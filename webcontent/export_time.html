@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Export Time Series - time</title>
+<meta name="robots" content="noindex" />
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="favicon.png" />
+
+<script src="jquery-2.1.1.min.js"></script>
+<script src="export_time.js"></script>
+
+<style type="text/css">
+#top_line {display: table; width: 100%; }
+#top_line_left {display: table-cell; text-align: left; }
+#top_line_right {display: table-cell; text-align: right; }
+h1 {margin-bottom: 40px; text-align:center;}
+div.bg {
+	background-image: url(timeseries_bg3.png);
+	background-position: top left;
+	background-size: 100%;
+}
+body {margin: 0px; background-color:#f6f6f6}
+table {
+    background-color: #ffffff;
+}
+
+.horizontal-box {display:flex; flex-flow:row;}
+.spacer {flex:auto;}
+.center {flex:none;}
+.main {background-color:#f6f6f6;}
+</style>
+
+</head>
+
+<body>
+<div class="bg">
+
+<div id="top_line">
+<div id="top_line_left">
+<div style="display:inline-block">status:</div>
+<div id="status" style="display:inline-block">init...</div>
+</div>
+<div id="top_line_right">
+<a href="..">main-page</a>
+<button onclick="var h=$('#div_help')[0].style;h.display=(h.display=='none')?'inline':'none'">?</button>
+</div> 
+</div>
+<h1>Export Time Series - choose timespan and aggregation</h1>
+
+<div class="horizontal-box">
+<div class="spacer"></div>
+<div class="center">
+<button id="button_cancel">cancel</button>
+<button id="button_apply">apply time</button>
+</div> <!--END center-->
+<div class="spacer"></div>
+</div> <!--END horizontal-box-->
+
+<hr/>
+</div>
+<div id="div_help" style="display:none">
+<h3>Help</h3>
+On this page you can choose time steps and time span of the exported data. Click on "cancel" to discard changed. Click on "apply time" to confirm changes.
+<br>
+<br>
+Click on the "time steps" box to choose a suitable time step.
+<br>
+At the "time span"-section you can choose between different methods to select a time span.
+<br>
+When you want to specify exact start- and end-dates of the requested time span select "specific dates". There you can write a date consisting of year, month, day and hour. You don't need to write the date up to hour. For example "2014-04 to 2014-09" implies "2014-04-30T00 to 2014-09-30T23". To request to from beginning (or up to the end) write "*" in the "from" field (or in the "to" field).
+
+<hr/>
+</div>
+
+<div class="horizontal-box">
+<div class="spacer"></div>
+<div class="center main">
+<h3>Time</h3>
+
+<div>
+<label for="choose_aggregation">Aggregation of time &nbsp;&nbsp;&nbsp;</label>
+<select id="choose_aggregation">
+<option>raw</option>
+<option>hour</option>
+<option>day</option>
+<option>week</option>
+<option>month</option>
+<option>year</option>
+</select>
+</div>
+<br>
+<br>
+
+<div>
+<h4>time span</h4>
+
+<table cellspacing="20">
+<tr><td><input type="radio" name="timespan_radio" id="radio_all">all available data<td><td><td><td>
+<tr>
+<tr><td><input type="radio" name="timespan_radio" id="radio_year">one year<td><td><select id="time_select_year"><td><td>
+<tr>
+<tr><td><input type="radio" name="timespan_radio" id="radio_years">years<td>from<td><select id="time_select_years_from"></select><td>to<td><select id="time_select_years_to"></select>
+<tr>
+<tr><td><input type="radio" name="timespan_radio" id="radio_dates">specific dates<td>from<td><input type="text" id="time_text_dates_from"></input><td>to<td><input type="text" id="time_text_dates_to"></input>
+</table>
+
+<br>
+<br>
+Format of dates: <b>yyyy-mm-ddThh</b> ( [year]-[month]-[day]T[hour] )
+<br>
+valid examples:
+<br>
+<table>
+<tr><td><b>2014</b></td><td> year</td></tr> 
+
+<tr><td><b>2014-01</b></td><td> year and month</td></tr>
+
+<tr><td><b>2014-01-01</b></td><td> year, month and day</td></tr>
+
+<tr><td><b>2014-01-01T07</b></td><td> year, month, day and hour</td></tr>
+
+<tr><td><b>*</b></td><td> from first timestamp / up to last timestamp</td></tr>
+
+</table>
+</input>
+</div>
+
+</div> <!--END center-->
+<div class="spacer"></div>
+</div> <!--END horizontal-box-->
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Time Series Web Interface</title>
+<meta name="robots" content="noindex" />
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="favicon.png" />
+<style type="text/css">
+button.linkbutton { width: 170px; }
+table { background-color:#f6f6f6; }
+body { margin: 0px; background-color:#e6e6e6;}
+
+div.bg {
+	background-image: url(timeseries_bg3.png);
+	background-position: top left;
+	background-size: 100%;
+}
+
+/*#center { width: 800px; height: auto; margin-left: auto; margin-right: auto; line-height:60px; }*/
+
+
+
+.horizontal-box {
+  display: flex;
+  flex-flow: row;
+}
+
+.spacer {
+  flex: auto;
+}
+#center {
+  flex: none;
+}
+
+.vertical-box {
+  display: flex;
+  flex-flow: column;
+}
+
+td {
+    padding: 10px;
+}
+
+#infobox {
+	flex: auto;
+	background-color:#f6f6f6;
+}
+
+</style>
+</head>
+<body>
+<div class="bg">
+<div style="text-align:right"><a href="bexis/bexis.html">._ bexis proposal page _.</a><button id="button_instructions" onclick="show_instructions()">?</button></div>
+<h1 style="text-align:center">Time Series Web Interface</h1>
+<hr/>
+</div>
+<div id="div_instructions" style="display:none">
+<script type="text/javascript">
+function show_instructions() {
+	if(document.getElementById("div_instructions").style.display==="none") {
+		document.getElementById("div_instructions").style.display = "inline";
+	} else {
+		document.getElementById("div_instructions").style.display = "none";
+	}
+}
+</script>
+<h2>Help</h2>
+This is the central start page of Time Series Web Interface. You can navigate to a desired view by clicking on one of the buttons below.
+<hr/>
+</div>
+
+<div class="horizontal-box">
+<div class="spacer"></div>
+<div id="center">
+<div class="vertical-box">
+<table>
+<colgroup>
+    <!--<col width="100px" height="50px"/>
+	<col width="100px" height="50px"/>
+    <col width="600px" height="50px"/>-->
+</colgroup>
+<tr><td></td><td><button class="linkbutton" onclick="window.location = 'visual_plotstation_raw.html';">visualize plots</button></td><td> view parameters of one plot (resp. station)</td></tr>
+<tr><td></td><td><button class="linkbutton" onclick="window.location = 'visual_parameter_raw.html';">visualize parameters</button></td><td>view one parameter of a group of plots</td></tr>
+<tr><td></td><td><button class="linkbutton" onclick="window.location = 'export.html';">export</button></td><td>download time series data</td></tr>
+<tr><td></td><td><button class="linkbutton" onclick="window.location = 'advanced_status.html';">advanced status</button></td><td>get the "up to date"-status of plots</td></tr>
+<tr><td>(prototype)</td><td><button class="linkbutton" onclick="window.location = 'map.html';">map</button></td><td>map of plots with "up to date"-status</td></tr>
+<tr><td></td><td><button class="linkbutton" onclick="window.location = '../supplement';">supplementary content</button></td><td>additional files</td></tr>
+</table>
+<div class="entry"><hr></div>
+<div class="entry">Infobox</div>
+<br>
+<!--<iframe width="800px" height="200px" src="../files/info.html"></iframe>-->
+<iframe id="infobox" height="300px" src="../files/info.html"></iframe>
+</div><!--END vertical-box-->
+</div><!--END center-->
+<div class="spacer"></div>
+</div><!--END horizontal-box-->
+
+
+</body>
+
+</html>

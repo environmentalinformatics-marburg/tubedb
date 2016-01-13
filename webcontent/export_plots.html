@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Export Time Series - choose plots</title>
+<meta name="robots" content="noindex" />
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="favicon.png" />
+
+<script src="jquery-2.1.1.min.js"></script>
+<script src="export_plots.js"></script>
+
+<style type="text/css">
+#top_line {display: table; width: 100%; }
+#top_line_left {display: table-cell; text-align: left; }
+#top_line_right {display: table-cell; text-align: right; }
+h1 {margin-bottom: 40px; text-align:center;}
+div.bg {
+	background-image: url(timeseries_bg3.png);
+	background-position: top left;
+	background-size: 100%;
+}
+body {margin: 0px; background-color:#f6f6f6}
+
+#box_centered {
+    display:inline-block;
+    width:200px;
+    vertical-align:top
+    background: yellow;
+    padding: 2em 0;
+}
+
+.button_centered {
+    display: table;
+    margin: 0 auto;
+}
+
+.horizontal-box {display:flex; flex-flow:row;}
+.spacer {flex:auto;}
+.center {flex:none;}
+.main {background-color:#f6f6f6;}
+</style>
+
+</head>
+
+<body>
+<div class="bg">
+
+<div id="top_line">
+<div id="top_line_left">
+<div style="display:inline-block">status:</div>
+<div id="status" style="display:inline-block">init...</div>
+</div>
+<div id="top_line_right">
+<a href="..">main-page</a>
+<button onclick="var h=$('#div_help')[0].style;h.display=(h.display=='none')?'inline':'none'">?</button>
+</div> 
+</div>
+<h1>Export Time Series - choose plots</h1>
+
+<div class="horizontal-box">
+<div class="spacer"></div>
+<div class="center">
+<button id="button_cancel">cancel</button>
+<button id="button_apply">apply chosen plots</button>
+</div> <!--END center-->
+<div class="spacer"></div>
+</div> <!--END horizontal-box-->
+
+<hr/>
+</div>
+
+<div id="div_help" style="display:none">
+<h3>Help</h3>
+On this page you can choose the plots of which some data should be exported. Click on "cancel" to discard changed. Click on "apply plots" to confirm changes.
+<br>
+<br>
+Double-click on one plot in the box of "Available Plots" to add it to your chosen plots in the box "Chosen Plots" and vice versa. You can use the "filter by" field to just list the plots of some sub-region to find specific plots more easily.
+<hr/>
+</div>
+
+<div class="horizontal-box">
+<div class="spacer"></div>
+<div class="center main">
+<h3>Select Plots</h3>
+
+<p>
+<div style="display:inline-block;width:200px;vertical-align:top">
+<label for="chosen_select">Chosen Plots</label><br>
+<select id="chosen_select" size="5" multiple="multiple" style="min-width:100px;height:300px">
+</select>
+</div>
+<div id="box_centered" style="display:inline-block;width:200px;vertical-align:top">
+<button class="button_centered" title="choose selected plot" id="choose_selected_button">&lt;</button>
+<button class="button_centered" title="remove selected plot" id="remove_selected_button">&gt;</button>
+<button class="button_centered" title="choose all (filtered) plots" id="choose_all_button">&lt;&lt;</button>
+<button class="button_centered" title="remove all chosen plots" id="remove_all_button">&gt;&gt;</button>
+</div>
+<div style="display:inline-block;width:200px;vertical-align:top;text-align:center">
+<label for="available_select">Available Plots</label><br>
+<label for="general_select">filter by</label><br>
+<select id="general_select"></select><br>
+<select id="available_select" size="5" multiple="multiple" style="min-width:100px;height:260px">
+</select>
+</div>
+</p>
+</div> <!--END center-->
+<div class="spacer"></div>
+</div> <!--END horizontal-box-->
+
+</body>
+</html>
