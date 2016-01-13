@@ -1,0 +1,10 @@
+station,sensor,start,end,comment
+HEG19,P_container_RT,2012-03-16,2012-07-19,"noise (P_container_RT used for P_RT_NRT)"
+HEG19,P_container_NRT,2012-03-16,2012-07-19,"noise (P_container_NRT not used for P_RT_NRT)"
+HEG24,P_container_RT,2011-11-30,2011-12-22,"noise"
+HEG24,P_container_NRT,2011-11-30,2011-12-22,"noise from P_container_RT"
+HEG24,P_container_RT,2012-10-17,2012-11-06,"noise"
+HEG24,P_container_NRT,2012-10-17,2012-11-06,"noise from P_container_RT"
+HEG31,P_container_RT,2012-10-17,2012-11-06,"noise"
+HEG31,P_container_NRT,2012-10-17,2012-11-06,"noise from P_container_RT"
+SEG43,P_container_RT,2011-01-31,2011-10-19,"noise"

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/commons-math3-3.5.jar"/>
+	<classpathentry kind="lib" path="lib/ini4j-0.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/JavaFastPFOR-0.1.6.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-api-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-core-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-jcl-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/mapdb-1.0.6.jar"/>
+	<classpathentry kind="lib" path="lib/opencsv-2.3.jar"/>
+	<classpathentry kind="lib" path="lib/snappy-java-1.1.1.6.jar"/>
+	<classpathentry kind="lib" path="lib/influx/gson-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/influx/guava-18.0.jar"/>
+	<classpathentry kind="lib" path="lib/influx/influxdb-java-2.0-sources.jar"/>
+	<classpathentry kind="lib" path="lib/influx/influxdb-java-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/influx/okhttp-2.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/influx/okio-1.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/influx/retrofit-1.9.0.jar"/>
+	<classpathentry kind="lib" path="C:/release-1800-x64-gdal-1-11-1-mapserver-6-4-1/bin/gdal/java/gdal.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

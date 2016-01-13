@@ -1,0 +1,50 @@
+DONE gra1 
+LoggerID 80031130065
+komplette Zeitreihe
+
+VoltageHiIMP [1] LWDR
+VoltageHiIMP [2] LWUR
+VoltageDVM [1] SWDR
+VoltageDVM [2] SWUR [broken]
+
+
+
+mai0 
+DONE LoggerID 80031130064 ab 25.03.2015 (davor auf Sav0 bis 24.03.2015)
+--> steht im Station Inventory auf Sav0, bitte aktualisieren. 
+
+DONE(mai0) LoggerID 80041130072 (bis 24.03.2015)
+
+VoltageHiIMP [1]  LWDR
+VoltageHiIMP [2]  LWUR [broken]
+VoltageDVM [1] SWDR
+VoltageDVM [2] SWUR
+
+
+
+DONE sav0 
+LoggerID 80041130072
+since 08.05.2015, before Mai0
+
+VoltageHiIMP [1]  LWDR
+VoltageHiIMP [2]  LWUR 
+VoltageDVM [1] SWDR
+VoltageDVM [2] SWUR
+
+
+
+DONE cof3 
+LoggerID 80031130066
+
+until 26.03.2015
+VoltageHiIMP [1]  LWDR
+VoltageHiIMP [2]  LWUR 
+VoltageDVM [1] SWDR
+VoltageDVM [2] SWUR
+
+
+since 27.03.2015
+VoltageHiIMP [1]  LWUR
+VoltageHiIMP [2]  LWDR 
+VoltageDVM [1] SWUR
+VoltageDVM [2] SWDR

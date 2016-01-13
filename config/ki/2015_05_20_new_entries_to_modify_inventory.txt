@@ -1,0 +1,150 @@
+DONE
+ADD ENTRY FOR MAI3 STARTING FROM 2015-03-30
+80121421102		2015-03-30T12:00	2015-04-24T09:15		(??)  mai3 (in filename)  mai4 (in taskbook) rug
+INVENTORY (incomplete): 80121421102	2015-03-30 *		rug 
+
+ki_xx00mai3_xxx_201503301200_201504240915_mez_ra01_nai05_0000.asc.not_in_inventory
+preprocessing/20150424-201053/preprocessed_error
+log entry: null,null,80121421102,2015-03-30T12:00,2015-04-24T09:15,station not found,E0AF01B7630946A439111FBDE6EF1EC8,301251,c:\timeseriesdatabase_preprocess\source\20150424-201053\ki_xx00mai3_xxx_201503301200_201504240915_mez_ra01_nai05_0000.asc.not_in_inventory
+taskbook: 2301	jn	mai4	rug	80121421102	201503301205	na	na	na	issue	re-installed logger at cof3 again 080121421102 the first logger was not responding,
+
+
+
+
+(DONE) TODO MISSING fog or rain info
+ADD ENTRY FOR FPD2 STARTING FROM 2014-10-20; CALIBRATION VALUES: 0.2
+80101326134		2014-10-20T10:10	2014-12-28T07:30	(??)  fpo2 (in filename)   mwh0 (taskbook)		(??) pu2 (taskbook pu1 or pu2)
+INVENTORY (incomplete): 80101326134	2014-10-20  * 
+
+ki_xx00fpo2_xxx_201410201010_201412280730_mez_ra01_nai05_0000.asc.not_in_inventory
+preprocessing/20150314/preprocessed_error
+preprocessing/20150323-121458/preprocessed_error
+preprocessing/20150410-183455/preprocessed_error
+preprocessing/20150417-055948/preprocessed_error
+preprocessing/20150424-201053/preprocessed_error
+log entry: null,null,80101326134,2014-10-20T10:10,2014-12-28T07:30,station not found,981B4429BA2A7248365560E5DF67944E,833517,c:\timeseriesdatabase_preprocess\source\20150424-201053\ki_xx00fpo2_xxx_201410201010_201412280730_mez_ra01_nai05_0000.asc.not_in_inventory
+taskbook: 2087	jn	mwh0	pu1	80101326134	201410201105	yes	changed	yes	noissue	data download and restart
+taskbook: 2218	jn	mwh0	pu2	80101326134	201502021149	yes	changed	yes	noissue	data download and restart
+
+
+
+
+DONE
+ADD ENTRY FOR GRA5 STARTING FROM 2015-03-30; CALIBRATION VALUES: 0.2
+80021526456		2015-03-30T10:08	2015-05-04T10:33		gra5		pu1
+INVENTORY (incomplete): 80021526456	2015-03-30  *		gra5		pu1
+
+ki_xx00gra5_xxx_201503301008_201505041033_mez_ra01_nai05_0000.asc.not_in_inventory
+preprocessing/20150507-044720/preprocessed_error
+log entry: null,null,80021526456,2015-03-30T10:08,2015-05-04T10:33,station not found,68FE8EE76ED0E765DF7129208B4559A4,312834,c:\timeseriesdatabase_preprocess\source\20150507-044720\ki_xx00gra5_xxx_201503301008_201505041033_mez_ra01_nai05_0000.asc.not_in_inventory
+taskbook: 2300	jn	gra5	pu1	80021526456	201503301130	na	na	na	issue	re-installed another logger and tipping bucket at gra5 with logger serial number 080021526456  the first logger and tipping bucket was stolen, I installed near of honer house
+taskbook: 2353	jn	gra5	pu1	80021526456	201505041139	yes	no change	no	noissue	data download and restart
+
+
+
+
+DONE
+ADD ENTRY FOR MAI4 STARTING FROM 2015-03-30
+80011521128		2015-03-30T08:42	2015-05-04T08:17		mai4		rug
+INVENTORY: 80011521128	2015-03-30 *		mai4	rug	
+
+ki_xx00mai4_xxx_201503300842_201505040817_mez_ra01_nai05_0000.asc.not_in_inventory
+preprocessing/20150507-044720/preprocessed_error
+log entry: null,null,80011521128,2015-03-30T08:42,2015-05-04T08:17,station not found,2F8D2917041EE93CB46E47C389640CCD,423387,c:\timeseriesdatabase_preprocess\source\20150507-044720\ki_xx00mai4_xxx_201503300842_201505040817_mez_ra01_nai05_0000.asc.not_in_inventory
+taskbook: 2299	jn	mai4	rug	80011521128	201503300842	na	na	na	issue	re-installed another logger at mai4 with serial number 080011521128 the first logger was not responding,
+taskbook: 2346	jn	mai4	rug	80011521128	201505040921	yes	no change	no	noissue	data download and restart,however the logger  is not in the  inventory file, 
+
+
+
+DONE
+ADD ENTRY FOR FLM1 STARTING FROM 2015-03-20
+80121421092		2015-03-20T10:47	2015-05-12T08:17		flm1		rug
+INVENTORY: 80121421092		2015-03-20  *		flm1		rug
+
+ki_xx00flm1_xxx_201503201047_201505120817_mez_ra01_nai05_0000.asc.not_in_inventory
+preprocessing/20150514-151513/preprocessed_error
+log entry: null,null,80121421092,2015-03-20T10:47,2015-05-12T08:17,station not found,257EDB70E3B0F0DF6C683287E795EBE8,640065,c:\timeseriesdatabase_preprocess\source\20150514-151513\ki_xx00flm1_xxx_201503201047_201505120817_mez_ra01_nai05_0000.asc.not_in_inventory
+taskbook: 2292	jn	flm1	rug	80121421092	201503201049	na	changed	na	issue	re-installed another logger at flm1 with serial number 80121421092 the first logger was not responding,
+taskbook: 2370	jn	flm1	rug	80121421092	201505120822	yes	changed	no	noissue	data download and restart
+
+
+
+DONE
+ADD ENTRY FOR FOC1 STARTING FROM 2015-03-19
+80121421096		2015-03-19T07:57	2015-05-12T07:07		foc1		rug
+INVENTORY: 80121421096		2015-03-19	*		foc1		rug
+
+ki_xx00foc1_xxx_201503190757_201505120707_mez_ra01_nai05_0000.asc.not_in_inventory
+preprocessing/20150514-151513/preprocessed_error
+log entry: null,null,80121421096,2015-03-19T07:57,2015-05-12T07:07,station not found,CE3C9C82BC4718D59D4A0AAED58A5A6C,653001,c:\timeseriesdatabase_preprocess\source\20150514-151513\ki_xx00foc1_xxx_201503190757_201505120707_mez_ra01_nai05_0000.asc.not_in_inventory
+taskbook: 2282	jn	foc1	rug	80121421096	201503190755	na	na	na	issue	 Re installed onother logger at foc1 with no 80121421096 the first logger  was not responding
+taskbook: 2367	jn	foc1	rug	80121421096	201505120711	yes	changed	no	noissue	data download and restart
+
+
+TODO missing logger type, missing info of relevant filename
+END ENTRY 800810252905 FOR MWH0 ON 2013-09-30
+
+DONE added ending for next entry: 2014-10-20
+ADD ENTRY 080101326134 FOR MWH0 STARTING 2014-04-19, CALIBRATION COEFFICIENT: 0.2
+2 Dateien
+
+
+
+DONE
+REMOVE FROM DB: WXT 2015-03-17 AND 2015-03-18 GRA1 AND SAV0
+
+DONE rug
+ADD ENTRY 051021038 FOR HOM3 STARTING 2012-09-12, ENDING 2012-09-26
+
+DONE rug
+ADD ENTRY 051021052 FOR HOM1 STARTING 2011-10-19, ENDING 2012-01-16
+
+DONE rug
+ADD ENTRY 051021056 FOR FLM4 STARTING 2012-09-12, ENDING 2012-09-26
+
+DONE rug
+ADD ENTRY 051071138 FOR FLM3 STARTING 2012-09-12, ENDING 2012-09-26
+
+DONE pu1
+ADD ENTRY 080081055 FOR HOM4 STARTING 2012-08-27, ENDING 2012-10-01, 0.2
+
+DONE rug
+ADD ENTRY 51021020230 FOR COF4 STARTING 2011-06-21, ENDING 2011-07-05
+
+DONE rug
+ADD ENTRY 51021020230 FOR HOM5 STARTING 2011-02-23, ENDING 2011-03-07
+
+TODO dublicate entries in two files with different data rug
+ADD ENTRY 051021038 FOR HOM1 STARTING 2011-10-19, ENDING 2012-01-16
+ki_xx000000_xxx_201110191030_201201161825_mez_ra01_nai05_0000.asc
+TODO dublicate entries in two files with different data rug
+ADD ENTRY 051021038 FOR HOM1 STARTING 2011-08-11, ENDING 2012-01-11
+ki_xx000000_xxx_201111081110_201201112145_mez_ra01_nai05_0000.asc
+
+
+
+DONE
+dublicate INVENTORY: NaN,NaN,NaN,NaN,forestlowermontane,flm1,000pu1,80081025289,2012-10-05,2099-12-31,5,6,0.2,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN
+dublicate INVENTORY: 346176,9635504,NaN,NaN,   grasland,gra5,000pu1,80081025289,2014-04-15,2099-12-31,5,6,0.2,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN
+
+taskbook: 799	jn	flm0	001_pu1	80081025289	201211061058	yes	not changed	yes	issue	Data download, however there was a lot of fine dust which turn into mad and clogged the gauge, hence no water was going down. When cleaned the sieve and the water passed through. This water however has been measured when the actual rain rained.
+taskbook: 890	jn	flm0	000pu1	80081025289	201212060722	yes	not changed	yes	issue	Data download, however there was a lot of fine dust which turn into mad and clogged the gauge, hence no water was going down. When cleaned the sieve and the water passed through. This water however has been measured when the actual rain rained.
+taskbook: 937	jn	flm1	000pu1	80081025289	201212310946	yes	not changed	yes	issue	Data download, however there was a lot of fine dust which turn into mad and clogged the gauge, hence no water was going down. When cleaned the sieve and the water passed through. This water however has been measured when the actual rain rained.
+taskbook: 939	em	flm1	000pu1	80081025289	201212311516	na	na	na	na	installed a fine wire mesh on top of the throwfall gutter to test if will solve the problem of mud accumulation.
+taskbook: 959	jn	flm0	000pu1	80081025289	201301081040	yes	not changed	yes	issue	Data download, however there was a lot of fine dust which turn into mad and clogged the gauge, hence no water was going down. When cleaned the sieve and the water passed through. This water however has been measured when the actual rain rained.
+taskbook: 961	em	flm0	000pu1	80081025289	201301081040	na	na	na	issue	We increased a hole on the curved plastic tip to help allow the fine dust that comes with rain to go throw
+taskbook: 1003	jn	flm0	000pu1	80081025289	201301190807	yes	not changed	no	issue	data download and restart however the logger was not in the inventory file.
+taskbook: 1009	em	flmo	000pu1	80081025289	201301251052	yes	not changed	no	issue	data download and restart, however logger was not in the inventory file
+taskbook: 1190	jn	flm1	000pu1	80081025289	201305031357	yes	not changed	yes	issue	Data download and restart, however there was a lot of fine dust which turn into mad and clogged the rain gauge, hence no water was going down. When cleaned the sieve and the water passed through. This water however has been measured when the actual rain rained.
+taskbook: 1405	jn	flm0	000pu1	80081025289	201308130803	yes	not changed	yes	issue	Data download and restart, however there was a lot of fine dust which turn into mad and clogged the rain gauge, hence no water was going down. When cleaned the sieve and the water passed through. This water however has been measured when the actual rain rained.
+taskbook: 1504	jn	flm0	000pu1	80081025289	201310100759	yes	changed	yes	issue	Data download and restart, however there was a lot of fine dust which turn into mad and clogged the rain gauge, hence no water was going down. When cleaned the sieve and the water passed through. This water however has been measured when the actual rain rained.
+taskbook: 1593	jn	flm0	000pu1	80081025289	201312021035	yes	not changed	yes	issue	Data download and restart, however there was a lot of fine dust which turn into mad and clogged the rain gauge, hence no water was going down. When cleaned the sieve and the water passed through. This water however has been measured when the actual rain rained.
+taskbook: 1671	jn	flm0	000pu1	80081025289	201401171258	yes	not changed	yes	issue	Data download and restart, however there was a lot of fine dust which turn into mad and clogged the rain gauge, hence no water was going down. When cleaned the sieve and the water passed through. This water however has been measured when the actual rain rained.
+taskbook: 1736	jn	flm0	002_pu1	80081025289	201403150946,00	yes	not changed	yes	issue	data download, replaced tipping bucket with two canisters
+taskbook: 1776	jn	gra5	pu1		80081025289	201404151016,00	na	na	na	na	I installed rain gauge at gra5 with searia no 080081025289
+taskbook: 1812	jn	gra5	pu1		80081025289	201405121006	yes	not changed	no	issue	data download and restart, however the logger was not in the inventory file
+
+
+
+
+

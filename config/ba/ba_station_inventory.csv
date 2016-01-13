@@ -1,0 +1,16 @@
+﻿plot,logger,serial,start,end
+GF2,th,80011420987,*,*
+WH2,th,80011420988,*,*
+RS1,th,80011420989,*,*
+FS2,th,80011420990,*,*
+WH1,th,80011420991,*,*
+FS1,th,80011420992,*,*
+GF1,th,80011420993,*,*
+RS2,th,80011420994,*,*
+FS2,th,80081521194,*,*
+Falkenstein,st,falkenstein,*,*
+HausZurWildnis,st,hauszurwildnis,*,*
+Taferlruck,st,taferlruck,*,*
+Waldschmidthaus,st,waldschmidthaus,*,*
+Waldhäuser,st,waldhaeuser,*,*
+KlingenbrunnBahnhof,st,klingenbrunn,*,*

@@ -1,0 +1,5 @@
+station,sensor,start,end,comment
+80011420989,Ta_200,2014-06-20,2014-08-13,"noise at Bavaria RS1"
+80011420989,rH_200,2014-06-20,2014-08-13,"noise at Bavaria RS1"
+80011420991,Ta_200,2015-02-15,2015-06-14,"noise at Bavaria WH1"
+80011420991,rH_200,2015-02-15,2015-06-14,"noise at Bavaria WH1"

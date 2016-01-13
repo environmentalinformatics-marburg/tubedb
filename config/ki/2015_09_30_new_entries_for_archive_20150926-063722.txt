@@ -1,0 +1,15 @@
+
+
+2344	jn	hom1	rug	80011521126	201504300924	na	na	na	na	Re installed a new logger at hom1 with serial number 080011521126
+
+(wrong entry?)
+2380	jn	mai0	pu1	80011521126	201505181145	yes	no change	yes	noissue	data download and restart
+
+2576	jn	hom1	rug	80011521126	201509250804	yes	no change	no	noissue	data download and restart
+
+
+
+
+NaN,NaN,NaN,NaN,NaN,[PLOT],000rug,[SERIAL],[START],*,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN
+
+NaN,NaN,NaN,NaN,NaN,hom1,000rug,80011521126,2015-04-30,*,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN

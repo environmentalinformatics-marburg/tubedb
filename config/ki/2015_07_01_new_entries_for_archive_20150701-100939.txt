@@ -1,0 +1,14 @@
+DONE
+
+ki_xx00fer4_xxx_201505271129_201506300939_mez_ra01_nai05_0000.asc.not_in_inventory
+
+(?)
+2404	jn	fer2	rug	80021251148	201505271411	na	changed	no	noissue	installed a new logger at fer2 with serial number 80021251148
+
+2473	jn	fer2	rug	80021521148	201506301030	yes	changed	no	noissue	data download and restart
+
+
+
+NaN,NaN,NaN,NaN,NaN,[PLOT],000rug,[SERIAL],[START],*,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN
+
+NaN,NaN,NaN,NaN,NaN,fer2,000rug,80021521148,2015-05-27,*,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN

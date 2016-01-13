@@ -1,0 +1,36 @@
+DONE
+ADD: 80021521150 cof6 rug  2015-04-08   *
+20150528-150845\ki_xx000000_xxx_201504081041_201505181031_mez_ra01_nai05_0000.asc.not_in_inventory
+2307	jn	cof6	rug	80021521150	201504080921	na	na	na	noissue	installed a new logger at cof6 with serial number 80021521150
+2375	jn	cof6	rug	80021521150	201505180933	yes	no change	no	noissue	data download and restart
+
+DONE
+ADD: 80121421093 cof2  rug  2015-04-20  *
+20150528-150845\ki_xx00cof2_xxx_201504201140_201505181145_mez_ra01_nai05_0000.asc.not_in_inventory
+2329	jn	cof2	rug	80121421093	201504201140	na	changed	na	na	Re installed a new logger at cof2 with serial number 80121421093
+2377	jn	cof2	rug	80121421093	201505181046	yes	changed	no	noissue	data download and restart
+
+DONE
+ADD: 80121421097  flm6  rug 2015-04-09  *
+20150528-150845\ki_xx00flm6_xxx_201504091027_201504300742_mez_ra01_nai05_0000.asc.not_in_inventory
+2313	jn	flm6	rug	80121421097	201504091057	na	na	na	na	Re installed a new logger at flm6 with serial number 80121421097
+2394	jn	flm6	rug	80121421097	201505221131	yes	changed	no	noissue	data download and restart
+
+DONE
+ADD: 80121421098 fod4  rug  2015-04-09  *
+20150528-150845\ki_xx00fod4_xxx_201504090941_201505221146_mez_ra01_nai05_0000.asc.not_in_inventory
+2311	jn	fod4	rug	80121421098	201504090942	na	na	na	na	Re installed a new logger at fod4 with serial number 80121421098
+2392	jn	fod4	rug	80121421098	201505221047	yes	no change	no	noissue	data download and restart
+
+DONE
+ADD: 80121421091 fod5  rug  2015-04-09  *
+20150528-150845\ki_xx00fod5_xxx_201504091000_201505221200_mez_ra01_nai05_0000.asc.not_in_inventory
+2312	jn	fod5	rug	80121421091	201504091005	na	na	na	na	Re installed a new logger at fod5 with serial number 80121421091
+2393	jn	fod5	rug	80121421091	201505221102	yes	no change	no	noissue	data download and restart
+
+DONE
+ADD: 80121421099 gra2  rug  2015-04-08  *
+20150528-150845\ki_xx00gra2_xxx_201504081335_201505191040_mez_ra01_nai05_0000.asc.not_in_inventory
+2310	jn	gra2	rug	80121421099	201504081209	yes	na	na	data download and restart,however i replace a new fannel. 	Re installed a new logger at gra2 with serial number 80121421099	installed a new logger at fed5 with serial number 80021521149
+2382	jn	gra2	rug	80121421099	201505190943	yes	no change	no	noissue	data download and restart
+

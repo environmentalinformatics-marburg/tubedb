@@ -1,0 +1,53 @@
+DONE - COF3 rad-Logger (80091025299) seit 201309090848 gestohlen
+DONE;DONE - COF3 verbleibende rad-Logger (80091025304 und 80091025309) seit 20130114* zerstört
+!CHECK! - MAI4 neuer pu-Logger (80021526456) seit 201503301130
+
+ALREADY IN INVENTORY;DONE - GRA5 neuer pu-Logger (80021526456) seit 201503301130 (von dem hat Jimmy am 201505041139 auch schon Daten heruntergeladen und mitgeschickt); alter pu-Logger (80081025289) DATE_END auf 2015-03-29 setzen, wurde gestohlen
+		2300	jn	gra5	pu1	80021526456	201503301130	na	na	na	issue	re-installed another logger and tipping bucket at gra5 with logger serial number 080021526456  the first logger and tipping bucket was stolen, I installed near of honer house
+		2353	jn	gra5	pu1	80021526456	201505041139	yes	no change	no	noissue	data download and restart
+
+DONE;DONE - FPO2 alter rad-Logger(80091025301) seit 201306100959 nicht mehr installiert; neuer rad-Logger (80081025292) seit 201308051059 installiert
+DONE - HEL3 rug-Logger (51021020222) nach Mai 2012 gestohlen, also z.B. DATE_END auf 2015-06-01 setzen
+DONE - FER1 rug-Logger (51021020161) DATE_END auf 2014-07-15 (Datum hatte ich in der vorherigen Mail falsch angegeben)
+DONE *fed1* seit 201505110155 neuer rug-Logger (80021521152)
+DONE *fed3* seit 201504010142 neuer rug-Logger (80021521146)
+DONE *fed4* seit 201504010122 neuer rug-Logger (80121421103)
+DONE *fed5* seit 201504011249 neuer rug-Logger (80021521149)
+DONE *sun1* rug-Logger (51111220726) seit 20131227 gestohlen
+DONE *sun2* rug-Logger (51111220725) seit 20131227 gestohlen
+DONE *sun3* rug-Logger (51071120479) seit 20120229 gestohlen
+DONE *sun4* rug-Logger (51111220728) seit 20140918 gestohlen
+   
+   
+   
+EASTING,NORTHING,POINT_X,POINT_Y,TYPE,PLOTID,LOGGER,SERIAL,DATE_START,DATE_END,HEADER,DATA,pu1_P_RT_NRT,pu2_1,pu2_2,wxt_SWDR_300,wxt_SWUR_300,wxt_LWDR_300,wxt_LWUR_300,cf_kd_rad,cf_par_rad,SERIAL_VAISALA,SERIAL_CNR4,SERIAL_ARG,SERIAL_PYR01,SERIAL_PYR02,SERIAL_PAR01,SERIAL_PAR02,TF_COLOR,TF_B,TF_B01,TF_B02,TF_B03,TF_B04,TF_B05,TF_B06,TF_B07,TF_B08,Misc,pu2_1_type,pu2_2_type,pu2_1_mapping,pu2_2_mapping
+
+NaN,NaN,NaN,NaN,NaN,[plot],[logger],[serial],[start],[end],NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN
+
+
+NaN,NaN,NaN,NaN,NaN,fed1,rug,80021521152,2015-05-11,*,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN  
+NaN,NaN,NaN,NaN,NaN,fed3,rug,80021521146,2015-04-01,*,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN 
+NaN,NaN,NaN,NaN,NaN,fed4,rug,80121421103,2015-04-01,*,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN
+NaN,NaN,NaN,NaN,NaN,fed5,rug,80021521149,2015-04-01,*,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+   
