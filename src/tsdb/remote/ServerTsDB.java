@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import tsdb.GeneralStation;
 import tsdb.Station;
 import tsdb.TsDB;
+import tsdb.TsDBFactory;
 import tsdb.VirtualPlot;
 import tsdb.component.LoggerType;
 import tsdb.component.Region;
@@ -127,12 +128,12 @@ public class ServerTsDB implements RemoteTsDB {
 	public String[] getValidSchema(String plotID, String[] sensorNames) {
 		return tsdb.getValidSchema(plotID, sensorNames);
 	}
-	
+
 	@Override
 	public String[] getValidSchemaWithVirtualSensors(String plotID, String[] sensorNames) {
 		return tsdb.getValidSchemaWithVirtualSensors(plotID, sensorNames);
 	}
-	
+
 	@Override
 	public String[] supplementSchema(String... schema) {
 		return tsdb.supplementSchema(schema);
@@ -329,13 +330,13 @@ public class ServerTsDB implements RemoteTsDB {
 		});
 		return result;
 	}
-	
-	
+
+
 	@Override
 	public ArrayList<PlotStatus> getPlotStatuses() {
 		return collectPlotStatuses(tsdb.getPlotNames());
 	}
-	
+
 	@Override
 	public ArrayList<PlotStatus> getPlotStatusesOfGeneralStation(String generalStationName) {		
 		GeneralStation generalStation = tsdb.getGeneralStation(generalStationName);
@@ -345,17 +346,27 @@ public class ServerTsDB implements RemoteTsDB {
 		}		
 		return collectPlotStatuses(generalStation.getStationAndVirtualPlotNames());
 	}
-	
+
 	@Override
 	public ArrayList<PlotStatus> getPlotStatusesOfRegion(String regionName) {
 		return collectPlotStatuses(tsdb.getGeneralStations(regionName).flatMap(g->g.getStationAndVirtualPlotNames()));
 	}
-	
+
 	private ArrayList<PlotStatus> collectPlotStatuses(Stream<String> plotIDstream) {
 		return collectPlotStatuses(plotIDstream, new ArrayList<PlotStatus>());
 	}
-	
+
 	private ArrayList<PlotStatus> collectPlotStatuses(Stream<String> plotIDstream, ArrayList<PlotStatus> result) {
+		Map<String, PlotMessage> m = null;
+		try {
+			ParseReceiverLogFile prlf = new ParseReceiverLogFile();
+			prlf.insertDirectory(TsDBFactory.WEBFILES_PATH+"/supplement/log");
+			m = prlf.plotMap;
+		} catch(Exception e) {
+			log.error(e);
+		}
+		Map<String, PlotMessage> messageMap = m;
+
 		plotIDstream.forEach(plotID->{
 			long[] interval = tsdb.getTimeInterval(plotID);
 			if(interval!=null) {
@@ -375,12 +386,20 @@ public class ServerTsDB implements RemoteTsDB {
 				if(it!=null&&it.hasNext()) {
 					DataEntry e = it.next();
 					//if(e.timestamp==ub[1]) {
-						voltage = e.value;
+					voltage = e.value;
 					//} else {
 					//	log.warn("timestamp error");
 					//}
-				}				
-				result.add(new PlotStatus(plotID, (int)interval[0], (int)interval[1], voltage));
+				}
+				PlotMessage plotMessage = null;
+				try {
+					if(messageMap!=null) {
+						plotMessage = messageMap.get(plotID);
+					}
+				} catch(Exception e) {
+					log.error(e);
+				}
+				result.add(new PlotStatus(plotID, (int)interval[0], (int)interval[1], voltage, plotMessage));
 			}
 		});		
 		return result;
@@ -476,7 +495,7 @@ public class ServerTsDB implements RemoteTsDB {
 
 	@Override
 	public TimestampSeries plotQuartile(String plotID, String[] columnNames, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated, Long start, Long end) {
-		
+
 		Node node = QueryPlan.plot(tsdb, plotID, columnNames, AggregationInterval.HOUR, dataQuality, interpolated);		
 		if(node==null) {
 			return null;
@@ -509,7 +528,7 @@ public class ServerTsDB implements RemoteTsDB {
 		}
 
 		EvaluatingAggregationIterator eai = new EvaluatingAggregationIterator(hour_it.getSchema(),collectingAggregator);
-		
+
 		if(eai==null||!eai.hasNext()) {
 			return null;
 		}

@@ -170,7 +170,7 @@ var runQuery = function() {
 			}			
 		}
 
-		var info = "<table><tr><th>Plot</th><th>First Timestamp</th><th>Last Timestamp</th><th>elapsed days</th><th>latest voltage reading</th></tr>";
+		var info = "<table><tr><th>Plot</th><th>First Timestamp</th><th>Last Timestamp</th><th>elapsed days</th><th>latest voltage reading</th><th>reception date</th><th>reception message</th></tr>";
 		
 		for(i in interval) {
 			var t = max_last - interval[i].last_timestamp;
@@ -208,6 +208,19 @@ var runQuery = function() {
 			}
 
 			info += "<td id=\""+voltageMark+"\">"+voltage+"</td>";
+			var message = "-";
+			var message_date = "-";
+			if(interval[i].message != undefined) {
+				message = interval[i].message;
+			}
+			if(interval[i].message_date != undefined) {
+				message_date = interval[i].message_date;
+				if(message_date<interval[i].last_datetime) {
+					message_date += " (outdated)";
+				}
+			}
+			info += "<td style=\"white-space: nowrap;\">"+message_date+"</td>";
+			info += "<td style=\"white-space: nowrap;\">"+message+"</td>";
 			info += "</tr>";
 
 		}

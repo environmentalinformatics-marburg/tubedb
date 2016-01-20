@@ -28,7 +28,6 @@ public class Handler_status extends MethodHandler {
 		}
 		@Override
 		public String toJSONString() {
-			//return Util.floatToString(value);
 			return Float.toString(value);
 		}		
 	}
@@ -62,7 +61,6 @@ public class Handler_status extends MethodHandler {
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);				
 				return;
 			}
-			//tsl.sort(PlotStatus.END_COMPARATOR);
 			PrintWriter writer = response.getWriter();
 			JSONWriter json_output = new JSONWriter(writer);
 			json_output.array();
@@ -81,7 +79,16 @@ public class Handler_status extends MethodHandler {
 				if(Float.isFinite(status.voltage)) {
 					json_output.key("voltage");
 					json_output.value(new JSONFloat(status.voltage));					
-					//json_output.value(i.voltage);
+				}
+				if(status.plotMessage!=null) {
+					try {
+						json_output.key("message_date");
+						json_output.value(status.plotMessage.dateTime.toString());
+						json_output.key("message");
+						json_output.value(status.plotMessage.message);			
+					}catch(Exception e) {
+						log.error(e);
+					}
 				}
 				json_output.endObject();
 			}

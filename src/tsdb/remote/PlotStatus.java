@@ -15,16 +15,17 @@ public class PlotStatus implements Serializable {
 	public final int firstTimestamp;
 	public final int lastTimestamp;
 	public final float voltage;
+	public final PlotMessage plotMessage;
 	
-	public PlotStatus(String plotID, int firstTimestamp, int lastTimestamp, float voltage) {
+	public PlotStatus(String plotID, int firstTimestamp, int lastTimestamp, float voltage, PlotMessage plotMessage) {
 		this.plotID = plotID;
 		this.firstTimestamp = firstTimestamp;
 		this.lastTimestamp = lastTimestamp;
 		this.voltage = voltage;
+		this.plotMessage = plotMessage;
 	}
 	
 	public static final Comparator<PlotStatus> END_COMPARATOR = (t1,t2)->{
 		return Integer.compare(t1.lastTimestamp,t2.lastTimestamp);
 	};
-
 }
