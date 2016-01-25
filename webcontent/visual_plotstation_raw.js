@@ -21,6 +21,7 @@ var type_hour_text = ["graph","heatmap","table","csv file"];
 var type_high_aggregated_text = ["graph","boxplot","table","csv file"];
 var type_general_text = ["graph","table","csv file"];
 var magnification_factors = [1,2,3,4];
+var height_entries = [{text:"small", value:100}, {text:"default", value:400}, {text:"large", value:800}];
 
 var sensor_rows = [];
 
@@ -39,6 +40,7 @@ var interpolation_checkbox;
 var type_select;
 var scale_checkbox;
 var magnification_select;
+var height_select;
 
 function getID(id) {
 	return document.getElementById(id);
@@ -107,6 +109,7 @@ function document_ready() {
 	type_select = $("#type_select");
 	scale_checkbox = $("#scale_checkbox");
 	magnification_select = $("#magnification_select");
+	height_select = $("#height_select");
 	
 	region_select[0].onchange = onRegionChange;
 	generalstation_select[0].onchange = onGeneralstationChange;
@@ -126,6 +129,7 @@ function document_ready() {
 	updateQualities();
 	updateTypes();
 	updateMagnification();
+	updateHeight();
 	
 	onTypeChange();
 	
@@ -294,7 +298,7 @@ function onVisualiseClick() {
 	getID("div_result").innerHTML = "query...";
 	
 	var width = getID("div_result").clientWidth - 30;
-	var height = 400;
+	var height = getID("height_select").value;
 	
 	var boxplot = false;
 	var plotName = plot_select.val();
@@ -668,6 +672,11 @@ function updateMagnification() {
 	$.each(magnification_factors, function(i,factor) {magnification_select.append(new Option("x"+factor,factor));});
 }
 
+function updateHeight() {
+	$.each(height_entries, function(i,entry) {height_select.append(new Option(entry.text,entry.value));});
+}
+
+
 function updateTypes() {
 	var prev_type = undefined;
 	var prev_index = type_select.val();
@@ -711,5 +720,11 @@ function onTypeChange() {
 	} else {
 		$("#div_scale").hide();
 		$("#div_magnification_select").hide();
+	}
+	
+	if(type=="graph" || type=="boxplot") {
+		$("#div_height_select").show();
+	} else {
+		$("#div_height_select").hide();
 	}
 }

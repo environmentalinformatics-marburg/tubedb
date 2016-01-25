@@ -23,6 +23,7 @@ var type_hour_text = ["graph","heatmap"];
 var type_high_aggregated_text = ["graph","boxplot"];
 var type_general_text = ["graph"];
 var magnification_factors = [1,2,3,4];
+var height_entries = [{text:"small", value:100}, {text:"default", value:400}, {text:"large", value:800}];
 
 var sensor_rows = [];
 
@@ -38,6 +39,7 @@ var quality_select;
 var interpolation_checkbox;
 var type_select;
 var magnification_select;
+var height_select;
 
 function getID(id) {
 	return document.getElementById(id);
@@ -102,6 +104,7 @@ function document_ready() {
 	interpolation_checkbox = $("#interpolation_checkbox");
 	type_select = $("#type_select");
 	magnification_select = $("#magnification_select");
+	height_select = $("#height_select");
 	
 	region_select[0].onchange = onRegionChange;
 	generalstation_select[0].onchange = onGeneralstationChange;
@@ -119,6 +122,7 @@ function document_ready() {
 	updateQualities();
 	updateTypes();
 	updateMagnification();
+	updateHeight();
 	
 	onTypeChange();
 	
@@ -305,7 +309,7 @@ function visualise(plots) {
 		case "graph":
 			getID("div_result").innerHTML = getSensorTable([sensor_row]);
 			var width = getID("div_result").clientWidth - 30;
-			var height = 400;
+			var height = getID("height_select").value;
 			$.each(plots, function(i,plot) {addDiagram(plot[0],sensor_row[0],boxplot,width,height);})
 			break;
 		case "heatmap":
@@ -616,6 +620,10 @@ function updateMagnification() {
 	$.each(magnification_factors, function(i,factor) {magnification_select.append(new Option("x"+factor,factor));});
 }
 
+function updateHeight() {
+	$.each(height_entries, function(i,entry) {height_select.append(new Option(entry.text,entry.value));});
+}
+
 function onTypeChange() {
 	var type = undefined;
 	var type_index = type_select.val();
@@ -627,5 +635,11 @@ function onTypeChange() {
 		$("#div_magnification_select").show();
 	} else {
 		$("#div_magnification_select").hide();
+	}
+	
+	if(type=="graph" || type=="boxplot") {
+		$("#div_height_select").show();
+	} else {
+		$("#div_height_select").hide();
 	}
 }

@@ -3,6 +3,11 @@ package tsdb.remote;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * Contains a data receiver message and a date of one plot.
+ * @author woellauer
+ *
+ */
 public class PlotMessage implements Serializable {
 	private static final long serialVersionUID = 9178544825203468112L;
 	

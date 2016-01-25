@@ -178,7 +178,6 @@ public class Main {
 
 
 		ContextHandler contextRedirect = new ContextHandler(TsDBFactory.WEB_SERVER_PREFIX_BASE_URL);
-		log.info("---");
 		contextRedirect.setHandler(new BaseRedirector(TsDBFactory.WEB_SERVER_PREFIX_BASE_URL+WEBCONTENT_PART_URL));
 
 		//ServletContextHandler x = new ServletContextHandler();		
