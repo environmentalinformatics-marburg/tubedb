@@ -13,3 +13,7 @@ hs_err_pid*
 /bin/
 
 /log/
+/package/
+/build/
+/.gradle/
+/gradle-app.setting
