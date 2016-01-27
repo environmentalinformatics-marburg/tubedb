@@ -145,11 +145,12 @@ public class ImportSaOwn {
 						}
 					}
 				} else {
-					log.info("sensor not found "+sensorName);
+					log.warn("sensor not found '"+sensorName+"'");
 				}
 			}
 			//log.info(timestampseries);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e);
 		}
 	}

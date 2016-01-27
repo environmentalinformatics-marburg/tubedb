@@ -11,10 +11,12 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import tsdb.util.Pair;
 import tsdb.util.TimeUtil;
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.TimestampSeries;
@@ -25,7 +27,6 @@ import tsdb.util.iterator.TimestampSeries;
  *
  */
 public class AscParser {
-
 	private static final Logger log = LogManager.getLogger();
 
 	private static final DateTimeFormatter dateFormate = new DateTimeFormatterBuilder().append(DateTimeFormatter.ofPattern("dd.MM.yy")).toFormatter();
@@ -34,7 +35,7 @@ public class AscParser {
 	public static TimestampSeries parse(Path filename) throws IOException {
 		return parse(filename,false);
 	}
-	
+
 	public static TimestampSeries parse(Path filename, boolean ignoreSeconds) throws IOException {
 		BufferedReader bufferedReader = Files.newBufferedReader(filename,Charset.forName("windows-1252"));
 		final String[] lines = bufferedReader.lines().toArray(String[]::new);
@@ -65,6 +66,7 @@ public class AscParser {
 			return null;
 		}
 
+		/* // old asc column header parser
 		String[] header = null;
 		while(currentLineIndex<lines.length) {  // search header
 			String currentLine = lines[currentLineIndex++];
@@ -97,6 +99,27 @@ public class AscParser {
 			}
 		}
 		String[] sensorNames = tempHeader.toArray(new String[0]);
+		 */
+
+		String[] sensorNames = null;
+		String[] sensorUnits = null;
+		while(currentLineIndex<lines.length) {  // search header
+			String currentLine = lines[currentLineIndex++];
+			if(currentLine.startsWith("Date")||currentLine.startsWith("Datum")) {
+				Pair<String[], String[]> pair = parseSensornames(currentLine);
+				sensorNames = pair.a;
+				sensorUnits = pair.b;				
+				break;
+			}
+		}
+		if(sensorNames==null) {
+			log.warn("no sensornames found: "+filename);
+			return null;
+		}
+
+		sensorNames = correctSensorNames(sensorNames, sensorUnits);
+		//log.info(Arrays.toString(sensorNames));
+		//log.info(Arrays.toString(sensorUnits));
 
 		try {
 			ArrayList<TsEntry> resultList = new ArrayList<TsEntry>(lines.length-currentLineIndex);
@@ -155,7 +178,7 @@ public class AscParser {
 
 				if(columns.length!=sensorNames.length+2) {					
 					String endoffile = currentLineIndex==lines.length?"at end of file":"at line within file";					
-					log.warn("different column count "+endoffile+" : "+currentLine+"  in "+filename);
+					log.warn("different column count "+endoffile+" : "+currentLine+"  in "+filename+"   header columns: "+(sensorNames.length+2)+"  row colunmns:"+columns.length);
 					break rowLoop;
 				}
 
@@ -200,5 +223,67 @@ public class AscParser {
 			log.error(e+"  "+filename);
 			return null;
 		}
+	}
+
+	private static HashSet<String> dateColumnNames; 
+	private static HashSet<String> timeColumnNames;
+	static {
+		dateColumnNames =  new HashSet<>();
+		dateColumnNames.add("Date");
+		dateColumnNames.add("Datum");
+
+		timeColumnNames =  new HashSet<>();
+		timeColumnNames.add("Time");
+		timeColumnNames.add("Zeit");
+	}
+
+	private static Pair<String[],String[]> parseSensornames(String headerText) {
+		String[] header = headerText.split("\t|;");
+		String[] headerUnit = new String[header.length];
+		for (int i=0; i<header.length; i++) {
+			String sensorName = header[i];
+			int unitIndexStart = sensorName.indexOf('[');
+			int unitIndexEnd = sensorName.indexOf(']');
+			if(unitIndexStart>=0) {
+				if(unitIndexEnd>=0) {
+					headerUnit[i] = sensorName.substring(unitIndexStart+1, unitIndexEnd).trim();
+				}
+				sensorName = sensorName.substring(0, unitIndexStart);
+			}
+			header[i] = sensorName.trim();			
+		}
+
+		String[] sensorNames = new String[header.length-2];
+		String[] sensorUnits = new String[header.length-2];
+
+		if( !(dateColumnNames.contains(header[0]) && timeColumnNames.contains(header[1])) ) {
+			throw new RuntimeException("date time columns not found: "+header[0]+" | "+header[1]);
+		}
+
+
+		for (int i=2; i<header.length; i++) {
+			sensorUnits[i-2] = headerUnit[i];
+			sensorNames[i-2] = header[i];
+		}
+
+		return Pair.of(sensorNames, sensorUnits);
+	}
+
+	/**
+	 * Add unit name to sensorname that may contain more than one unit. eg. Temperature °C and K
+	 * @param sensorNames
+	 * @param sensorUnits
+	 * @return
+	 */
+	private static String[] correctSensorNames(String[] sensorNames, String[] sensorUnits) {
+		String[] resultNames = new String[sensorNames.length];
+		for (int i = 0; i < sensorNames.length; i++) {
+			if(sensorNames[i].equals("Temperature") && sensorUnits[i].equals("K")) {
+				resultNames[i] = sensorNames[i]+"["+sensorUnits[i]+"]";
+			} else {
+				resultNames[i] = sensorNames[i];
+			}
+		}
+		return resultNames;
 	}
 }
