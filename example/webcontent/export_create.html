@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Export Time Series</title>
+<meta name="robots" content="noindex" />
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="favicon.png" />
+<script src="jquery-2.1.1.min.js"></script>
+<script src="export_create.js"></script>
+
+<style type="text/css">
+#top_line {display: table; width: 100%; }
+#top_line_left {display: table-cell; text-align: left; }
+#top_line_right {display: table-cell; text-align: right; }
+h1 {margin-bottom: 40px; text-align:center;}
+div.bg {
+	background-image: url(timeseries_bg3.png);
+	background-position: top left;
+	background-size: 100%;
+}
+body {margin: 0px; background-color:#f6f6f6}
+
+.horizontal-box {display:flex; flex-flow:row;}
+.spacer {flex:auto;}
+.center {flex:none;}
+.main {background-color:#f6f6f6;}
+</style>
+
+</head>
+<body>
+<div class="bg">
+
+<div id="top_line">
+<div id="top_line_left">
+<div style="display:inline-block">status:</div>
+<div id="status" style="display:inline-block">init...</div>
+</div>
+<div id="top_line_right">
+<a href="..">main-page</a>
+<button onclick="var h=$('#div_help')[0].style;h.display=(h.display=='none')?'inline':'none'">?</button>
+</div> 
+</div>
+<h1>Export Time Series - create zip-file</h1>
+<hr>
+</div>
+<div id="div_help" style="display:none">
+<h3>Help</h3>
+On this page you can view the progress of processing the chosen plots. Wait until it's done. Then you get a link to download the resulting zip file.
+<hr/>
+</div>
+
+<div class="horizontal-box">
+<div class="spacer"></div>
+<div class="center main">
+<p>
+<progress id="progress" style="width:700px"></progress>&nbsp;&nbsp;&nbsp;<span id="progressLabel"></span>
+</p>
+<p>
+<div id="download">
+processing plots (download not ready)
+</div>
+</p>
+<p>
+<textarea id="output" cols="100" rows="30" wrap="soft" readonly="readonly">init...</textarea>
+</p>
+</div> <!--END center-->
+<div class="spacer"></div>
+</div> <!--END horizontal-box-->
+
+</body>
+</html>

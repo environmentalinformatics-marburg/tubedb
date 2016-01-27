@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Time Series Status</title>
+<meta name="robots" content="noindex" />
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="favicon.png" />
+<script src="jquery-2.1.1.min.js"></script>
+<script src="advanced_status.js"></script>
+
+<style type="text/css">
+
+#top_line {display: table; width: 100%; }
+#top_line_left {display: table-cell; text-align: left; }
+#top_line_right {display: table-cell; text-align: right; }
+h1 {margin-bottom: 40px; text-align:center;}
+
+div.bg {
+	background-image: url(timeseries_bg3.png);
+	background-position: top left;
+	background-size: 100%;
+}
+
+body { margin: 0px; }
+h1 { margin-top:0px; text-align:center }
+
+body {
+	background-color:#f6f6f6;
+	margin: 0px;
+}
+
+#timeMarkLost { background-color: #666666; }
+#timeMarkOneMonth { background-color: #ff4444; }
+#timeMarkTwoWeeks { background-color: #ff9944; }
+#timeMarkOneWeek { background-color: #ffff44; }
+#timeMarkNow { background-color: #44ff44; }
+
+#voltageMarkNaN{ background-color:#888888; }
+#voltageMarkOK{ background-color: #44ff44;  }
+#volageMarkWARN { background-color: #ffff44; }
+#volageMarkWARN2 { background-color: #ff9944; }
+#volageMarkCRITICAL { background-color: #ff4444; }
+
+td {padding: 2px 30px;}
+
+//table {border-padding:20px 5px;}
+table th {background-color:#d6d6d6}
+table tr:nth-child(odd) {background-color:#e6e6e6;}
+table tr:nth-child(even) {background-color:#f2f2f2;}
+
+td:nth-child(4), td:nth-child(5) {text-align:right;}
+
+.input_entity {display:inline-block}
+.input_entity label {display:block;text-align:center}
+.input_entity div {display:block;text-align:center}
+
+.horizontal-box {display:flex; flex-flow:row;}
+.spacer {flex:auto;}
+.center {flex:none;}
+.main {background-color:#f6f6f6;}
+
+</style>
+
+</head>
+
+<body>
+<div class="bg">
+
+<div id="top_line">
+<div id="top_line_left">
+<div style="display:inline-block">status:</div>
+<div id="status" style="display:inline-block">init...</div>
+<img src="busy.gif" id="busy_indicator">
+</div>
+<div id="top_line_right">
+<a href="..">main-page</a>
+<button onclick="var h=$('#div_help')[0].style;h.display=(h.display=='none')?'inline':'none'">?</button>
+</div> 
+</div>
+<h1 style="text-align:center">Plot Status</h1>
+
+
+
+<div class="horizontal-box">
+<div class="spacer"></div>
+<div class="center">
+<div class="input_elements">
+
+<div id="div_region_select" class="input_entity">
+<label for="region_select">Region</label>
+<div><select id="region_select" class="blockable"></select></div>
+</div>
+
+&nbsp;&nbsp;&nbsp;
+<div class="input_entity">
+<label for="generalstation_select">General Station</label>
+<div><select id="generalstation_select" class="blockable"></select></div>
+</div>
+
+&nbsp;&nbsp;&nbsp;
+<div class="input_entity">
+<label for="paramter_select">with timestamps of</label>
+<div><select id="paramter_select" class="blockable"><option>[any paramter]</option></select></div>
+</div>
+
+&nbsp;&nbsp;&nbsp;
+<div class="input_entity">
+<label for="sort_by_select">sort by</label>
+<div><select id="sort_by_select" class="blockable"></select></div>
+</div>
+
+&nbsp;&nbsp;&nbsp;
+<div class="input_entity">
+<button id="query_button" class="blockable">query</button>
+</div>
+
+</div>
+</div> <!--END center-->
+<div class="spacer"></div>
+</div> <!--END horizontal-box-->
+<hr>
+</div>
+<div id="div_help" style="display:none">
+<h3>Help</h3>
+On this page you can view the time span of data that each plot contains.
+<br>
+<br>
+First choose a set of plots and then click "query" to get the time spans of the plots.
+<br>
+The plots are sorted at time span end-date. Oldest end-dates are first. The entry at the right of each row ("x days") means the time span of day between this time span end-date and the latest end-date of this set plots. 
+<br>
+When there are long time spans between this plot end-date and the latest plot end-date the row is colored yellow, orange or red.
+
+<hr/>
+</div>
+
+<div id="result">
+
+</div>
+
+</body>
+
+</html>

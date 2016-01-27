@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Export Time Series</title>
+<meta name="robots" content="noindex" />
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="favicon.png" />
+<script src="jquery-2.1.1.min.js"></script>
+<script src="export.js"></script>
+
+<style type="text/css">
+#top_line {display: table; width: 100%; }
+#top_line_left {display: table-cell; text-align: left; }
+#top_line_right {display: table-cell; text-align: right; }
+h1 {margin-bottom: 40px; text-align:center;}
+div.bg {
+	background-image: url(timeseries_bg3.png);
+	background-position: top left;
+	background-size: 100%;
+}
+body {margin: 0px; background-color:#f6f6f6}
+li { line-height:150%; }
+ul { padding-left:15px; }
+
+.horizontal-box {display:flex; flex-flow:row;}
+.spacer {flex:auto;}
+.center {flex:none;}
+.main {background-color:#f6f6f6;}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="bg">
+
+
+<div id="top_line">
+<div id="top_line_left">
+<div style="display:inline-block">status:</div>
+<div id="status" style="display:inline-block">init...</div> 
+</div>
+<div id="top_line_right">
+<a href="..">main-page</a>
+<button onclick="var h=$('#div_help')[0].style;h.display=(h.display=='none')?'inline':'none'">?</button>
+</div> 
+</div>
+
+<h1>Export Time Series</h1>
+
+<div class="horizontal-box">
+<div class="spacer"></div>
+<div class="center">
+<button id="button_reset">reset</button>
+<div id="choose_region_div" style="display:inline">&nbsp;&nbsp;<b>(0)</b><button id="choose_region">region</button></div>
+&nbsp;&nbsp;<b>(1)</b><button id="choose_sensors">parameters</button>
+&nbsp;&nbsp;<b>(2)</b><button id="choose_plots">plots</button>
+&nbsp;&nbsp;<b>(3)</b><button id="choose_time">timespan &amp; aggregation</button>
+&nbsp;&nbsp;<b>(4)</b><button id="button_settings">settings</button>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp;&nbsp;<b>(5)</b><!--<button id="download"><b>download ZIP-File</b></button>--><a href="../export/result.zip"><b>&gt;&gt;DOWNLOAD ZIP-FILE&lt;&lt;</b></a>
+&nbsp; &nbsp; &nbsp; or &nbsp; &nbsp; &nbsp; <button id="create">create ZIP-File</button>
+</div> <!--END center-->
+<div class="spacer"></div>
+</div> <!--END horizontal-box-->
+
+
+<hr/>
+
+
+</div>
+
+<div id="div_help" style="display:none">
+<h3>Help</h3>
+This the main page to download time series data as zip-file.
+<br>Below is a <b>summary</b> of settings that will be used to create the zip-file. Before download check this info to make sure, that you chose correct settings for your request.
+<br><br>The numbers at the buttons at the top guide you through the process of data selection and download:
+<ul>
+<br><li><b>(0)</b> select your region of plots (only present if there are multiple regions)</li>
+<br><li><b>(1)</b> choose your set of parameters (sensors) out of the available parameters</li>
+<br><li><b>(2)</b> choose your set of plots</li>
+<br><li><b>(3)</b> choose an aggregation of time and a time series timespan</li>
+<br><li><b>(4)</b> choose some additional settings like quality control and structure of csv-files</li>
+<br><li><b>(5)</b> first examine the summary then download your zip-file either by clicking the download-link (with right click you can choose location and filename on some browsers) or by pressing the create ZIP-File button.
+<br>The difference between the two download methods is that by clicking the download-link the data will be processed at the same time the data is downloading.
+<br>The create zip-file method opens a new page where you can watch the progress in processing the data. When it finishes you get a download link.</li>
+</ul>
+
+<hr/>
+</div>
+
+
+<div class="horizontal-box">
+<div class="spacer"></div>
+<div class="center main">
+<h3>Summary of exported time series</h3>
+<div id="div_region">
+<h4 style="display:inline-block">Region&nbsp; &nbsp; &nbsp;</h4>
+<div id="region_output" style="display:inline-block"></div>
+<br/>
+</div>
+<h4 style="display:inline-block">Time&nbsp; &nbsp; &nbsp;</h4>
+timespan of &nbsp;&nbsp;
+<b><div id="timespan_output" style="display:inline-block"></div></b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+with time steps of &nbsp;&nbsp;
+<b><div id="aggregation_output" style="display:inline-block"></div></b>
+<br/>
+<br/>
+<div style="display:inline-block;width:300px;line-height:0;vertical-align:top">
+<h4>Settings</h4>
+<div id="settings_output" style="height:200px"></div>
+</div>
+<div style="display:inline-block;width:200px;line-height:0;vertical-align:top">
+<h4>Parameters</h4>
+<div id="sensors_output"></div>
+</div>
+<div style="display:inline-block;width:400px;line-height:0;vertical-align:top">
+<h4>Plots</h4>
+<div id="plots_output"></div>
+</div>
+</div> <!--END center-->
+<div class="spacer"></div>
+</div> <!--END horizontal-box-->
+</body>
+</html>

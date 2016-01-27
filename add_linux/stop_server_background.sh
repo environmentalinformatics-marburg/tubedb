@@ -1,3 +1,3 @@
 #!/bin/bash
 
-screen -X -S tsdb quit
+screen -X -S tubedb quit

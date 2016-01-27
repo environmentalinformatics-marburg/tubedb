@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Map of Plots</title>
+<meta name="robots" content="noindex" />
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+<script src="markerwithlabel.js"></script>
+<script src="jquery-2.1.1.min.js"></script>
+<script src="map.js"></script>
+<link rel="icon" type="image/png" href="favicon.png" />
+<script type="text/javascript">
+$(document).ready(document_ready);
+</script>
+<style>
+body {background-color:#f6f6f6}
+.input_entity {display:inline-block}
+.input_entity label {display:block;text-align:center}
+.input_element {text-align:center}
+
+#plot_select {font-family: monospace}
+#station_select {font-family: monospace}
+#sensor_select {font-family: monospace}
+
+table th {background-color:#d6d6d6}
+table tr:nth-child(odd) {background-color:#e6e6e6;}
+table tr:nth-child(even) {background-color:#f2f2f2;}
+
+
+#top_line {display: table; width: 100%; }
+#top_line_left {display: table-cell; text-align: left; }
+#top_line_right {display: table-cell; text-align: right; }
+
+div.bg {background-image: url(timeseries_bg3.png); background-position: top left; background-size: 100%; margin: 0px; padding: 0px;}
+
+body { margin: 0px; }
+h1{ margin: 0px; text-align:center }
+hr{margin-bottom: 0px}
+
+/*html, body, #map-canvas { height: 100%; margin: 0px; padding: 0px }*/
+html {height: 100%}
+body {display: flex; flex-direction: column; height: 100%;}
+#map-canvas { flex-grow: 1; background-color:#000000;}
+
+.horizontal-box {display:flex; flex-flow:row;}
+.spacer {flex-grow: 1;}
+.center {flex:none;}
+.main {background-color:#f6f6f6;}
+
+.plotlabels {background-color:#bbbbbb; opacity:0.6;}
+</style>
+</head>
+<body>
+<div class="bg">
+
+<div id="top_line">
+<div id="top_line_left">
+
+</div>
+<div id="top_line_right">
+
+
+</div> 
+</div>
+
+
+<div class="horizontal-box">
+<div class="spacer">status : <div id="status" style="display:inline-block"></div> <img src="busy.gif" id="busy_indicator"></div>
+<div class="center">
+<h1>Map of Plots</h1>
+<div class="input_entity" id="div_plots_select">
+<label>Plots</label>
+<div class="input_element">
+<select id="plots_select" class="blockable"></select>
+</div>
+</div>
+</div> <!--END center-->
+<div class="spacer"></div>
+<div>
+<a href="..">main-page</a>
+<button onclick="var h=$('#div_help')[0].style;h.display=(h.display=='none')?'inline':'none'">?</button>
+</div>
+<div style="font-size: 0.7em">
+<table>
+<tr><td style="background-color:#44ff44">green</td><td>less than one week</td></tr>
+<tr><td style="background-color:#ffff44">yellow</td><td>more than one week</td></tr>
+<tr><td style="background-color:#ff9944">orange</td><td>more than two weeks</td></tr>
+<tr><td style="background-color:#ff4444">red</td><td>more than one month</td></tr>
+<tr><td style="background-color:#666666">grey</td><td>more than one year</td></tr>
+</table>
+</div>
+
+</div> <!--END horizontal-box-->
+<hr>
+
+</div>
+<div id="div_help" style="display:none">
+<h2>Help</h2>
+On this page you can view plots positioned at a geographic map.
+<br>
+<br>Use mouse-wheel or (+)/(-) buttons to zoom in and out.
+<br>Drag mouse (move the mouse with pressed left mouse button) to move the map view.
+<hr>
+</div>
+<div id="map-canvas"></div>
+</body>
+</html>
+

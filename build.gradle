@@ -59,8 +59,8 @@ task copy_config(type: Copy, dependsOn: [jar]) {
 	into 'package/config'
 }
 
-task _build_package(dependsOn:[ clean_package, copy_build, copy_lib, copy_webcontent, copy_add, copy_config, copy_add_linux ]) {
-}
+task _build_package(dependsOn:[ clean_package, copy_build, copy_lib, copy_webcontent, copy_add, copy_config, copy_add_linux ]) { }
 
-task _build_package_windows(dependsOn:[ clean_package, copy_build, copy_lib, copy_webcontent, copy_add, copy_config, copy_add_windows ]) {
-}
+task _build_package_windows(dependsOn:[ clean_package, copy_build, copy_lib, copy_webcontent, copy_add, copy_config, copy_add_windows ]) { }
+
+task _build_package_linux_windows(dependsOn:[ clean_package, copy_build, copy_lib, copy_webcontent, copy_add, copy_config, copy_add_linux, copy_add_windows ]) { }
