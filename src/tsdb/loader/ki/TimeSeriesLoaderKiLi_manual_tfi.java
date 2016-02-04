@@ -54,18 +54,18 @@ public class TimeSeriesLoaderKiLi_manual_tfi {
 		try {
 			if(Files.exists(kiliTfiPath)) {
 				DirectoryStream<Path> stream = Files.newDirectoryStream(kiliTfiPath);
-				log.info("load directory of manual tfi files    "+kiliTfiPath);
+				log.trace("load directory of manual tfi files    "+kiliTfiPath);
 				for(Path path:stream) {
 					try {
 						if(!path.toFile().isDirectory()) {
 							String filename = path.getName(path.getNameCount()-1).toString();
 							if(filename.endsWith(".csv")) {
 								if(filename.startsWith("iso_tfi")) {
-									log.info("load iso tfi  "+path);
+									log.trace("load iso tfi  "+path);
 									loadOneFile_structure_kili_iso_tfi(path);
 								} else if(filename.indexOf("_tfi")==4) {
 									String plotID = filename.substring(0, 4);
-									log.info("load plot tfi  "+plotID+"   from  "+path.getFileName());
+									log.trace("load plot tfi  "+plotID+"   from  "+path.getFileName());
 									VirtualPlot virtualPlot = tsdb.getVirtualPlot(plotID);
 									if(virtualPlot!=null) {
 										loadOneFile_structure_kili_tfi(virtualPlot,path);

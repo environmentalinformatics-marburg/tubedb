@@ -214,7 +214,7 @@ public class ConsoleRunner implements Runnable {
 
 	private void command_create_empirical_reference() {
 		println("create group averages...");	
-		new CreateStationGroupAverageCache_NEW(tsdb,this::println).run();
+		new CreateStationGroupAverageCache(tsdb,this::println).run();
 	}
 
 

@@ -71,7 +71,7 @@ public class ImportGenericCSV {
 
 	public void loadFile(Path filePath) {
 		try {
-			log.info("load file "+filePath);			
+			log.trace("load file "+filePath);			
 			Table table = Table.readCSV(filePath,',');		
 			int datetimeIndex = table.getColumnIndex("datetime");
 			if(datetimeIndex!=0) {
@@ -82,7 +82,7 @@ public class ImportGenericCSV {
 
 			String stationName = filename.substring(0, filename.indexOf('_'));
 
-			log.info("station "+stationName);
+			log.trace("station "+stationName);
 
 			final int sensors = table.names.length-1;
 

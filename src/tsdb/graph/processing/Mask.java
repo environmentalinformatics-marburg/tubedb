@@ -37,7 +37,7 @@ public class Mask extends Node.Abstract{
 				mask_counter++;
 			}
 		}
-		log.info("get masks "+mask_counter);
+		log.trace("get masks "+mask_counter);
 		if(mask_counter>0) {
 			return new Mask(tsdb,source,masks);
 		} else {
@@ -51,7 +51,7 @@ public class Mask extends Node.Abstract{
 		if(input_iterator==null||!input_iterator.hasNext()) {
 			return null;
 		}
-		log.info("with mask !!!");
+		//log.info("with mask !!!");
 		MaskIterator it = new MaskIterator(input_iterator,masks);
 		return it;
 	}

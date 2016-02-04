@@ -80,7 +80,7 @@ public class ImportSaOwn {
 
 	public void loadFile(Path filePath) {
 		try {
-			log.info("load file "+filePath);
+			log.trace("load file "+filePath);
 			TimestampSeries timestampseries = AscParser.parse(filePath);
 			if(timestampseries==null) {
 				log.error("timestampseries null");
@@ -118,7 +118,7 @@ public class ImportSaOwn {
 						DataEntry[] data = timestampseries.toDataEntyArray(sensorName);
 						
 						if(targetName.equals("P_RT_NRT")) {
-							log.info("P_RT_NRT corrected");
+							log.trace("P_RT_NRT corrected");
 							DataEntry[] corrected_data =  new DataEntry[data.length];
 							for(int i=0;i<data.length;i++) {
 								corrected_data[i] = new DataEntry(data[i].timestamp,data[i].value*0.2f);
@@ -132,7 +132,7 @@ public class ImportSaOwn {
 							tsdb.streamStorage.insertDataEntryArray(timestampseries.name, targetName, data);
 							
 							if(targetName.equals("DecagonECH2O")) {
-								log.info("DecagonECH2O translated");
+								log.trace("DecagonECH2O translated");
 								DataEntry[] transformed_data =  new DataEntry[data.length];
 								for(int i=0;i<data.length;i++) {
 									final float x = data[i].value / 1000f; // mV to V
@@ -145,7 +145,7 @@ public class ImportSaOwn {
 						}
 					}
 				} else {
-					log.warn("sensor not found '"+sensorName+"'");
+					log.warn("sensor not found '"+sensorName+"' in "+filePath);
 				}
 			}
 			//log.info(timestampseries);

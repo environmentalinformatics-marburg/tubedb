@@ -41,7 +41,7 @@ public class VirtualBase extends Base.Abstract  {
 		if(schema.length==0) {
 			throw new RuntimeException("no schema");			
 		}
-		
+
 		String[] virtualPlotSchema = virtualPlot.getSchema();
 		virtualPlotSchema = tsdb.includeVirtualSensorNames(virtualPlotSchema);
 		if(virtualPlotSchema==null||virtualPlotSchema.length==0) {
@@ -51,7 +51,7 @@ public class VirtualBase extends Base.Abstract  {
 		if(virtualPlotBaseSchema==null||virtualPlotBaseSchema.length==0) {
 			throw new RuntimeException("no base sensors in virtualplot "+virtualPlot.plotID);
 		}
-		
+
 		if(!Util.isContained(schema, virtualPlotBaseSchema)) {
 			throw new RuntimeException("schema not valid  "+Arrays.toString(schema)+"  in  "+virtualPlot.plotID+"   "+Arrays.toString(tsdb.getBaseSchema(virtualPlot.getSchema())));
 		}
@@ -59,7 +59,7 @@ public class VirtualBase extends Base.Abstract  {
 		this.schema = schema;
 		this.stationGen = stationGen;
 	}
-	
+
 	public static VirtualBase of(TsDB tsdb, VirtualPlot virtualPlot, String[] querySchema, NodeGen stationGen) {
 		if(querySchema==null) {
 			String[] schema = virtualPlot.getSchema();
@@ -86,10 +86,12 @@ public class VirtualBase extends Base.Abstract  {
 				TimestampInterval<StationProperties> filteredInterval = interval.filterByInterval(start, end);
 				if(filteredInterval!=null) {
 					Station station = tsdb.getStation(stationID);
-					Node node = StationBase.of(tsdb, station, stationSchema, stationGen);			
-					TsIterator it = node.get(filteredInterval.start, filteredInterval.end);
-					if(it!=null&&it.hasNext()) {
-						processing_iteratorList.add(it);
+					if(station.existData()) {
+						Node node = StationBase.of(tsdb, station, stationSchema, stationGen);			
+						TsIterator it = node.get(filteredInterval.start, filteredInterval.end);
+						if(it!=null&&it.hasNext()) {
+							processing_iteratorList.add(it);
+						}
 					}
 				}				
 			}
@@ -113,7 +115,7 @@ public class VirtualBase extends Base.Abstract  {
 		}
 		return virtual_iterator;
 	}
-	
+
 	@Override
 	public Station getSourceStation() {
 		return null; // source unknown
@@ -123,12 +125,12 @@ public class VirtualBase extends Base.Abstract  {
 	public String[] getSchema() {
 		return schema;
 	}
-	
+
 	@Override
 	public VirtualPlot getSourceVirtualPlot() {
 		return virtualPlot;
 	}
-	
+
 	@Override
 	public long[] getTimestampInterval() {
 		return virtualPlot.getTimestampInterval();

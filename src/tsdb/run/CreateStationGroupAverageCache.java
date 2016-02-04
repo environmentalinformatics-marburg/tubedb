@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import tsdb.Plot;
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.graph.QueryPlanGenerators;
@@ -28,7 +29,7 @@ import tsdb.util.iterator.TsIterator;
  * @author woellauer
  *
  */
-public class CreateStationGroupAverageCache_NEW {
+public class CreateStationGroupAverageCache {
 
 	private static final Logger log = LogManager.getLogger();
 
@@ -40,18 +41,18 @@ public class CreateStationGroupAverageCache_NEW {
 	private CbPrint cbPrint;
 
 	public static void main(String[] args) {
-		System.out.println("start...");
+		log.info("create averages...");
 		TsDB tsdb = TsDBFactory.createDefault();
-		new CreateStationGroupAverageCache_NEW(tsdb).run();
+		new CreateStationGroupAverageCache(tsdb).run();
 		tsdb.close();
-		System.out.println("...end");
+		log.info("...end");
 	}
 
-	public CreateStationGroupAverageCache_NEW(TsDB tsdb) {
-		this(tsdb,text->System.out.println(text));
+	public CreateStationGroupAverageCache(TsDB tsdb) {
+		this(tsdb,text->log.info(text));
 	}
 
-	public CreateStationGroupAverageCache_NEW(TsDB tsdb, CbPrint cbPrint) {
+	public CreateStationGroupAverageCache(TsDB tsdb, CbPrint cbPrint) {
 		throwNulls(tsdb,cbPrint);
 		this.tsdb = tsdb;
 		this.cbPrint = cbPrint;
@@ -64,6 +65,7 @@ public class CreateStationGroupAverageCache_NEW {
 		ContinuousGen continuousGen = QueryPlanGenerators.getContinuousGen(tsdb, DataQuality.STEP);
 
 		for(String group:tsdb.getGeneralStationGroups()) {
+			log.info("create average of group "+group);
 			List<String> list = tsdb.getStationAndVirtualPlotNames(group).collect(Collectors.toList());
 
 			TreeSet<String> sensorNameSet = new TreeSet<String>(); 
@@ -78,7 +80,7 @@ public class CreateStationGroupAverageCache_NEW {
 				}				
 				sensorNameSet.addAll(Arrays.asList(sensorNames));
 			}
-			log.info(sensorNameSet);
+			log.trace(sensorNameSet);
 
 			for(String sensorName:sensorNameSet) {
 
@@ -119,7 +121,7 @@ public class CreateStationGroupAverageCache_NEW {
 					continue;
 				}
 
-				cbPrint.println(group+"  "+sensorName+" ********************************* "+TimeUtil.oleMinutesToLocalDateTime(groupMinTimestamp)+"\t - \t"+TimeUtil.oleMinutesToLocalDateTime(groupMaxTimestamp)+" **************************************************************** "+groupMinTimestamp+"\t-\t"+groupMaxTimestamp);
+				//cbPrint.println(group+"  "+sensorName+" ********************************* "+TimeUtil.oleMinutesToLocalDateTime(groupMinTimestamp)+"\t - \t"+TimeUtil.oleMinutesToLocalDateTime(groupMaxTimestamp)+" **************************************************************** "+groupMinTimestamp+"\t-\t"+groupMaxTimestamp);
 				List<Continuous> sources = new ArrayList<Continuous>();
 				List<Continuous> additions = new ArrayList<Continuous>();
 				for(String plotID:list) {
@@ -140,15 +142,16 @@ public class CreateStationGroupAverageCache_NEW {
 						}
 
 
-						Continuous continuous = continuousGen.get(plotID,new String[]{sensorName});
-						if(continuous!=null) {
-							Addition addition = Addition.createWithElevationTemperature(tsdb,continuous,plotID);
-							if(addition!=null) {
-								additions.add(addition);
+						Plot plot = tsdb.getPlot(plotID);
+						if(plot!=null && plot.existData(sensorName)) {
+							Continuous continuous = continuousGen.get(plotID,new String[]{sensorName});
+							if(continuous!=null) {
+								Addition addition = Addition.createWithElevationTemperature(tsdb,continuous,plotID);
+								if(addition!=null) {
+									additions.add(addition);
+								}
+								sources.add(continuous);
 							}
-							sources.add(continuous);
-						} else {
-							//log.warn("no stream of "+plotID);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -174,14 +177,15 @@ public class CreateStationGroupAverageCache_NEW {
 						//tsdb.cacheStorage.writeNew(group, averaged.get(groupMinTimestamp, groupMaxTimestamp));
 						TimestampSeries timestampSeries = it.toTimestampSeries(group);
 						tsdb.streamCache.insertTimestampSeries(timestampSeries);
+					    log.trace(group+"/"+sensorName+" <- "+averaged.getSourceText());
 					} else {
 						log.warn("averages: "+group);
 					}
 				} else {
-					log.warn("not enough sources for average: "+group);
+					log.trace(group+"/"+sensorName+" not enough sources for average");
 				}
 			}
-			cbPrint.println("create average: "+group+" -> "+list);
+			//cbPrint.println(group+" -> "+list);
 		}
 
 		long endRunTime = System.currentTimeMillis();

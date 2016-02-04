@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import tsdb.Plot.Real;
 import tsdb.component.LoggerType;
 import tsdb.component.Region;
 import tsdb.component.Sensor;
@@ -722,5 +723,17 @@ public class TsDB implements AutoCloseable {
 		} else {
 			return Stream.concat(Arrays.stream(schema), additionalSensorNames.stream()).toArray(String[]::new);			
 		}		
+	}
+
+	public Plot getPlot(String plotID) {
+		VirtualPlot virtualPlot = getVirtualPlot(plotID);
+		if(virtualPlot!=null) {
+			return Plot.of(virtualPlot);
+		}
+		Station station = getStation(plotID);
+		if(station!=null) {
+			return Plot.of(station);
+		}
+		return null;
 	}
 }

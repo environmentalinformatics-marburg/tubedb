@@ -19,5 +19,5 @@ Files in the example folder that end with `.cmd` are windows script files.
 
 Double-click at `clear_import.cmd` and time series source data files will be imported into TsDB. Wait until its done.
 
-Double-click at `server.sh` to run the webserver. Now you can open a browser and type `http://localhost:8080` to view the web interface of TubeDB. To terminate the TubeDB server press ctrl-c or close the console-window.
+Double-click at `server.cmd` to run the webserver. Now you can open a browser and type `http://localhost:8080` to view the web interface of TubeDB. To terminate the TubeDB server press ctrl-c or close the console-window.
 

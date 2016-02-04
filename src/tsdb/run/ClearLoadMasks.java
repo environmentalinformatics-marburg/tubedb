@@ -108,7 +108,7 @@ public class ClearLoadMasks {
 				}
 			}
 
-			log.info("\n"+maskTable);
+			//log.info("\n"+maskTable);
 		} catch(Exception e) {
 			log.error(e);
 		}

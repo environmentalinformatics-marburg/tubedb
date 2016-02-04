@@ -140,5 +140,13 @@ public class Averaged extends Continuous.Abstract {
 		}
 		return interval;
 	}
+	
+	public String getSourceText() {
+		String s="";
+		for(Continuous source:sources) {
+			s+=source.getSourceName()+" ";
+		}
+		return s;
+	}
 
 }

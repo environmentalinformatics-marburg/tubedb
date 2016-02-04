@@ -73,7 +73,7 @@ public class ImportGenericASC {
 			if(filePath.toString().toLowerCase().endsWith(".bin")) { // skip file
 				return;
 			}
-			log.info("load file "+filePath);
+			log.trace("load file "+filePath);
 			TimestampSeries timestampseries = AscParser.parse(filePath,true);
 			if(timestampseries==null) {
 				log.error("timestampseries null  "+filePath);

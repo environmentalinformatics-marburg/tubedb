@@ -35,8 +35,8 @@ public class TimeSeriesMask implements Externalizable {
 	}
 
 	public void addInterval(Interval interval) {
-		log.info("add "+interval);
-		log.info("in "+intervals);
+		log.trace("add "+interval);
+		log.trace("in "+intervals);
 		throwNull(interval);
 		ArrayList<Interval> result = new ArrayList<Interval>(intervals.size()+1);
 		Iterator<Interval> it = intervals.iterator();
@@ -85,7 +85,7 @@ public class TimeSeriesMask implements Externalizable {
 			}
 		}		
 		intervals = result;
-		log.info("intervals "+intervals.size());
+		log.trace("intervals "+intervals.size());
 	}
 
 	public Iterator<Interval> getIterator() {

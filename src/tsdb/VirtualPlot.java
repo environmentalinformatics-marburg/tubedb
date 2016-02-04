@@ -361,4 +361,34 @@ public class VirtualPlot {
 		}
 		return set.toArray(new String[0]);
 	}
+
+	public boolean existData() {
+		for(TimestampInterval<StationProperties> interval:intervalList) {
+			String stationID = interval.value.get_serial();
+			if(tsdb.streamStorage.existStation(stationID)) {
+				long[] stationInterval = tsdb.streamStorage.getStationTimeInterval(stationID);
+				if(stationInterval!=null) {
+					if(overlaps(interval.start, interval.end, stationInterval[0], stationInterval[1])) {
+						return true;
+					}
+				}
+			}
+		}		
+		return false;
+	}
+
+	public boolean existData(String sensorName) {
+		for(TimestampInterval<StationProperties> interval:intervalList) {
+			String stationID = interval.value.get_serial();
+			if(tsdb.streamStorage.existSensor(stationID, sensorName)) {
+				int[] sensorInterval = tsdb.streamStorage.getSensorTimeInterval(stationID, sensorName);
+				if(sensorInterval!=null) {
+					if(overlaps(interval.start, interval.end, (long)sensorInterval[0], (long)sensorInterval[1])) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 }

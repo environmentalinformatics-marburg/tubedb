@@ -13,6 +13,8 @@ public interface Plot {
 	Stream<Plot> getNearestPlots();
 	String[] getSensorNames();
 	String getPlotID();
+	boolean existData(String sensorName);
+	boolean existData();
 	default String[] getValidSensorNames(String[] querySchema) {
 		return Util.getValidEntries(querySchema, getSensorNames());
 	}
@@ -42,6 +44,14 @@ public interface Plot {
 		public String[] getSensorNames() {
 			return station.getSchema();
 		}
+		@Override
+		public boolean existData() {
+			return station.existData();
+		}
+		@Override
+		public boolean existData(String sensorName) {
+			return station.existData(sensorName);
+		}
 	}
 		
 	class Virtual implements Plot {		
@@ -60,6 +70,14 @@ public interface Plot {
 		@Override
 		public String[] getSensorNames() {
 			return virtualPlot.getSchema();
+		}
+		@Override
+		public boolean existData() {
+			return virtualPlot.existData();
+		}
+		@Override
+		public boolean existData(String sensorName) {
+			return virtualPlot.existData(sensorName);
 		}
 	}
 }

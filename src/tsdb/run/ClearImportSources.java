@@ -188,7 +188,7 @@ public class ClearImportSources {
 		ClearLoadMasks.main(new String[0]);
 
 		long timeStartAvg = System.currentTimeMillis();
-		CreateStationGroupAverageCache_NEW.main(new String[0]);
+		CreateStationGroupAverageCache.main(new String[0]);
 		long timeEndAvg = System.currentTimeMillis();
 		System.gc();
 		long timeStartCompact = System.currentTimeMillis();

@@ -53,7 +53,7 @@ public final class QueryPlanGenerators {
 				}
 			}
 			Node rawSource = StationRawSource.of(tsdb, stationID, schema);
-			log.info("get raw source "+Arrays.toString(schema));
+			log.trace("get raw source "+Arrays.toString(schema));
 			if(DataQuality.Na!=dataQuality && DataQuality.NO!=dataQuality) {
 				rawSource = Mask.of(tsdb, rawSource);
 			}

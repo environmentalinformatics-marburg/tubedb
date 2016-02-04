@@ -154,7 +154,7 @@ public class Station {
 		//return Util.getValidEntries(querySchema, loggerType.sensorNames);
 		return Util.getValidEntries(querySchema, getSchema());
 	}
-	
+
 	public String[] getValidSchemaEntriesWithVirtualSensors(String[] querySchema) {		
 		//return Util.getValidEntries(querySchema, loggerType.sensorNames);
 		return Util.getValidEntries(querySchema, tsdb.includeVirtualSensorNames(getSchema()));
@@ -164,7 +164,7 @@ public class Station {
 		//return !(querySchema==null||querySchema.length==0||!Util.isContained(querySchema, loggerType.sensorNames));
 		return !(querySchema==null||querySchema.length==0||!Util.isContained(querySchema, getSchema()));
 	}
-	
+
 	public boolean isValidSchemaWithVirtualSensors(String[] querySchema) {
 		//return !(querySchema==null||querySchema.length==0||!Util.isContained(querySchema, loggerType.sensorNames));
 		return !(querySchema==null||querySchema.length==0||!Util.isContained(querySchema, tsdb.includeVirtualSensorNames(getSchema())));
@@ -209,7 +209,10 @@ public class Station {
 	}
 
 	public String[] getSchema() {
-		String[] sensorSet = tsdb.streamStorage.getSensorNames(stationID);
+		String[] sensorSet = null;
+		if(tsdb.streamStorage.existStation(stationID)) {
+			sensorSet = tsdb.streamStorage.getSensorNames(stationID);
+		}
 		if(sensorSet!=null) {
 			return sensorSet;
 		} else {
@@ -222,5 +225,25 @@ public class Station {
 			return false;
 		}
 		return propertiesList.get(0).value.isVIP();
+	}
+	
+	public boolean existData() {
+		return tsdb.streamStorage.existStation(stationID);
+	}
+	
+	public boolean existData(String sensorName) {
+		if( !existData()) {
+			return false;
+		}
+		String[] sensorNames = tsdb.streamStorage.getSensorNames(stationID);
+		if(sensorName==null) {
+			return false;
+		}
+		for(String s:sensorNames) {
+			if(sensorName.equals(s)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

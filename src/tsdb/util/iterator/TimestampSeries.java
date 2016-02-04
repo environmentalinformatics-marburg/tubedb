@@ -225,7 +225,7 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 			}
 		}
 		if(resultList.isEmpty()) {
-			log.warn("list empty "+sensorName);
+			log.trace("list empty "+sensorName);
 			return null;
 		}
 		return resultList.toArray(new DataEntry[0]);

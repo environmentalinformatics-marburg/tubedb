@@ -87,7 +87,7 @@ public class StreamDB {
 				db.commit();
 				log.info("close...");
 				db.close();
-				log.info("closed");
+				log.trace("closed");
 			}
 		}		
 	}
@@ -120,8 +120,30 @@ public class StreamDB {
 	protected void finalize() throws Throwable {
 		close();
 	}
-
-
+	
+	/**
+	 * Check if station exists in StreamDB. Station exists only if it contains time series data.
+	 * @param stationID
+	 * @return
+	 */
+	public boolean existStation(String stationID) {
+		return stationMetaMap.containsKey(stationID);
+	}
+	
+	/**
+	 * Check if data of sensor exits in station. If station does not exist return false. 
+	 * @param stationID
+	 * @param sensorName
+	 * @return
+	 */
+	public boolean existSensor(String stationID, String sensorName) {
+		StationMeta stationMeta = stationMetaMap.get(stationID);
+		if(stationMeta==null) {
+			return false;
+		}
+		return getSensorMap(stationMeta).containsKey(sensorName);
+	}
+	
 	private StationMeta getStationMeta(String stationName, boolean createIfNotExists) {
 		throwNull(stationName);
 		StationMeta stationMeta = stationMetaMap.get(stationName);		
@@ -143,6 +165,7 @@ public class StreamDB {
 			stationMetaMap.put(stationName, stationMeta);			
 		}
 		if(stationMeta==null) {
+			new Throwable().printStackTrace();
 			log.warn("no station: "+stationName);
 		}
 		return stationMeta;
@@ -171,6 +194,7 @@ public class StreamDB {
 			sensorMap.put(sensorName, sensorMeta);
 		}
 		if(sensorMeta==null) {
+			new Throwable().printStackTrace();
 			log.warn("no sensor: "+sensorName+"  in station: "+stationMeta.stationName);
 		}
 		return sensorMeta;
@@ -301,7 +325,7 @@ public class StreamDB {
 				if(newChunk!=null) {
 					removeChunk(chunkMetaMap,chunkMap,chunkMeta);
 					insertChunk(chunkMetaMap,chunkMap,newChunk);
-					log.info("chunk part reinserted");
+					log.trace("chunk part reinserted");
 				} else {
 					log.error("chunk not removed (internal error): "+chunkMeta);
 				}
@@ -580,7 +604,7 @@ public class StreamDB {
 			return;
 		}
 		for(String sensorName:sensorNames) {
-			log.info("remove "+stationName+"/"+sensorName+"  "+start+"  "+end);
+			log.trace("remove "+stationName+"/"+sensorName+"  "+start+"  "+end);
 			removeSensorData(stationName, sensorName, start, end);
 		}
 	}

@@ -87,7 +87,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 
 	@Override
 	public TsIterator getRawIterator(String stationName, String[] sensorNames, Long start, Long end) {
-		log.info("StreamDB get "+stationName+" with "+Util.arrayToString(sensorNames)+"     at "+TimeUtil.oleMinutesToText(start)+" - "+TimeUtil.oleMinutesToText(end));
+		log.trace("StreamDB get "+stationName+" with "+Util.arrayToString(sensorNames)+"     at "+TimeUtil.oleMinutesToText(start)+" - "+TimeUtil.oleMinutesToText(end));
 		int minTimestamp;
 		int maxTimestamp;
 		if(start==null) {
@@ -127,6 +127,9 @@ public class StreamStorageStreamDB implements StreamStorage {
 	}
 
 	public long[] getStationTimeInterval(String streamName) {
+		if( !streamdb.existStation(streamName) ) {
+			return null;
+		}
 		int[] interval = streamdb.getStationTimeInterval(streamName);
 		if(interval==null) {
 			return null;
@@ -146,6 +149,25 @@ public class StreamStorageStreamDB implements StreamStorage {
 		}
 		return set.toArray(new String[set.size()]);
 	}
+	
+	/**
+	 * Check if station exists in StreamDB. Station exists only if it contains time series data.
+	 * @param stationID
+	 * @return
+	 */
+	public boolean existStation(String stationID) {
+		return streamdb.existStation(stationID);
+	}
+	
+	/**
+	 * Check if data of sensor exits in station. If station does not exist return false. 
+	 * @param stationID
+	 * @param sensorName
+	 * @return
+	 */
+	public boolean existSensor(String stationID, String sensorName) {
+		return streamdb.existSensor(stationID, sensorName);
+	}
 
 	@Override
 	public TimeSeriesMask getTimeSeriesMask(String stationName, String sensorName) {
@@ -160,7 +182,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 
 	@Override
 	public void insertTimestampSeries(TimestampSeries timestampSeries) {
-		log.info("streamDB insert TimestampSeries "+timestampSeries.name);
+		if(logging) log.info("streamDB insert TimestampSeries "+timestampSeries.name);
 		String stationName = timestampSeries.name;
 		for(String sensorName:timestampSeries.sensorNames) {
 			DataEntry[] data = timestampSeries.toDataEntyArray(sensorName);
