@@ -62,6 +62,24 @@ public class ElementCopyIterator extends InputIterator {
 		} else {
 			qf = null;
 		}
-		return new TsEntry(entry.timestamp, data, qf);
+		int[][] qc;
+		if(entry.qualityCounter!=null) {
+			qc = Arrays.copyOf(entry.qualityCounter, entry.qualityCounter.length); //copy pointers to sub arrays (read only)
+			for(Action action:actions) {
+				qc[action.targetIndex] = qc[action.sourceIndex];
+			}
+		} else {
+			qc = null;
+		}
+		boolean[] inter;
+		if(entry.interpolated!=null) {
+			inter = Arrays.copyOf(entry.interpolated, entry.interpolated.length);
+			for(Action action:actions) {
+				inter[action.targetIndex] = inter[action.sourceIndex];
+			}
+		} else {
+			inter = null;
+		}		
+		return new TsEntry(entry.timestamp, data, qf, qc, inter);
 	}
 }

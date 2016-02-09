@@ -165,7 +165,7 @@ public class StreamDB {
 			stationMetaMap.put(stationName, stationMeta);			
 		}
 		if(stationMeta==null) {
-			new Throwable().printStackTrace();
+			//new Throwable().printStackTrace();
 			log.warn("no station: "+stationName);
 		}
 		return stationMeta;
@@ -194,7 +194,7 @@ public class StreamDB {
 			sensorMap.put(sensorName, sensorMeta);
 		}
 		if(sensorMeta==null) {
-			new Throwable().printStackTrace();
+			//new Throwable().printStackTrace();
 			log.warn("no sensor: "+sensorName+"  in station: "+stationMeta.stationName);
 		}
 		return sensorMeta;

@@ -218,7 +218,7 @@ public class Main {
 		mod.setHandler(gzipHandler);*/
 		RequestLogHandler requestLogHandler = new RequestLogHandler();
 		requestLogHandler.setRequestLog((Request request, Response response)->{
-			System.out.println("*** request   "+request.getRequestURL()+"  "+request.getQueryString());
+			log.trace("*** request   "+request.getRequestURL()+"  "+request.getQueryString());
 		});
 		requestLogHandler.setHandler(gzipHandler);
 		server.setHandler(requestLogHandler);

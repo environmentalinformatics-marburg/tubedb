@@ -224,7 +224,7 @@ public class TimeSeriesDiagram {
 		if(aggregationTimeInterval>0) {
 			diagramMaxTimestamp += aggregationTimeInterval-1;
 		}
-		log.info(TimeUtil.oleMinutesToText(dataMaxTimestamp)+"  "+TimeUtil.oleMinutesToText((long) diagramMaxTimestamp));
+		log.trace(TimeUtil.oleMinutesToText(dataMaxTimestamp)+"  "+TimeUtil.oleMinutesToText((long) diagramMaxTimestamp));
 		diagramTimestampRange = diagramMaxTimestamp-diagramMinTimestamp;
 	}
 

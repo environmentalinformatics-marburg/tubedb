@@ -489,7 +489,7 @@ public class ServerTsDB implements RemoteTsDB {
 		if(it==null||!it.hasNext()) {
 			return null;
 		}
-		log.info(it.getProcessingChain().getText());
+		log.trace(it.getProcessingChain().getText());
 		return it.toTimestampSeries(plotID);
 	}
 
