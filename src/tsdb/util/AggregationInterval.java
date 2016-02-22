@@ -15,6 +15,10 @@ public enum AggregationInterval {
 	
 	private static final Logger log = LogManager.getLogger();
 	
+	public static AggregationInterval getBaseAggregation() {
+		return HOUR;
+	}
+	
 	public String getText() {
 		switch(this) {
 		case RAW:

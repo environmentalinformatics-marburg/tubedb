@@ -10,6 +10,9 @@ import tsdb.VirtualPlot;
 import tsdb.iterator.NanGapIterator;
 import tsdb.util.BaseAggregationTimeUtil;
 import tsdb.util.TimeUtil;
+import tsdb.util.TsEntry;
+import tsdb.util.TsSchema;
+import tsdb.util.TsSchema.Aggregation;
 import tsdb.util.iterator.TsIterator;
 
 
@@ -77,10 +80,6 @@ public interface Continuous extends Node {
 
 		@Override
 		public TsIterator get(Long start, Long end) {
-			TsIterator input_iterator = source.get(start, end);
-			if(input_iterator==null||!input_iterator.hasNext()) {
-				return null;
-			}
 			if(start!=null&&!BaseAggregationTimeUtil.isBaseAggregationTimestamp(start)) {
 				LogManager.getLogger().warn("start timestamp not alligned: "+start+"   "+TimeUtil.oleMinutesToText(start));
 				start = BaseAggregationTimeUtil.calcBaseAggregationTimestamp(start); // TODO ?
@@ -88,6 +87,27 @@ public interface Continuous extends Node {
 			if(end!=null&&!BaseAggregationTimeUtil.isBaseAggregationTimestamp(end)) {
 				LogManager.getLogger().warn("end timestamp not alligned: "+end+"   "+TimeUtil.oleMinutesToText(end));
 				end = BaseAggregationTimeUtil.calcBaseAggregationTimestamp(end); // TODO ?
+			}
+			TsIterator input_iterator = source.get(start, end);
+			if(input_iterator==null) {
+				String[] names = getSchema();
+				Aggregation aggregation = Aggregation.CONSTANT_STEP;
+				int timeStep = BaseAggregationTimeUtil.AGGREGATION_TIME_INTERVAL;
+				boolean isContinuous = true;
+				boolean hasQualityFlags = true;
+				boolean hasInterpolatedFlags = true;
+				boolean hasQualityCounters = true;
+				TsSchema schema = new TsSchema(names, aggregation, timeStep, isContinuous, hasQualityFlags, hasInterpolatedFlags, hasQualityCounters);
+				input_iterator = new TsIterator(schema) {					
+					@Override
+					public TsEntry next() {
+						throw new RuntimeException("no elements");
+					}					
+					@Override
+					public boolean hasNext() {
+						return false;
+					}
+				};
 			}
 			NanGapIterator continuous = new NanGapIterator(input_iterator, start, end);
 			if(!continuous.hasNext()) {
@@ -124,6 +144,6 @@ public interface Continuous extends Node {
 		@Override
 		public long[] getTimestampInterval() {
 			return source.getTimestampInterval();
-		}	
+	}	
 	}
 }

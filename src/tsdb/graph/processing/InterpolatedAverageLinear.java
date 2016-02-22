@@ -99,7 +99,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 
 	@Override
 	public TsIterator getExactly(long start, long end) {
-		log.info("lin get "+TimeUtil.oleMinutesToText(start, end));
+		log.trace("lin get "+TimeUtil.oleMinutesToText(start, end));
 		long[] trainingInterval = trainingTarget.getTimestampBaseInterval();
 		if(trainingInterval==null) {
 			log.info("no data in "+trainingTarget.getSourceName());
@@ -184,11 +184,19 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 
 		};*/
 
-
+		if(sourceIterator==null) {
+			log.error("no interpolation source");
+			//return null;
+		}
+		
+		if(interpolationIterators[0]==null) {
+			log.error("no interpolation training sources");
+			//return null;
+		}
 
 
 		//TODO
-		return new InterpolationAverageLinearIterator(sourceIterator, interpolationIterators, intercepts, slopes);
+		return new InterpolationAverageLinearIterator(sourceIterator, interpolationIterators, intercepts, slopes, interpolationSchema);
 	}
 
 	@Override

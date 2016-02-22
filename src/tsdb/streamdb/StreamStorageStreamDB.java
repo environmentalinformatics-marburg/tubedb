@@ -49,7 +49,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 
 	@Override
 	public void insertData(String streamName, TreeMap<Long, DataRow> eventMap, String[] sensorNames) {
-		log.info(Arrays.toString(sensorNames));
+		log.trace("insertData "+Arrays.toString(sensorNames)+"  in "+streamName);
 		ArrayList<DataEntry> sensorData = new ArrayList<DataEntry>(eventMap.size());
 		for(int i=0;i<sensorNames.length;i++) {
 			sensorData.clear();

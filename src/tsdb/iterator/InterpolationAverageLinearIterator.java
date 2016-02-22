@@ -15,12 +15,12 @@ public class InterpolationAverageLinearIterator extends InputIterator {
 	private final double[][] slopes;
 	private final int[] posIndex;
 
-	public InterpolationAverageLinearIterator(TsIterator input_iterator, TsIterator[] interpolationIterators, double[][] intercepts, double[][] slopes) {
+	public InterpolationAverageLinearIterator(TsIterator input_iterator, TsIterator[] interpolationIterators, double[][] intercepts, double[][] slopes, String[] interpolationSchema) {
 		super(input_iterator, input_iterator.getSchema());
 		this.interpolationIterators = interpolationIterators;
 		this.intercepts = intercepts;
 		this.slopes = slopes;
-		this.posIndex = Util.stringArrayToPositionIndexArray(interpolationIterators[0].getNames(),input_iterator.getNames(), true, true);
+		this.posIndex = Util.stringArrayToPositionIndexArray(interpolationSchema, input_iterator.getNames(), true, true);
 	}
 
 	@Override

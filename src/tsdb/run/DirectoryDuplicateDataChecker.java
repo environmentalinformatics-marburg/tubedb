@@ -123,7 +123,7 @@ public class DirectoryDuplicateDataChecker {
 				if(!f.toLowerCase().endsWith(".dat")) {
 					log.warn("no .dat file "+filename);
 				}
-				Path target = Paths.get(targetDir+'/'+f);
+				Path target = Paths.get(targetDir+'/'+"hd_"+f);
 				if(Files.exists(target)) {
 					log.warn("target already exits "+target);
 				}
