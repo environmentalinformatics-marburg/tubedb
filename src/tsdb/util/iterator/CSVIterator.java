@@ -11,6 +11,35 @@ import tsdb.util.TimeUtil;
 import tsdb.util.TsEntry;
 import tsdb.util.TsSchema;
 
+/**
+ * A TsIterator with CSV-file as source.
+ * 
+ * CSV-file format:
+ * 
+ * header:
+ * [Date resp. first entry],[Time resp. second entry],[sensor_name_1 (third entry)],[sensor_name_2 (fourth entry)],...
+ * 
+ * e.g.:
+ * data,time,Ta_200,rH_200
+ * 
+ * 
+ * row:
+ * [ISO-date YYYY-MM-DD],[time hh:mm:ss],[value_1],[value_2],...
+ * 
+ * e.g.:
+ * 2016-01-11,17:32:00,12.34,23.45
+ * 
+ * missing values are denoted by empty entry or NA
+ * missing time leads to 12:00:00
+ * e.g.:
+ * 2016-01-11,,12.34,23.45
+ * 2016-01-11,17:32:00,,23.45
+ * 2016-01-11,NA,12.34,23.45
+ * 2016-01-11,17:32:00,NA,23.45
+ * 
+ * @author woellauer
+ *
+ */
 public class CSVIterator extends TsIterator {
 
 	private static final Logger log = LogManager.getLogger();
@@ -59,7 +88,7 @@ public class CSVIterator extends TsIterator {
 		float[] data = new float[schema.length];
 		for(int colIndex=0;colIndex<schema.length;colIndex++) {
 			try {
-				if(!row[colIndex+2].isEmpty()) {
+				if( !(row[colIndex+2].isEmpty() || row[colIndex+2].equals("NA")) ) {
 					data[colIndex] = Float.parseFloat(row[colIndex+2]);
 				} else {
 					data[colIndex] = Float.NaN;

@@ -21,9 +21,9 @@ import tsdb.util.iterator.TsIterator;
 public class Statistics {
 	private static final Logger log = LogManager.getLogger();
 	
-	private static final String[] generalStationNames = new String[]{"AEG","AEW","HEG","HEW","SEG","SEW"};
-	private static final String[] sensorNames = new String[]{"Ta_200","P_RT_NRT"};
-	private static final int[] years = new int[]{2010,2011};
+	private static final String[] generalStationNames = new String[]{"AEG", "AEW", "HEG", "HEW", "SEG", "SEW"};
+	private static final String[] sensorNames = new String[]{"Ta_200", "P_RT_NRT", "SM_10"};
+	private static final int[] years = new int[]{2009, 2010, 2011, 2012, 2013, 2014, 2015};
 	
 	private static final AggregationInterval aggregationInterval = AggregationInterval.HOUR;
 	private static final DataQuality dataQuality = DataQuality.EMPIRICAL;

@@ -81,6 +81,7 @@ public class TimeSeriesLoaderKiLi_manual_tfi {
 							}
 						}
 					} catch (Exception e) {
+						e.printStackTrace();
 						log.error("error in load tfi file: "+e+"  "+path);
 					}
 				}

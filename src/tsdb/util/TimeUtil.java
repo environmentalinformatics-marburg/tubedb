@@ -169,7 +169,7 @@ public final class TimeUtil implements Serializable {
 		int minute;
 		int second;
 
-		if(!timeText.isEmpty())  {
+		if( !(timeText.isEmpty() || timeText.equals("NA"))) {
 			// 09:30:00
 			hour = 10*(timeText.charAt(0)-'0')+(timeText.charAt(1)-'0');
 			minute = 10*(timeText.charAt(3)-'0')+(timeText.charAt(4)-'0');
@@ -181,8 +181,12 @@ public final class TimeUtil implements Serializable {
 			second = 00;
 		}
 
-		LocalDateTime datetime = LocalDateTime.of(year, month, dayOfMonth, hour, minute, second);
-		return TimeUtil.dateTimeToOleMinutes(datetime);
+		try {
+			LocalDateTime datetime = LocalDateTime.of(year, month, dayOfMonth, hour, minute, second);
+			return TimeUtil.dateTimeToOleMinutes(datetime);
+		} catch (Exception e) {
+			throw new RuntimeException("could not parse date: "+dateText+" "+timeText,e);
+		}
 	}
 
 	public static int roundLowerYear(int timestamp) {
