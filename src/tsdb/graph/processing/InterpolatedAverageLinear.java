@@ -64,7 +64,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 				.toArray(String[]::new);
 		
 		if(iSchema.length==0) {
-			log.info("no interpolation for "+plotID+"   "+Arrays.toString(querySchema));
+			log.info("no interpolatable sensors for "+plotID+"   "+Arrays.toString(querySchema));
 			return source;
 		}
 
@@ -88,7 +88,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 				.toArray(Continuous[]::new);
 
 		if(trainingSources.length==0) {
-			log.info("no interpolation");
+			log.info("no interpolation sources for "+plotID+"   "+Arrays.toString(querySchema));
 			return source;
 		}
 		

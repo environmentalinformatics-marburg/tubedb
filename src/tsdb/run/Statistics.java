@@ -1,6 +1,5 @@
 package tsdb.run;
 
-
 import java.util.Iterator;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,11 +19,15 @@ import tsdb.util.iterator.TsIterator;
 
 public class Statistics {
 	private static final Logger log = LogManager.getLogger();
-	
+
 	private static final String[] generalStationNames = new String[]{"AEG", "AEW", "HEG", "HEW", "SEG", "SEW"};
-	private static final String[] sensorNames = new String[]{"Ta_200", "P_RT_NRT", "SM_10"};
+	//private static final String[] generalStationNames = new String[]{"SEG"};
+	private static final String[] sensorNames = new String[]{"Ta_200", "P_RT_NRT", "SM_10","Rn_300", "rH_200", "SM_20", "sunshine", "SWDR_300", "SWDR_3700", "SWDR_4400", "P_RT_NRT_01", "P_RT_NRT_02"};
+	//private static final String[] sensorNames = new String[]{"sunshine"};
 	private static final int[] years = new int[]{2009, 2010, 2011, 2012, 2013, 2014, 2015};
-	
+	//private static final int[] years = new int[]{2015};
+
+
 	private static final AggregationInterval aggregationInterval = AggregationInterval.HOUR;
 	private static final DataQuality dataQuality = DataQuality.EMPIRICAL;
 	private static final boolean interpolated = true;	
@@ -46,12 +49,12 @@ public class Statistics {
 				String[] columnNames = new String[]{sensorName};
 				for(int year:years) {				
 					for(String generalStationName:generalStationNames) {
-						
+
 						int summary_plot_count = 0;
 						int summary_whole_count = 0;
 						int summary_real_count = 0;
 						int summary_interpolated_count = 0;
-						
+
 						String filename = "c:/temp2/stat/"+generalStationName+"_"+sensorName+"_"+year+".csv";
 						MiniCSV csv = new MiniCSV(filename, true);
 						csv.writeString("plotID");
@@ -67,46 +70,52 @@ public class Statistics {
 
 						while(plotIt.hasNext()) {
 							String plotID = plotIt.next();
-
-							try {
-								Node node = QueryPlan.plot(tsdb, plotID, columnNames, aggregationInterval, dataQuality, interpolated);
-								TsIterator it = node.get(TimeUtil.ofDateStartHour(year), TimeUtil.ofDateEndHour(year));
-								if(it!=null) {
-									int whole_count = 0;
-									int real_count = 0;
-									int interpolated_count = 0;
-									while(it.hasNext()) {
-										TsEntry e = it.next();
-										whole_count++;
-										if(Float.isFinite(e.data[0])) {
-											if(e.interpolated[0]) {
-												interpolated_count++;
-											} else {
-												real_count++;
+							String[] plotColumnNames = tsdb.supplementSchema(columnNames);
+							
+							if(tsdb.getValidSchema(plotID, plotColumnNames).length>0) {
+								//log.info(plotID+"  "+Arrays.toString(plotColumnNames));
+								try {								
+									Node node = QueryPlan.plot(tsdb, plotID, plotColumnNames, aggregationInterval, dataQuality, interpolated);
+									TsIterator it = node.get(TimeUtil.ofDateStartHour(year), TimeUtil.ofDateEndHour(year));
+									if(it!=null) {
+										//log.info(it);
+										int whole_count = 0;
+										int real_count = 0;
+										int interpolated_count = 0;
+										while(it.hasNext()) {										
+											TsEntry e = it.next();
+											whole_count++;
+											//log.info(e);
+											if(Float.isFinite(e.data[0])) {
+												if(e.interpolated!=null && e.interpolated[0]) {
+													interpolated_count++;
+												} else {
+													real_count++;
+												}
 											}
 										}
-									}
 
-									csv.writeString(plotID);
-									csv.writeString(sensorName);
-									csv.writeLong(year);
-									csv.writeLong(whole_count);
-									csv.writeLong(real_count);
-									csv.writeLong(interpolated_count);
-									csv.finishRow();
-									log.info(plotID+"/"+sensorName+":"+year+"  "+whole_count+"  "+real_count+"  "+interpolated_count);
-									summary_plot_count++;
-									summary_whole_count += whole_count;
-									summary_real_count += real_count;
-									summary_interpolated_count += interpolated_count;
+										csv.writeString(plotID);
+										csv.writeString(sensorName);
+										csv.writeLong(year);
+										csv.writeLong(whole_count);
+										csv.writeLong(real_count);
+										csv.writeLong(interpolated_count);
+										csv.finishRow();
+										log.info(plotID+"/"+sensorName+":"+year+"  "+whole_count+"  "+real_count+"  "+interpolated_count);
+										summary_plot_count++;
+										summary_whole_count += whole_count;
+										summary_real_count += real_count;
+										summary_interpolated_count += interpolated_count;
+									}
+								} catch(Exception e) {
+									//e.printStackTrace();
+									log.warn(plotID+"/"+sensorName+"  "+e);
 								}
-							} catch(Exception e) {
-								e.printStackTrace();
-								log.warn(plotID+"/"+sensorName+"  "+e);
 							}
 						}
 						csv.close();
-						
+
 						csvSummary.writeString(sensorName);
 						csvSummary.writeLong(year);
 						csvSummary.writeString(generalStationName);

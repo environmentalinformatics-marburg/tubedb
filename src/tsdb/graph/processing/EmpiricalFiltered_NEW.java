@@ -71,7 +71,7 @@ public class EmpiricalFiltered_NEW extends Continuous.Abstract {
 		}
 		TsIterator compare_iterator = compareSource.get(start, end);
 		if(compare_iterator==null||!compare_iterator.hasNext()) {
-			log.warn("no compare iterator");
+			log.info("no reference compare iterator");
 			return input_iterator;
 		}		
 		Float[] maxDiff = tsdb.getEmpiricalDiff(source.getSchema());
