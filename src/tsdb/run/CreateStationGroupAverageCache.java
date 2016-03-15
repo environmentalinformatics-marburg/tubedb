@@ -20,7 +20,6 @@ import tsdb.graph.node.ContinuousGen;
 import tsdb.graph.processing.Addition;
 import tsdb.graph.processing.Averaged;
 import tsdb.util.DataQuality;
-import tsdb.util.TimeUtil;
 import tsdb.util.iterator.TimestampSeries;
 import tsdb.util.iterator.TsIterator;
 

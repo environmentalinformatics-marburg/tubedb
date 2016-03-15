@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import tsdb.Plot.Real;
 import tsdb.component.LoggerType;
 import tsdb.component.Region;
 import tsdb.component.Sensor;
