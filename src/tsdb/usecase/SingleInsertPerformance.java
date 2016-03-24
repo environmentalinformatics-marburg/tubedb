@@ -24,6 +24,7 @@ public class SingleInsertPerformance {
 	
 	static float[] data = new float[rounds*stations*sensors];
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		
 		DoubleSummaryStatistics dss = new DoubleSummaryStatistics();
@@ -46,6 +47,7 @@ public class SingleInsertPerformance {
 		log.info(msToText(timeStart,timeEnd)+" insert "+element_count);
 	}
 	
+	@SuppressWarnings("unused")
 	private static long run_tsdb() {
 		TsDB tsdb = TsDBFactory.createDefault();
 		StreamStorageStreamDB streamStorage = tsdb.streamStorage;

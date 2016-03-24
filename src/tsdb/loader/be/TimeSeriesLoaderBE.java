@@ -248,11 +248,9 @@ public class TimeSeriesLoaderBE {
 		UniversalDataBinFile udbFile = new UniversalDataBinFile(filename);
 		if(!udbFile.isEmpty()){
 			UDBFTimestampSeries udbfTimeSeries = udbFile.getUDBFTimeSeries();
-			udbFile.close();
 			return udbfTimeSeries;
 		} else {
 			log.info("empty file: "+filename);
-			udbFile.close();
 			return null;
 		}		
 	}

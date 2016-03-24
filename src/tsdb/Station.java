@@ -3,7 +3,6 @@ package tsdb;
 import static tsdb.util.AssumptionCheck.throwNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -213,7 +212,6 @@ public class Station {
 		String[] sensorSet = null;
 		if(tsdb.streamStorage.existStation(stationID)) {
 			sensorSet = tsdb.streamStorage.getSensorNames(stationID);
-			log.info("sensorSet "+Arrays.toString(sensorSet));
 		}
 		if(sensorSet!=null) {
 			return sensorSet;

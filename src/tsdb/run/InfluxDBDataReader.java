@@ -78,7 +78,7 @@ public class InfluxDBDataReader {
 				//log.info("values "+series.getValues());
 				List<List<Object>> valueList = series.getValues();
 				for(List<Object> value:valueList) {
-					Object v = value.get(1);
+					value.get(1);
 					//System.out.println(value.get(1));
 					total_count++;
 				}

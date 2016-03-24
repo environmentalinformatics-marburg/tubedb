@@ -45,7 +45,7 @@ public class TimeSeriesArchivReader {
 	private long byteBufferMaxSize = 200*1024*1024;//Integer.MAX_VALUE;
 	private long minReadCapacity = 100*1024*1024; 
 
-	private ByteBuffer mappedByteBuffer;
+	private ByteBuffer byteBuffer;
 
 	private long byteBufferSize;
 
@@ -59,7 +59,7 @@ public class TimeSeriesArchivReader {
 			minReadCapacity = byteBufferMaxSize;
 		}
 		this.byteBufferPos = 0;
-		mappedByteBuffer = ByteBuffer.allocateDirect((int) byteBufferMaxSize);
+		byteBuffer = ByteBuffer.allocateDirect((int) byteBufferMaxSize);
 		mapBuffer();		
 	}
 
@@ -70,15 +70,15 @@ public class TimeSeriesArchivReader {
 		}
 		//log.info("remap buffer "+byteBufferPos+" size "+byteBufferSize);
 		//mappedByteBuffer = filechannel.map(MapMode.READ_ONLY, byteBufferPos, byteBufferSize);
-		mappedByteBuffer.clear();
-		int readBytes = filechannel.read(mappedByteBuffer, byteBufferPos);
+		byteBuffer.clear();
+		int readBytes = filechannel.read(byteBuffer, byteBufferPos);
 		if(readBytes!=byteBufferSize) {
 			throw new RuntimeException(readBytes+"  "+byteBufferSize);
 		}
 
 
 		byteBufferPos += byteBufferSize;		
-		this.in = new DataInput2(mappedByteBuffer,0);
+		this.in = new DataInput2(byteBuffer,0);
 		//System.gc();
 	}
 

@@ -58,8 +58,9 @@ public class FullDataReader {
 		series_count++;
 		
 		while(it.hasNext()) {
+			@SuppressWarnings("unused")
 			DataEntry e = it.next();
-			float v = e.value;
+			//float v = e.value;
 			total_count++;
 		}	
 	}

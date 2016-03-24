@@ -1,6 +1,5 @@
 package tsdb.loader.ki;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -28,6 +27,8 @@ import tsdb.util.iterator.TimestampSeries;
  */
 public class AscParser {
 	private static final Logger log = LogManager.getLogger();
+	
+	private static final Charset ASC_CHARSET = Charset.forName("windows-1252");
 
 	private static final DateTimeFormatter dateFormate = new DateTimeFormatterBuilder().append(DateTimeFormatter.ofPattern("dd.MM.yy")).toFormatter();
 	private static final DateTimeFormatter timeFormater = new DateTimeFormatterBuilder().append(DateTimeFormatter.ofPattern("HH:mm:00")).toFormatter();
@@ -37,9 +38,7 @@ public class AscParser {
 	}
 
 	public static TimestampSeries parse(Path filename, boolean ignoreSeconds) throws IOException {
-		BufferedReader bufferedReader = Files.newBufferedReader(filename,Charset.forName("windows-1252"));
-		final String[] lines = bufferedReader.lines().toArray(String[]::new);
-		bufferedReader.close();
+		final String[] lines = Files.readAllLines(filename, ASC_CHARSET).toArray(new String[0]);
 
 		String serial = null;
 		int currentLineIndex = 0;		

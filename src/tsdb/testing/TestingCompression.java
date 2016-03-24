@@ -71,12 +71,13 @@ public class TestingCompression {
 			//log.info(raw.length);
 			for(int innerRound=0;innerRound<INNER_ROUNDS;innerRound++) {
 				DataInput2 in = new DataInput2(raw);
-				Chunk chunkNew = Chunk.SNAPPY_DELTA_TIME_DELTA_DELTA_VALUE_INT_QUANTIZED_SERIALIZER.deserialize(in, -1);
+				Chunk.SNAPPY_DELTA_TIME_DELTA_DELTA_VALUE_INT_QUANTIZED_SERIALIZER.deserialize(in, -1);
 			}
 		}
 	}
 
 
+	@SuppressWarnings("unused")
 	private static void compressNew(DataEntry[] data) throws IOException {
 		for(int round=0;round<ROUNDS;round++) {
 			Chunk chunk = Chunk.of(data);
@@ -92,6 +93,7 @@ public class TestingCompression {
 	}
 
 
+	@SuppressWarnings("unused")
 	private static void compressNewPrev(DataEntry[] data) throws IOException {
 		final int SIZE = data.length;		
 
