@@ -49,7 +49,7 @@ public class StreamDB {
 
 		db = DBMaker.newFileDB(new File(pathName))
 				//.checksumEnable()
-				.compressionEnable()
+				//.compressionEnable() //in new db disabled!
 				//.transactionDisable()
 				//.mmapFileEnable() //slow commit and close!!!
 				.mmapFileEnablePartial()
@@ -182,7 +182,8 @@ public class StreamDB {
 			db.createTreeMap(sensorMeta.db_name_sensor_chunk_map)
 			.keySerializer(BTreeKeySerializer.ZERO_OR_POSITIVE_INT)
 			//.valueSerializer(Chunk.DELTA_TIME_DELTA_DELTA_VALUE_INT_QUANTIZED_SERIALIZER)
-			.valueSerializer(Chunk.SNAPPY_DELTA_TIME_DELTA_DELTA_VALUE_INT_QUANTIZED_SERIALIZER)
+			//.valueSerializer(Chunk.SNAPPY_DELTA_TIME_DELTA_DELTA_VALUE_INT_QUANTIZED_SERIALIZER)
+			.valueSerializer(ChunkSerializer.DEFAULT)
 			//.valuesOutsideNodesEnable() // !!! does not work: growing database
 			//.
 			.makeOrGet();

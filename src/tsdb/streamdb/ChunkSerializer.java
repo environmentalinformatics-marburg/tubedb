@@ -6,9 +6,8 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import org.mapdb.Serializer;
-import org.xerial.snappy.Snappy;
 
-import me.lemire.integercompression.FastPFOR;
+import me.lemire.integercompression.FastPFOR128;
 import me.lemire.integercompression.IntCompressor;
 import me.lemire.integercompression.SkippableComposition;
 import me.lemire.integercompression.VariableByte;
@@ -25,16 +24,28 @@ import tsdb.util.TimeUtil;
  */
 public final class ChunkSerializer implements Serializer<Chunk>, Serializable {
 	//private static final Logger log = LogManager.getLogger();
-	private static final long serialVersionUID = -3783534813264670384L;
+	private static final long serialVersionUID = 0;
 	
 	public static final Serializer<Chunk> DEFAULT = new ChunkSerializer();
 	
 	private static final float QUANTIZATION_FACTOR = 100f;
 	
+	private static ThreadLocal<IntCompressor> threadLocal_ic = new ThreadLocal<IntCompressor>() {
+		@Override
+		protected IntCompressor initialValue() {
+			SkippableComposition codec = new SkippableComposition(new FastPFOR128(), new VariableByte());
+			IntCompressor ic = new IntCompressor(codec);
+			return ic;
+		}		
+	};
+	
 	private ChunkSerializer(){}
 
 	@Override
 	public void serialize(DataOutput out, Chunk chunk) throws IOException {
+		
+		IntCompressor ic = threadLocal_ic.get();
+		
 		final DataEntry[] data = chunk.data;
 		final int SIZE = data.length;
 		
@@ -62,28 +73,23 @@ public final class ChunkSerializer implements Serializer<Chunk>, Serializable {
 			prevDelta = delta;
 		}
 
-		SkippableComposition codec = new SkippableComposition(new FastPFOR(), new VariableByte());
-		IntCompressor ic = new IntCompressor(codec);
-
 		int[] resultTimestamp = ic.compress(deltaTimestamps);
 		int[] result = ic.compress(deltas);
 
-		//Serializer.BYTE_ARRAY.serialize(out, Snappy.compress(resultTimestamp));
-		//Serializer.BYTE_ARRAY.serialize(out, Snappy.compress(result));
-		writeByteArray(out, Snappy.compress(resultTimestamp));
-		writeByteArray(out, Snappy.compress(result));
-
+		//writeByteArray(out, Snappy.compress(resultTimestamp));
+		//writeByteArray(out, Snappy.compress(result));
+		serializeIntArray(out, resultTimestamp);
+		serializeIntArray(out, result);
 	}
 
 	@Override
 	public Chunk deserialize(DataInput in, int available) throws IOException {
-		SkippableComposition codec = new SkippableComposition(new FastPFOR(), new VariableByte());
-		IntCompressor ic = new IntCompressor(codec);
+		IntCompressor ic = threadLocal_ic.get();
 		
-		//int[] deltaTimestamps = ic.uncompress(Snappy.uncompressIntArray(Serializer.BYTE_ARRAY.deserialize(in, -1)));
-		//int[] deltas = ic.uncompress(Snappy.uncompressIntArray(Serializer.BYTE_ARRAY.deserialize(in, -1)));		
-		int[] deltaTimestamps = ic.uncompress(Snappy.uncompressIntArray(readByteArray(in)));
-		int[] deltas = ic.uncompress(Snappy.uncompressIntArray(readByteArray(in)));
+		//int[] deltaTimestamps = ic.uncompress(Snappy.uncompressIntArray(readByteArray(in)));
+		//int[] deltas = ic.uncompress(Snappy.uncompressIntArray(readByteArray(in)));
+		int[] deltaTimestamps = ic.uncompress(deserializeIntArray(in));
+		int[] deltas = ic.uncompress(deserializeIntArray(in));
 		
 		final int SIZE = deltaTimestamps.length;
 		AssumptionCheck.throwFalse(deltas.length==SIZE);
@@ -126,5 +132,45 @@ public final class ChunkSerializer implements Serializer<Chunk>, Serializable {
 		byte[] array = new byte[SIZE];
 		in.readFully(array);
 		return array;
+	}
+	
+	static byte[] intToByteArray(int[] data) {
+		int SIZE_INTS = data.length;
+		byte[] result = new byte[SIZE_INTS*4];
+		int pos=0;
+		for(int i=0; i<SIZE_INTS; i++) {
+			int v = data[i];
+			result[pos++] = (byte) (0xff & v);
+			result[pos++] = (byte) (0xff & (v >> 8));
+			result[pos++] = (byte) (0xff & (v >> 16));
+			result[pos++] = (byte) (0xff & (v >> 24));
+		}
+		return result;
+	}
+
+	static int[] byteToIntArray(byte[] data) {
+		int SIZE_INTS = data.length/4;
+		int[] result = new int[SIZE_INTS];
+		int pos=0;
+		for(int i=0; i<SIZE_INTS; i++) {
+			int a = data[pos++] & 0xFF;
+			int b = data[pos++] & 0xFF;
+			int c = data[pos++] & 0xFF;
+			int d = data[pos++];
+			result[i] = a | (b<<8) | (c<<16) | (d<<24);
+		}
+		return result;
+	}
+
+	static void serializeIntArray(DataOutput out, int[] value) throws IOException {
+		out.writeInt(value.length);
+		out.write(intToByteArray(value));
+	}
+
+	static int[] deserializeIntArray(DataInput in) throws IOException {		
+		final int size = in.readInt();
+		byte[] byteArray = new byte[size*4];
+		in.readFully(byteArray);
+		return byteToIntArray(byteArray);
 	}
 }

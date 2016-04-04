@@ -8,7 +8,7 @@
 	<classpathentry kind="lib" path="lib/log4j-api-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-core-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-jcl-2.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/mapdb-1.0.6.jar"/>
+	<classpathentry kind="lib" path="lib/mapdb-1.0.6.jar" sourcepath="lib_src/mapdb-1.0.6-sources.jar"/>
 	<classpathentry kind="lib" path="lib/opencsv-2.3.jar"/>
 	<classpathentry kind="lib" path="lib/snappy-java-1.1.1.6.jar"/>
 	<classpathentry kind="lib" path="lib/influx/gson-2.4.jar"/>

@@ -260,8 +260,19 @@ public class Handler_query_image extends MethodHandler {
 			tsd.draw(new TimeSeriesPainterGraphics2D(bufferedImage),compareTs);
 
 			try {
-				ImageIO.write(bufferedImage, "png", response.getOutputStream());
 				response.setStatus(HttpServletResponse.SC_OK);
+				ImageIO.write(bufferedImage, "png", response.getOutputStream());
+				//ImageIO.write(bufferedImage, "jpg", response.getOutputStream());
+				/*{
+					ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+					ImageWriteParam iwp = writer.getDefaultWriteParam();
+					iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+					iwp.setCompressionQuality(1f);
+					writer.setOutput(ImageIO.createImageOutputStream(response.getOutputStream()));
+					IIOImage image = new IIOImage(bufferedImage, null, null);
+					writer.write(null, image, iwp);
+					writer.dispose();
+				}*/
 			} catch (IOException e) {
 				log.error(e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
