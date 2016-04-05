@@ -381,9 +381,5 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 				raf.close();
 			}
 		}
-	}
-
-
-
-	
+	}	
 }

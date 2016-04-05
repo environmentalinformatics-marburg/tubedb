@@ -1,0 +1,52 @@
+/* (start of comment)
+
+This config file contains correction information for wrong sensor names from raw-data-input-files.
+
+Original sensor names are mapped to corrected sensor names.
+This mapping is applied before the sensor name translation step with information from config file "be_sensor_translation.ini".
+
+Each entry contains start and end date of validity. 
+Only files with a time-interval that is completely within the time-interval of the entry are applied to the correction-entry.
+Files wiht a time-interval that is (partly) outside of an entry are NOT applied. 
+So its possible to define start and end date imprecise (a bit lower for start resp. a bit higher for end).
+If multiple entries fit to one file and raw sensor name the first entry is applied.
+
+File format is JSON with block comments.
+
+file structure (as JSON array of entries):
+[
+<ENTRY1>,
+<ENTRY2>,
+<ENTRY3>,
+]
+
+entry structure (as JSON object):
+{plot:"<PLOT_NAME>", raw:"RAW_SENSOR_NAME", correct:"CORRECTED_SENSOR_NAME", start:"START_DATE", end:"END_DATE"}
+
+date format (ISO 8601):
+
+YEAR-MONTH-DAY
+
+YYYY eg. 2009
+YYYY-MM eg. 2009-12
+YYYY-MM-DD eg. 2009-12-31
+YYYY-MM-DDThh:mm eg. 2009-12-31T14:09
+
+For unspecified start or end "*" can be used.
+
+Shortened end dates are set to end of that period e.g. end date 2009 leads to 2009-12-31T23:59
+
+
+example file-content:
+[
+{plot:"AEG01", raw:"SM_10", correct:"SM_10_u", start:"2009-10-01", end:"2010-11-02"},
+]
+
+(end of comment)
+*/
+
+
+[
+{plot:"AEG01", raw:"SM_10", correct:"SM_10_u", start:"2011-09", end:"2012-05"},
+
+]

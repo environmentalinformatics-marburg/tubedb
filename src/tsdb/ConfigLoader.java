@@ -5,6 +5,10 @@ import static tsdb.util.AssumptionCheck.throwNull;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,13 +23,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.ini4j.Profile.Section;
 import org.ini4j.Wini;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import au.com.bytecode.opencsv.CSVReader;
 import tsdb.component.LoggerType;
 import tsdb.component.Region;
 import tsdb.component.Sensor;
 import tsdb.component.SensorCategory;
 import tsdb.util.AggregationType;
 import tsdb.util.Interval;
+import tsdb.util.NamedInterval;
 import tsdb.util.Table;
 import tsdb.util.Table.ColumnReaderDouble;
 import tsdb.util.Table.ColumnReaderFloat;
@@ -33,7 +41,6 @@ import tsdb.util.Table.ColumnReaderString;
 import tsdb.util.TimeUtil;
 import tsdb.util.Util;
 import tsdb.util.Util.FloatRange;
-import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * Reads config files and inserts meta data into TimeSeriesDatabase
@@ -268,6 +275,54 @@ public class ConfigLoader {
 		} catch (Exception e) {
 			log.error(e);
 		}
+	}
+	
+	public void readSensorNameCorrection(String jsonFile) {
+		Path filename = Paths.get(jsonFile);
+		if(!Files.isRegularFile(filename)) {
+			log.error("ConfigJson file not found "+filename);
+			//throw new RuntimeException("file not found: "+filename);
+			return;
+		}
+		try {
+			String jsonText = new String(Util.removeComments(Files.readAllBytes(filename)),Charset.forName("UTF-8"));
+			JSONArray jsonArray = new JSONArray(jsonText);
+			
+			final int SIZE = jsonArray.length();
+			for (int i = 0; i < SIZE; i++) {
+				try {
+					JSONObject obj = jsonArray.getJSONObject(i);
+					String plotText = obj.getString("plot");
+					String rawText = obj.getString("raw");
+					String correctText = obj.getString("correct");
+					String startText = obj.getString("start");
+					String endText = obj.getString("end");
+					
+					int start = TimeUtil.parseStartTimestamp(startText);
+					int end = TimeUtil.parseEndTimestamp(endText);
+					NamedInterval entry = NamedInterval.of(start,end,correctText);
+					
+					Station station = tsdb.getStation(plotText);
+					if(station==null) {
+						log.warn("plot not found "+plotText+" at "+obj+" in "+jsonFile);
+						continue;
+					}
+					if(station.sensorNameCorrectionMap==null) {
+						station.sensorNameCorrectionMap = new HashMap<>();
+					}
+					NamedInterval[] corrections = station.sensorNameCorrectionMap.get(rawText);
+					NamedInterval[] new_corrections = Util.addEntryToArray(corrections, entry);
+					station.sensorNameCorrectionMap.put(rawText, new_corrections);					
+					
+					log.info(obj);
+				} catch(Exception e) {
+					log.warn(e);
+				}
+			}
+		} catch (Exception e) {
+			log.error("ConfigJson file error "+e);
+			//throw new RuntimeException(e);
+		}		
 	}
 
 	private void readLoggerTypeSensorTranslation(String loggerTypeName, Section section) {

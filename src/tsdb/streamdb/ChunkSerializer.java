@@ -60,7 +60,7 @@ public final class ChunkSerializer implements Serializer<Chunk>, Serializable {
 			int timestamp = entry.timestamp;
 			float value = entry.value;
 			if(!Float.isFinite(value)) {
-				throw new RuntimeException("Not finite Value in stream "+value+"  "+Float.floatToRawIntBits(value)+" "+TimeUtil.oleMinutesToText(timestamp));
+				throw new RuntimeException("Not finite value in stream "+value+"  "+Float.floatToRawIntBits(value)+" "+TimeUtil.oleMinutesToText(timestamp));
 			}
 			int curr = (int) (value*QUANTIZATION_FACTOR);
 			int deltaTimestamp = timestamp-prevTimestamp;

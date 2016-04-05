@@ -3,6 +3,7 @@ package tsdb.util;
 import static tsdb.util.AssumptionCheck.throwNulls;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -543,6 +544,57 @@ public final class Util {
 		long z = diff%100/10;
 		long e = diff%10;
 		return diff/1000+"."+h+z+e+" s";
+	}
+	
+	public static byte[] removeComments(byte[] data) {
+		byte[] result = new byte[data.length];
+		final byte c0 = '/';
+		final byte c1 = '*';
+		int size_max = data.length-1;
+		int i=0;
+		int r=0;
+		boolean inComment = false;
+		while(i<size_max) {
+			if(data[i]==c0 && data[i+1]==c1) {
+				i++;
+				i++;
+				inComment = true;
+				while(i<size_max) {
+					if(data[i]==c1 && data[i+1]==c0) {
+						i++;
+						i++;
+						inComment = false;
+						break;
+					}
+					i++;
+				}
+
+			} else {
+				result[r++] = data[i++];
+			}
+		}
+		if(!inComment) {
+			result[r++] = data[i++];
+		}
+		return result;		
+	}
+	
+	/**
+	 * Concatenates an array and an element and returns the new array
+	 * @param array may be null
+	 * @param e may not be null if array is null to get type of new array
+	 * @return new array
+	 */
+	public static <T> T[] addEntryToArray(T[] array, T e) {
+		if(array==null) {
+			@SuppressWarnings("unchecked")
+			T[] result = (T[]) Array.newInstance(e.getClass(), 1);
+			result[0] = e;
+			return result;
+		}
+		T[] result = Arrays.copyOf(array, array.length+1);
+		result[array.length] = e;
+		return result;
 	}
 	
 }

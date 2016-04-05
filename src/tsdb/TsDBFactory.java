@@ -190,6 +190,7 @@ public final class TsDBFactory {
 				configLoader.readStation(configDirectory+"be/be_station_inventory.csv"); // [create STATION] read station list, generate general station name and properties and create station objects
 				configLoader.readStationGeoPosition(configDirectory+"be/be_station_master.csv"); // read geo position of stations and insert into existing stations
 				configLoader.readSensorTranslation(configDirectory+"be/be_sensor_translation.ini"); // read sensor translation and insert it into existing logger types, general stations and stations
+				configLoader.readSensorNameCorrection(configDirectory+"be/be_sensor_name_correction.json");
 			}
 
 			if(JUST_ONE_REGION==null||JUST_ONE_REGION.toUpperCase().equals("KI")) { //*** KI

@@ -7,7 +7,8 @@ import static tsdb.util.AssumptionCheck.*;
 
 /**
  * (open) interval of time with value object.
- * immutable if value is immutable
+ * if start and / or end is null the interval is open.
+ * immutable (if value is immutable)
  * @param <T> Type of value 
  * @author woellauer
  */

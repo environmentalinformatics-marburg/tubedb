@@ -12,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 
 import tsdb.component.LoggerType;
 import tsdb.util.AggregationType;
+import tsdb.util.Interval;
+import tsdb.util.NamedInterval;
 import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
 import tsdb.util.Util;
@@ -45,6 +47,13 @@ public class Station {
 	 */
 	public Map<String,String> sensorNameTranlationMap;
 
+	/**
+	 * input sensor name correction map: input sensor name -> corrected sensor name
+	 * This map contains only entries that are specific for this Station (or plotID)
+	 * This filed may be null if no corrections are available.
+	 */
+	public Map<String,NamedInterval[]> sensorNameCorrectionMap = null;
+
 	//*** start of fields that are used if this station is identical to one plot ***
 	public final boolean isPlot;
 	public double geoPosLongitude;
@@ -77,7 +86,7 @@ public class Station {
 		this.geoPosLongitude = Float.NaN;
 		this.geoPosLatitude = Float.NaN;
 		this.loggerType = loggerType;
-		sensorNameTranlationMap = new HashMap<String, String>();
+		this.sensorNameTranlationMap = new HashMap<String, String>();
 		if(isPlot) {
 			if(propertiesList.size()!=1) {
 				log.warn("station that is plot can only have one StationProperties: "+propertiesList.size());
@@ -129,6 +138,30 @@ public class Station {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Applys sensor name corrections.
+	 * Should be used before translateInputSensorName.
+	 * @param rawName
+	 * @param fileTimeInterval
+	 * @return rawName or corrected name
+	 */
+	public String correctRawSensorName(String rawName, Interval fileTimeInterval) {
+		if(sensorNameCorrectionMap==null) {
+			return rawName;
+		}
+		NamedInterval[] corrected = sensorNameCorrectionMap.get(rawName);
+		if(corrected==null) {
+			return rawName;
+		}
+		for(NamedInterval namedInterval:corrected) {
+			if(namedInterval.covers(fileTimeInterval)) {
+				log.warn("sensor name corrected in "+stationID+"    "+rawName+" -> "+namedInterval.name);
+				return namedInterval.name;
+			}
+		}
+		return rawName;
 	}
 
 	@Override
@@ -226,11 +259,11 @@ public class Station {
 		}
 		return propertiesList.get(0).value.isVIP();
 	}
-	
+
 	public boolean existData() {
 		return tsdb.streamStorage.existStation(stationID);
 	}
-	
+
 	public boolean existData(String sensorName) {
 		if( !existData()) {
 			return false;

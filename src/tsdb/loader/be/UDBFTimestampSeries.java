@@ -3,6 +3,7 @@ package tsdb.loader.be;
 import java.nio.file.Path;
 import java.util.Arrays;
 
+import tsdb.util.Interval;
 import tsdb.util.TimeConverter;
 
 /**
@@ -37,5 +38,13 @@ public class UDBFTimestampSeries {
 	@Override
 	public String toString() {
 		return Arrays.toString(sensorHeaders)+" "+filename;
+	}
+	
+	/**
+	 * Get interval of covered time.
+	 * @return
+	 */
+	public Interval getTimeInterval() {
+		return Interval.of((int)time[0], (int)time[time.length-1]);
 	}
 }

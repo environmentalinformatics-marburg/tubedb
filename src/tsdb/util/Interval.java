@@ -10,7 +10,9 @@ import org.apache.logging.log4j.Logger;
 import org.mapdb.Serializer;
 
 /**
- * Interval of time with start and end timestamps.
+ * Integer interval of time with start and end timestamps.
+ * Borders start and end are inclusive within the interval.
+ * To specify open start or end Integer.MIN_VALUE or Integer.MAX_VALUE may be used.
  * immutable
  * @author woellauer
  *
@@ -22,18 +24,24 @@ public class Interval implements Serializable {
 	public final int start; // start <= end
 	public final int end;
 
-	protected Interval(int start, int end) {			
+	protected Interval(int start, int end) {
+		if(start>end) {
+			throw new RuntimeException();
+		}
 		this.start = start;
 		this.end = end;
 	}
 
-	public static Interval of(int start, int end) {
-		if(start>end) {
-			throw new RuntimeException();
-		}
+	public static Interval of(int start, int end) {		
 		return new Interval(start, end);
 	}
 
+	/**
+	 * Check if there is no gap between a and b
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	public static boolean isAdjacentOrOverlap(Interval a, Interval b) {
 		if(a.end+1==b.start || b.end+1==a.start) {
 			return true;
@@ -41,15 +49,36 @@ public class Interval implements Serializable {
 		return a.end >= b.start && a.start <= b.end;
 	}
 
+	/**
+	 * Get smallest interval that contains a and b.
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	public static Interval getEnvelope(Interval a, Interval b) {
-		return Interval.of(Math.min(a.start, b.start),Math.max(a.end, b.end));
-	}
-
-	public boolean less(Interval other) {
-		return this.end<other.start;
+		return Interval.of(Math.min(a.start, b.start), Math.max(a.end, b.end));
 	}
 
 	/**
+	 * Check this interval is lower than other (and no overlap)
+	 * @param other
+	 * @return
+	 */
+	public boolean less(Interval other) {
+		return this.end<other.start;
+	}
+	
+	/**
+	 * Check if this interval covers completely other.
+	 * @param other
+	 * @return
+	 */
+	public boolean covers(Interval other) {
+		return this.start<=other.start && other.end<=this.end;
+	}
+
+	/**
+	 * Simple parser of an interval
 	 * format: [ x,   y ]
 	 * example [2008,2015]
 	 * @return

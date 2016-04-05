@@ -24,6 +24,7 @@ import tsdb.TsDB;
 import tsdb.component.SourceEntry;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataRow;
+import tsdb.util.Interval;
 import tsdb.util.Pair;
 
 
@@ -262,7 +263,9 @@ public class TimeSeriesLoaderBE {
 	 * @return List of Events, time stamp ordered 
 	 */
 	public List<DataRow> translateToEvents(Station station, UDBFTimestampSeries udbfTimeSeries, long minTimestamp) {
-		List<DataRow> resultList = new ArrayList<DataRow>(); // result list of events	
+		List<DataRow> resultList = new ArrayList<DataRow>(); // result list of events
+		
+		Interval fileTimeInterval = udbfTimeSeries.getTimeInterval();
 
 		//mapping: UDBFTimeSeries column index position -> Event column index position;    eventPos[i] == -1 -> no mapping		
 		int[] eventPos = new int[udbfTimeSeries.sensorHeaders.length];  
@@ -280,6 +283,10 @@ public class TimeSeriesLoaderBE {
 			SensorHeader sensorHeader = udbfTimeSeries.sensorHeaders[sensorIndex];
 			String rawSensorName = sensorHeader.name;
 			if(!tsdb.containsIgnoreSensorName(rawSensorName)) {
+				
+				//correct rawSensorName
+				rawSensorName = station.correctRawSensorName(rawSensorName, fileTimeInterval);
+				
 				String sensorName = station.translateInputSensorName(rawSensorName,true);
 				//System.out.println(sensorHeader.name+"->"+sensorName);
 				if(sensorName!=null&&sensorName.equals("NaN")) { // ignore sensor

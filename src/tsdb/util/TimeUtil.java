@@ -15,7 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * This class convertes beween date and time systems and keeps timestamp info from a UDBF-File.
+ * This class converts between date and time systems and keeps timestamp info from a UDBF-File.
  * @author woellauer
  *
  */
@@ -267,6 +267,15 @@ public final class TimeUtil implements Serializable {
 		}
 	};
 
+	/**
+	 * parses an ISO 8601 date.
+	 * full format:  YYYY-MM-DDThh:mm eg. 2009-12-31T14:09
+	 * completes shortened dates to start of period
+	 * eg. 2009 leads to 2009-01-01T00:00
+	 * text "*" as unspecified date returns Integer.MIN_VALUE
+	 * @param text
+	 * @return timestamp in minutes
+	 */
 	public static int parseStartTimestamp(String text) {
 		text = text.trim();
 
@@ -298,6 +307,15 @@ public final class TimeUtil implements Serializable {
 		}
 	}
 
+	/**
+	 * parses an ISO 8601 date.
+	 * full format:  YYYY-MM-DDThh:mm eg. 2009-12-31T14:09
+	 * completes shortened dates to end of period
+	 * eg. 2009 leads to 2009-12-31T23:59
+	 * text "*" as unspecified date returns Integer.MAX_VALUE
+	 * @param text
+	 * @return timestamp in minutes
+	 */
 	public static int parseEndTimestamp(String text) {
 		text = text.trim();
 
