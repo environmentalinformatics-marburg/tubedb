@@ -242,7 +242,7 @@ public class Station {
 	}
 
 	public String[] getSchema() {
-		String[] sensorSet = null;
+		/*String[] sensorSet = null;
 		if(tsdb.streamStorage.existStation(stationID)) {
 			sensorSet = tsdb.streamStorage.getSensorNames(stationID);
 		}
@@ -250,7 +250,12 @@ public class Station {
 			return sensorSet;
 		} else {
 			return loggerType.sensorNames;
-		}
+		}*/
+		if(tsdb.streamStorage.existStation(stationID)) {
+			return tsdb.streamStorage.getSensorNames(stationID);
+		} else {
+			return new String[0];
+		}		
 	}
 
 	public boolean isVIP() {
