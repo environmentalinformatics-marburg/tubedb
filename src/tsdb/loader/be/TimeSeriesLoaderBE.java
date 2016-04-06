@@ -143,10 +143,11 @@ public class TimeSeriesLoaderBE {
 				try {
 					UDBFTimestampSeries timeSeries = readUDBFTimeSeries(station.stationID, path);
 					if(timeSeries!=null) {
-						List<DataRow> eventList = translateToEvents(station, timeSeries, minTimestamp);
+						String[][] outInfoTranslatedSensorNames = new String[1][];
+						List<DataRow> eventList = translateToEvents(station, timeSeries, minTimestamp, outInfoTranslatedSensorNames);
 						if(eventList!=null) {
 							eventsList.add(eventList);
-							tsdb.sourceCatalog.insert(new SourceEntry(path,station.stationID,timeSeries.time[0],timeSeries.time[timeSeries.time.length-1],timeSeries.time.length,timeSeries.getHeaderNames(), new String[0],(int)timeSeries.timeConverter.getTimeStep().toMinutes()));
+							tsdb.sourceCatalog.insert(new SourceEntry(path,station.stationID,timeSeries.time[0],timeSeries.time[timeSeries.time.length-1],timeSeries.time.length,timeSeries.getHeaderNames(), outInfoTranslatedSensorNames[0],(int)timeSeries.timeConverter.getTimeStep().toMinutes()));
 						}
 					}
 				} catch (Exception e) {
@@ -262,7 +263,7 @@ public class TimeSeriesLoaderBE {
 	 * @param minTimestamp minimal timestamp that should be included in result
 	 * @return List of Events, time stamp ordered 
 	 */
-	public List<DataRow> translateToEvents(Station station, UDBFTimestampSeries udbfTimeSeries, long minTimestamp) {
+	public List<DataRow> translateToEvents(Station station, UDBFTimestampSeries udbfTimeSeries, long minTimestamp, String[][] outInfoTranslatedSensorNames) {
 		List<DataRow> resultList = new ArrayList<DataRow>(); // result list of events
 		
 		Interval fileTimeInterval = udbfTimeSeries.getTimeInterval();
@@ -276,6 +277,8 @@ public class TimeSeriesLoaderBE {
 
 		ArrayList<String> infoListNoMapping = new ArrayList<String>(1);
 		ArrayList<String> infoListNoSchemaMapping = new ArrayList<String>(1);
+		String[] infoTranslatedSensorNames = new String[udbfTimeSeries.sensorHeaders.length];
+		outInfoTranslatedSensorNames[0] = infoTranslatedSensorNames;
 
 		//creates mapping eventPos   (  udbf pos -> event pos )
 		for(int sensorIndex=0; sensorIndex<udbfTimeSeries.sensorHeaders.length; sensorIndex++) {
@@ -285,9 +288,8 @@ public class TimeSeriesLoaderBE {
 			if(!tsdb.containsIgnoreSensorName(rawSensorName)) {
 				
 				//correct rawSensorName
-				rawSensorName = station.correctRawSensorName(rawSensorName, fileTimeInterval);
-				
-				String sensorName = station.translateInputSensorName(rawSensorName,true);
+				String correctedSensorName = station.correctRawSensorName(rawSensorName, fileTimeInterval);				
+				String sensorName = station.translateInputSensorName(correctedSensorName,true);
 				//System.out.println(sensorHeader.name+"->"+sensorName);
 				if(sensorName!=null&&sensorName.equals("NaN")) { // ignore sensor
 					continue;
@@ -308,6 +310,8 @@ public class TimeSeriesLoaderBE {
 						infoListNoSchemaMapping.add(rawSensorName+" -> "+sensorName);
 						//log.info("sensor name not in schema: "+rawSensorName+" -> "+sensorName+"\t"+station.stationID+"\t"+udbfTimeSeries.filename+"\t"+station.loggerType);
 					}
+				} else {
+					infoTranslatedSensorNames[sensorIndex] = sensorName;
 				}
 			}
 		}

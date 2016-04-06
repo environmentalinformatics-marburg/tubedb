@@ -47,6 +47,5 @@ example file-content:
 
 
 [
-{plot:"AEG01", raw:"SM_10", correct:"SM_10_u", start:"2011-09", end:"2012-05"},
-
+{plot:"AEG01", raw:"SM_10", correct:"SM_10_U", start:"2011-09-06T18:10", end:"2012-05-08T15:20"},
 ]

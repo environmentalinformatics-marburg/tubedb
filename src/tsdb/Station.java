@@ -7,11 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import tsdb.component.LoggerType;
 import tsdb.util.AggregationType;
+import tsdb.util.AssumptionCheck;
 import tsdb.util.Interval;
 import tsdb.util.NamedInterval;
 import tsdb.util.TimeUtil;
@@ -50,7 +53,7 @@ public class Station {
 	/**
 	 * input sensor name correction map: input sensor name -> corrected sensor name
 	 * This map contains only entries that are specific for this Station (or plotID)
-	 * This filed may be null if no corrections are available.
+	 * This field may be null if no corrections are available.
 	 */
 	public Map<String,NamedInterval[]> sensorNameCorrectionMap = null;
 
@@ -147,7 +150,8 @@ public class Station {
 	 * @param fileTimeInterval
 	 * @return rawName or corrected name
 	 */
-	public String correctRawSensorName(String rawName, Interval fileTimeInterval) {
+	public @NotNull String correctRawSensorName(@NotNull String rawName, @NotNull Interval fileTimeInterval) {
+		AssumptionCheck.throwNulls(rawName, fileTimeInterval);
 		if(sensorNameCorrectionMap==null) {
 			return rawName;
 		}
@@ -241,7 +245,11 @@ public class Station {
 		return properties;
 	}
 
-	public String[] getSchema() {
+	/**
+	 * Get sensor names of station.
+	 * @return array of all sensor names that contain time series data. Empty array if there is no data.
+	 */
+	public @NotNull String[] getSchema() {
 		/*String[] sensorSet = null;
 		if(tsdb.streamStorage.existStation(stationID)) {
 			sensorSet = tsdb.streamStorage.getSensorNames(stationID);

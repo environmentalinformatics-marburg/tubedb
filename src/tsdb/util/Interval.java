@@ -24,6 +24,13 @@ public class Interval implements Serializable {
 	public final int start; // start <= end
 	public final int end;
 
+	/**
+	 * create an interval
+	 * Invariant start <= end is checked.
+	 * @param start
+	 * @param end
+	 * @return
+	 */
 	protected Interval(int start, int end) {
 		if(start>end) {
 			throw new RuntimeException();
@@ -32,6 +39,13 @@ public class Interval implements Serializable {
 		this.end = end;
 	}
 
+	/**
+	 * create an interval
+	 * Invariant start <= end is checked.
+	 * @param start
+	 * @param end
+	 * @return
+	 */
 	public static Interval of(int start, int end) {		
 		return new Interval(start, end);
 	}

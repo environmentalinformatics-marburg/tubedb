@@ -49,7 +49,7 @@ public class FullDataReader {
 			log.error(e);
 		}
 		long timeEndImport = System.currentTimeMillis();
-		log.info((timeEndImport-timeStartImport)/1000+" s "+(timeEndImport-timeStartImport)+" ms Export "+total_count+" total_count    "+series_count+" series_count");
+		log.info((timeEndImport-timeStartImport)/1000+" s "+(timeEndImport-timeStartImport)+" ms "+total_count+" total_count    "+series_count+" series_count");
 	}
 
 	private void readSeries(String stationName, String sensorName) {

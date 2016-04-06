@@ -277,6 +277,10 @@ public class ConfigLoader {
 		}
 	}
 	
+	/**
+	 * Read and insert sensor name corrections with time intervals in json format.
+	 * @param jsonFile filename
+	 */
 	public void readSensorNameCorrection(String jsonFile) {
 		Path filename = Paths.get(jsonFile);
 		if(!Files.isRegularFile(filename)) {
@@ -313,8 +317,6 @@ public class ConfigLoader {
 					NamedInterval[] corrections = station.sensorNameCorrectionMap.get(rawText);
 					NamedInterval[] new_corrections = Util.addEntryToArray(corrections, entry);
 					station.sensorNameCorrectionMap.put(rawText, new_corrections);					
-					
-					log.info(obj);
 				} catch(Exception e) {
 					log.warn(e);
 				}
