@@ -289,7 +289,7 @@ public class ConfigLoader {
 			return;
 		}
 		try {
-			String jsonText = new String(Util.removeComments(Files.readAllBytes(filename)),Charset.forName("UTF-8"));
+			String jsonText = Util.removeComments(Files.readAllBytes(filename));
 			JSONArray jsonArray = new JSONArray(jsonText);
 			
 			final int SIZE = jsonArray.length();
@@ -322,7 +322,8 @@ public class ConfigLoader {
 				}
 			}
 		} catch (Exception e) {
-			log.error("ConfigJson file error "+e);
+			e.printStackTrace();
+			log.error("readSensorNameCorrection ConfigJson file error "+e);
 			//throw new RuntimeException(e);
 		}		
 	}

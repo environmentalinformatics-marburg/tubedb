@@ -151,7 +151,7 @@ public class TimeSeriesLoaderBE {
 						}
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					//e.printStackTrace();
 					log.error("file not read: "+path+"\t"+e);
 				}
 			}

@@ -206,6 +206,14 @@ public final class TimeUtil implements Serializable {
 	public static long ofDateEndHour(int year) { // at hour
 		return TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, 12, 31, 23, 0));
 	}
+	
+	public static long ofDateStartMinute(int year) {
+		return TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, 1, 1, 0, 0));
+	}
+
+	public static long ofDateEndMinute(int year) {
+		return TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, 12, 31, 23, 59));
+	}
 
 	public static long ofDateStartHour(int year,int month) { // at hour
 		return TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, 1, 0, 0));

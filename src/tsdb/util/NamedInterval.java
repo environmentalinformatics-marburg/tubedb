@@ -1,6 +1,6 @@
 package tsdb.util;
 
-import com.sun.istack.internal.NotNull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Interval with start, end and name.

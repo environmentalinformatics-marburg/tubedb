@@ -45,28 +45,7 @@ public class Handler_source_catalog_csv extends MethodHandler {
 			//String header = arrayToString(e.headerNames);
 			//String sensors = arrayToString(e.sensorNames);
 
-			String translationText = "";
-
-			if(e.headerNames.length==0 || e.sensorNames.length==0) {
-				translationText = (e.headerNames.length==0?'?':arrayToString(e.headerNames))+"->"+(e.sensorNames.length==0?'?':arrayToString(e.sensorNames));
-			} else {
-				String[] translation = new String[e.headerNames.length];
-
-				for (int i = 0; i < e.headerNames.length; i++) {
-					if(e.headerNames[i].equals(e.sensorNames[i])) {
-						translation[i] = e.headerNames[i];
-					} else {
-						if(e.sensorNames[i]==null) {
-							translation[i] = '<'+e.headerNames[i]+'>';
-						} else {
-							translation[i] = e.headerNames[i]+"->"+e.sensorNames[i];
-						}
-					}
-				}
-				
-				translationText = arrayToString(translation);
-
-			}
+			String translationText = e.getTranslation();
 
 			String[] line = new String[]{station, first, last, rows, timestep, translationText, filename, path};
 			writer.writeNext(line);
@@ -77,33 +56,5 @@ public class Handler_source_catalog_csv extends MethodHandler {
 
 	}
 
-	String arrayToString(String[] a) {
-		if(a == null) {
-			return "[]";
-		}
-
-		int iMax = a.length - 1;
-		if (iMax == -1) {
-			return "[ ]";
-		}
-
-		StringBuilder b = new StringBuilder();
-		b.append('[');
-		for (int i = 0; ; i++) {			
-			if(a[i]==null) {
-			} else {
-				b.append(String.valueOf(a[i]));
-			}
-			if (i == iMax) {
-				return b.append(']').toString();
-			}
-			if(a[i+1]==null) {
-				//b.append(',');
-				b.append(' ');
-			} else {
-				//b.append(", ");
-				b.append(' ');
-			}
-		}
-	}
+	
 }

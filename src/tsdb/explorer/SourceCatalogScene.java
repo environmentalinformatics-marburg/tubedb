@@ -5,7 +5,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.sun.javafx.binding.ObjectConstant;
+
+import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,25 +24,23 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import tsdb.StationProperties;
 import tsdb.component.Region;
 import tsdb.component.SourceEntry;
 import tsdb.remote.RemoteTsDB;
 import tsdb.remote.StationInfo;
 import tsdb.remote.VirtualPlotInfo;
+import tsdb.util.Interval;
 import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
 import tsdb.util.TsSchema;
-
-import com.sun.javafx.binding.ObjectConstant;
 
 /**
  * View of SourceCatalog
@@ -43,11 +48,11 @@ import com.sun.javafx.binding.ObjectConstant;
  *
  */
 public class SourceCatalogScene extends TsdbScene {
-	
+
 	private static final Logger log = LogManager.getLogger();
-	
+
 	private final RemoteTsDB tsdb;
-	
+
 	private ArrayList<SourceItem> sourceItemList;
 	private FilteredList<SourceItem> filteredList;
 	private Region[] regions;
@@ -55,16 +60,20 @@ public class SourceCatalogScene extends TsdbScene {
 	private ComboBox<Region> comboRegion;
 	private ComboBox<String> comboGeneralStation;
 	private ComboBox<String> comboPlot;
-	
+	private ComboBox<Integer> comboYear;
+
 	private TableView<SourceItem> table;
+	private Label lblPlaceHolder;
+	
+	private Label lblStatus;
 
 	private final Region regionAll = new Region("[all]","[all]");
-	
+
 	public SourceCatalogScene(RemoteTsDB tsdb) {
 		super("source catalog");
 		this.tsdb = tsdb;
 	}
-	
+
 	private static <S, T> Callback<TableColumn<S,T>, TableCell<S,T>> createCellFactory(Callback<T,String> converter) {
 		return param -> new TableCell<S, T>(){
 			@Override
@@ -78,12 +87,35 @@ public class SourceCatalogScene extends TsdbScene {
 			}
 		};
 	}
+	
+	private void onTableClick(MouseEvent e) {
+		if(e.getClickCount()==2) {
+			SourceItem item = table.getSelectionModel().getSelectedItem();
+			if(item==null) {
+				return;
+			}
+			SourceEntry entry = item.sourceEntry;
+			String s = entry.stationName;
+			s += ", "+TimeUtil.oleMinutesToText(entry.firstTimestamp);
+			s += ", "+TimeUtil.oleMinutesToText(entry.lastTimestamp);
+			s += ", "+entry.getFullPath();
+			s += ", "+entry.getTranslation();
+			//table.getFocusModel().getFocusedCell().getColumn()			
+			ClipboardContent content = new ClipboardContent();
+			content.putString(s);
+			Clipboard.getSystemClipboard().setContent(content);
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Parent createContent() {
-		
+
 		table = new TableView<SourceItem>();
+		lblPlaceHolder = new Label("loading content...");
+		table.setPlaceholder(lblPlaceHolder);
+		table.setOnMouseClicked(this::onTableClick);
+		//table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
 		TableColumn<SourceItem,String> colPlot = new TableColumn<SourceItem,String>("plot");		
 		colPlot.setCellValueFactory(param->ObjectConstant.valueOf(param.getValue().plotid));
@@ -92,10 +124,12 @@ public class SourceCatalogScene extends TsdbScene {
 		TableColumn<SourceItem,Long> colFirst = new TableColumn<SourceItem,Long>("first");		
 		colFirst.setCellValueFactory(param->ObjectConstant.valueOf(param.getValue().sourceEntry.firstTimestamp));
 		colFirst.setCellFactory(createCellFactory(t->TimeUtil.oleMinutesToText(t)));
+		colFirst.setMinWidth(110);
 
 		TableColumn<SourceItem,Long> colLast = new TableColumn<SourceItem,Long>("last");		
 		colLast.setCellValueFactory(param->ObjectConstant.valueOf(param.getValue().sourceEntry.lastTimestamp));
 		colLast.setCellFactory(createCellFactory(t->TimeUtil.oleMinutesToText(t)));
+		colLast.setMinWidth(110);
 
 		TableColumn<SourceItem,String> colStation = new TableColumn<SourceItem,String>("station");		
 		colStation.setCellValueFactory(param->ObjectConstant.valueOf(param.getValue().sourceEntry.stationName));
@@ -108,6 +142,7 @@ public class SourceCatalogScene extends TsdbScene {
 
 		TableColumn<SourceItem,String> colFilename = new TableColumn<SourceItem,String>("filename");		
 		colFilename.setCellValueFactory(param->ObjectConstant.valueOf(param.getValue().sourceEntry.filename));
+		colFilename.setMinWidth(256);
 		colFilename.setComparator(String.CASE_INSENSITIVE_ORDER);
 
 		TableColumn<SourceItem,Integer> colRows = new TableColumn<SourceItem,Integer>("rows");		
@@ -117,6 +152,10 @@ public class SourceCatalogScene extends TsdbScene {
 		colTimeStep.setCellValueFactory(param->ObjectConstant.valueOf(param.getValue().sourceEntry.timeStep));
 		colTimeStep.setCellFactory(createCellFactory(timestep->timestep==null||timestep==TsSchema.NO_CONSTANT_TIMESTEP?null:timestep.toString()));
 
+		TableColumn<SourceItem,Integer> colColumns = new TableColumn<SourceItem,Integer>("columns");		
+		colColumns.setCellValueFactory(param->ObjectConstant.valueOf(param.getValue().sourceEntry.headerNames.length));
+		colColumns.setMinWidth(10);
+		
 		TableColumn<SourceItem,String> colHeader = new TableColumn<SourceItem,String>("header");		
 		colHeader.setCellValueFactory(param->ObjectConstant.valueOf(Arrays.toString(param.getValue().sourceEntry.headerNames)));
 		colHeader.setComparator(String.CASE_INSENSITIVE_ORDER);
@@ -133,14 +172,14 @@ public class SourceCatalogScene extends TsdbScene {
 		colGeneralStation.setCellValueFactory(param->ObjectConstant.valueOf(param.getValue().generalStationName));
 		colPlot.setComparator(String.CASE_INSENSITIVE_ORDER);
 
-		table.getColumns().setAll(colGeneralStation,colPlot,colStation,colFirst,colLast,colRows,colTimeStep,colFilename,colPath,colHeader,colSensors);
-		
+		table.getColumns().setAll(colGeneralStation,colPlot,colStation,colFirst,colLast,colRows,colTimeStep,colFilename,colPath,colColumns,colHeader,colSensors);
+
 		BorderPane mainBoderPane = new BorderPane();		
 		mainBoderPane.setCenter(table);
-		
-		Label lblStatus = new Label("ready");
+
+		lblStatus = new Label("loading...");
 		mainBoderPane.setBottom(lblStatus);
-		
+
 		comboRegion = new ComboBox<Region>();
 		StringConverter<Region> regionConverter = new StringConverter<Region>() {			
 			@Override
@@ -162,6 +201,20 @@ public class SourceCatalogScene extends TsdbScene {
 		comboPlot = new ComboBox<String>();
 		comboPlot.valueProperty().addListener(this::onPlotChanged);
 
+		comboYear = new ComboBox<Integer>();
+		StringConverter<Integer> yearConverter = new StringConverter<Integer>() {			
+			@Override
+			public String toString(Integer year) {
+				return year==yearAll?"[all]":Integer.toString(year);
+			}			
+			@Override
+			public Integer fromString(String string) {
+				return null;
+			}
+		};
+		comboYear.setConverter(yearConverter);
+		comboYear.valueProperty().addListener(this::onYearChanged);
+
 		HBox hBoxControl = new HBox(10d);
 		hBoxControl.getChildren().add(new Label("Region"));
 		hBoxControl.getChildren().add(comboRegion);
@@ -169,10 +222,12 @@ public class SourceCatalogScene extends TsdbScene {
 		hBoxControl.getChildren().add(comboGeneralStation);
 		hBoxControl.getChildren().add(new Label("Plot"));
 		hBoxControl.getChildren().add(comboPlot);
+		hBoxControl.getChildren().add(new Label("Year"));
+		hBoxControl.getChildren().add(comboYear);
 		mainBoderPane.setTop(hBoxControl);
 		return mainBoderPane;
 	}
-	
+
 	@Override
 	protected void onShown() {
 		sourceItemList = new ArrayList<SourceItem>();
@@ -220,15 +275,20 @@ public class SourceCatalogScene extends TsdbScene {
 				}
 			}
 			regions = tsdb.getRegions();
-			
-			
+
+
 			filteredList = new FilteredList<SourceItem>(FXCollections.observableArrayList(sourceItemList));
+			filteredList.addListener(this::updateStatus);
 			SortedList<SourceItem> sortedList = new SortedList<SourceItem>(filteredList);
 			sortedList.comparatorProperty().bind(table.comparatorProperty());
 			table.setItems(sortedList);
-			
+
 			setRegions(regions);
+			setYears();
 			
+			lblPlaceHolder.setText("no content");
+			updateStatus(null);
+
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			log.error(e);
@@ -236,6 +296,22 @@ public class SourceCatalogScene extends TsdbScene {
 		}
 	}
 	
+	private void updateStatus(Observable observable) {
+		lblStatus.setText(""+filteredList.size()+" entries");
+	}
+	
+	private static final Integer yearAll = 0;
+
+	private void setYears() {
+		ObservableList<Integer> yearList = FXCollections.observableArrayList();
+		yearList.add(yearAll);
+		for(int y=2008;y<=2016;y++) {
+			yearList.addAll(y);
+		}
+		comboYear.setItems(yearList);
+		comboYear.setValue(yearAll);		
+	}
+
 	private void setRegions(Region[] regions) {
 		ObservableList<Region> regionList = FXCollections.observableArrayList();
 		regionList.add(regionAll);
@@ -243,7 +319,7 @@ public class SourceCatalogScene extends TsdbScene {
 		comboRegion.setItems(regionList);
 		comboRegion.setValue(regionAll);		
 	}
-	
+
 	private void onRegionChanged(ObservableValue<? extends Region> observable, Region oldValue, Region newValue) {
 		TreeSet<String> generalSet = new TreeSet<String>();
 		Region region = newValue;		
@@ -267,9 +343,8 @@ public class SourceCatalogScene extends TsdbScene {
 
 		//updateComboPlot();		
 	}
-	
+
 	private void onGeneralStationChanged(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-		System.out.println(oldValue+"     "+newValue);
 		Region region = comboRegion.getValue();
 		TreeSet<String> plotSet = new TreeSet<String>();
 		String general = newValue;
@@ -289,30 +364,64 @@ public class SourceCatalogScene extends TsdbScene {
 
 		ObservableList<String> plots = FXCollections.observableArrayList();
 		String plotAll = "[all]";
-		plots.add(plotAll );
+		plots.add(plotAll);
 		plots.addAll(plotSet);
 		comboPlot.setItems(plots);
 		comboPlot.setValue(plotAll);
 	}
-	
+
 	private void onPlotChanged(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-		System.out.println(oldValue+"     "+newValue);
+		updateListFilter();
+	}
+
+
+
+	private void onYearChanged(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+		updateListFilter();
+	}
+
+
+	private static final Predicate<SourceItem> predicateTrue = (s)->true;
+
+	private void updateListFilter() {
 		Region region = comboRegion.getValue();
 		String general = comboGeneralStation.getValue();
-		String plot = newValue;
+		String plot = comboPlot.getValue();
+		Integer year = comboYear.getValue();
 
-		if(plot==null||plot.equals("[all]")) {
-			if(general==null||general.equals("[all]")) {
-				if(region==null||region.name.equals("[all]")) {
-					filteredList.setPredicate(sourceEntry->true);
-				} else {
-					filteredList.setPredicate(sourceEntry->region.name.equals(sourceEntry.regionName));
-				}
-			} else {
-				filteredList.setPredicate(sourceEntry->general.equals(sourceEntry.generalStationName));
-			}
+		Predicate<SourceItem> predicateStation = predicateTrue;
+		if(plot!=null && !plot.equals("[all]")) {
+			predicateStation = sourceEntry->plot.equals(sourceEntry.plotid);
 		} else {
-			filteredList.setPredicate(sourceEntry->plot.equals(sourceEntry.plotid));
+			if(general!=null && !general.equals("[all]")) {
+				predicateStation = sourceEntry->general.equals(sourceEntry.generalStationName);
+			} else {
+				if(region!=null && !region.name.equals("[all]")) {
+					predicateStation = sourceEntry->region.name.equals(sourceEntry.regionName);
+				}
+			}
 		}
+		
+		if(year!=null && year!=yearAll) {
+			filteredList.setPredicate(predicateStation.and(new PredicateYear(year)));
+		} else {
+			filteredList.setPredicate(predicateStation);
+		}	
+	}
+	
+	private static class PredicateYear implements Predicate<SourceItem> {
+		private final Interval yearInterval;
+		public PredicateYear(Integer year) {			
+			long start = TimeUtil.ofDateStartMinute(year);
+			long end = TimeUtil.ofDateEndMinute(year);			
+			yearInterval = Interval.of((int)start, (int)end);
+		}
+
+		@Override
+		public boolean test(SourceItem s) {
+			int start = (int) s.sourceEntry.firstTimestamp;
+			int end = (int) s.sourceEntry.lastTimestamp;
+			return yearInterval.overlaps(start, end);
+		}		
 	}
 }

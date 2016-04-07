@@ -19,4 +19,10 @@ public class SourceItem {
 		this.regionName = null;
 		this.plotid = null;
 	}
+
+	@Override
+	public String toString() {
+		return "SourceItem [sourceEntry=" + sourceEntry + ", generalStationName=" + generalStationName + ", regionName="
+				+ regionName + ", plotid=" + plotid + "]";
+	}
 }

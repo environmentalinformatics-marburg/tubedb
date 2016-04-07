@@ -62,6 +62,10 @@ public class Interval implements Serializable {
 		}
 		return a.end >= b.start && a.start <= b.end;
 	}
+	
+	public boolean overlaps(int start2, int end2) {
+		return this.start<=end2 && start2<=this.end;
+	}
 
 	/**
 	 * Get smallest interval that contains a and b.

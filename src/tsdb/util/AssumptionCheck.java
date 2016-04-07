@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Methods of this class throw exeption and add an entry in log if an assumtion is false.
+ * Methods of this class throw exceptions and add an entry in log if an assumtion is false.
  * @author woellauer
  *
  */

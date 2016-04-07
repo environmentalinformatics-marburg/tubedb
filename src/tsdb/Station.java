@@ -161,7 +161,7 @@ public class Station {
 		}
 		for(NamedInterval namedInterval:corrected) {
 			if(namedInterval.covers(fileTimeInterval)) {
-				log.warn("sensor name corrected in "+stationID+"    "+rawName+" -> "+namedInterval.name);
+				log.info("sensor name corrected in "+stationID+"    "+rawName+" -> "+namedInterval.name);
 				return namedInterval.name;
 			}
 		}

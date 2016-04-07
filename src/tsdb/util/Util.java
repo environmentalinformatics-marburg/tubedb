@@ -4,6 +4,7 @@ import static tsdb.util.AssumptionCheck.throwNulls;
 
 import java.io.File;
 import java.lang.reflect.Array;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import org.ini4j.Wini;
  *
  */
 public final class Util {
+	public static final Charset CHARSET_UTF_8 = Charset.forName("UTF-8");
 	
 	private Util(){}
 
@@ -441,6 +443,41 @@ public final class Util {
 		}
 		return result;
 	}
+	
+	/**
+	 * transforms an array of strings to string with removed null elements.
+	 * @param a
+	 * @return
+	 */
+	public static String arrayToStringNullable(String[] a) {
+		if(a == null) {
+			return "[]";
+		}
+
+		int iMax = a.length - 1;
+		if (iMax == -1) {
+			return "[ ]";
+		}
+
+		StringBuilder b = new StringBuilder();
+		b.append('[');
+		for (int i = 0; ; i++) {			
+			if(a[i]==null) {
+			} else {
+				b.append(String.valueOf(a[i]));
+			}
+			if (i == iMax) {
+				return b.append(']').toString();
+			}
+			if(a[i+1]==null) {
+				//b.append(',');
+				b.append(' ');
+			} else {
+				//b.append(", ");
+				b.append(' ');
+			}
+		}
+	}
 
 	public static String arrayToString(int[] array) {
 		String result = "";
@@ -546,7 +583,12 @@ public final class Util {
 		return diff/1000+"."+h+z+e+" s";
 	}
 	
-	public static byte[] removeComments(byte[] data) {
+	/**
+	 * remove block comments from data.
+	 * @param data in UTF-8 with block comments
+	 * @return converted String
+	 */
+	public static String removeComments(byte[] data) {
 		byte[] result = new byte[data.length];
 		final byte c0 = '/';
 		final byte c1 = '*';
@@ -573,10 +615,10 @@ public final class Util {
 				result[r++] = data[i++];
 			}
 		}
-		if(!inComment) {
+		if(!inComment && i<=size_max) {
 			result[r++] = data[i++];
 		}
-		return result;		
+		return new String(result, 0, r, CHARSET_UTF_8);
 	}
 	
 	/**

@@ -5,6 +5,7 @@ import java.nio.file.Path;
 
 import tsdb.util.TimeUtil;
 import tsdb.util.TsSchema;
+import tsdb.util.Util;
 import tsdb.util.iterator.TimestampSeries;
 
 /**
@@ -49,6 +50,30 @@ public class SourceEntry implements Serializable {
 	
 	public String getStationName() {
 		return stationName;
+	}
+	
+	public String getFullPath() {
+		return path+'/'+filename;
+	}
+	
+	public String getTranslation() {
+		if(headerNames.length==0 || sensorNames.length==0) {
+			return (headerNames.length==0?'?':Util.arrayToStringNullable(headerNames))+"->"+(sensorNames.length==0?'?':Util.arrayToStringNullable(sensorNames));
+		} else {
+			String[] translation = new String[headerNames.length];
+			for (int i = 0; i < headerNames.length; i++) {
+				if(headerNames[i].equals(sensorNames[i])) {
+					translation[i] = headerNames[i];
+				} else {
+					if(sensorNames[i]==null) {
+						translation[i] = '<'+headerNames[i]+'>';
+					} else {
+						translation[i] = headerNames[i]+"->"+sensorNames[i];
+					}
+				}
+			}			
+			return Util.arrayToStringNullable(translation);
+		}		
 	}
 
 }
