@@ -8,26 +8,18 @@ package tsdb.util;
  * @param <A>
  * @param <B>
  */
-public final class Pair<A,B> {
-	
+public class Pair<A,B> {
+
 	public final A a;
 	public final B b;
-	
+
 	public Pair(A a, B b) {
 		this.a = a;
 		this.b = b;
 	}
-	
+
 	public static <A,B> Pair<A, B> of(A a, B b) {
 		return new Pair<A, B>(a,b);
-	}
-	
-	public static <A,B> A projA(Pair<A,B> p) {
-		return p.a;
-	}
-	
-	public static <A,B> B projB(Pair<A, B> p) {
-		return p.b;
 	}
 
 	@Override
@@ -53,5 +45,29 @@ public final class Pair<A,B> {
 	@Override
 	public String toString() {
 		return String.format("Pair [a=%s, b=%s]", a, b);
+	}
+	
+	public A getA() {
+		return a;
+	}
+
+	public B getB() {
+		return b;
+	}
+	
+	public static <A,B> A projA(Pair<A,B> p) {
+		return p.a;
+	}
+
+	public static <A,B> B projB(Pair<A, B> p) {
+		return p.b;
+	}
+
+	public ConstValue<A> observableA() {
+		return ()->a;
+	}
+	
+	public ConstValue<B> observableB() {
+		return ()->b;
 	}
 }

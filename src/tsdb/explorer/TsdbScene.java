@@ -73,7 +73,7 @@ public abstract class TsdbScene {
 
 	protected abstract Parent createContent();
 
-	public void show() {
+	public final void show() {
 		stage.show();
 		onShown();
 	}

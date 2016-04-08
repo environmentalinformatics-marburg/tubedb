@@ -26,6 +26,14 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.ini4j.Profile.Section;
+
+import com.sun.javafx.binding.StringConstant;
+
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.util.Callback;
+
 import org.ini4j.Wini;
 
 /**
@@ -637,6 +645,5 @@ public final class Util {
 		T[] result = Arrays.copyOf(array, array.length+1);
 		result[array.length] = e;
 		return result;
-	}
-	
+	}	
 }

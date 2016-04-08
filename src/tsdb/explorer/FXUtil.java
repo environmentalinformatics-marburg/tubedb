@@ -1,13 +1,20 @@
 package tsdb.explorer;
 
+import java.util.function.Function;
+
+import com.sun.javafx.binding.StringConstant;
+
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import tsdb.StationProperties;
 import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
+import tsdb.util.Util;
 
 public final class FXUtil {
 	
@@ -34,6 +41,22 @@ public final class FXUtil {
 				super.setText(TimeUtil.oleMinutesToText(item));
 			}
 		}			
+	}
+	
+	public static <T> Callback<CellDataFeatures<T, String>, ObservableValue<String>> getCellValueFactory(Function<T, String> extractor) {
+		return (CellDataFeatures<T, String> c)-> StringConstant.valueOf(extractor.apply(c.getValue()));
+	}
+	
+	public static <T> Callback<CellDataFeatures<T, String>, ObservableValue<String>> getCellValueFactoryObservable(Function<T, ObservableValue<String>> extractor) {
+		return (CellDataFeatures<T, String> c)-> extractor.apply(c.getValue());
+	}
+	
+	public static <T> void setColumnExtractor(TableColumn<T,String> column, Function<T, String> extractor) {
+		column.setCellValueFactory(getCellValueFactory(extractor));
+	}
+	
+	public static <T> void setColumnObservableExtractor(TableColumn<T,String> column, Function<T, ObservableValue<String>> extractor) {
+		column.setCellValueFactory(getCellValueFactoryObservable(extractor));
 	}
 
 }

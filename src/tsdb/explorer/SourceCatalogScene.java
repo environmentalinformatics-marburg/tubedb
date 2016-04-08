@@ -48,7 +48,6 @@ import tsdb.util.TsSchema;
  *
  */
 public class SourceCatalogScene extends TsdbScene {
-
 	private static final Logger log = LogManager.getLogger();
 
 	private final RemoteTsDB tsdb;
@@ -64,7 +63,7 @@ public class SourceCatalogScene extends TsdbScene {
 
 	private TableView<SourceItem> table;
 	private Label lblPlaceHolder;
-	
+
 	private Label lblStatus;
 
 	private final Region regionAll = new Region("[all]","[all]");
@@ -87,7 +86,7 @@ public class SourceCatalogScene extends TsdbScene {
 			}
 		};
 	}
-	
+
 	private void onTableClick(MouseEvent e) {
 		if(e.getClickCount()==2) {
 			SourceItem item = table.getSelectionModel().getSelectedItem();
@@ -104,6 +103,7 @@ public class SourceCatalogScene extends TsdbScene {
 			ClipboardContent content = new ClipboardContent();
 			content.putString(s);
 			Clipboard.getSystemClipboard().setContent(content);
+			new SourceItemScene(item).show();	
 		}
 	}
 
@@ -155,7 +155,7 @@ public class SourceCatalogScene extends TsdbScene {
 		TableColumn<SourceItem,Integer> colColumns = new TableColumn<SourceItem,Integer>("columns");		
 		colColumns.setCellValueFactory(param->ObjectConstant.valueOf(param.getValue().sourceEntry.headerNames.length));
 		colColumns.setMinWidth(10);
-		
+
 		TableColumn<SourceItem,String> colHeader = new TableColumn<SourceItem,String>("header");		
 		colHeader.setCellValueFactory(param->ObjectConstant.valueOf(Arrays.toString(param.getValue().sourceEntry.headerNames)));
 		colHeader.setComparator(String.CASE_INSENSITIVE_ORDER);
@@ -285,7 +285,7 @@ public class SourceCatalogScene extends TsdbScene {
 
 			setRegions(regions);
 			setYears();
-			
+
 			lblPlaceHolder.setText("no content");
 			updateStatus(null);
 
@@ -295,11 +295,11 @@ public class SourceCatalogScene extends TsdbScene {
 			regions = new Region[0];
 		}
 	}
-	
+
 	private void updateStatus(Observable observable) {
 		lblStatus.setText(""+filteredList.size()+" entries");
 	}
-	
+
 	private static final Integer yearAll = 0;
 
 	private void setYears() {
@@ -401,14 +401,14 @@ public class SourceCatalogScene extends TsdbScene {
 				}
 			}
 		}
-		
+
 		if(year!=null && year!=yearAll) {
 			filteredList.setPredicate(predicateStation.and(new PredicateYear(year)));
 		} else {
 			filteredList.setPredicate(predicateStation);
 		}	
 	}
-	
+
 	private static class PredicateYear implements Predicate<SourceItem> {
 		private final Interval yearInterval;
 		public PredicateYear(Integer year) {			
