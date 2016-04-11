@@ -88,7 +88,7 @@ public class ImportSaOwn {
 			}
 			Station station = tsdb.getStation(timestampseries.name);
 			if(station==null) {
-				log.error("station not found "+timestampseries.name);
+				log.error("station not found "+timestampseries.name+"   in "+filePath);
 				return;
 			}
 			

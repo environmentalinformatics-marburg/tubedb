@@ -48,7 +48,11 @@ body {display: flex; flex-direction: column; height: 100%;}
 .center {flex:none;}
 .main {background-color:#f6f6f6;}
 
-.plotlabels {background-color:#bbbbbb; opacity:0.6;}
+.plotlabels {
+	background-color:#bbbbbb;
+	opacity:0.6;
+	border: 1px solid blue;
+}
 </style>
 </head>
 <body>
@@ -70,7 +74,7 @@ body {display: flex; flex-direction: column; height: 100%;}
 <div class="center">
 <h1>Map of Plots</h1>
 <div class="input_entity" id="div_plots_select">
-<label>Plots</label>
+<label>Region</label>
 <div class="input_element">
 <select id="plots_select" class="blockable"></select>
 </div>
@@ -99,8 +103,11 @@ body {display: flex; flex-direction: column; height: 100%;}
 <h2>Help</h2>
 On this page you can view plots positioned at a geographic map.
 <br>
+<br>Use the region control at the top to select one region of plots.
 <br>Use mouse-wheel or (+)/(-) buttons to zoom in and out.
 <br>Drag mouse (move the mouse with pressed left mouse button) to move the map view.
+<br>Plot positions are denoted with one red dot and a circle around it with a color that shows the time since last update. You may need to zoom in to see it.
+<br>The labels of each plot show the plot name and the number of days since last update in comparison to the most recently updated plot.
 <hr>
 </div>
 <div id="map-canvas"></div>
