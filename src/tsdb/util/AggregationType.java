@@ -7,15 +7,17 @@ package tsdb.util;
  */
 public enum AggregationType {	
 	NONE,	// no aggregation
-	AVERAGE,
-	SUM,
-	AVERAGE_WIND_DIRECTION, // special aggregation for wind direction
+	AVERAGE, // average of values
+	SUM, // sum of values
+	AVERAGE_WIND_DIRECTION, // special average aggregation for wind direction
 	AVERAGE_WIND_VELOCITY,  // helper tag for calculation of AVERAGE_WIND_DIRECTION
-	MINIMUM,
-	MAXIMUM,
-	AVERAGE_ZERO, //average aggregation type, NaN values are interpreted as 0
-	AVERAGE_ALBEDO,
-	SUM_SUNSHINE;
+	MINIMUM, // minimum of values
+	MAXIMUM, // maximum of values
+	AVERAGE_ZERO, // average of values, NaN values are interpreted as zero
+	AVERAGE_ALBEDO, // average of values, special base aggregation for albedo
+	SUM_SUNSHINE, // average of values, special base aggregation for sunshine (SD)
+	SUM_OF_AVERAGE, // sum of values, average for base aggregation
+	SUM_RADIATION; // sum of values, special average for base aggregation - used for radiation sensors ( W/m^2 -> Wh/m^2)
 
 	public static AggregationType getAggregationType(String aggregateTypeText) {
 		switch(aggregateTypeText.toLowerCase()) {
@@ -37,8 +39,12 @@ public enum AggregationType {
 			return AVERAGE_ALBEDO;
 		case "none":
 			return NONE;
-		case "sum_sunshine":
+		case "sum_sunshine":			
 			return SUM_SUNSHINE;
+		case "sum_of_average":
+			return SUM_OF_AVERAGE;
+		case "sum_radiation":
+			return SUM_RADIATION;						
 		default:
 			return null;
 		}
