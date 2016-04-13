@@ -43,7 +43,7 @@ public class VirtualPlotStationRawSource extends RawSource.Abstract {
 			throw new RuntimeException("no schema");
 		}
 		if(!station.isValidSchema(sensorNames)) { // no virtual sensors in raw !
-			throw new RuntimeException("not valid schema: "+Util.arrayToString(sensorNames)+" in "+Util.arrayToString(station.getSchema())); 
+			throw new RuntimeException("not valid schema: "+Util.arrayToString(sensorNames)+" in "+Util.arrayToString(station.getSensorNames())); 
 		}
 	}
 
@@ -66,7 +66,7 @@ public class VirtualPlotStationRawSource extends RawSource.Abstract {
 
 	public static VirtualPlotStationRawSource of(TsDB tsdb, VirtualPlot virtualPlot, Station station, String[] querySchema) {	
 		if(querySchema==null) {
-			querySchema = station.getSchema();
+			querySchema = station.getSensorNames();
 		}
 		return new VirtualPlotStationRawSource(tsdb, virtualPlot, station, querySchema);
 	}

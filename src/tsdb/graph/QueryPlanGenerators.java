@@ -15,7 +15,7 @@ import tsdb.graph.node.ContinuousGen;
 import tsdb.graph.node.Node;
 import tsdb.graph.node.NodeGen;
 import tsdb.graph.processing.Aggregated;
-import tsdb.graph.processing.ElementCopy;
+import tsdb.graph.processing.ElementRawCopy;
 import tsdb.graph.processing.EmpiricalFiltered_NEW;
 import tsdb.graph.processing.Mask;
 import tsdb.graph.processing.PeakSmoothed;
@@ -65,13 +65,19 @@ public final class QueryPlanGenerators {
 			}			
 			if(DataQuality.Na!=dataQuality) {
 				rawSource = RangeStepFiltered.of(tsdb, rawSource, dataQuality);
-			}
-			if(Util.containsString(schema, "sunshine")) {
-				rawSource = Sunshine.of(tsdb, rawSource);
-			}
+			}			
+			rawSource = rawProcessing(tsdb, rawSource, schema);
 			//rawSource = elementCopy(rawSource, schema);
 			return rawSource;
 		};
+	}
+	
+	public static Node rawProcessing(TsDB tsdb, Node rawSource, String[] schema) {
+		rawSource = elementRawCopy(rawSource);
+		if(Util.containsString(schema, "SD")) {
+			rawSource = Sunshine.of(tsdb, rawSource);
+		}
+		return rawSource;
 	}
 
 	/**
@@ -80,7 +86,31 @@ public final class QueryPlanGenerators {
 	 * @param source 
 	 * @return 
 	 */
-	public static Continuous elementCopy(Continuous source) {
+	public static Node elementRawCopy(Node source) {
+		String[] schema = source.getSchema();
+		if(Util.containsString(schema, "Ta_200_min") 
+				|| Util.containsString(schema, "Ta_200_max")
+				|| Util.containsString(schema, "rH_200_min") 
+				|| Util.containsString(schema, "rH_200_max")) {
+			List<Action> actions = new ArrayList<>();
+			if(Util.containsString(schema, "Ta_200_min")) {
+				actions.add(Action.of(schema, "Ta_200", "Ta_200_min"));
+			}
+			if(Util.containsString(schema, "Ta_200_max")) {
+				actions.add(Action.of(schema, "Ta_200", "Ta_200_max"));
+			}
+			if(Util.containsString(schema, "rH_200_min")) {
+				actions.add(Action.of(schema, "rH_200", "rH_200_min"));
+			}
+			if(Util.containsString(schema, "rH_200_max")) {
+				actions.add(Action.of(schema, "rH_200", "rH_200_max"));
+			}				
+			source = ElementRawCopy.of(source, actions.toArray(new Action[0]));
+		}
+		return source;
+	}
+	
+	/*public static Continuous elementCopy(Continuous source) {
 		String[] schema = source.getSchema();
 		if(Util.containsString(schema, "Ta_200_min") 
 				|| Util.containsString(schema, "Ta_200_max")
@@ -102,7 +132,7 @@ public final class QueryPlanGenerators {
 			source = ElementCopy.of(source, actions.toArray(new Action[0]));
 		}
 		return source;
-	}
+	}*/
 
 	/**
 	 * Creates a generator of a continuous source.

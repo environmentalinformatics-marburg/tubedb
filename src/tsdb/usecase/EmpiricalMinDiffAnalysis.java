@@ -76,7 +76,7 @@ public class EmpiricalMinDiffAnalysis {
 				.limit(6)
 				.map(p->{
 					log.info(p.getPlotID());				
-					String[] validSensorNames = p.getValidSensorNames(new String[]{sensorName});
+					String[] validSensorNames = p.getValidSchemaEntries(new String[]{sensorName});
 					if(validSensorNames.length==0) {
 						return null;
 					}

@@ -829,8 +829,8 @@ public class TimeSeriesDiagram {
 			tsp.setColorYScaleText();
 			tsp.drawText(valueText,pos,y,posType,PosVerical.CENTER);
 			if(scale_right) {
-				//tsp.drawText(valueText,diagramMaxX+2,y,PosHorizontal.LEFT,PosVerical.CENTER); //big numbers get clipped
-				tsp.drawText(valueText,diagramMaxX+borderRight,y,PosHorizontal.RIGHT,PosVerical.CENTER); //no clipping
+				tsp.drawText(valueText,diagramMaxX+2,y,PosHorizontal.LEFT,PosVerical.CENTER); //big numbers get clipped
+				//tsp.drawText(valueText,diagramMaxX+borderRight,y,PosHorizontal.RIGHT,PosVerical.CENTER); //no clipping
 			}
 			line+=lineStep;
 			debug_counter++;

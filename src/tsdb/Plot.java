@@ -15,9 +15,11 @@ public interface Plot {
 	String getPlotID();
 	boolean existData(String sensorName);
 	boolean existData();
-	default String[] getValidSensorNames(String[] querySchema) {
+	default String[] getValidSchemaEntries(String[] querySchema) {
 		return Util.getValidEntries(querySchema, getSensorNames());
 	}
+	
+	String[] getValidSchemaEntriesWithVirtualSensors(String[] querySchema);
 	
 	public static Real of(Station station) {
 		return new Real(station);
@@ -42,7 +44,7 @@ public interface Plot {
 		}
 		@Override
 		public String[] getSensorNames() {
-			return station.getSchema();
+			return station.getSensorNames();
 		}
 		@Override
 		public boolean existData() {
@@ -51,6 +53,10 @@ public interface Plot {
 		@Override
 		public boolean existData(String sensorName) {
 			return station.existData(sensorName);
+		}
+		@Override
+		public String[] getValidSchemaEntriesWithVirtualSensors(String[] querySchema) {
+			return station.getValidSchemaEntriesWithVirtualSensors(querySchema);
 		}
 	}
 		
@@ -69,7 +75,7 @@ public interface Plot {
 		}
 		@Override
 		public String[] getSensorNames() {
-			return virtualPlot.getSchema();
+			return virtualPlot.getSensorNames();
 		}
 		@Override
 		public boolean existData() {
@@ -78,6 +84,10 @@ public interface Plot {
 		@Override
 		public boolean existData(String sensorName) {
 			return virtualPlot.existData(sensorName);
+		}
+		@Override
+		public String[] getValidSchemaEntriesWithVirtualSensors(String[] querySchema) {
+			return virtualPlot.getValidSchemaEntriesWithVirtualSensors(querySchema);
 		}
 	}
 }

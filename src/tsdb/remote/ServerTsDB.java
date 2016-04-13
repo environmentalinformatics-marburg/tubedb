@@ -68,11 +68,11 @@ public class ServerTsDB implements RemoteTsDB {
 		}
 		VirtualPlot virtualPlot = tsdb.getVirtualPlot(plotID);
 		if(virtualPlot!=null) {
-			return tsdb.includeVirtualSensorNames(virtualPlot.getSchema());
+			return tsdb.includeVirtualSensorNames(virtualPlot.getSensorNames());
 		}
 		Station station = tsdb.getStation(plotID);
 		if(station!=null) {
-			return tsdb.includeVirtualSensorNames(station.getSchema());
+			return tsdb.includeVirtualSensorNames(station.getSensorNames());
 
 		}
 		log.warn("plotID not found "+plotID);
@@ -94,11 +94,11 @@ public class ServerTsDB implements RemoteTsDB {
 		TreeSet<String> sensorNameSet = new TreeSet<String>();
 
 		for(Station station:generalStation.stationList) {
-			sensorNameSet.addAll(Arrays.asList(station.getSchema()));
+			sensorNameSet.addAll(Arrays.asList(station.getSensorNames()));
 		}
 
 		for(VirtualPlot virtualPlot:generalStation.virtualPlots) {
-			sensorNameSet.addAll(Arrays.asList(virtualPlot.getSchema()));
+			sensorNameSet.addAll(Arrays.asList(virtualPlot.getSensorNames()));
 		}		
 
 		return tsdb.includeVirtualSensorNames(sensorNameSet.toArray(new String[sensorNameSet.size()])); 

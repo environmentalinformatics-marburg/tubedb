@@ -100,7 +100,7 @@ public class Interpolated extends Continuous.Abstract {
 	 */
 	public static Continuous createFromStation(TsDB tsdb, Station station, String[] querySchema, ContinuousGen sourceGen) {
 		if(querySchema==null) {
-			querySchema = station.getSchema();
+			querySchema = station.getSensorNames();
 		} else {
 			querySchema = station.getValidSchemaEntriesWithVirtualSensors(querySchema);
 		}
@@ -138,7 +138,7 @@ public class Interpolated extends Continuous.Abstract {
 	 */
 	public static Continuous createFromVirtual(TsDB tsdb, VirtualPlot virtualPlot, String[] querySchema, ContinuousGen sourceGen) {
 		if(querySchema==null) {
-			querySchema = virtualPlot.getSchema();
+			querySchema = virtualPlot.getSensorNames();
 		} else {
 			querySchema = virtualPlot.getValidSchemaEntries(querySchema);
 		}

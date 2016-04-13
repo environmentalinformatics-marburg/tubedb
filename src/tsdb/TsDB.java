@@ -551,11 +551,11 @@ public class TsDB implements AutoCloseable {
 	public String[] getSensorNamesOfPlot(String plotID) {
 		VirtualPlot virtualPlot = getVirtualPlot(plotID);
 		if(virtualPlot!=null) {
-			return virtualPlot.getSchema();
+			return virtualPlot.getSensorNames();
 		}
 		Station station = getStation(plotID);
 		if(station!=null) {
-			return station.getSchema();
+			return station.getSensorNames();
 		}		
 		String[] parts = plotID.split(":"); // structure plotID:stationID
 		if(parts.length!=2) {
@@ -563,7 +563,7 @@ public class TsDB implements AutoCloseable {
 		}
 		station = getStation(parts[1]);
 		if(station!=null) {
-			return station.getSchema();
+			return station.getSensorNames();
 		}
 		
 		return null;
@@ -662,7 +662,7 @@ public class TsDB implements AutoCloseable {
 				if(additionalSensorNames==null) {
 					additionalSensorNames = new ArrayList<String>();
 				}
-				additionalSensorNames.add("sunshine");
+				additionalSensorNames.add("SD");
 			}
 			if(name.equals("Ta_200")) {
 				if(additionalSensorNames==null) {
@@ -697,7 +697,7 @@ public class TsDB implements AutoCloseable {
 		if(schemaMap.containsKey("WD")&&!schemaMap.containsKey("WV")) {
 			additionalSensorNames.add("WV");
 		}
-		if(schemaMap.containsKey("sunshine")&&!schemaMap.containsKey("Rn_300")) {
+		if(schemaMap.containsKey("SD")&&!schemaMap.containsKey("Rn_300")) {
 			additionalSensorNames.add("Rn_300");
 		}
 		

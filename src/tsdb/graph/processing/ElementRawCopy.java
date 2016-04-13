@@ -3,29 +3,30 @@ package tsdb.graph.processing;
 import static tsdb.util.AssumptionCheck.throwNull;
 
 import tsdb.Station;
-import tsdb.TsDB;
 import tsdb.VirtualPlot;
 import tsdb.graph.node.Node;
-import tsdb.iterator.SunshineIterator;
+import tsdb.iterator.ElementCopyIterator;
+import tsdb.iterator.ElementCopyIterator.Action;
 import tsdb.util.iterator.TsIterator;
 
 /**
- * Virtual sensor Sunshine calculates sunshine duration from source (Rn_300)
+ * Node: calculates sunshine duration from source (Rn_300)
  * @author woellauer
  *
  */
-public class Sunshine extends Node.Abstract{
-	
+public class ElementRawCopy implements Node {
+
 	private final Node source;
-	
-	protected Sunshine(TsDB tsdb,Node source) {
-		super(tsdb);
-		throwNull(source);
+	private final Action[] actions;
+
+	protected ElementRawCopy(Node source,Action[] actions) {
+		throwNull(actions);
 		this.source = source;
+		this.actions = actions;
 	}
-	
-	public static Sunshine of(TsDB tsdb,Node source) {
-		return new Sunshine(tsdb, source);
+
+	public static ElementRawCopy of(Node source, Action[] actions) {
+		return new ElementRawCopy(source, actions);
 	}
 
 	@Override
@@ -33,8 +34,8 @@ public class Sunshine extends Node.Abstract{
 		TsIterator input_iterator = source.get(start, end);
 		if(input_iterator==null||!input_iterator.hasNext()) {
 			return null;
-		}			
-		return new SunshineIterator(input_iterator);
+		}
+		return new ElementCopyIterator(input_iterator, actions);
 	}
 
 	@Override
@@ -56,12 +57,12 @@ public class Sunshine extends Node.Abstract{
 	public String[] getSchema() {
 		return source.getSchema();
 	}
-	
+
 	@Override
 	public VirtualPlot getSourceVirtualPlot() {
 		return source.getSourceVirtualPlot();
 	}
-	
+
 	@Override
 	public long[] getTimestampInterval() {
 		return source.getTimestampInterval();

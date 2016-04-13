@@ -189,22 +189,22 @@ public class Station {
 
 	public String[] getValidSchemaEntries(String[] querySchema) {		
 		//return Util.getValidEntries(querySchema, loggerType.sensorNames);
-		return Util.getValidEntries(querySchema, getSchema());
+		return Util.getValidEntries(querySchema, getSensorNames());
 	}
 
 	public String[] getValidSchemaEntriesWithVirtualSensors(String[] querySchema) {		
 		//return Util.getValidEntries(querySchema, loggerType.sensorNames);
-		return Util.getValidEntries(querySchema, tsdb.includeVirtualSensorNames(getSchema()));
+		return Util.getValidEntries(querySchema, tsdb.includeVirtualSensorNames(getSensorNames()));
 	}
 
 	public boolean isValidSchema(String[] querySchema) {
 		//return !(querySchema==null||querySchema.length==0||!Util.isContained(querySchema, loggerType.sensorNames));
-		return !(querySchema==null||querySchema.length==0||!Util.isContained(querySchema, getSchema()));
+		return !(querySchema==null||querySchema.length==0||!Util.isContained(querySchema, getSensorNames()));
 	}
 
 	public boolean isValidSchemaWithVirtualSensors(String[] querySchema) {
 		//return !(querySchema==null||querySchema.length==0||!Util.isContained(querySchema, loggerType.sensorNames));
-		return !(querySchema==null||querySchema.length==0||!Util.isContained(querySchema, tsdb.includeVirtualSensorNames(getSchema())));
+		return !(querySchema==null||querySchema.length==0||!Util.isContained(querySchema, tsdb.includeVirtualSensorNames(getSensorNames())));
 	}
 
 	public boolean isValidBaseSchema(String[] querySchema) {
@@ -249,7 +249,7 @@ public class Station {
 	 * Get sensor names of station.
 	 * @return array of all sensor names that contain time series data. Empty array if there is no data.
 	 */
-	public @NotNull String[] getSchema() {
+	public @NotNull String[] getSensorNames() {
 		/*String[] sensorSet = null;
 		if(tsdb.streamStorage.existStation(stationID)) {
 			sensorSet = tsdb.streamStorage.getSensorNames(stationID);

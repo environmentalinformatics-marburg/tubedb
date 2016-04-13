@@ -18,7 +18,7 @@ import tsdb.util.iterator.TsIterator;
 public class SunshineIterator extends InputIterator {
 	
 	private int Rn_300_pos = -1;
-	private int sunshine_pos = -1;	
+	private int SD_pos = -1;	
 
 	public SunshineIterator(TsIterator input_iterator) {
 		super(input_iterator, input_iterator.getSchema());
@@ -28,11 +28,11 @@ public class SunshineIterator extends InputIterator {
 			if(names[i].equals("Rn_300")) {
 				Rn_300_pos = i;
 			}
-			if(names[i].equals("sunshine")) {
-				sunshine_pos = i;
+			if(names[i].equals("SD")) {
+				SD_pos = i;
 			}
 		}
-		AssumptionCheck.throwTrue(Rn_300_pos<0||sunshine_pos<0,"no Rn_300 or sunshine for SunshineIterator");		
+		AssumptionCheck.throwTrue(Rn_300_pos<0||SD_pos<0,"no Rn_300 or SD for SunshineIterator");		
 	}
 
 	@Override
@@ -45,11 +45,11 @@ public class SunshineIterator extends InputIterator {
 		TsEntry entry = input_iterator.next();
 		float[] data = Arrays.copyOf(entry.data, entry.data.length);
 		float value = entry.data[Rn_300_pos];
-		data[sunshine_pos] = Float.isNaN(value)?Float.NaN:(value>=120?1f:0f);
+		data[SD_pos] = Float.isNaN(value)?Float.NaN:(value>=120?1f:0f);
 		DataQuality[] qf;
 		if(entry.qualityFlag!=null) {
 			qf = Arrays.copyOf(entry.qualityFlag, entry.qualityFlag.length);
-			qf[sunshine_pos] = entry.qualityFlag[Rn_300_pos];
+			qf[SD_pos] = entry.qualityFlag[Rn_300_pos];
 		} else {
 			qf = null;
 		}

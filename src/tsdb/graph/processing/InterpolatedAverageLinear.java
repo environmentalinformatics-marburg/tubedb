@@ -74,7 +74,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 		Continuous[] trainingSources = source.getSourcePlot().getNearestPlots()
 				.limit(MAX_TRAINING_PLOT_COUNT)
 				.map(p->{
-					String[] validSchema = p.getValidSensorNames(interpolationSchema);
+					String[] validSchema = p.getValidSchemaEntriesWithVirtualSensors(interpolationSchema);
 					if(validSchema.length==0) {
 						return null;
 					}

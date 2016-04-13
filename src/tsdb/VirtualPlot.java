@@ -69,7 +69,7 @@ public class VirtualPlot {
 	 * Creates schema of this plot that is union of all attributes of stations that are attached to this plot with some time interval.
 	 * @return null if there are no intervals
 	 */
-	public String[] getSchema() {
+	public String[] getSensorNames() {
 		if(intervalList.isEmpty()) {
 			return new String[0]; //empty schema
 		}
@@ -86,7 +86,7 @@ public class VirtualPlot {
 				log.warn("station not found "+stationName);
 				continue;
 			}
-			String[] sensorNames = station.getSchema();
+			String[] sensorNames = station.getSensorNames();
 			sensorNameSet.addAll(Arrays.asList(sensorNames));
 		}
 
@@ -112,11 +112,11 @@ public class VirtualPlot {
 	}
 
 	public String[] getValidSchemaEntries(String[] querySchema) {
-		return Util.getValidEntries(querySchema, getSchema());
+		return Util.getValidEntries(querySchema, getSensorNames());
 	}
 	
 	public String[] getValidSchemaEntriesWithVirtualSensors(String[] querySchema) {
-		return Util.getValidEntries(querySchema, tsdb.includeVirtualSensorNames(getSchema()));
+		return Util.getValidEntries(querySchema, tsdb.includeVirtualSensorNames(getSensorNames()));
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class VirtualPlot {
 	 */
 	public List<TimestampInterval<StationProperties>> getStationList(Long queryStart, Long queryEnd, String[] schema) {		
 		if(schema==null) {
-			schema = getSchema();
+			schema = getSensorNames();
 		}
 
 		ArrayList<TimestampInterval<StationProperties>> tempList = new ArrayList<TimestampInterval<StationProperties>>(intervalList); // because ConcurrentModificationException
@@ -203,7 +203,7 @@ public class VirtualPlot {
 			if(stationID!=null) {
 				Station station = tsdb.getStation(stationID);
 				if(station!=null) {
-					String[] stationSchema = station.getSchema();
+					String[] stationSchema = station.getSensorNames();
 					if(schemaOverlaps(stationSchema,schema)) {
 						if(overlaps(queryStart, queryEnd, interval.start, interval.end)) {
 							resultIntervalList.add(interval);
@@ -304,7 +304,7 @@ public class VirtualPlot {
 
 	public boolean isValidSchema(String[] querySchema) {
 		throwNull((Object)querySchema);
-		String[] schema = getSchema();
+		String[] schema = getSensorNames();
 		if(schema==null) {
 			return false;
 		}
@@ -313,7 +313,7 @@ public class VirtualPlot {
 	
 	public boolean isValidSchemaWithVirtualSensors(String[] querySchema) {
 		throwNull((Object)querySchema);
-		String[] schema = getSchema();
+		String[] schema = getSensorNames();
 		if(schema==null) {
 			return false;
 		}

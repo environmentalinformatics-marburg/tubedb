@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
@@ -184,7 +185,7 @@ public class Handler_query_image extends MethodHandler {
 			}*/
 			String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, sensorNames);
 			if(sensorNames.length!=validSchema.length) {
-				log.info("sensorName not in plot: "+plot+"  "+sensorName);
+				log.info("sensorName not in plot: "+plot+"  "+sensorName+"    "+Arrays.toString(sensorNames)+"   "+Arrays.toString(validSchema));
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);				
 				return;
 			}
