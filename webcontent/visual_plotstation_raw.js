@@ -392,7 +392,7 @@ function addDiagram(plotName, sensorName, sensorDesc, sensorUnit, boxplot, width
 	incTask();
 	var sensorResult = getID("div_result").appendChild(document.createElement("div"));
 	var sensorResultTitle = sensorResult.appendChild(document.createElement("div"));
-	sensorResultTitle.innerHTML += "query "+sensorName+"...";
+	sensorResultTitle.innerHTML += "query "+plotName+"   "+sensorName+"...";
 	var aggregationName = aggregation_select.val();
 	var qualityName = "step";
 	var qualityName = quality_name[quality_select.val()];
@@ -428,7 +428,7 @@ function addHeatmap(plotName, sensorName, sensorDesc, sensorUnit) {
 	var sensorResult = getID("div_result").appendChild(document.createElement("div"));
 	var sensorResultTitle = sensorResult.appendChild(document.createElement("div"));
 	var sensorResultScale = sensorResult.appendChild(document.createElement("div"));
-	sensorResultTitle.innerHTML += "query "+sensorName+"...";
+	sensorResultTitle.innerHTML += "query "+plotName+"   "+sensorName+"...";
 	var aggregationName = aggregation_select.val();
 	var qualityName = "step";
 	var qualityName = quality_name[quality_select.val()];

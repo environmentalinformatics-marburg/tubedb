@@ -798,7 +798,8 @@ public class TimeSeriesDiagram {
 
 	private void drawYScale(TimeSeriesPainter tsp, float lineStart, double lineStep) {
 		float line = lineStart;
-		while(line<=diagramMaxValue) {			
+		int debug_counter = 0; //TODO remove
+		while(line<=diagramMaxValue && debug_counter<100) {			
 			int y = calcDiagramY(line);
 			tsp.setColorYScaleLine();
 			tsp.drawLine(diagramMinX-1 , y, diagramMaxX, y);			
@@ -828,9 +829,11 @@ public class TimeSeriesDiagram {
 			tsp.setColorYScaleText();
 			tsp.drawText(valueText,pos,y,posType,PosVerical.CENTER);
 			if(scale_right) {
-				tsp.drawText(valueText,diagramMaxX+2,y,PosHorizontal.LEFT,PosVerical.CENTER);
+				//tsp.drawText(valueText,diagramMaxX+2,y,PosHorizontal.LEFT,PosVerical.CENTER); //big numbers get clipped
+				tsp.drawText(valueText,diagramMaxX+borderRight,y,PosHorizontal.RIGHT,PosVerical.CENTER); //no clipping
 			}
 			line+=lineStep;
+			debug_counter++;
 		}		
 	}
 
