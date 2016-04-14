@@ -34,48 +34,49 @@ public final class QueryPlanGenerators {
 	private QueryPlanGenerators(){} 
 
 	/**
-	 * creates a generator of a station raw data with quality check
+	 * creates a generator of a station raw data with raw processing (quality check) and processing on not aggregated data (tfi)
 	 * @param tsdb
 	 * @param dataQuality
 	 * @return
 	 */
 	public static NodeGen getStationGen(TsDB tsdb, DataQuality dataQuality) {
-		return (String stationID, String[] schema)->{
+		return (String stationID, String[] schema)->{			
 			Station station = tsdb.getStation(stationID);
 			if(station==null) {
-				throw new RuntimeException("station not found");
+				throw new RuntimeException("station not found: "+stationID);
 			}
-			boolean virtual_P_RT_NRT = false;
-			if(station.generalStation!=null && station.generalStation.region.name.equals("BE") && Util.containsString(schema, "P_RT_NRT")) {
-				virtual_P_RT_NRT = true;				
-				if(!Util.containsString(schema, "P_container_RT")) {
-					schema = Util.concat(schema,"P_container_RT");
-				}
-			}
-			Node rawSource = StationRawSource.of(tsdb, stationID, schema);
-			log.trace("get raw source "+Arrays.toString(schema));
-			if(DataQuality.Na!=dataQuality && DataQuality.NO!=dataQuality) {
-				rawSource = Mask.of(tsdb, rawSource);
-			}
-			if(virtual_P_RT_NRT) {
-				rawSource = Virtual_P_RT_NRT.of(tsdb, rawSource);
-			}
+			schema = stationSchemaSupplement(tsdb, station, schema);
+			Node rawSource = StationRawSource.of(tsdb, stationID, schema);									
+			rawSource = rawProcessing(tsdb, rawSource, schema, dataQuality);			
 			if(station.loggerType.typeName.equals("tfi")) {
 				rawSource = PeakSmoothed.of(rawSource);
-			}			
-			if(DataQuality.Na!=dataQuality) {
-				rawSource = RangeStepFiltered.of(tsdb, rawSource, dataQuality);
-			}			
-			rawSource = rawProcessing(tsdb, rawSource, schema);
-			//rawSource = elementCopy(rawSource, schema);
+			}
 			return rawSource;
 		};
 	}
 	
-	public static Node rawProcessing(TsDB tsdb, Node rawSource, String[] schema) {
+	public static String[] stationSchemaSupplement(TsDB tsdb, Station station, String[] schema) {		
+		if(station.generalStation!=null && station.generalStation.region.name.equals("BE") && Util.containsString(schema, "P_RT_NRT")) {
+			if(!Util.containsString(schema, "P_container_RT")) {
+				return Util.concat(schema,"P_container_RT");
+			}
+		}
+		return schema;		
+	}
+
+	public static Node rawProcessing(TsDB tsdb, Node rawSource, String[] schema, DataQuality dataQuality) {
+		if(DataQuality.Na!=dataQuality) {
+			if(DataQuality.NO!=dataQuality) {
+				rawSource = Mask.of(tsdb, rawSource);
+			}
+			rawSource = RangeStepFiltered.of(tsdb, rawSource, dataQuality);
+		}
 		rawSource = elementRawCopy(rawSource);
 		if(Util.containsString(schema, "SD")) {
 			rawSource = Sunshine.of(tsdb, rawSource);
+		}
+		if(Util.containsString(schema, "P_RT_NRT") && Util.containsString(schema, "P_container_RT")) {
+			rawSource = Virtual_P_RT_NRT.of(tsdb, rawSource);
 		}
 		return rawSource;
 	}
@@ -109,7 +110,7 @@ public final class QueryPlanGenerators {
 		}
 		return source;
 	}
-	
+
 	/*public static Continuous elementCopy(Continuous source) {
 		String[] schema = source.getSchema();
 		if(Util.containsString(schema, "Ta_200_min") 

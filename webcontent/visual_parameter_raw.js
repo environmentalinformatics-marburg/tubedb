@@ -18,6 +18,7 @@ var aggregation_text = ["raw","hour","day","week","month","year"];
 var aggregation_raw_text = ["raw"];
 var quality_name = ["no", "physical", "step", "empirical"];
 var quality_text = ["0: no","1: physical","2: physical + step","3: physical + step + empirical"];
+var quality_raw_text = ["0: no","1: physical","2: physical + step"];
 var type_raw_text = ["graph"];
 var type_hour_text = ["graph","heatmap"];
 var type_high_aggregated_text = ["graph","boxplot"];
@@ -118,8 +119,8 @@ function document_ready() {
 	
 	updateRegions();
 	updateTimeYears();
-	//updateAggregations();
-	updateQualities();
+	//updateAggregations(); //moved
+	//updateQualities(); //moved
 	updateTypes();
 	updateMagnification();
 	updateHeight();
@@ -572,12 +573,13 @@ function onTimeYearChange() {
 
 function onAggregationChange() {
 	if(aggregation_select.val()=="raw") {
-		$("#div_quality_select").hide();
+		//$("#div_quality_select").hide();
 		$("#div_interpolation").hide();
 	} else {
-		$("#div_quality_select").show();
+		//$("#div_quality_select").show();
 		$("#div_interpolation").show();
 	}
+	updateQualities();
 	updateTypes();
 }
 
@@ -612,8 +614,15 @@ function updateTypes() {
 }
 
 function updateQualities() {
-	$.each(quality_text, function(i,text) {quality_select.append(new Option(text,i));});
-	quality_select.val(2);
+	var prefQ = (quality_select.val()==undefined)?2:quality_select.val();
+	quality_select.empty();
+	if(aggregation_select.val()=="raw") {
+		$.each(quality_raw_text, function(i,text) {quality_select.append(new Option(text,i));});
+		quality_select.val(prefQ>2?2:prefQ);
+	} else {
+		$.each(quality_text, function(i,text) {quality_select.append(new Option(text,i));});
+		quality_select.val(prefQ);
+	}
 }
 
 function updateMagnification() {
