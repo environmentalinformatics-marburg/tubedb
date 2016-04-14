@@ -44,10 +44,10 @@ public class SupplementHandler extends AbstractHandler {
 		Html html = new Html();
 
 		Css css = html.css;
-		css.addLine("body", "background-color:#f6f6f6", "margin:0px");
+		css.addLine("body", "background-color:#f6f6f6", "margin:0px", "font-size: 0.9em", "font-family: sans-serif");
 		css.addLine("table", "background-color:#dddddd");
 		css.addLine("div.bg", "background-image:url(../content/timeseries_bg3.png)","background-position:top left","background-size:100%");
-		css.addLine("h1", "text-align:center", "margin:0px");
+		css.addLine("h1", "text-align:center", "margin:0px", "font-size: 2.5em", "font-family: serif");
 		css.addLine("#top_line", "display:table", "width:100%");
 		//#top_line_left {display: table-cell; text-align: left; }
 		css.addLine("#top_line_right", "display:table-cell", "text-align:right");
