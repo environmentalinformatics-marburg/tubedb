@@ -16,6 +16,7 @@ import tsdb.remote.RemoteTsDB;
 import tsdb.util.TimeUtil;
 
 public class Handler_source_catalog_csv extends MethodHandler {	
+	@SuppressWarnings("unused")
 	private static final Logger log = LogManager.getLogger();
 
 	public Handler_source_catalog_csv(RemoteTsDB tsdb) {

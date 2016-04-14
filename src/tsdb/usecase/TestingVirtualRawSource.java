@@ -2,7 +2,7 @@ package tsdb.usecase;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
-import tsdb.graph.node.RawSource;
+import tsdb.graph.source.RawSource;
 import tsdb.util.iterator.TsIterator;
 
 public class TestingVirtualRawSource {

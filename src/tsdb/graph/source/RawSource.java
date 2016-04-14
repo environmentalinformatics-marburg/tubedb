@@ -1,11 +1,10 @@
-package tsdb.graph.node;
+package tsdb.graph.source;
 
 import static tsdb.util.AssumptionCheck.throwNull;
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.VirtualPlot;
-import tsdb.graph.source.StationRawSource;
-import tsdb.graph.source.VirtualRawSource;
+import tsdb.graph.node.Node;
 
 /**
  * Interface Node: raw source

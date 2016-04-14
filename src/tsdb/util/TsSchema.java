@@ -162,7 +162,7 @@ public class TsSchema implements Serializable {
 	}
 	
 	public void throwNoQualityFlags() {
-		throwFalse(hasQualityFlags,"input has no qualityflags");
+		throwFalse(hasQualityFlags,"input does not have qualityflags");
 	}
 	
 	public void throwNoInterpolatedFlags() {

@@ -3,7 +3,6 @@ package tsdb.explorer;
 import java.util.function.Function;
 
 import javafx.scene.control.TableColumn;
-import tsdb.util.Util;
 
 /**
  * Column of type String

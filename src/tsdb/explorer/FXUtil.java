@@ -14,7 +14,6 @@ import javafx.util.Callback;
 import tsdb.StationProperties;
 import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
-import tsdb.util.Util;
 
 public final class FXUtil {
 	

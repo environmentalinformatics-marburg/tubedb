@@ -26,14 +26,6 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.ini4j.Profile.Section;
-
-import com.sun.javafx.binding.StringConstant;
-
-import javafx.beans.value.ObservableValue;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.util.Callback;
-
 import org.ini4j.Wini;
 
 /**

@@ -176,7 +176,7 @@ public class TsDB implements AutoCloseable {
 		}
 		return sensors;
 	}
-	
+
 	/**
 	 * Get stream of sensors.
 	 * @param names
@@ -354,7 +354,7 @@ public class TsDB implements AutoCloseable {
 	public Sensor getSensor(String sensorName) {
 		return sensorMap.get(sensorName);
 	}
-	
+
 	public Sensor getOrCreateSensor(String sensorName) {
 		Sensor sensor = sensorMap.get(sensorName);
 		if(sensor==null) {
@@ -506,7 +506,7 @@ public class TsDB implements AutoCloseable {
 		}
 		sensor.baseAggregationType = aggregateType;
 	}
-	
+
 	public void insertRawSensor(String sensorName) {
 		Sensor sensor = getSensor(sensorName);
 		if(sensor==null) {
@@ -536,7 +536,7 @@ public class TsDB implements AutoCloseable {
 	public Set<String> getBaseAggregationSensorNames() {
 		return baseAggregationSensorNameSet;
 	}
-	
+
 	public boolean isBaseSchema(String[] schema) {
 		for(String sensorName:schema) {
 			if(!baseAggregationSensorNameSet.contains(sensorName)) {
@@ -565,11 +565,11 @@ public class TsDB implements AutoCloseable {
 		if(station!=null) {
 			return station.getSensorNames();
 		}
-		
+
 		return null;
 	}
-	
-	
+
+
 	public String[] getValidSchema(String plotID, String[] schema) {
 		VirtualPlot virtualPlot = getVirtualPlot(plotID);
 		if(virtualPlot!=null) {
@@ -587,10 +587,10 @@ public class TsDB implements AutoCloseable {
 		if(station!=null) {
 			return station.getValidSchemaEntries(schema);
 		}
-		
+
 		throw new RuntimeException("plotID not found: "+plotID);
 	}
-	
+
 	public String[] getValidSchemaWithVirtualSensors(String plotID, String[] schema) {
 		VirtualPlot virtualPlot = getVirtualPlot(plotID);
 		if(virtualPlot!=null) {
@@ -608,7 +608,7 @@ public class TsDB implements AutoCloseable {
 		if(station!=null) {
 			return station.getValidSchemaEntriesWithVirtualSensors(schema);
 		}
-		
+
 		throw new RuntimeException("plotID not found: "+plotID);
 	}
 
@@ -646,7 +646,7 @@ public class TsDB implements AutoCloseable {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * add appropriate virtual sensors to given schema
 	 * @param schema (nullable) (if null returns null)
@@ -656,43 +656,48 @@ public class TsDB implements AutoCloseable {
 		if(schema==null) {
 			return null;
 		}
-		ArrayList<String> additionalSensorNames = null;
-		for(String name:schema) {
-			if(name.equals("Rn_300")) {
-				if(additionalSensorNames==null) {
-					additionalSensorNames = new ArrayList<String>();
-				}
-				additionalSensorNames.add("SD");
-			}
-			if(name.equals("Ta_200")) {
-				if(additionalSensorNames==null) {
-					additionalSensorNames = new ArrayList<String>();
-				}
+		Map<String, Integer> schemaMap = Util.stringArrayToMap(schema);
+		LinkedHashSet<String> additionalSensorNames = new LinkedHashSet<>(); // no duplicates		
+		if(schemaMap.containsKey("Rn_300")&&!schemaMap.containsKey("SD")) {
+			additionalSensorNames.add("SD");
+		}		
+		if(schemaMap.containsKey("Ta_200")) {
+			if(!schemaMap.containsKey("Ta_200_min")) {
 				additionalSensorNames.add("Ta_200_min");
+			}
+			if(!schemaMap.containsKey("Ta_200_max")) {
 				additionalSensorNames.add("Ta_200_max");
 			}
-			if(name.equals("rH_200")) {
-				if(additionalSensorNames==null) {
-					additionalSensorNames = new ArrayList<String>();
-				}
+		}
+		if(schemaMap.containsKey("rH_200")) {
+			if(!schemaMap.containsKey("rH_200_min")) {
 				additionalSensorNames.add("rH_200_min");
+			}
+			if(!schemaMap.containsKey("rH_200_max")) {
 				additionalSensorNames.add("rH_200_max");
 			}
 		}
-		if(additionalSensorNames==null) {
+		if(schemaMap.containsKey("P_container_RT")&&!schemaMap.containsKey("P_RT_NRT")) {
+			additionalSensorNames.add("P_RT_NRT");
+		}
+		if(additionalSensorNames.isEmpty()) {
 			return schema;
 		} else {
 			return Stream.concat(Arrays.stream(schema), additionalSensorNames.stream()).toArray(String[]::new);			
 		}
 	}
-	
+
+	/**
+	 * Add sensors that are needed for virtual sensor processing in schema
+	 * @param schema with virtual sensors
+	 * @return schema + additional sensors
+	 */
 	public String[] supplementSchema(String... schema) {
 		if(schema==null) {
 			return null;
 		}
-		
+
 		Map<String, Integer> schemaMap = Util.stringArrayToMap(schema);
-		//ArrayList<String> additionalSensorNames = new ArrayList<String>();
 		LinkedHashSet<String> additionalSensorNames = new LinkedHashSet<>(); // no duplicates
 		if(schemaMap.containsKey("WD")&&!schemaMap.containsKey("WV")) {
 			additionalSensorNames.add("WV");
@@ -700,22 +705,26 @@ public class TsDB implements AutoCloseable {
 		if(schemaMap.containsKey("SD")&&!schemaMap.containsKey("Rn_300")) {
 			additionalSensorNames.add("Rn_300");
 		}
-		
+
 		if(schemaMap.containsKey("Ta_200_min")&&!schemaMap.containsKey("Ta_200")) {
 			additionalSensorNames.add("Ta_200");
 		}
-		
+
 		if(schemaMap.containsKey("Ta_200_max")&&!schemaMap.containsKey("Ta_200")) {
 			additionalSensorNames.add("Ta_200");
 		}
-		
+
 		if(schemaMap.containsKey("rH_200_min")&&!schemaMap.containsKey("rH_200")) {
 			additionalSensorNames.add("rH_200");
 		}
-		
+
 		if(schemaMap.containsKey("rH_200_max")&&!schemaMap.containsKey("rH_200")) {
 			additionalSensorNames.add("rH_200");
 		}
+
+		/*if(schemaMap.containsKey("P_RT_NRT")&&!schemaMap.containsKey("P_container_RT")) { // P_RT_NRT is not always virtual
+			additionalSensorNames.add("P_container_RT");
+		}*/
 
 		if(additionalSensorNames.isEmpty()) {
 			return schema;

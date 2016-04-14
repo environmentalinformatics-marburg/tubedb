@@ -278,9 +278,9 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 					break;
 				case SUM_RADIATION:
 					resultData[i] = aggSum[i]/(aggCnt[i]*1000);
-					if(resultData[i]<0f) {
+					/*if(resultData[i]<0f) { //negative values may be valid
 						resultData[i] = 0f;
-					}
+					}*/
 					validValueCounter++;
 					columnEntryCounter[i]++;
 					break;

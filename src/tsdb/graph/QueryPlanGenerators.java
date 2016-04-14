@@ -1,7 +1,6 @@
 package tsdb.graph;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +29,7 @@ import tsdb.util.DataQuality;
 import tsdb.util.Util;
 
 public final class QueryPlanGenerators {
+	@SuppressWarnings("unused")
 	private static final Logger log = LogManager.getLogger();	
 	private QueryPlanGenerators(){} 
 
@@ -65,13 +65,13 @@ public final class QueryPlanGenerators {
 	}
 
 	public static Node rawProcessing(TsDB tsdb, Node rawSource, String[] schema, DataQuality dataQuality) {
+		rawSource = elementRawCopy(rawSource);
 		if(DataQuality.Na!=dataQuality) {
 			if(DataQuality.NO!=dataQuality) {
 				rawSource = Mask.of(tsdb, rawSource);
 			}
 			rawSource = RangeStepFiltered.of(tsdb, rawSource, dataQuality);
 		}
-		rawSource = elementRawCopy(rawSource);
 		if(Util.containsString(schema, "SD")) {
 			rawSource = Sunshine.of(tsdb, rawSource);
 		}

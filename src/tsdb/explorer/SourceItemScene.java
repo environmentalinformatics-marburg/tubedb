@@ -12,12 +12,12 @@ import tsdb.component.SourceEntry;
 import tsdb.util.Pair;
 import tsdb.util.StringPair;
 import tsdb.util.TimeUtil;
-import tsdb.util.Util;
 
 /**
  * Detail view of one SourceItem
  */
 public class SourceItemScene extends TsdbScene {
+	@SuppressWarnings("unused")
 	private static final Logger log = LogManager.getLogger();
 	
 	private final SourceItem sourceItem;

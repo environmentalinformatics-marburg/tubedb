@@ -70,7 +70,12 @@ public interface Node {
 		}
 		it.writeCSV(filename);
 		return true;
-	}	
+	}
+	
+	public default void writeConsole() {
+		writeConsole(null, null);
+	}
+	
 	public default void writeConsole(Long start, Long end) {
 		get(start,end).writeConsole();
 	}
