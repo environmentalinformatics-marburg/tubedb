@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Request;
 
 import tsdb.remote.RemoteTsDB;
+import tsdb.util.gui.ImageRGBA;
 import tsdb.util.gui.TimeSeriesHeatMap;
 import tsdb.util.gui.TimeSeriesPainterGraphics2D;
 
@@ -55,7 +56,8 @@ public class Handler_heatmap_scale extends MethodHandler {
 			}
 
 			try {
-				ImageIO.write(bufferedImage, "png", response.getOutputStream());
+				//ImageIO.write(bufferedImage, "png", response.getOutputStream());
+				ImageRGBA.ofBufferedImage(bufferedImage).writePngCompressed(response.getOutputStream());
 				response.setStatus(HttpServletResponse.SC_OK);
 			} catch (IOException e) {
 				log.error(e);

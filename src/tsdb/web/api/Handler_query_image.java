@@ -23,6 +23,7 @@ import tsdb.remote.RemoteTsDB;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataQuality;
 import tsdb.util.TimeUtil;
+import tsdb.util.gui.ImageRGBA;
 import tsdb.util.gui.TimeSeriesDiagram;
 import tsdb.util.gui.TimeSeriesPainterGraphics2D;
 import tsdb.util.iterator.TimestampSeries;
@@ -262,7 +263,7 @@ public class Handler_query_image extends MethodHandler {
 
 			try {
 				response.setStatus(HttpServletResponse.SC_OK);
-				ImageIO.write(bufferedImage, "png", response.getOutputStream());
+				//ImageIO.write(bufferedImage, "png", response.getOutputStream());
 				//ImageIO.write(bufferedImage, "jpg", response.getOutputStream());
 				/*{
 					ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
@@ -274,6 +275,8 @@ public class Handler_query_image extends MethodHandler {
 					writer.write(null, image, iwp);
 					writer.dispose();
 				}*/
+				//ImageRGBA.ofBufferedImage(bufferedImage).writePngUncompressed(response.getOutputStream());
+				ImageRGBA.ofBufferedImage(bufferedImage).writePngCompressed(response.getOutputStream());
 			} catch (IOException e) {
 				log.error(e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

@@ -18,6 +18,7 @@ import tsdb.remote.RemoteTsDB;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataQuality;
 import tsdb.util.TimeUtil;
+import tsdb.util.gui.ImageRGBA;
 import tsdb.util.gui.TimeSeriesHeatMap;
 import tsdb.util.gui.TimeSeriesPainterGraphics2D;
 import tsdb.util.iterator.TimestampSeries;
@@ -165,7 +166,8 @@ public class Handler_query_heatmap extends MethodHandler {
 			tshm.leftField(tsp,0,0,xDiagramMin-1,imageHeight-1);
 
 			try {
-				ImageIO.write(bufferedImage, "png", response.getOutputStream());
+				//ImageIO.write(bufferedImage, "png", response.getOutputStream());
+				ImageRGBA.ofBufferedImage(bufferedImage).writePngCompressed(response.getOutputStream());
 				response.setStatus(HttpServletResponse.SC_OK);
 			} catch (IOException e) {
 				log.error(e);
