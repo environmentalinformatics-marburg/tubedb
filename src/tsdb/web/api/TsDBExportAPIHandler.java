@@ -38,6 +38,15 @@ import tsdb.util.Pair;
 import tsdb.web.api.ExportModel.TimespanType;
 import tsdb.web.util.WebUtil;
 
+/**
+ * Web API handler to export serveral time series as ZIP-file.
+ * <p>
+ * Settings of export can be modifiedt by several calls to this handler.
+ * <br>
+ * State is preserved by session cooky.
+ * @author woellauer
+ *
+ */
 public class TsDBExportAPIHandler extends AbstractHandler {
 
 	private static final Logger log = LogManager.getLogger();

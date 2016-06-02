@@ -60,6 +60,11 @@ public final class TimeUtil implements Serializable {
 		return oleMinutesToDateTimeFileText(Long.valueOf(oleTimeMinutes));
 	}
 
+	/**
+	 * convertes timestamp to text that is usable as part of a filename
+	 * @param oleTimeMinutes invalid timestamps (null or < 0 ) are handled by placeholder text
+	 * @return
+	 */
 	public static String oleMinutesToDateTimeFileText(Long oleTimeMinutes) {
 		if(oleTimeMinutes==null||oleTimeMinutes==-1) {
 			return "xxxx_xx_xx";
@@ -189,11 +194,21 @@ public final class TimeUtil implements Serializable {
 		}
 	}
 
+	/**
+	 * Get timestamp of start of the year at timestamp.
+	 * @param timestamp
+	 * @return
+	 */
 	public static int roundLowerYear(int timestamp) {
 		LocalDateTime datetime = oleMinutesToLocalDateTime(timestamp);
 		return (int) dateTimeToOleMinutes(LocalDateTime.of(datetime.getYear(),1,1,0,0));
 	}
 
+	/**
+	 * Get timestamp of start of next year following year of timestamp.
+	 * @param timestamp
+	 * @return
+	 */
 	public static int roundNextYear(int timestamp) {
 		LocalDateTime datetime = oleMinutesToLocalDateTime(timestamp);
 		return (int) dateTimeToOleMinutes(LocalDateTime.of(datetime.getYear()+1,1,1,0,0));

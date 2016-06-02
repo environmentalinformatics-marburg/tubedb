@@ -24,6 +24,32 @@ import tsdb.util.Table;
 import tsdb.util.Table.ColumnReaderInt;
 import tsdb.util.Table.ColumnReaderString;
 
+/**
+ * Get list of plots with name and long name.
+ * <p>
+ * Parameter: 
+ * <br>
+ * (optional) region
+ * <br>
+ * (optional) generalstation
+ * <br>
+ * (optional) comment: value of year to query comments of.
+ * <p>
+ * Either region or generalstation needs to be set to filter plots.
+ * <p>
+ * Returns one plot per row with columns:
+ * <br>
+ * 1. plot name
+ * <br>
+ * 2. plot category (normal, vip)
+ * <br>
+ * 3. logger type name or virtual (if plot is not identical with station)
+ * <br>
+ * 4. (if parameter comment was set) comment for this plot as text  
+ * 
+ * @author woellauer
+ *
+ */
 public class Handler_plot_list extends MethodHandler {	
 	private static final Logger log = LogManager.getLogger();
 

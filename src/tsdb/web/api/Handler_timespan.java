@@ -17,6 +17,14 @@ import tsdb.remote.RemoteTsDB;
 import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
 
+/**
+ * Get timespan of timeseries data.
+ * <p>
+ * Deprecated: use "status" instead
+ * @author woellauer
+ *
+ */
+@Deprecated
 public class Handler_timespan extends MethodHandler {	
 	private static final Logger log = LogManager.getLogger();
 

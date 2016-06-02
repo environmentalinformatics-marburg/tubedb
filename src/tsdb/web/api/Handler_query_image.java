@@ -28,6 +28,29 @@ import tsdb.util.gui.TimeSeriesDiagram;
 import tsdb.util.gui.TimeSeriesPainterGraphics2D;
 import tsdb.util.iterator.TimestampSeries;
 
+/**
+ * Get timeseries data as image with diagram or boxplot.
+ * <p>
+ * parameters:
+ * <br>
+ * plot
+ * <br>
+ * sensor
+ * <br>
+ * (optional defaults to hour) aggregation
+ * <br>
+ * (optional defaults to false) boxplot
+ * <br>
+ * (optional defaults to step) quality
+ * <br>
+ * (optional defaults to false) interpolated
+ * <br>
+ * (optional defaults to all years) year
+ * <br>
+ * (optional defaults to full year) month 
+ * @author woellauer
+ *
+ */
 public class Handler_query_image extends MethodHandler {	
 	private static final Logger log = LogManager.getLogger();
 	

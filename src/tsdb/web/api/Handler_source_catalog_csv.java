@@ -15,6 +15,15 @@ import tsdb.component.SourceEntry;
 import tsdb.remote.RemoteTsDB;
 import tsdb.util.TimeUtil;
 
+/**
+ * Get information about time series data files that have been imported into database.
+ * <p>
+ * returns: CSV-file with one file-entry per row and first row as header:
+ * <br>
+ * station,first,last,rows,timestep,translation,filename,path  
+ * @author woellauer
+ *
+ */
 public class Handler_source_catalog_csv extends MethodHandler {	
 	@SuppressWarnings("unused")
 	private static final Logger log = LogManager.getLogger();

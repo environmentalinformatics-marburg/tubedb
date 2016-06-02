@@ -17,6 +17,13 @@ import tsdb.util.gui.ImageRGBA;
 import tsdb.util.gui.TimeSeriesHeatMap;
 import tsdb.util.gui.TimeSeriesPainterGraphics2D;
 
+/**
+ * Get color scale of heatmap as image.
+ * <p>
+ * parameter: sensor
+ * @author woellauer
+ *
+ */
 public class Handler_heatmap_scale extends MethodHandler {	
 	private static final Logger log = LogManager.getLogger();
 

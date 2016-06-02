@@ -28,6 +28,11 @@ import tsdb.remote.RemoteTsDB;
 import tsdb.util.Pair;
 import tsdb.web.util.WebUtil;
 
+/**
+ * Central web API class, that dispatches requests to method handlers.
+ * @author woellauer
+ *
+ */
 public class TsDBAPIHandler extends AbstractHandler {
 
 	private static final Logger log = LogManager.getLogger();
@@ -43,15 +48,15 @@ public class TsDBAPIHandler extends AbstractHandler {
 		addMethodHandler(new Handler_generalstation_list(tsdb));
 		addMethodHandler(new Handler_plot_list(tsdb));
 		addMethodHandler(new Handler_sensor_list(tsdb));
-		addMethodHandler(new Handler_query(tsdb));
 		addMethodHandler(new Handler_query_image(tsdb));
 		addMethodHandler(new Handler_query_heatmap(tsdb));
 		addMethodHandler(new Handler_query_csv(tsdb));
-		addMethodHandler(new Handler_timespan(tsdb));
 		addMethodHandler(new Handler_heatmap_scale(tsdb));
 		addMethodHandler(new Handler_plotstation_list(tsdb));
 		addMethodHandler(new Handler_status(tsdb));
 		addMethodHandler(new Handler_source_catalog_csv(tsdb));
+		addMethodHandler(new Handler_query(tsdb));
+		addMethodHandler(new Handler_timespan(tsdb));
 	}
 
 	private void addMethodHandler(MethodHandler methodHandler) {

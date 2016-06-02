@@ -18,6 +18,11 @@ import tsdb.util.AggregationInterval;
 import tsdb.util.DataQuality;
 import tsdb.util.Pair;
 
+/**
+ * Encapsulates process of creating ZIP-file bases on ExportModel settings.
+ * @author woellauer
+ *
+ */
 public class ZipExportProxy {
 
 	private static final Logger log = LogManager.getLogger();

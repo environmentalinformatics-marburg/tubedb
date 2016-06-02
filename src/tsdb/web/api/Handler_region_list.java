@@ -16,6 +16,13 @@ import tsdb.TsDBFactory;
 import tsdb.component.Region;
 import tsdb.remote.RemoteTsDB;
 
+/**
+ * Get regions.
+ * <p>
+ * returns: list of region name and long name.
+ * @author woellauer
+ *
+ */
 public class Handler_region_list extends MethodHandler {	
 	private static final Logger log = LogManager.getLogger();
 

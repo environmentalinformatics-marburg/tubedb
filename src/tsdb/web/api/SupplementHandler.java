@@ -21,6 +21,11 @@ import tsdb.web.generator.Css;
 import tsdb.web.generator.Html;
 import tsdb.web.generator.Tag;
 
+/**
+ * Provides additional user defined files within web ui.
+ * @author woellauer
+ *
+ */
 public class SupplementHandler extends AbstractHandler {
 	private static final Logger log = LogManager.getLogger();
 

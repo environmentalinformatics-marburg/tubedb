@@ -18,6 +18,17 @@ import tsdb.remote.PlotStatus;
 import tsdb.remote.RemoteTsDB;
 import tsdb.util.TimeUtil;
 
+/**
+ * Get status information of plots.
+ * <p>
+ * parameters: (optional one of) region or generalstation
+ * <p>
+ * returns: list of plots as JSON array with keys:
+ * <br>
+ * plot, first_timestamp, last_timestamp, first_datetime, last_datetime, voltage, message_date, message
+ * @author woellauer
+ *
+ */
 public class Handler_status extends MethodHandler {	
 	private static final Logger log = LogManager.getLogger();
 	

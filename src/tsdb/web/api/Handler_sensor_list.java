@@ -21,6 +21,17 @@ import tsdb.component.Sensor;
 import tsdb.remote.GeneralStationInfo;
 import tsdb.remote.RemoteTsDB;
 
+/**
+ * Get sensors (parameters).
+ * <p>
+ * parameters:
+ * <br>
+ * (exactly one of) station or plot or general_station or region
+ * <p>
+ * returns: list of sensors with [name],[description],[unit],[aggregation type],[is internal]
+ * @author woellauer
+ *
+ */
 public class Handler_sensor_list extends MethodHandler {	
 	private static final Logger log = LogManager.getLogger();
 

@@ -13,6 +13,15 @@ import org.eclipse.jetty.server.Request;
 
 import tsdb.remote.RemoteTsDB;
 
+/**
+ * Get stations of virtual plot.
+ * <p>
+ * parameter: plot
+ * <p>
+ * returns: list of station names and logger types
+ * @author woellauer
+ *
+ */
 public class Handler_plotstation_list extends MethodHandler {
 	private static final Logger log = LogManager.getLogger();
 

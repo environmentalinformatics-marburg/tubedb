@@ -21,6 +21,33 @@ import tsdb.util.iterator.CSV;
 import tsdb.util.iterator.CSVTimeType;
 import tsdb.util.iterator.TimestampSeries;
 
+/**
+ * Get timeseries data as CSV-file.
+ * <p>
+ * parameters:
+ * <br>
+ * plot
+ * <br>
+ * (one or more times) sensor
+ * <br>
+ * (optional defaults to hour) aggregation
+ * <br>
+ * (optional defaults to step) quality
+ * <br>
+ * (optional defaults to false) interpolated
+ * <br>
+ * (optional defaults to all years) year
+ * <br>
+ * (optional defaults to full year) month 
+ * <p>
+ * returns: 
+ * <br>
+ * first row with header "datetime","sensorname1","sensorname2",...
+ * <br>
+ * following rows with data: e.g. 2012-01-01T00:00,10.2,85.4
+ * @author woellauer
+ *
+ */
 public class Handler_query_csv extends MethodHandler {	
 	private static final Logger log = LogManager.getLogger();
 

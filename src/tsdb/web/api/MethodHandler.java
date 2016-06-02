@@ -7,6 +7,11 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import tsdb.remote.RemoteTsDB;
 
+/**
+ * Base class for web API method handlers.
+ * @author woellauer
+ *
+ */
 public abstract class MethodHandler extends AbstractHandler {
 	
 	protected final RemoteTsDB tsdb;	

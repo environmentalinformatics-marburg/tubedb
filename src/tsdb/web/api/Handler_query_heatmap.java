@@ -23,6 +23,29 @@ import tsdb.util.gui.TimeSeriesHeatMap;
 import tsdb.util.gui.TimeSeriesPainterGraphics2D;
 import tsdb.util.iterator.TimestampSeries;
 
+/**
+ * Get heatmap as image.
+ * <p>
+ * timeseries data of all years or one year or one month is aggregated to hour.
+ * <p>
+ * parameters:
+ * <br>
+ * plot
+ * <br>
+ * sensor
+ * <br>
+ * (optional defaults to step) quality
+ * <br>
+ * (optional defaults to false) interpolated
+ * <br>
+ * (optional defaults to all years) year
+ * <br>
+ * (optional defaults to full year) month 
+ * <p>
+ * 
+ * @author woellauer
+ *
+ */
 public class Handler_query_heatmap extends MethodHandler {	
 	private static final Logger log = LogManager.getLogger();
 

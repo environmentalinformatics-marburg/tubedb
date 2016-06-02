@@ -21,6 +21,14 @@ import tsdb.util.TsEntry;
 import tsdb.util.iterator.TimestampSeries;
 import tsdb.util.iterator.TsIterator;
 
+/**
+ * Get timeseries data.
+ * <p>
+ * Deprecated: use "query_csv" instead
+ * @author woellauer
+ *
+ */
+@Deprecated
 public class Handler_query extends MethodHandler {	
 	private static final Logger log = LogManager.getLogger();
 

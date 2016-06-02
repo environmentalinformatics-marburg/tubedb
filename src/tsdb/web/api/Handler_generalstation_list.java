@@ -15,6 +15,15 @@ import org.eclipse.jetty.server.Request;
 import tsdb.remote.GeneralStationInfo;
 import tsdb.remote.RemoteTsDB;
 
+/**
+ * Get general stations.
+ * <p>
+ * parameter: region
+ * <p>
+ * returns: list of general stations with name and long name.
+ * @author woellauer
+ *
+ */
 public class Handler_generalstation_list extends MethodHandler {	
 	private static final Logger log = LogManager.getLogger();
 
