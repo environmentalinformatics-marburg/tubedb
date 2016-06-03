@@ -5,7 +5,7 @@ import tsdb.util.AggregationType;
 import tsdb.util.iterator.TsIterator;
 
 /**
- * aggregation iterator to week
+ * Aggregate day data to week data.
  * @author woellauer
  *
  */

@@ -7,15 +7,41 @@ import tsdb.util.TsEntry;
 import tsdb.util.iterator.InputIterator;
 import tsdb.util.iterator.TsIterator;
 
+/**
+ * Copies value data to different columns.
+ * <p>
+ * Meta data (quality flags, quality counter, interpolation flag) is copied togehter with values if present.
+ * @author woellauer
+ *
+ */
 public class ElementCopyIterator extends InputIterator {
 
+	/**
+	 * Action defines one copy operation from one column to an other column for all entries in iterator.
+	 * @author woellauer
+	 *
+	 */
 	public static class Action {
 		public final int sourceIndex;
 		public final int targetIndex;
+		
+		/**
+		 * Creates one copy operation with source and target-index.
+		 * @param sourceIndex
+		 * @param targetIndex
+		 */
 		private Action(int sourceIndex, int targetIndex) {
 			this.sourceIndex = sourceIndex;
 			this.targetIndex = targetIndex;
 		}
+		
+		/**
+		 * Creates one copy operation with source and target-column-name.
+		 * @param schema
+		 * @param sourceName
+		 * @param targetName
+		 * @return
+		 */
 		public static Action of(String[] schema, String sourceName, String targetName) {
 			int source = -1;
 			int target = -1;
@@ -36,14 +62,14 @@ public class ElementCopyIterator extends InputIterator {
 
 	private final Action[] actions;	
 
+	/**
+	 * Creates copy iterator with array of copy actions, that are applied to all entries in iterator.
+	 * @param input_iterator
+	 * @param actions
+	 */
 	public ElementCopyIterator(TsIterator input_iterator, Action[] actions) {
 		super(input_iterator, input_iterator.getSchema());
 		this.actions = actions;	
-	}
-
-	@Override
-	public boolean hasNext() {
-		return input_iterator.hasNext();
 	}
 
 	@Override

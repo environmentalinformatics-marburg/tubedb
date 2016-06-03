@@ -22,10 +22,4 @@ public class WeekCollectingAggregator extends AbstractCollectingAggregator {
 	protected boolean isValidAggregate(int collectorCount, AggregationType aggregationType) {
 		return 6<=collectorCount; 
 	}
-
-	@Override
-	public String getProcessingTitle() {
-		return "WeekCollectingAggregator";
-	}
-
 }

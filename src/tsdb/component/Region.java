@@ -25,5 +25,4 @@ public class Region implements Serializable {
 		this.longName = longName;
 		this.viewTimeRange = null;
 	}
-
 }

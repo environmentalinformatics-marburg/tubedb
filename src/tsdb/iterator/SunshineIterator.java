@@ -36,11 +36,6 @@ public class SunshineIterator extends InputIterator {
 	}
 
 	@Override
-	public boolean hasNext() {
-		return input_iterator.hasNext();
-	}
-
-	@Override
 	public TsEntry next() {
 		TsEntry entry = input_iterator.next();
 		float[] data = Arrays.copyOf(entry.data, entry.data.length);

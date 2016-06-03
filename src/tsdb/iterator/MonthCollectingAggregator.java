@@ -30,9 +30,4 @@ public class MonthCollectingAggregator extends AbstractCollectingAggregator {
 	protected boolean isValidAggregate(int collectorCount, AggregationType aggregationType) {
 		return 27<=collectorCount;
 	}
-
-	@Override
-	public String getProcessingTitle() {
-		return "MonthCollectingAggregator";
-	}
 }

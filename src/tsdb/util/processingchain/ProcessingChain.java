@@ -13,6 +13,11 @@ public interface ProcessingChain {
 		return ProcessingChainSource.createUnknown();
 	}
 	
+	/**
+	 * Create processing chain of one source entry
+	 * @param entry
+	 * @return
+	 */
 	public static ProcessingChainSource of(ProcessingChainEntry entry) {
 		return ProcessingChainSource.of(entry);
 	}

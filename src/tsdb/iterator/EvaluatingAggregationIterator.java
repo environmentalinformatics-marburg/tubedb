@@ -103,6 +103,5 @@ public class EvaluatingAggregationIterator extends MoveIterator {
 	@Override
 	public ProcessingChain getProcessingChain() {		
 		return ProcessingChain.of(collectingAggregator,this);
-	}	
-
+	}
 }

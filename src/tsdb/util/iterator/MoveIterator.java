@@ -3,6 +3,15 @@ package tsdb.util.iterator;
 import tsdb.util.TsEntry;
 import tsdb.util.TsSchema;
 
+/**
+ * Time series iterator that stores the current element.
+ * <p>
+ * This iterator my simplify processing iterators.
+ * <br>
+ * Extending classes need to implement getNext() only.
+ * @author woellauer
+ *
+ */
 public abstract class MoveIterator extends TsIterator {
 
 	private TsEntry current = null;
@@ -12,6 +21,9 @@ public abstract class MoveIterator extends TsIterator {
 		super(schema);
 	}
 
+	/**
+	 * redirects processing to getNext()
+	 */
 	@Override
 	public final boolean hasNext() {
 		if(closed) {
@@ -28,6 +40,9 @@ public abstract class MoveIterator extends TsIterator {
 		return true;
 	}
 
+	/**
+	 * redirects processing to getNext()
+	 */
 	@Override
 	public final TsEntry next() {
 		hasNext();
@@ -38,15 +53,22 @@ public abstract class MoveIterator extends TsIterator {
 	}
 
 	/**
-	 * returns null if no more elements
-	 * Guaranteed to not be called again when it first returns null
-	 * Should not be called from deriving classes
+	 * Request next element. 
+	 * <p>
+	 * It's guaranteed to not be called again when it first returns null (no next element).
+	 * <br>
+	 * This method should be called by MoveIterator internal only.
+	 * @return next element or null if there is no next element
 	 */
 	protected abstract TsEntry getNext();
 	
+	/**
+	 * Signals that iterator does not contain a next element. 
+	 * <br>
+	 * So getNext() will not be called again.
+	 */
 	public void close() {
 		current = null;		
 		closed = true;
 	}
-
 }

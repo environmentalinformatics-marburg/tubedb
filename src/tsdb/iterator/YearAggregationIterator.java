@@ -10,7 +10,7 @@ import tsdb.util.TsSchema.Aggregation;
 import tsdb.util.iterator.TsIterator;
 
 /**
- * aggregation iterator to year
+ * Aggregate month data to year data.
  * @author woellauer
  *
  */

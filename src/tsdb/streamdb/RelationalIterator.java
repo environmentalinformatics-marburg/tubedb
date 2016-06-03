@@ -141,6 +141,5 @@ public class RelationalIterator extends TsIterator {
 		}
 		s+=")"+schema.toString();
 		return ProcessingChain.of(ProcessingChainEntry.of(this.getProcessingTitle()+s));
-	}
-	
+	}	
 }

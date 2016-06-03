@@ -16,24 +16,48 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mapdb.Serializer;
 
+/**
+ * Contains list of intervals of time that should be masked out.
+ * <p>
+ * A mask defines parts of time series data that is (manually) marked as invalid data.
+ * @author woellauer
+ *
+ */
 public class TimeSeriesMask implements Externalizable {
 	private static final Logger log = LogManager.getLogger();
 
 	private ArrayList<Interval> intervals;
 
+	/**
+	 * Creates empty mask.
+	 */
 	public TimeSeriesMask() {
 		this(new ArrayList<Interval>());
 	}
 
+	/**
+	 * Creates mask with list of intervals
+	 * @param intervals
+	 */
 	private TimeSeriesMask(ArrayList<Interval> intervals) {
 		throwNull(intervals);
 		this.intervals = intervals;
 	}
 
+	/**
+	 * Get list of intervals.
+	 * @return
+	 */
 	public ArrayList<Interval> getIntervals() {
 		return intervals;
 	}
 
+	/**
+	 * Insert new interval to mask.
+	 * <p>
+	 * Interval is added to list of intervals possibly merged with existing intervals.
+	 * @param interval
+	 */
 	public void addInterval(Interval interval) {
 		log.trace("add "+interval);
 		log.trace("in "+intervals);

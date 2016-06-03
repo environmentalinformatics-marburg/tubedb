@@ -112,11 +112,6 @@ public class DayCollectingAggregator implements CollectingAggregator {
 	}
 
 	@Override
-	public String getProcessingTitle() {
-		return "DayCollectingAggregator";
-	}
-
-	@Override
 	public ProcessingChain getProcessingChain() {		
 		return ProcessingChain.of(input_iterator,this);
 	}

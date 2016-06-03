@@ -45,8 +45,6 @@ public class StreamTsIterator extends TsIterator {
 
 	@Override
 	public TsEntry next() {
-		DataEntry e = input_iterator.next();
-		return new TsEntry(e.timestamp, new float[]{e.value});
+		return TsEntry.of(input_iterator.next());
 	}
-
 }

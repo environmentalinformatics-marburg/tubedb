@@ -15,7 +15,7 @@ import tsdb.util.iterator.InputProcessingIterator;
 import tsdb.util.iterator.TsIterator;
 
 /**
- * Base class for aggregation iterators
+ * Base class for aggregation iterators.
  * @author woellauer
  *
  */

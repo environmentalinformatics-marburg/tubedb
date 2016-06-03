@@ -7,6 +7,11 @@ import tsdb.util.Util;
 import tsdb.util.iterator.InputIterator;
 import tsdb.util.iterator.TsIterator;
 
+/**
+ * Interpolates missing data values in iterator with interpolated data from other iterators with avarege of multiple linear regressions.
+ * @author woellauer
+ *
+ */
 public class InterpolationAverageLinearIterator extends InputIterator {
 	//private static final Logger log = LogManager.getLogger();
 
@@ -15,17 +20,22 @@ public class InterpolationAverageLinearIterator extends InputIterator {
 	private final double[][] slopes;
 	private final int[] posIndex;
 
+	/**
+	 * Creates interpolation iterator.
+	 * @param input_iterator source data entry of which missing data should be filled.
+	 * @param interpolationIterators Array of reference iterators.
+	 * @param intercepts Array of intercepts to reference iterators from linear regression for each column in interpolationSchema.
+	 * <br>intercept == intercepts[interpolationIteratorNo][interpolationSchemaNo]
+	 * @param slopes Array of slopes to reference iterators from linear regression for each column in interpolationSchema.
+	 * <br>slope == slopes[interpolationIteratorNo][interpolationSchemaNo]
+	 * @param interpolationSchema Array of column names that should be interpolated.
+	 */
 	public InterpolationAverageLinearIterator(TsIterator input_iterator, TsIterator[] interpolationIterators, double[][] intercepts, double[][] slopes, String[] interpolationSchema) {
 		super(input_iterator, input_iterator.getSchema());
 		this.interpolationIterators = interpolationIterators;
 		this.intercepts = intercepts;
 		this.slopes = slopes;
 		this.posIndex = Util.stringArrayToPositionIndexArray(interpolationSchema, input_iterator.getNames(), true, true);
-	}
-
-	@Override
-	public boolean hasNext() {
-		return input_iterator.hasNext();
 	}
 
 	@Override

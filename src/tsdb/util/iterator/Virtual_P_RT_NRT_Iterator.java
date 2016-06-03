@@ -10,6 +10,13 @@ import tsdb.util.TsEntry;
 import tsdb.util.TsSchema;
 import tsdb.util.TsSchema.Aggregation;
 
+/**
+ * Specific iterator that calculates current precipitation from rain container sensor (P_container_RT to P_RT_NRT).
+ * <p>
+ * Rain container value errors are recognized by checking delta values.
+ * @author woellauer
+ *
+ */
 public class Virtual_P_RT_NRT_Iterator extends InputIterator {
 	
 	private static float MAX_DELTA = 15;
@@ -41,11 +48,6 @@ public class Virtual_P_RT_NRT_Iterator extends InputIterator {
 		log.info("input_iterator "+this.schema);
 		this.pos_P_container_RT = pos_P_container_RT;
 		this.pos_P_RT_NRT = pos_P_RT_NRT;
-	}
-
-	@Override
-	public boolean hasNext() {
-		return input_iterator.hasNext();
 	}
 
 	@Override

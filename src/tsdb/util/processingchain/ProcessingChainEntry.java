@@ -6,6 +6,10 @@ package tsdb.util.processingchain;
  *
  */
 public interface ProcessingChainEntry {	
+	/**
+	 * get title of this entry
+	 * @return
+	 */
 	String getProcessingTitle();
 	
 	public static ProcessingChainTitle createUnknown() {

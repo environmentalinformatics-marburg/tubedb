@@ -29,9 +29,4 @@ public class YearCollectingAggregator extends AbstractCollectingAggregator {
 	protected boolean isValidAggregate(int collectorCount, AggregationType aggregationType) {
 		return 12==collectorCount; 
 	}
-
-	@Override
-	public String getProcessingTitle() {
-		return "YearCollectingAggregator";
-	}
 }

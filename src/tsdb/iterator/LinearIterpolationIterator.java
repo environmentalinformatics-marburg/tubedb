@@ -8,6 +8,11 @@ import tsdb.util.TsSchema;
 import tsdb.util.iterator.InputProcessingIterator;
 import tsdb.util.iterator.TsIterator;
 
+/**
+ * Linear interpolates one-value-gaps based on previous and next value.
+ * @author woellauer
+ *
+ */
 public class LinearIterpolationIterator extends InputProcessingIterator {
 	private static final Logger log = LogManager.getLogger();
 	

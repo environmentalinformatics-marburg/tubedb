@@ -31,11 +31,6 @@ public class LowQualityToNanIterator extends InputIterator {
 	}
 
 	@Override
-	public boolean hasNext() {
-		return input_iterator.hasNext();
-	}
-
-	@Override
 	public TsEntry next() {
 		TsEntry next = input_iterator.next();
 		float[] data = next.data;

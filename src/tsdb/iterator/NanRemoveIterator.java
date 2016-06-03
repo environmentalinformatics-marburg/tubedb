@@ -8,6 +8,8 @@ import tsdb.util.iterator.TsIterator;
 
 /**
  * Sends only input elements to output that have at least one not NaN-value in data.
+ * <p>
+ * Resulting timestamps may not be continuous because of removed NaN-rows.
  * @author woellauer
  *
  */

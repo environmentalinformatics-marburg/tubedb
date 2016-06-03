@@ -13,6 +13,11 @@ import tsdb.util.TsEntry;
 import tsdb.util.iterator.InputIterator;
 import tsdb.util.iterator.TsIterator;
 
+/**
+ * Replaces data values with NaN-values based on TimeSeriesMask.
+ * @author woellauer
+ *
+ */
 public class MaskIterator extends InputIterator {
 		@SuppressWarnings("unused")
 		private static final Logger log = LogManager.getLogger();
@@ -50,11 +55,6 @@ public class MaskIterator extends InputIterator {
 				currIntervals[i] = null;
 			}
 			return currIntervals[i];
-		}
-
-		@Override
-		public boolean hasNext() {
-			return input_iterator.hasNext();
 		}
 
 		@Override

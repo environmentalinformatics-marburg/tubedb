@@ -71,10 +71,6 @@ public class GroupAverageSource_NEW extends Continuous.Abstract {
 			super(it,createSchema(it.getSchema()));
 		}
 		@Override
-		public boolean hasNext() {
-			return input_iterator.hasNext();
-		}
-		@Override
 		public TsEntry next() {
 			return input_iterator.next();
 		}		

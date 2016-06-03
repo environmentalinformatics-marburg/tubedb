@@ -63,10 +63,6 @@ public class Testing_P_container_RT {
 				data[2] = sumV;
 				prevV = v;
 				return new TsEntry(e.timestamp, data);
-			}			
-			@Override
-			public boolean hasNext() {
-				return it.hasNext();
 			}
 		};
 		

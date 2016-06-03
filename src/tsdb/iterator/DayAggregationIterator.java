@@ -5,7 +5,7 @@ import tsdb.util.AggregationType;
 import tsdb.util.iterator.TsIterator;
 
 /**
- * aggregation iterator to day
+ * Aggregate hour data to day data.
  * @author woellauer
  *
  */

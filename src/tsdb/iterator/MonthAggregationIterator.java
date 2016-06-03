@@ -9,6 +9,11 @@ import tsdb.util.TimeUtil;
 import tsdb.util.TsSchema.Aggregation;
 import tsdb.util.iterator.TsIterator;
 
+/**
+ * Aggregate day data to month data.
+ * @author woellauer
+ *
+ */
 public class MonthAggregationIterator extends AbstractAggregationIterator  {
 
 	public MonthAggregationIterator(TsDB tsdb, TsIterator input_iterator) {

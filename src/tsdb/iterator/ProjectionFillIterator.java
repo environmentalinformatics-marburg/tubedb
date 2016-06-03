@@ -36,11 +36,6 @@ public class ProjectionFillIterator extends InputIterator {
 	}
 
 	@Override
-	public boolean hasNext() {
-		return input_iterator.hasNext();
-	}
-
-	@Override
 	public TsEntry next() {
 		TsEntry element = input_iterator.next();
 		float[] data = new float[schema.length];

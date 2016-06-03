@@ -18,6 +18,10 @@ public class TsEntry implements Serializable {
 	public static TsEntry of(long timestamp, float ... values) {
 		return new TsEntry(timestamp, values);
 	}
+	
+	public static TsEntry of(DataEntry e) {
+		return new TsEntry(e.timestamp, new float[]{e.value});
+	}
 
 	public TsEntry(long timestamp, float[] data, DataQuality[] qualityFlag,int[][] qualityCounter) {
 		this(timestamp, data, qualityFlag, qualityCounter, null);

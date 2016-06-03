@@ -4,7 +4,9 @@ import tsdb.util.TsSchema;
 import tsdb.util.processingchain.ProcessingChain;
 
 /**
- * Base class for iterators that process input from one TimeSeriesIterator
+ * Base class for iterators that process input from one TimeSeriesIterator based stored current element.
+ * <p>
+ * Extending classes need to implement getNext() only.
  * @author woellauer
  *
  */

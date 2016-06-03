@@ -13,14 +13,17 @@ import tsdb.util.Util;
 import tsdb.util.TsSchema.Aggregation;
 import tsdb.util.processingchain.ProcessingChain;
 import tsdb.util.processingchain.ProcessingChainEntry;
+import tsdb.util.processingchain.ProcessingChainNode;
 import tsdb.util.processingchain.ProcessingChainSupplier;
 
 /**
- * time series of aggregated data. time interval between values is constant
+ * Time series of aggregated data. 
+ * <p>
+ * Time interval between values is constant
  * @author woellauer
  *
  */
-public class TimeSeries implements TsIterable, ProcessingChainEntry, ProcessingChainSupplier {
+public class TimeSeries implements TsIterable, ProcessingChainNode {
 	
 	private static final Logger log = LogManager.getLogger();
 
@@ -56,6 +59,16 @@ public class TimeSeries implements TsIterable, ProcessingChainEntry, ProcessingC
 	
 	private ProcessingChain processingChain;
 
+	/**
+	 * Creates TimeSeries filled with data.
+	 * @param processingChainSupplier nullable
+	 * @param parameterNames column names
+	 * @param startTimestamp timestampm of first entry
+	 * @param timeStep time step between entries
+	 * @param data Array of data rows.
+	 * @param dataQuality Array of data quality rows. nullable
+	 * @param dataInterpolated Array of data interpolated flag rows. nullable
+	 */
 	public TimeSeries(ProcessingChainSupplier processingChainSupplier, String[] parameterNames, long startTimestamp, int timeStep, float[][] data, DataQuality[][] dataQuality, boolean[][] dataInterpolated) {
 		//this.processingChain = new NewProcessingChainOneSource(processingChain,new ProcessingChainTitle("TimeSeries"));
 		this.processingChain = ProcessingChain.of(processingChainSupplier,this);
@@ -81,16 +94,11 @@ public class TimeSeries implements TsIterable, ProcessingChainEntry, ProcessingC
 		}		
 	}
 	
-	@Override
-	public String getProcessingTitle() {
-		return "TimeSeries";
-	}
-
 	/**
 	 * Converts elements of an iterator in TimeSeries object.
-	 * Elements need to be in ordered in timeStep time intervals
+	 * <p>
+	 * Elements need to be ordered in constant timeStep time intervals.
 	 * @param input_iterator
-	 * @param timeStep
 	 * @return
 	 */
 	public static TimeSeries create(TsIterator input_iterator) {
@@ -321,6 +329,12 @@ public class TimeSeries implements TsIterable, ProcessingChainEntry, ProcessingC
 		return new InternalClipIterator(null, null);
 	}
 	
+	/**
+	 * Iterator of data from clipStart to clipEnd
+	 * @param clipStart if null then from start
+	 * @param clipEnd if null then up to end
+	 * @return
+	 */
 	public TsIterator timeSeriesIteratorCLIP(Long clipStart, Long clipEnd) {
 		return new InternalClipIterator(clipStart, clipEnd);
 	}
@@ -395,6 +409,11 @@ public class TimeSeries implements TsIterable, ProcessingChainEntry, ProcessingC
 	}*/
 
 
+	/**
+	 * Iterator over (part of) TimeSeries data.
+	 * @author woellauer
+	 *
+	 */
 	private class InternalClipIterator extends TsIterator {
 
 		private int pos;
@@ -447,11 +466,6 @@ public class TimeSeries implements TsIterable, ProcessingChainEntry, ProcessingC
 			}
 		}		
 
-		@Override
-		public String getProcessingTitle() {
-			return "InternalClipIterator";
-		}
-		
 		@Override
 		public ProcessingChain getProcessingChain() {
 			return ProcessingChain.of(TimeSeries.this, this);
