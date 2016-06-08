@@ -34,5 +34,4 @@ public class ProcessingChainTitle implements ProcessingChainEntry {
 	public String toString() {
 		return getProcessingTitle();
 	}
-
 }

@@ -20,6 +20,5 @@ public interface ProcessingChainSupplier {
 	 */
 	public static ProcessingChainSupplier createUnknown() {
 		return ()->ProcessingChain.createUnknown();
-	}
-	
+	}	
 }

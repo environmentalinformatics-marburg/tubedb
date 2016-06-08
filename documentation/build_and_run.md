@@ -1,7 +1,7 @@
 Instructions to build and run TubeDB
 ===
 
-Java 8 and Gradle is required build TubeDB.
+Java 8 and Gradle is required to build TubeDB.
 
 The TubeDB package can be compiled and run on Linux or Windows.
 

@@ -28,12 +28,12 @@ public class RelationalIterator extends TsIterator {
 	@SuppressWarnings("unused")
 	private static final Logger log = LogManager.getLogger();
 
-	private StreamIterator[] iterators;
+	private final StreamIterator[] iterators;
 	private TsEntry curr;
 	private DataEntry[] next;
-	private int[] posIndex;
+	private final int[] posIndex;
 
-	private float[] NAN_DATA;
+	private final float[] NAN_DATA;
 
 	public RelationalIterator(Collection<StreamIterator> iterators, String[] outputSchema) {
 		this(iterators.toArray(new StreamIterator[0]),outputSchema);

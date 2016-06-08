@@ -21,52 +21,76 @@ tasks.withType(JavaCompile){
 }
 
 task clean_package(type: Delete) {
-  delete 'package'
+	description 'delete folder package'
+	delete 'package'
 }
 
 task copy_lib(type: Copy) {
+	description 'copy folder lib to package'
 	from files(configurations.runtime)
     into 'package/lib'
 }
 
 task copy_add(type: Copy) {
+	description 'copy folder add to package'
 	from fileTree('add')
 	into 'package'
 }
 
 task copy_add_windows(type: Copy) {
+	description 'copy folder add_windows to package'
 	from fileTree('add_windows')
 	into 'package'
 }
 
 task copy_add_linux(type: Copy) {
+	description 'copy folder add_linux to package'
 	from fileTree('add_linux')
 	into 'package'
 }
 
 task copy_webcontent(type: Copy) {
+	description 'copy folder webcontent to package'
 	from fileTree('webcontent')
 	into 'package/webcontent'
 }
 
 task copy_build(type: Copy, dependsOn: [jar]) {
+	description 'copy compiled java jar file to package'
 	from fileTree('build/libs')
 	into 'package'
 }
 
 task copy_config(type: Copy, dependsOn: [jar]) {
+	description 'copy folder config to package'
 	from fileTree('config')
 	into 'package/config'
 }
 
 task _build_package(dependsOn:[ clean_package, copy_build, copy_lib, copy_webcontent, copy_add, copy_config, copy_add_linux ]) {
-	group = 'project' 
+	group = 'project'
+	description 'create TubeDB package for Linux'	
 }
 
 task _build_package_windows(dependsOn:[ clean_package, copy_build, copy_lib, copy_webcontent, copy_add, copy_config, copy_add_windows ]) {
-	group = 'project'  
+	group = 'project' 
+	description 'create TubeDB package for Windows'		
 }
 
 task _build_package_linux_windows(dependsOn:[ clean_package, copy_build, copy_lib, copy_webcontent, copy_add, copy_config, copy_add_linux, copy_add_windows ]) {
-	group = 'project'  
+	group = 'project'
+	description 'create TubeDB package for Linux and Windows'	
+}
+
+task _create_javadoc(type: Javadoc) {
+	group = 'project'
+	description 'create javadoc for TubeDB'
+	source = sourceSets.main.allJava
+	destinationDir = file('javadoc')
+	title = 'TubeDB'
+	options.header = 'TubeDB'
+	options.windowTitle = 'TubeDB'
+	options.overview = 'src/overview.html'
+	options.links("http://docs.oracle.com/javase/8/docs/api")
+	options.links("https://docs.oracle.com/javase/8/javafx/api")
 }
