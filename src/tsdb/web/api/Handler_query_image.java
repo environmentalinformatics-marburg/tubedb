@@ -238,7 +238,8 @@ public class Handler_query_image extends MethodHandler {
 			}
 
 			int imageWidth = 1500;
-			int imageHeight = 400;
+			//int imageHeight = 400;
+			int imageHeight = 200;
 
 			String imageWidthText = request.getParameter("width");
 			String imageHeightText = request.getParameter("height");
