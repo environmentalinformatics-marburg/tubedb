@@ -40,6 +40,6 @@ In subfolder `supplement` contained files and folders will be shown at web user 
 
 `tsdb.jar` Compiled TubeDB application.
 
-`tsdb_paths.ini` Configuration of TubeDB.
+`tsdb_paths.ini` Configuration of TubeDB. Included documentation.
 
 
