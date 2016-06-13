@@ -106,12 +106,12 @@ writer class: `tsdb.TimeSeriesArchivWriter`
 ###format specification
 
 data type definitions:
-* *<byte>* one byte
-* *<int>* 32 bit integer (four bytes big-endian)
-* *<packed_int>* packed integer number (one to five bytes): Sequence of bytes. If highest bit of current byte is set then next byte is part of this sequence. Lower 7 bits of byte are used to code value: bn denotes the 7 value bits of byte n:  interger value == b1 | (b2<<7) | (b3<<14)
-* *<text>*  sequence of characters coded by count of characters followed by characters as bytes: *<packed_int>* *<byte>* *<byte>* *<byte>* ...
-* marker is coded as *<text>*
-* *<float>* IEEE 754 single-precision binary floating-point format 32 bit (four bytes big-endian)
+* *(byte)* one byte
+* *(int)* 32 bit integer (four bytes big-endian)
+* *(packed_int)* packed integer number (one to five bytes): Sequence of bytes. If highest bit of current byte is set then next byte is part of this sequence. Lower 7 bits of byte are used to code value: bn denotes the 7 value bits of byte n:  interger value == b1 | (b2<<7) | (b3<<14)
+* *(text)*  sequence of characters coded by count of characters followed by characters as bytes: *(packed_int)* *(byte)* *(byte)* *(byte)* ...
+* marker is coded as *(text)*
+* *(float)* IEEE 754 single-precision binary floating-point format 32 bit (four bytes big-endian)
 
 
 marker definitions:
@@ -136,25 +136,25 @@ marker definitions:
 
 content:
  
-*<text>*[station name] 
+*(text)*[station name] 
 
-*<text>*[sensor name] 
+*(text)*[sensor name] 
 
 `TOC_START`
 
-*<packed_int>*[count of entries]
+*(packed_int)*[count of entries]
 
-*<int>*\[timestamp] 
+*(int)*\[timestamp] 
 
-*<float>*\[value]
+*(float)*\[value]
 
-*<int>*\[timestamp] 
+*(int)*\[timestamp] 
 
-*<float>*\[value]
+*(float)*\[value]
 
-*<int>*\[timestamp] 
+*(int)*\[timestamp] 
 
-*<float>*\[value]
+*(float)*\[value]
 
 ...
 
@@ -173,31 +173,31 @@ content:
 
 `TOC_START`
 
-*<text>*[station name]
+*(text)*[station name]
 
-*<packed_int>*[count of sensors]
+*(packed_int)*[count of sensors]
 
-*<text>*[sensor name 1]
+*(text)*[sensor name 1]
 
-*<text>*[sensor name 2]
-
-...
-
-*<packed_int>*[count of entries]
-
-*<int>*\[timestamp] 
-
-*<float>*\[value 1] 
-
-*<float>*\[value 2] 
+*(text)*[sensor name 2]
 
 ...
 
-*<int>*\[timestamp] 
+*(packed_int)*[count of entries]
 
-*<float>*\[value 1] 
+*(int)*\[timestamp] 
 
-*<float>*\[value 2] 
+*(float)*\[value 1] 
+
+*(float)*\[value 2] 
+
+...
+
+*(int)*\[timestamp] 
+
+*(float)*\[value 1] 
+
+*(float)*\[value 2] 
 
 ...
 
