@@ -226,6 +226,9 @@ public class UniversalDataBinFile {
 			case 7:
 				dataRowByteSize += 4; // ~ 4 byte int
 				break;
+			case 12:
+				dataRowByteSize += 8; // ~ 8 byte double
+				break;				
 			default:
 				throw new RuntimeException("type not implemented:\t"+sensorHeaders[sensorID].dataType);
 			}			
@@ -254,6 +257,9 @@ public class UniversalDataBinFile {
 				case 7:
 					data[sensorID] = byteBuffer.getInt();
 					break;
+				case 12:
+					data[sensorID] = (float) byteBuffer.getDouble(); // loss of precision
+					break;					
 				default:
 					throw new RuntimeException("type not implemented:\t"+sensorHeaders[sensorID].dataType);
 				}

@@ -36,7 +36,9 @@ public class Station {
 	 */
 	public final String stationID;
 
-	public final LoggerType loggerType;	
+	public final LoggerType loggerType;
+	
+	public LabeledProperties labeledProperties = new LabeledProperties();
 
 	/**
 	 * 

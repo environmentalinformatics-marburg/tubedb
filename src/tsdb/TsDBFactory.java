@@ -191,6 +191,7 @@ public final class TsDBFactory {
 				configLoader.readStationGeoPosition(configDirectory+"be/be_station_master.csv"); // read geo position of stations and insert into existing stations
 				configLoader.readSensorTranslation(configDirectory+"be/be_sensor_translation.ini"); // read sensor translation and insert it into existing logger types, general stations and stations
 				configLoader.readSensorNameCorrection(configDirectory+"be/be_sensor_name_correction.json");  // read sensor translation and insert it into existing stations
+				configLoader.readStationProperties(configDirectory+"be/station_properties.yaml");
 			}
 
 			if(JUST_ONE_REGION==null||JUST_ONE_REGION.toUpperCase().equals("KI")) { //*** KI

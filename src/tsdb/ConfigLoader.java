@@ -3,8 +3,11 @@ package tsdb;
 import static tsdb.util.AssumptionCheck.throwNull;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +28,15 @@ import org.ini4j.Profile.Section;
 import org.ini4j.Wini;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.TypeDescription;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Construct;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
+import org.yaml.snakeyaml.constructor.SafeConstructor.ConstructYamlStr;
+import org.yaml.snakeyaml.constructor.SafeConstructor.ConstructYamlTimestamp;
+import org.yaml.snakeyaml.nodes.Tag;
 
 import au.com.bytecode.opencsv.CSVReader;
 import tsdb.component.LoggerType;
@@ -47,7 +60,6 @@ import tsdb.util.Util.FloatRange;
  *
  */
 public class ConfigLoader {
-
 	private static final Logger log = LogManager.getLogger();
 
 	private final TsDB tsdb; //not null
@@ -275,7 +287,7 @@ public class ConfigLoader {
 			log.error(e);
 		}
 	}
-	
+
 	/**
 	 * Read and insert sensor name corrections with time intervals in json format.
 	 * @param jsonFile filename
@@ -290,7 +302,7 @@ public class ConfigLoader {
 		try {
 			String jsonText = Util.removeComments(Files.readAllBytes(filename));
 			JSONArray jsonArray = new JSONArray(jsonText);
-			
+
 			final int SIZE = jsonArray.length();
 			for (int i = 0; i < SIZE; i++) {
 				try {
@@ -300,11 +312,11 @@ public class ConfigLoader {
 					String correctText = obj.getString("correct");
 					String startText = obj.getString("start");
 					String endText = obj.getString("end");
-					
+
 					int start = TimeUtil.parseStartTimestamp(startText);
 					int end = TimeUtil.parseEndTimestamp(endText);
 					NamedInterval entry = NamedInterval.of(start,end,correctText);
-					
+
 					Station station = tsdb.getStation(plotText);
 					if(station==null) {
 						log.warn("plot not found "+plotText+" at "+obj+" in "+jsonFile);
@@ -966,7 +978,7 @@ public class ConfigLoader {
 					log.warn("interpolation config: sensor not found: "+name);
 				}
 			}
-			
+
 			for(Entry<String, String> entry:section.entrySet()) {
 				Sensor sensor = tsdb.getSensor(entry.getKey());
 				if(sensor!=null) {
@@ -1129,7 +1141,7 @@ public class ConfigLoader {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * mark sensors in config-file as internal
 	 * @param configFile
@@ -1322,7 +1334,7 @@ public class ConfigLoader {
 			virtualPlot.addStationEntry(station, stationProperties);
 		}
 	}
-	
+
 	public void readBaPlotInventory(String configFile) {
 		Table table = Table.readCSV(configFile,',');
 		ColumnReaderString cr_plot = table.createColumnReader("plot");
@@ -1350,4 +1362,29 @@ public class ConfigLoader {
 		}
 
 	}
+
+	private static class MyConsturctor extends SafeConstructor {
+		MyConsturctor() {
+			Construct stringConstructor = this.yamlConstructors.get(Tag.STR);
+			this.yamlConstructors.put(Tag.TIMESTAMP, stringConstructor);
+		}
+	}
+
+	public void readStationProperties(String yamlFile) {
+		log.info("read yaml");
+		try {
+			Yaml yaml = new Yaml(new MyConsturctor());
+			InputStream in = new FileInputStream(new File(yamlFile));
+			Object yamlObject = yaml.load(in);
+			YamlList yamlList = new YamlList(yamlObject);
+			for(YamlMap entry:yamlList.asMaps()) {
+				List<LabeledProperty> properties = LabeledProperty.parse(entry);
+				for(LabeledProperty property:properties) {
+					tsdb.insertLabeledProperty(property);
+				}
+			}
+		} catch (Exception e) {
+			log.error("could not read station properties yaml file: "+e);
+		}		
+	}	
 }

@@ -225,9 +225,29 @@ public final class TimeUtil implements Serializable {
 	public static long ofDateStartMinute(int year) {
 		return TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, 1, 1, 0, 0));
 	}
+	
+	public static long ofDateStartMinute(int year, int month) {
+		return TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, 1, 0, 0));
+	}
 
 	public static long ofDateEndMinute(int year) {
 		return TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, 12, 31, 23, 59));
+	}
+	
+	public static long ofDateEndMinute(int year, int month) { // TODO remove exceptions
+		try {
+			return TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, 31, 23, 59));
+		} catch (DateTimeException e31) {
+			try {
+				return TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, 30, 23, 59));
+			} catch (DateTimeException e30) {
+				try {
+					return TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, 29, 23, 59));
+				} catch (DateTimeException e29) {
+					return TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, 28, 23, 59));
+				}
+			}
+		}
 	}
 
 	public static long ofDateStartHour(int year,int month) { // at hour

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -743,5 +744,14 @@ public class TsDB implements AutoCloseable {
 			return Plot.of(station);
 		}
 		return null;
+	}
+
+	public void insertLabeledProperty(LabeledProperty property) {
+		Station station = getStation(property.station);
+		if(station==null) {
+			log.warn("station not found property not inserted: "+property);
+		} else {
+			station.labeledProperties.insert(property);
+		}
 	}
 }

@@ -35,5 +35,6 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.7.jar"/>
 	<classpathentry kind="lib" path="lib/validation-api-1.1.0.Final.jar" sourcepath="lib_src/validation-api-1.1.0.Final-sources.jar"/>
 	<classpathentry kind="lib" path="lib/pngj-2.1.0.jar" sourcepath="lib_src/pngj-2.1.0-sources.jar"/>
+	<classpathentry kind="lib" path="lib/snakeyaml-1.17.jar" sourcepath="lib_src/snakeyaml-1.17-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

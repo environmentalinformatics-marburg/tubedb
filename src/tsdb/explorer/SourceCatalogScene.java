@@ -24,6 +24,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
@@ -60,6 +61,9 @@ public class SourceCatalogScene extends TsdbScene {
 	private ComboBox<String> comboGeneralStation;
 	private ComboBox<String> comboPlot;
 	private ComboBox<Integer> comboYear;
+	private Label labelMonth;
+	private ComboBox<Integer> comboMonth;
+	private TextField txtSensor;
 
 	private TableView<SourceItem> table;
 	private Label lblPlaceHolder;
@@ -215,6 +219,54 @@ public class SourceCatalogScene extends TsdbScene {
 		comboYear.setConverter(yearConverter);
 		comboYear.valueProperty().addListener(this::onYearChanged);
 
+		comboMonth = new ComboBox<Integer>();
+		StringConverter<Integer> monthConverter = new StringConverter<Integer>() {			
+			@Override
+			public String toString(Integer month) {
+				switch(month) {
+				case 0:
+					return "[all]";
+				case 1:
+					return "jan";
+				case 2:
+					return "feb";
+				case 3:
+					return "mar";
+				case 4:
+					return "apr";
+				case 5:
+					return "may";
+				case 6:
+					return "jun";
+				case 7:
+					return "jul";
+				case 8:
+					return "aug";
+				case 9:
+					return "sep";
+				case 10:
+					return "oct";
+				case 11:
+					return "nov";
+				case 12:
+					return "dec";
+				default:
+					return "???";
+				}
+
+			}			
+			@Override
+			public Integer fromString(String string) {
+				return null;
+			}
+		};
+		comboMonth.setConverter(monthConverter);
+		comboMonth.valueProperty().addListener(this::onMonthChanged);
+		
+		txtSensor = new TextField();
+		txtSensor.setPromptText("all sensors");
+		txtSensor.textProperty().addListener(this::onSensorChanged);
+
 		HBox hBoxControl = new HBox(10d);
 		hBoxControl.getChildren().add(new Label("Region"));
 		hBoxControl.getChildren().add(comboRegion);
@@ -224,6 +276,11 @@ public class SourceCatalogScene extends TsdbScene {
 		hBoxControl.getChildren().add(comboPlot);
 		hBoxControl.getChildren().add(new Label("Year"));
 		hBoxControl.getChildren().add(comboYear);
+		labelMonth = new Label("Month");
+		hBoxControl.getChildren().add(labelMonth);
+		hBoxControl.getChildren().add(comboMonth);
+		hBoxControl.getChildren().add(new Label("Sensor"));
+		hBoxControl.getChildren().add(txtSensor);
 		mainBoderPane.setTop(hBoxControl);
 		return mainBoderPane;
 	}
@@ -285,6 +342,7 @@ public class SourceCatalogScene extends TsdbScene {
 
 			setRegions(regions);
 			setYears();
+			setMonths();
 
 			lblPlaceHolder.setText("no content");
 			updateStatus(null);
@@ -301,6 +359,7 @@ public class SourceCatalogScene extends TsdbScene {
 	}
 
 	private static final Integer yearAll = 0;
+	private static final Integer monthAll = 0;
 
 	private void setYears() {
 		ObservableList<Integer> yearList = FXCollections.observableArrayList();
@@ -310,6 +369,16 @@ public class SourceCatalogScene extends TsdbScene {
 		}
 		comboYear.setItems(yearList);
 		comboYear.setValue(yearAll);		
+	}
+
+	private void setMonths() {
+		ObservableList<Integer> monthList = FXCollections.observableArrayList();
+		monthList.add(monthAll);
+		for(int y=1;y<=12;y++) {
+			monthList.addAll(y);
+		}
+		comboMonth.setItems(monthList);
+		comboMonth.setValue(monthAll);		
 	}
 
 	private void setRegions(Region[] regions) {
@@ -377,6 +446,22 @@ public class SourceCatalogScene extends TsdbScene {
 
 
 	private void onYearChanged(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+		if(comboYear.getValue()==yearAll) {
+			labelMonth.setDisable(true);
+			comboMonth.setDisable(true);
+			comboMonth.setValue(monthAll);
+		} else {
+			labelMonth.setDisable(false);
+			comboMonth.setDisable(false);
+		}
+		updateListFilter();
+	}
+
+	private void onMonthChanged(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+		updateListFilter();
+	}
+	
+	private void onSensorChanged(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 		updateListFilter();
 	}
 
@@ -388,25 +473,35 @@ public class SourceCatalogScene extends TsdbScene {
 		String general = comboGeneralStation.getValue();
 		String plot = comboPlot.getValue();
 		Integer year = comboYear.getValue();
+		Integer month = comboMonth.getValue();
+		String sensorPrefix = txtSensor.getText();
 
-		Predicate<SourceItem> predicateStation = predicateTrue;
+		Predicate<SourceItem> predicate = predicateTrue;
 		if(plot!=null && !plot.equals("[all]")) {
-			predicateStation = sourceEntry->plot.equals(sourceEntry.plotid);
+			predicate = sourceEntry->plot.equals(sourceEntry.plotid);
 		} else {
 			if(general!=null && !general.equals("[all]")) {
-				predicateStation = sourceEntry->general.equals(sourceEntry.generalStationName);
+				predicate = sourceEntry->general.equals(sourceEntry.generalStationName);
 			} else {
 				if(region!=null && !region.name.equals("[all]")) {
-					predicateStation = sourceEntry->region.name.equals(sourceEntry.regionName);
+					predicate = sourceEntry->region.name.equals(sourceEntry.regionName);
 				}
 			}
 		}
 
 		if(year!=null && year!=yearAll) {
-			filteredList.setPredicate(predicateStation.and(new PredicateYear(year)));
-		} else {
-			filteredList.setPredicate(predicateStation);
-		}	
+			if(month!=null && month!=monthAll) {
+				predicate = predicate.and(new PredicateYearMonth(year, month));
+			} else {
+				predicate = predicate.and(new PredicateYear(year));
+			}
+		}
+		
+		if(sensorPrefix!=null && !sensorPrefix.isEmpty()) {
+			predicate = predicate.and(new PredicateSensorPrefix(sensorPrefix));
+		}
+		
+		filteredList.setPredicate(predicate);
 	}
 
 	private static class PredicateYear implements Predicate<SourceItem> {
@@ -423,5 +518,44 @@ public class SourceCatalogScene extends TsdbScene {
 			int end = (int) s.sourceEntry.lastTimestamp;
 			return yearInterval.overlaps(start, end);
 		}		
+	}
+
+	private static class PredicateYearMonth implements Predicate<SourceItem> {
+		private final Interval yearMonthInterval;
+		public PredicateYearMonth(Integer year, Integer month) {			
+			long start = TimeUtil.ofDateStartMinute(year, month);
+			long end = TimeUtil.ofDateEndMinute(year, month);			
+			yearMonthInterval = Interval.of((int)start, (int)end);
+		}
+
+		@Override
+		public boolean test(SourceItem s) {
+			int start = (int) s.sourceEntry.firstTimestamp;
+			int end = (int) s.sourceEntry.lastTimestamp;
+			return yearMonthInterval.overlaps(start, end);
+		}		
+	}
+	
+	private static class PredicateSensorPrefix implements Predicate<SourceItem> {
+		private final String sensorPrefix;		
+
+		public PredicateSensorPrefix(String sensorPrefix) {
+			this.sensorPrefix = sensorPrefix;
+		}
+
+		@Override
+		public boolean test(SourceItem t) {			
+			String[] sn = t.sourceEntry.sensorNames;			
+			if(sn==null || sn.length==0) {
+				return false;
+			}			
+			for(String s:sn) {
+				if(s!=null && s.startsWith(sensorPrefix)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
 	}
 }

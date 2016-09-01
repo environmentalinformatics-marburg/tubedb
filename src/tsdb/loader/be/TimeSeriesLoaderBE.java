@@ -19,6 +19,7 @@ import java.util.stream.StreamSupport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import tsdb.LabeledProperty;
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
@@ -26,6 +27,7 @@ import tsdb.util.AssumptionCheck;
 import tsdb.util.DataRow;
 import tsdb.util.Interval;
 import tsdb.util.Pair;
+import tsdb.util.TimeUtil;
 
 
 /**
@@ -130,6 +132,29 @@ public class TimeSeriesLoaderBE {
 		}		
 	}
 
+	private void merge(DataRow collector, DataRow add) {
+		//log.info("merge "+Arrays.toString(collector.data));
+		if(collector!=add) {
+			Float[] collectorData = collector.data;
+			Float[] currentData = add.data;
+			int len = collectorData.length;
+			for(int i=0;i<len;i++) {
+				if(Float.isNaN(collectorData[i])) {
+					collectorData[i] = currentData[i];
+				}
+			}
+		}
+	}
+
+	private void addToMap(TreeMap<Long,DataRow> map, DataRow dataRow) {
+		DataRow collector = map.get(dataRow.timestamp);
+		if(collector==null) {
+			map.put(dataRow.timestamp, dataRow);
+		} else {
+			merge(collector, dataRow);
+		}
+	}
+
 	public void loadWithPrefixFilenameMapOfOneStation(Station station, TreeMap<String, List<Path>> prefixFilenameMap) {
 		TreeMap<Long,DataRow> eventMap = new TreeMap<Long,DataRow>();
 
@@ -137,7 +162,7 @@ public class TimeSeriesLoaderBE {
 			//String prefix = entry.getKey();
 			List<Path> pathList = prefixEntry.getValue();	
 
-			List<List<DataRow>> eventsList = new ArrayList<List<DataRow>>();
+			List<List<DataRow>> eventLists = new ArrayList<List<DataRow>>();
 
 			for(Path path:pathList) {
 				try {
@@ -146,7 +171,7 @@ public class TimeSeriesLoaderBE {
 						String[][] outInfoTranslatedSensorNames = new String[1][];
 						List<DataRow> eventList = translateToEvents(station, timeSeries, minTimestamp, outInfoTranslatedSensorNames);
 						if(eventList!=null) {
-							eventsList.add(eventList);
+							eventLists.add(eventList);
 							tsdb.sourceCatalog.insert(new SourceEntry(path,station.stationID,timeSeries.time[0],timeSeries.time[timeSeries.time.length-1],timeSeries.time.length,timeSeries.getHeaderNames(), outInfoTranslatedSensorNames[0],(int)timeSeries.timeConverter.getTimeStep().toMinutes()));
 						}
 					}
@@ -157,11 +182,56 @@ public class TimeSeriesLoaderBE {
 			}
 
 			@SuppressWarnings("unchecked")
-			Iterator<DataRow>[] iterators = new Iterator[eventsList.size()];
+			Iterator<DataRow>[] iterators = new Iterator[eventLists.size()];
 
-			for(int i=0;i<eventsList.size();i++) {
-				iterators[i]=eventsList.get(i).iterator();
+			for(int i=0;i<eventLists.size();i++) {
+				iterators[i]=eventLists.get(i).iterator();
 			}
+
+			DataRow[] itDataRows = new DataRow[iterators.length];
+			for(int i=0;i<iterators.length;i++) {
+				if(iterators[i].hasNext()) {
+					itDataRows[i] = iterators[i].next();
+				}				
+			}
+
+			long collectorTimestamp = -1;
+			DataRow collectorRow = null;
+			while(true) {
+				int currentItIndex=-1;
+				long currentTimestamp = Long.MAX_VALUE;
+				for(int i=0;i<iterators.length;i++) { // minimum timestamp of itDataRows
+					DataRow dataRow = itDataRows[i];
+					if(dataRow!=null) {
+						if(dataRow.timestamp<currentTimestamp) {
+							currentTimestamp = dataRow.timestamp;
+							currentItIndex = i;
+						}
+					}
+				}
+				if(currentItIndex<0) { // no more elements
+					break;
+				}
+				DataRow currentDataRow = itDataRows[currentItIndex];
+				if(collectorTimestamp<currentTimestamp) { // new timestamp, insert old collectorRow
+					if(collectorRow!=null) {
+						addToMap(eventMap, collectorRow);
+					}
+					collectorTimestamp = currentTimestamp;
+					collectorRow = currentDataRow;
+				} else if(currentTimestamp==collectorTimestamp) { // merge elements
+					merge(collectorRow, currentDataRow);
+				} else {
+					throw new RuntimeException("timestamps not ordered");
+				}				
+				itDataRows[currentItIndex] = iterators[currentItIndex].hasNext()?iterators[currentItIndex].next():null;
+			}			
+			if(collectorRow!=null) { // last row
+				addToMap(eventMap, collectorRow);
+			}
+
+
+			/*
 
 			DataRow[] currentEvent = new DataRow[iterators.length];
 
@@ -169,7 +239,7 @@ public class TimeSeriesLoaderBE {
 				if(iterators[i].hasNext()) {
 					currentEvent[i] = iterators[i].next();
 				}				
-			}
+			}  
 
 
 			long currentTimestamp = -1;
@@ -192,7 +262,7 @@ public class TimeSeriesLoaderBE {
 					break;
 				}
 
-				if(currentTimestamp<currentEvent[minIndex].timestamp) {
+				if(currentTimestamp<currentEvent[minIndex].timestamp) { // next timestamp
 					if(collectorEvent!=null) {
 						if(eventMap.containsKey(collectorEvent.timestamp)) {
 							//log.warn("event already inserted");
@@ -206,8 +276,8 @@ public class TimeSeriesLoaderBE {
 				if(collectorEvent==null) {
 					collectorEvent = currentEvent[minIndex];
 				} else {
-					Object[] payload = currentEvent[minIndex].data;
-					Object[] collectorPayload = collectorEvent.data;
+					Float[] payload = currentEvent[minIndex].data;
+					Float[] collectorPayload = collectorEvent.data;
 					for(int i=0;i<collectorPayload.length-1;i++) { // TODO
 						if(!Float.isNaN((float) payload[i])&&Float.isNaN((float) collectorPayload[i])) {
 							collectorPayload[i] = payload[i];
@@ -229,10 +299,14 @@ public class TimeSeriesLoaderBE {
 				} else {
 					eventMap.put(collectorEvent.timestamp, collectorEvent);
 				}
-			}			
+			}*/			
 		}	
 
 		if(eventMap.size()>0) {
+			List<LabeledProperty> cnr4List = station.labeledProperties.query("CNR4", eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
+			if(cnr4List.size()>0) {
+				log.info("****************** CNR4 found **************");
+			}
 			tsdb.streamStorage.insertData(station.stationID, eventMap, station.loggerType.sensorNames);			
 		} else {
 			log.warn("no data to insert: "+station);
@@ -265,7 +339,7 @@ public class TimeSeriesLoaderBE {
 	 */
 	public List<DataRow> translateToEvents(Station station, UDBFTimestampSeries udbfTimeSeries, long minTimestamp, String[][] outInfoTranslatedSensorNames) {
 		List<DataRow> resultList = new ArrayList<DataRow>(); // result list of events
-		
+
 		Interval fileTimeInterval = udbfTimeSeries.getTimeInterval();
 
 		//mapping: UDBFTimeSeries column index position -> Event column index position;    eventPos[i] == -1 -> no mapping		
@@ -286,7 +360,7 @@ public class TimeSeriesLoaderBE {
 			SensorHeader sensorHeader = udbfTimeSeries.sensorHeaders[sensorIndex];
 			String rawSensorName = sensorHeader.name;
 			if(!tsdb.containsIgnoreSensorName(rawSensorName)) {
-				
+
 				//correct rawSensorName
 				String correctedSensorName = station.correctRawSensorName(rawSensorName, fileTimeInterval);				
 				String sensorName = station.translateInputSensorName(correctedSensorName,true);
