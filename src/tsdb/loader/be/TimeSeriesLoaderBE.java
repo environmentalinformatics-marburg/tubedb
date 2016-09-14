@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -20,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import tsdb.LabeledProperty;
+import tsdb.PropertyCNR4;
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
@@ -27,7 +29,6 @@ import tsdb.util.AssumptionCheck;
 import tsdb.util.DataRow;
 import tsdb.util.Interval;
 import tsdb.util.Pair;
-import tsdb.util.TimeUtil;
 
 
 /**
@@ -305,7 +306,15 @@ public class TimeSeriesLoaderBE {
 		if(eventMap.size()>0) {
 			List<LabeledProperty> cnr4List = station.labeledProperties.query("CNR4", eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
 			if(cnr4List.size()>0) {
-				log.info("****************** CNR4 found **************");
+				log.info("****************** CNR4 found **************");				
+				for(LabeledProperty prop:cnr4List) {					
+					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
+					try {
+						((PropertyCNR4)prop.content).calculate(rows, station.loggerType.sensorNames);
+					} catch(Exception e) {
+						log.warn(e);
+					}
+				}
 			}
 			tsdb.streamStorage.insertData(station.stationID, eventMap, station.loggerType.sensorNames);			
 		} else {
