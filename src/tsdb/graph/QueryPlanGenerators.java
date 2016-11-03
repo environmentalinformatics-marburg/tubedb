@@ -54,7 +54,7 @@ public final class QueryPlanGenerators {
 			return rawSource;
 		};
 	}
-	
+
 	public static String[] stationSchemaSupplement(TsDB tsdb, Station station, String[] schema) {		
 		if(station.generalStation!=null && station.generalStation.region.name.equals("BE") && Util.containsString(schema, "P_RT_NRT")) {
 			if(!Util.containsString(schema, "P_container_RT")) {
@@ -144,7 +144,13 @@ public final class QueryPlanGenerators {
 	public static ContinuousGen getContinuousGen(TsDB tsdb, DataQuality dataQuality) {
 		return (String plotID, String[] schema)->{
 			NodeGen stationGen = getStationGen(tsdb, dataQuality);		
-			Base base = BaseFactory.of(tsdb, plotID, schema, stationGen);
+			Base base = null;
+			try {
+				base = BaseFactory.of(tsdb, plotID, schema, stationGen);
+			} catch(Exception e) {
+				log.warn(e);
+				return null;
+			}
 			if(base==null) {
 				return null;
 			}

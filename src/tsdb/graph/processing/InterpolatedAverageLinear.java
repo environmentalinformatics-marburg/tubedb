@@ -35,13 +35,13 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 	private final int MIN_TRAINING_VALUE_COUNT;
 	private final double[] maxMSEs;
 
-	protected InterpolatedAverageLinear(TsDB tsdb, Continuous source, Continuous trainingTarget, Continuous[] trainingSources, String[] interpolationSchema, AggregationInterval sourceAgg, double[] maxMSEs) {
+	public InterpolatedAverageLinear(TsDB tsdb, Continuous source, Continuous trainingTarget, Continuous[] trainingSources, String[] interpolationSchema, AggregationInterval sourceAgg, double[] maxMSEs) {
 		super(tsdb);
 		this.source = source;
 		this.trainingTarget = trainingTarget;
 		this.trainingSources = trainingSources;
 		this.interpolationSchema = interpolationSchema;
-		
+
 		switch(sourceAgg) {
 		case HOUR:
 			MIN_TRAINING_VALUE_COUNT = MIN_TRAINING_VALUE_COUNT_HOUR;
@@ -52,7 +52,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 		default:
 			throw new RuntimeException("unknown aggregation for interpolation "+sourceAgg);
 		}
-		
+
 		this.maxMSEs = maxMSEs;
 	}
 
@@ -62,7 +62,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 		String[] iSchema = Arrays.stream(querySchema)
 				.filter(sensorName -> tsdb.getSensor(sensorName).useInterpolation)
 				.toArray(String[]::new);
-		
+
 		if(iSchema.length==0) {
 			log.info("no interpolatable sensors for "+plotID+"   "+Arrays.toString(querySchema));
 			return source;
@@ -91,7 +91,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 			log.info("no interpolation sources for "+plotID+"   "+Arrays.toString(querySchema));
 			return source;
 		}
-		
+
 		double[] maxMSEs = tsdb.getSensorStream(interpolationSchema).mapToDouble(Sensor::getMaxInterpolationMSE).toArray();
 
 		return new InterpolatedAverageLinear(tsdb, source, trainingTarget, trainingSources, interpolationSchema, sourceAgg, maxMSEs);
@@ -145,22 +145,42 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 
 		double[][] intercepts = new double[trainingIterators.length][interpolationSchema.length];
 		double[][] slopes = new double[trainingIterators.length][interpolationSchema.length];
+		double[][] weights = new double[trainingIterators.length][interpolationSchema.length];
 
 		for(int trainingIndex=0;trainingIndex<trainingIterators.length;trainingIndex++) {
 			SimpleRegression[] regs = simpleRegressions[trainingIndex];
 			for(int column=0;column<interpolationSchema.length;column++) {
 				SimpleRegression reg = regs[column];
 				final double MAX_MSE = maxMSEs[column];
-				if(reg.getN()<MIN_TRAINING_VALUE_COUNT || MAX_MSE<reg.getMeanSquareError()) {
+				double mse = reg.getMeanSquareError();
+				if(reg.getN()<MIN_TRAINING_VALUE_COUNT || MAX_MSE<mse) {
 					intercepts[trainingIndex][column] = Double.NaN;
 					slopes[trainingIndex][column] = Double.NaN;
+					weights[trainingIndex][column] = Double.NaN;
 				} else {
 					intercepts[trainingIndex][column] = reg.getIntercept();
 					slopes[trainingIndex][column] = reg.getSlope();
+					weights[trainingIndex][column] = mse;
 					//log.info("linear regression "+reg.getN()+"  "+reg.getIntercept()+" "+reg.getSlope()+" "+reg.getMeanSquareError());
 				}
 			}
 		}
+
+		for(int column=0;column<interpolationSchema.length;column++) {
+			double min_mse = Double.POSITIVE_INFINITY;
+			for(int trainingIndex=0;trainingIndex<trainingIterators.length;trainingIndex++) {
+				double mse = weights[trainingIndex][column];
+				if(Double.isFinite(mse)&&mse<min_mse) {
+					min_mse = mse;
+				}
+			}
+			for(int trainingIndex=0;trainingIndex<trainingIterators.length;trainingIndex++) {
+				double mse = weights[trainingIndex][column];
+				weights[trainingIndex][column] = Math.pow(min_mse/mse,5);
+				log.info("w "+mse+" -> "+weights[trainingIndex][column]);
+			}
+		}
+
 
 		TsIterator sourceIterator = source.getExactly(start, end);
 		TsIterator[] interpolationIterators = Arrays.stream(trainingSources).map(s->s.getExactly(start, end)).toArray(TsIterator[]::new);
@@ -188,7 +208,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 			log.error("no interpolation source");
 			//return null;
 		}
-		
+
 		if(interpolationIterators[0]==null) {
 			log.error("no interpolation training sources");
 			//return null;
@@ -196,7 +216,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 
 
 		//TODO
-		return new InterpolationAverageLinearIterator(sourceIterator, interpolationIterators, intercepts, slopes, interpolationSchema);
+		return new InterpolationAverageLinearIterator(sourceIterator, interpolationIterators, intercepts, slopes, interpolationSchema, weights);
 	}
 
 	@Override

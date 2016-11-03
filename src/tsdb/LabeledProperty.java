@@ -42,8 +42,8 @@ public class LabeledProperty {
 		String endObject = entry.optString("end", "*");
 		int start = TimeUtil.parseStartTimestamp(startObject);
 		int end = TimeUtil.parseEndTimestamp(endObject);
-		log.info(startObject);
-		log.info(endObject);
+		log.trace(startObject);
+		log.trace(endObject);
 
 		List<LabeledProperty> result = new ArrayList<LabeledProperty>();
 		for(YamlMap map:entry.getList("content").asMaps()) {
@@ -51,7 +51,7 @@ public class LabeledProperty {
 			String label = map.getString("label");
 			LabeledProperty labeledProperty = new LabeledProperty(station, label, start, end, map);
 			result.add(labeledProperty);
-			log.info(labeledProperty);
+			log.trace(labeledProperty);
 			} catch (Exception e) {
 				log.warn("could not parse entry "+entry+"  "+e);
 			}

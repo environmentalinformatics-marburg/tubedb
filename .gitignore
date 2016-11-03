@@ -18,3 +18,4 @@ hs_err_pid*
 /.gradle/
 /gradle-app.setting
 /javadoc/
+/performance_testing/

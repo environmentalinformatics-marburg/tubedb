@@ -18,6 +18,7 @@ public class InterpolationAverageLinearIterator extends InputIterator {
 	private final TsIterator[] interpolationIterators;
 	private final double[][] intercepts;
 	private final double[][] slopes;
+	private final double[][] weights;
 	private final int[] posIndex;
 
 	/**
@@ -29,12 +30,14 @@ public class InterpolationAverageLinearIterator extends InputIterator {
 	 * @param slopes Array of slopes to reference iterators from linear regression for each column in interpolationSchema.
 	 * <br>slope == slopes[interpolationIteratorNo][interpolationSchemaNo]
 	 * @param interpolationSchema Array of column names that should be interpolated.
+	 * @param weights 
 	 */
-	public InterpolationAverageLinearIterator(TsIterator input_iterator, TsIterator[] interpolationIterators, double[][] intercepts, double[][] slopes, String[] interpolationSchema) {
+	public InterpolationAverageLinearIterator(TsIterator input_iterator, TsIterator[] interpolationIterators, double[][] intercepts, double[][] slopes, String[] interpolationSchema, double[][] weights) {
 		super(input_iterator, input_iterator.getSchema());
 		this.interpolationIterators = interpolationIterators;
 		this.intercepts = intercepts;
 		this.slopes = slopes;
+		this.weights = weights;
 		this.posIndex = Util.stringArrayToPositionIndexArray(interpolationSchema, input_iterator.getNames(), true, true);
 	}
 
@@ -72,8 +75,11 @@ public class InterpolationAverageLinearIterator extends InputIterator {
 					float[] x = interpolations[itIndex];					
 					if(x!=null && !Float.isNaN(x[i]) && !Double.isNaN(intercepts[itIndex][i])) {
 						//y[pos] = x[i];
-						sum += (float) (intercepts[itIndex][i] + slopes[itIndex][i] * x[i]);
-						count++;
+						double weight = weights[itIndex][i];
+						sum += (float) ((intercepts[itIndex][i] + slopes[itIndex][i] * x[i]) * weight); // weighted regression
+						//sum += (float) (x[i] * weight); // weighted value
+						//count++;
+						count += weight;
 					}
 				}
 				//log.info(count);

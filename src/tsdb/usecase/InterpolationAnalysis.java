@@ -1,9 +1,25 @@
 package tsdb.usecase;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import tsdb.Station;
+import tsdb.TsDB;
+import tsdb.TsDBFactory;
+import tsdb.graph.QueryPlanGenerators;
+import tsdb.graph.node.Continuous;
+import tsdb.graph.node.ContinuousGen;
+import tsdb.graph.processing.Interpolated;
+import tsdb.graph.processing.IntervalRemove;
+import tsdb.util.DataQuality;
+import tsdb.util.TimeUtil;
+import tsdb.util.TsEntry;
+import tsdb.util.iterator.TsIterator;
+
 public class InterpolationAnalysis {
 
 	public static void main(String[] args) {
-		/*
+		
 		//final int source_count = Interpolated.STATION_INTERPOLATION_COUNT;
 		final int source_count = 6;
 
@@ -50,7 +66,9 @@ public class InterpolationAnalysis {
 		}
 
 		Continuous resultNode = Interpolated.of(tsdb, targetNodeIntervalRemoved, sourceNodes, schema);
-
+		//double[] maxMSEs = new double[]{};
+		//Continuous resultNode = new InterpolatedAverageLinear(tsdb, targetNodeIntervalRemoved, targetNodeIntervalRemoved, sourceNodes, schema, AggregationInterval.DAY, maxMSEs);
+		
 		TsIterator it = resultNode.get(start, end);
 		int count = 0;
 		while(it.hasNext()) {
@@ -67,7 +85,7 @@ public class InterpolationAnalysis {
 		targetNode.writeCSV(removeStart, removeEnd, path+targetPlot+"_real.csv");
 		resultNode.writeCSV(removeStart, removeEnd, path+targetPlot+"_interpolated.csv");
 		sourceNodes[0].writeCSV(removeStart, removeEnd, path+sourceNodes[0].getSourceStation().stationID+"_real.csv");
-		 */
+		 
 
 	}
 

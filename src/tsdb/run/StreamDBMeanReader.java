@@ -10,24 +10,24 @@ import tsdb.TsDBFactory;
 import tsdb.streamdb.StreamIterator;
 import tsdb.util.DataEntry;
 
-public class FullDataReader {
+public class StreamDBMeanReader {
 	private static final Logger log = LogManager.getLogger();
 
 	private final TsDB tsdb;
-	
+
 	private long total_count = 0;
 	private long series_count = 0;
-	
+
 	private long station_count = 0;
 
 	public static void main(String[] args) {		
 		TsDB tsdb = TsDBFactory.createDefault();
-		FullDataReader fullDataReader = new FullDataReader(tsdb);
-		fullDataReader.readAll();
+		StreamDBMeanReader reader = new StreamDBMeanReader(tsdb);
+		reader.readAll();
 		tsdb.close();		
 	}
 
-	public FullDataReader(TsDB tsdb) {
+	public StreamDBMeanReader(TsDB tsdb) {
 		this.tsdb = tsdb;
 	}
 
@@ -40,11 +40,7 @@ public class FullDataReader {
 			for(String stationName:stationNames) {
 				boolean isValidStation = false;
 				try {
-					String[] sensorNames = tsdb.streamStorage.getSensorNames(stationName);
-					for(String sensorName:sensorNames) {
-						isValidStation = true;
-						readSeries(stationName,sensorName);
-					}
+					readSeries(stationName,"Ta_200");
 				} catch(Exception e) {
 					log.error(e);
 				}
@@ -60,15 +56,21 @@ public class FullDataReader {
 	}
 
 	private void readSeries(String stationName, String sensorName) {
-		
+
 		StreamIterator it = tsdb.streamStorage.getRawSensorIterator(stationName, sensorName, null, null);
 		series_count++;
-		
+
+		float sum=0;
+		int cnt = 0;
 		while(it.hasNext()) {
-			@SuppressWarnings("unused")
 			DataEntry e = it.next();
-			//float v = e.value;
+			float v = e.value;
 			total_count++;
-		}	
+			
+			cnt++;
+			sum+=v;
+		}
+		log.info(sum/cnt);
 	}
+
 }

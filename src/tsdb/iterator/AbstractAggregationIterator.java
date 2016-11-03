@@ -187,7 +187,7 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 				}
 			}		
 
-			if(inputQualityCounter!=null) {
+			if(inputQualityCounter!=null && aggQualityCounter!=null) {
 				for(int q=0;q<QUALITY_COUNTERS;q++) {
 					if(Float.isNaN(value)) {
 						//log.info(Arrays.toString(inputQualityCounter[i]));
@@ -285,9 +285,11 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 					log.warn("aggration type unknown");
 				}
 
-				for(int q=0;q<QUALITY_COUNTERS;q++) {
-					resultQualityCounter[i][q] = aggQualityCounter[i][q];
-				}				
+				if(aggQualityCounter!=null) {
+					for(int q=0;q<QUALITY_COUNTERS;q++) {
+						resultQualityCounter[i][q] = aggQualityCounter[i][q];
+					}
+				}
 			} else {// no entry in this aggregation time period
 				resultData[i] = Float.NaN;
 			}

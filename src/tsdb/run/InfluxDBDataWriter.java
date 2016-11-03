@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.influxdb.InfluxDB;
+import org.influxdb.InfluxDB.ConsistencyLevel;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
@@ -25,8 +26,9 @@ public class InfluxDBDataWriter {
 	private final TsDB tsdb;
 
 	public static String dbHost = "http://192.168.191.183:8086";
+	//public static String dbHost = "http://localhost:8086/";
 
-	
+
 	public static String dbName = "testing_1a";
 
 	private FileWriter writer = null;
@@ -52,10 +54,10 @@ public class InfluxDBDataWriter {
 		try {
 			log.info("open connection to InfluxDB "+dbHost);
 			influxDB = InfluxDBFactory.connect(dbHost, "root", "root");
-			int actions = 1000000;
-			int flushDuration = 1;
-			TimeUnit flushDurationTimeUnit = TimeUnit.MINUTES;
-			influxDB.enableBatch(actions, flushDuration, flushDurationTimeUnit);
+			//int actions = 1000000;
+			//int flushDuration = 1;
+			//TimeUnit flushDurationTimeUnit = TimeUnit.MINUTES;
+			//influxDB.enableBatch(actions, flushDuration, flushDurationTimeUnit);
 			influxDB.deleteDatabase(dbName);
 			//if(true)return;
 			influxDB.createDatabase(dbName);
@@ -156,18 +158,20 @@ public class InfluxDBDataWriter {
 		BatchPoints batchPoints = BatchPoints
 				.database(dbName)
 				//.tag("async", "true")
-				//.retentionPolicy("default")
-				//.consistency(ConsistencyLevel.ALL)
+				.retentionPolicy("autogen")
+				.consistency(ConsistencyLevel.ONE)
 				.build();
 
 		while(it.hasNext()) {			
 			DataEntry e = it.next();
 			long t = ((long)e.timestamp)-INFLUXDB_TIME_START_OLE_MINUTES;
 			//System.out.println(t);
-			Point point = Point.measurement(it.stationName+"/"+it.sensorName).time(t, TimeUnit.MINUTES).field("value", e.value).build();
+			//Point point = Point.measurement(it.stationName+"/"+it.sensorName).time(t, TimeUnit.MINUTES).addField("value", e.value).build();
+			//Point point = Point.measurement(it.stationName).time(t, TimeUnit.MINUTES).tag("sensor", it.sensorName).addField("value", e.value).build();
+			Point point = Point.measurement(it.sensorName).time(t, TimeUnit.MINUTES).tag("station", it.stationName).addField("value", e.value).build();
 			batchPoints.point(point);
 		}
-		
+
 		influxDB.write(batchPoints);
 
 		/*while(it.hasNext()) {			

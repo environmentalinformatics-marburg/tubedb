@@ -58,6 +58,10 @@ public interface Plot {
 		public String[] getValidSchemaEntriesWithVirtualSensors(String[] querySchema) {
 			return station.getValidSchemaEntriesWithVirtualSensors(querySchema);
 		}
+		@Override
+		public String toString() {
+			return getPlotID();
+		}
 	}
 		
 	class Virtual implements Plot {		
@@ -88,6 +92,10 @@ public interface Plot {
 		@Override
 		public String[] getValidSchemaEntriesWithVirtualSensors(String[] querySchema) {
 			return virtualPlot.getValidSchemaEntriesWithVirtualSensors(querySchema);
+		}
+		@Override
+		public String toString() {
+			return getPlotID();
 		}
 	}
 }

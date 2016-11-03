@@ -29,9 +29,19 @@ public class Terminal {
 	}
 
 	static {
-		addCommand("full_read",FullDataReader::main);
+		addCommand("streamdb_import",StreamDBDataWriter::main);
 		addCommand("influxdb_import",InfluxDBDataWriter::main);
+		addCommand("h2_import",H2DataWriter::main);
+		addCommand("druid_csv_write",DruidCsvWriter::main);
+		
+		addCommand("full_read",FullDataReader::main);		
 		addCommand("influxdb_full_read",InfluxDBDataReader::main);
+		addCommand("h2_full_read",H2DataReader::main);
+		
+		addCommand("streamdb_mean_read",StreamDBMeanReader::main);
+		addCommand("influxdb_mean_read",InfluxDBMeanReader::main);
+		addCommand("h2_mean_read",H2MeanReader::main);
+		
 		addCommand("clear_import",ClearImportSources::main);
 	}
 

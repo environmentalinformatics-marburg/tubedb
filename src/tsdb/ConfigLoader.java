@@ -1371,7 +1371,7 @@ public class ConfigLoader {
 	}
 
 	public void readStationProperties(String yamlFile) {
-		log.info("read yaml");
+		log.trace("read yaml");
 		try {
 			Yaml yaml = new Yaml(new MyConsturctor());
 			InputStream in = new FileInputStream(new File(yamlFile));

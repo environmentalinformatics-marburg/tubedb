@@ -13,8 +13,6 @@
 	<classpathentry kind="lib" path="lib/snappy-java-1.1.1.6.jar"/>
 	<classpathentry kind="lib" path="lib/influx/gson-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/influx/guava-18.0.jar"/>
-	<classpathentry kind="lib" path="lib/influx/influxdb-java-2.0-sources.jar"/>
-	<classpathentry kind="lib" path="lib/influx/influxdb-java-2.0.jar"/>
 	<classpathentry kind="lib" path="lib/influx/okhttp-2.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/influx/okio-1.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/influx/retrofit-1.9.0.jar"/>
@@ -36,5 +34,7 @@
 	<classpathentry kind="lib" path="lib/validation-api-1.1.0.Final.jar" sourcepath="lib_src/validation-api-1.1.0.Final-sources.jar"/>
 	<classpathentry kind="lib" path="lib/pngj-2.1.0.jar" sourcepath="lib_src/pngj-2.1.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/snakeyaml-1.17.jar" sourcepath="lib_src/snakeyaml-1.17-sources.jar"/>
+	<classpathentry kind="lib" path="lib/influx/influxdb-java-2.3.jar" sourcepath="lib/influx/influxdb-java-2.3-sources.jar"/>
+	<classpathentry kind="lib" path="lib/h2-1.4.192.jar" sourcepath="lib_src/h2-1.4.192-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
