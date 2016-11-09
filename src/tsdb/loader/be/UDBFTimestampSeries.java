@@ -5,6 +5,10 @@ import java.util.Arrays;
 
 import tsdb.util.Interval;
 import tsdb.util.TimeConverter;
+import tsdb.util.TimeUtil;
+import tsdb.util.TsEntry;
+import tsdb.util.TsSchema;
+import tsdb.util.iterator.TsIterator;
 
 /**
  * contains relevant data of a UDBF-File.
@@ -37,7 +41,8 @@ public class UDBFTimestampSeries {
 	
 	@Override
 	public String toString() {
-		return Arrays.toString(sensorHeaders)+" "+filename;
+		Interval i = getTimeInterval();
+		return TimeUtil.oleMinutesToText(i.start, i.end)+"\n"+Arrays.toString(sensorHeaders)+"\n"+filename;
 	}
 	
 	/**
@@ -46,5 +51,31 @@ public class UDBFTimestampSeries {
 	 */
 	public Interval getTimeInterval() {
 		return Interval.of((int)time[0], (int)time[time.length-1]);
+	}
+	
+	public TsIterator toTsIterator() {
+		return new It();
+	}
+	
+	private class It extends TsIterator {
+		
+		private int i=0;
+
+		public It() {
+			super(new TsSchema(SensorHeader.toSensorNames(sensorHeaders)));
+		}
+
+		@Override
+		public boolean hasNext() {
+			return i<time.length;
+		}
+
+		@Override
+		public TsEntry next() {
+			TsEntry e = TsEntry.of(time[i], data[i]);
+			i++;
+			return e;
+		}
+		
 	}
 }

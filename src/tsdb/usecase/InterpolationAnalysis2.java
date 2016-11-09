@@ -34,9 +34,9 @@ public class InterpolationAnalysis2 {
 		String[] schema = new String[]{"Ta_200"};
 		//String targetPlot = "SEG29";
 		//String targetPlot = "AEG02";
-		//String targetPlot = "AEG35";
+		String targetPlot = "AEG35";
 		//String targetPlot = "sav5";
-		String targetPlot = "foc2";
+		//String targetPlot = "foc2"; // <----
 		DataQuality dataQuality = DataQuality.EMPIRICAL;
 		//long gapStart = TimeUtil.ofDateStartHour(2014,6);
 		//long gapEnd = TimeUtil.ofDateEndHour(2014,6);
@@ -79,6 +79,9 @@ public class InterpolationAnalysis2 {
 		Aggregated.of(tsdb, interpolatedNode, aggregationInterval).writeCSV(gapStart, gapEnd, path+"interpolated.csv");
 		Aggregated.of(tsdb, meanNode, aggregationInterval).writeCSV(gapStart, gapEnd, path+"mean.csv");
 		Aggregated.of(tsdb, nearNode, aggregationInterval).writeCSV(gapStart, gapEnd, path+"near.csv");
+		
+		Aggregated.of(tsdb, realNode, aggregationInterval).writeCSV(null, null, path+"real_full.csv");
+		Aggregated.of(tsdb, nearNode, aggregationInterval).writeCSV(null, null, path+"near_full.csv");
 		
 
 	}

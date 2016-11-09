@@ -35,6 +35,16 @@ public class UniversalDataBinFile {
 	private SensorHeader[] sensorHeaders;
 	private boolean empty = false;
 
+	private int dataRowTimestampByteSize;
+	private short dActTimeDataType;
+	private double dActTimeToSecondFactor;
+
+	private double startTimeToDayFactor;
+
+	private double startTime;
+	
+	private boolean directTimestamps;
+
 	public static class DataRow {
 
 		public static final Comparator<DataRow> COMPARATOR = new Comparator<DataRow>() {
@@ -52,6 +62,10 @@ public class UniversalDataBinFile {
 			this.data = data;
 		}
 
+		@Override
+		public String toString() {
+			return "DataRow [id=" + id + ", data=" + Arrays.toString(data) + "]";
+		}
 	}
 
 	public UniversalDataBinFile(Path fileName) throws IOException {
@@ -110,18 +124,33 @@ public class UniversalDataBinFile {
 		if(moduleAdditionalDataLen>0) {
 			throw new RuntimeException("reading of additional optional data in header not implemented: "+moduleAdditionalDataLen);
 		}
-		double startTimeToDayFactor = byteBuffer.getDouble();
-		//System.out.println(startTimeToDayFactor+"\tstartTimeToDayFactor");
-		/*short dActTimeDataType =*/ byteBuffer.getShort();
-		//System.out.println(dActTimeDataType+"\tdActTimeDataType");
-		double dActTimeToSecondFactor = byteBuffer.getDouble();
-		//System.out.println(dActTimeToSecondFactor+"\tdActTimeToSecondFactor");
-		double startTime = byteBuffer.getDouble();
-		//System.out.println(startTime+"\tstartTime");
+		this.startTimeToDayFactor = byteBuffer.getDouble();
+		log.info(startTimeToDayFactor+"\tstartTimeToDayFactor");
+		this.dActTimeDataType = byteBuffer.getShort();
+		log.info(dActTimeDataType+"\tdActTimeDataType");
+		this.dActTimeToSecondFactor = byteBuffer.getDouble();
+		log.info(dActTimeToSecondFactor+"\tdActTimeToSecondFactor");
+		this.startTime = byteBuffer.getDouble();
+		log.info(startTime+"\tstartTime");
 		double sampleRate = byteBuffer.getDouble();
-		//System.out.println(sampleRate+"\tsampleRate");
+		log.info(sampleRate+"\tsampleRate");
 		variableCount = byteBuffer.getShort();
 		//System.out.println(variableCount+" variableCount");
+		
+		
+		switch(dActTimeDataType) {
+		case 7: // UnSignedInt32 (default for loggers)
+		case 6: // SignedInt32
+			dataRowTimestampByteSize = 4;
+			directTimestamps = false;
+			break;
+		case 12: // Double
+			dataRowTimestampByteSize = 8;
+			directTimestamps = true;
+			break;
+		default:
+			throw new RuntimeException("timestamp data type unknown "+dActTimeDataType);
+		}
 
 		timeConverter = new TimeConverter(startTimeToDayFactor, dActTimeToSecondFactor, startTime, sampleRate);
 
@@ -214,7 +243,7 @@ public class UniversalDataBinFile {
 	public DataRow[] readDataRows() {
 		byteBuffer.position(dataSectionStartFilePosition);
 		//int dataRowByteSize = (variableCount+1)*4;
-		int dataRowByteSize = 4;
+		int dataRowByteSize = dataRowTimestampByteSize;
 		for(int sensorID=0;sensorID<variableCount;sensorID++) {
 			switch(sensorHeaders[sensorID].dataType) {
 			case 1:
@@ -243,34 +272,98 @@ public class UniversalDataBinFile {
 
 		DataRow[] datarows = new DataRow[dataEntryCount];
 
-		for(int i=0;i<dataEntryCount;i++) {
-			float[] data = new float[variableCount];
-			int rowID = byteBuffer.getInt();
-			for(int sensorID=0;sensorID<variableCount;sensorID++) {
-				switch(sensorHeaders[sensorID].dataType) {
-				case 1:
-					data[sensorID] = byteBuffer.get(); // ~ 1 byte boolean
-					break;
-				case 8:
-					data[sensorID] = byteBuffer.getFloat(); 
-					break;
-				case 7:
-					data[sensorID] = byteBuffer.getInt();
-					break;
-				case 12:
-					data[sensorID] = (float) byteBuffer.getDouble(); // loss of precision
-					break;					
-				default:
-					throw new RuntimeException("type not implemented:\t"+sensorHeaders[sensorID].dataType);
-				}
+		switch(dActTimeDataType) {
+		case 7: // UnSignedInt32 (default for loggers)
+		case 6: // SignedInt32
+			for(int i=0;i<dataEntryCount;i++) {
+				float[] data = new float[variableCount];
+				int rowID = byteBuffer.getInt();
+				for(int sensorID=0;sensorID<variableCount;sensorID++) {
+					switch(sensorHeaders[sensorID].dataType) {
+					case 1:
+						data[sensorID] = byteBuffer.get(); // ~ 1 byte boolean
+						break;
+					case 8:
+						data[sensorID] = byteBuffer.getFloat(); 
+						break;
+					case 7:
+						data[sensorID] = byteBuffer.getInt();
+						break;
+					case 12:
+						data[sensorID] = (float) byteBuffer.getDouble(); // loss of precision
+						break;					
+					default:
+						throw new RuntimeException("type not implemented:\t"+sensorHeaders[sensorID].dataType);
+					}
 
+				}
+				datarows[i] = new DataRow(rowID, data);
 			}
-			datarows[i] = new DataRow(rowID, data);
+			break;
+		case 12: {// Double
+			double offsetMinutes = startTime*startTimeToDayFactor*24*60;
+			double dActTimeToMinuteFactor = dActTimeToSecondFactor/60;
+			int prevRowID = 0;
+			for(int i=0;i<dataEntryCount;i++) {
+				float[] data = new float[variableCount];
+				int rowID = (int) (byteBuffer.getDouble()*dActTimeToMinuteFactor + offsetMinutes);
+				if(rowID<=prevRowID) {
+					throw new RuntimeException("(in read direct) row timestamps not in ascending order "+prevRowID+" "+rowID);
+				}
+				prevRowID = rowID;
+				for(int sensorID=0;sensorID<variableCount;sensorID++) {
+					switch(sensorHeaders[sensorID].dataType) {
+					case 1:
+						data[sensorID] = byteBuffer.get(); // ~ 1 byte boolean
+						break;
+					case 8:
+						data[sensorID] = byteBuffer.getFloat(); 
+						break;
+					case 7:
+						data[sensorID] = byteBuffer.getInt();
+						break;
+					case 12:
+						data[sensorID] = (float) byteBuffer.getDouble(); // loss of precision
+						break;					
+					default:
+						throw new RuntimeException("type not implemented:\t"+sensorHeaders[sensorID].dataType);
+					}
+
+				}
+				datarows[i] = new DataRow(rowID, data);
+			}
+			break;
 		}
+		default:
+			throw new RuntimeException("timestamp data type unknown "+dActTimeDataType);
+		}	
+
 		return datarows;
 	}
-
+	
 	public UDBFTimestampSeries getUDBFTimeSeries() {
+		if(directTimestamps) {
+			return getUDBFTimeSeriesDirect();
+		} else {
+			return getUDBFTimeSeriesTimeConverted();
+		}
+	}
+	
+	private UDBFTimestampSeries getUDBFTimeSeriesDirect() {
+		DataRow[] dataRows = readDataRows();
+		int len = dataRows.length;
+		long[] time = new long[len]; 
+		float[][] data = new float[len][];
+		
+		for (int i = 0; i < len; i++) {
+			DataRow dataRow = dataRows[i];
+			time[i] = dataRow.id;
+			data[i] = dataRow.data;			
+		}		
+		return new UDBFTimestampSeries(filename, sensorHeaders, timeConverter, time, data);		
+	}
+
+	private UDBFTimestampSeries getUDBFTimeSeriesTimeConverted() {
 		DataRow[] dataRows = readDataRows();
 		if(dataRows.length==0) {
 			return null;
@@ -426,5 +519,10 @@ public class UniversalDataBinFile {
 		}
 
 		return new UDBFTimestampSeries(filename, sensorHeaders, timeConverter, time, data);
+	}
+
+	@Override
+	public String toString() {
+		return "udbf "+timeConverter.getStartDateTime()+"  "+"  "+timeConverter;
 	}
 }

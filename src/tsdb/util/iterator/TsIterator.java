@@ -73,6 +73,20 @@ public abstract class TsIterator implements Iterator<TsEntry>, ProcessingChainNo
 	}
 	
 	/**
+	 * Write (at most) next n elements to console.
+	 * @param filename
+	 */
+	public void writeConsole(int n) {
+		for (int i = 0; i < n; i++) {
+			if(!this.hasNext()) {
+				break;
+			}
+			TsEntry e = this.next();
+			System.out.println(e);
+		}	
+	}
+	
+	/**
 	 * Collect all remaining elements into TimeSeries Object.
 	 * @param filename
 	 */

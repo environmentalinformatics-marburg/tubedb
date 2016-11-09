@@ -38,5 +38,14 @@ class SensorHeader implements Serializable {
 	public String toString() {
 		return name+":"+unit+":"+dataType;
 	}
+	
+	public static String[] toSensorNames(SensorHeader[] sensorHeaders) {
+		int len = sensorHeaders.length;
+		String[] names = new String[len];
+		for (int i = 0; i < len; i++) {
+			names[i] = sensorHeaders[i].name;
+		}
+		return names;
+	}
 
 }

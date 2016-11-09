@@ -52,4 +52,10 @@ public final class TimeConverter {
 		return (long) Math.round((dActTimeToSecondFactor/86400d)*24d*60d);
 	}
 
+	@Override
+	public String toString() {
+		return "TimeConverter [dActTimeToSecondFactor=" + dActTimeToSecondFactor + ", startTime=" + startTime
+				+ ", startTimeToDayFactor=" + startTimeToDayFactor + "]";
+	}
+
 }
