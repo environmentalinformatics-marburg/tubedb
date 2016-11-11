@@ -8,6 +8,7 @@ public class YamlList {
 	
 	private List<Object> list;
 	
+	@SuppressWarnings("unchecked")
 	public YamlList(Object data) {
 		if(data instanceof List) {
 			this.list = (List<Object>) data;
@@ -21,6 +22,7 @@ public class YamlList {
 		this.list = list;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<YamlMap> asMaps() {
 		ArrayList<YamlMap> result = new ArrayList<YamlMap>(list.size());
 		for(Object e:list) {

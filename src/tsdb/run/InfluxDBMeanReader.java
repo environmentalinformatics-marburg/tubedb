@@ -1,7 +1,6 @@
 package tsdb.run;
 
 import java.util.List;
-import java.util.NavigableSet;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,7 +28,7 @@ SELECT MEAN(*) FROM "Ta_200" GROUP BY station
 public class InfluxDBMeanReader {
 	private static final Logger log = LogManager.getLogger();
 
-	private final TsDB tsdb;
+	//private final TsDB tsdb;
 	private final InfluxDB influxDB;
 	
 	private long total_count = 0;
@@ -46,14 +45,14 @@ public class InfluxDBMeanReader {
 	}
 
 	public InfluxDBMeanReader(TsDB tsdb, InfluxDB influxDB) {
-		this.tsdb = tsdb;
+		//this.tsdb = tsdb;
 		this.influxDB = influxDB;
 
 	}
 
 
 	public void readAll() {		
-		NavigableSet<String> stationNames = tsdb.streamStorage.getStationNames();	
+		//NavigableSet<String> stationNames = tsdb.streamStorage.getStationNames();	
 
 		long timeStartImport = System.currentTimeMillis();
 		try {

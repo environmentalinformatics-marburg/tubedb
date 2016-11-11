@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="robots" content="noindex" />
+<link rel="shortcut icon" href="../favicon.png">
+
+<script src="jquery-ui-1.12.0/external/jquery/jquery.js"></script>
+<link rel="stylesheet" href="jquery-ui-1.12.0/jquery-ui.css" type="text/css">
+<script src="jquery-ui-1.12.0/jquery-ui.js"></script>
+
+<link href="catalog.css" type="text/css" rel="stylesheet">
+<script src="vue.js"></script>
+<script src="Helper.js"></script>
+
+<script type="text/x-template" id="translation-dialog-template">
+  <transition name="modal">
+    <div class="modal-mask" @click="$emit('close')">
+      <div class="modal-wrapper">
+        <div class="modal-container" @click.stop>
+
+          <div class="modal-header">
+              <b>{{row[0]}}</b>
+			  <button class="modal-default-button" @click="$emit('close')">
+                x
+              </button>
+			  <br>
+			  {{row[1]}} - {{row[2]}} 
+			  <br>
+			  <i>{{row[7]}}</i>
+			  <br>
+			  <b>{{row[6]}}</b>
+			  
+          </div>
+
+          <div class="modal-body">
+				<table>
+					<tr>
+						<th>source</th> <th>translation</th>
+					</tr>
+					<tr v-for="entry in translations">
+						<td :class="entry[1]==''?'translationNull':entry[0]==entry[1]?'translationSame':'translationDifferent'">{{entry[0]}}</td>
+						<td :class="entry[1]==''?'translationNull':entry[0]==entry[1]?'translationSame':'translationDifferent'">{{entry[1]}}</td>
+					</tr>
+				</table>
+          </div>
+
+          <div class="modal-footer">
+		  .
+              <button class="modal-default-button" @click="$emit('close')">
+                OK
+              </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
+</script>
+
+<script type="text/x-template" id="catalog-table-template">
+<transition name="fade">
+<div v-if="message==undefined" key="table">
+	<table>
+		<thead>
+			<tr>
+				<th v-for="(key, index) in columnNames" :class="{ active: sortKey == key }" @click="sortBy(key)">
+					{{key}}
+					<span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr v-for="row in filteredData" @click="viewRow(row)">
+				<td v-for="index in columnIndices">
+					{{row[index]}}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<template v-if="data.length>0">
+		<template v-if="filteredData.length==data.length">{{data.length}} rows</template>
+		<template v-else>{{filteredData.length}} / {{data.length}} rows</template>
+	</template>
+  
+  	<div style="display: none;">
+		<div id="translation_dialog">
+			<table>
+				<tr>
+					<th>source</th> <th>translation</th>
+				</tr>
+				<tr v-for="entry in selectedRow==undefined?[]:getTranslation(selectedRow)">
+					<td :class="entry[1]==''?'translationNull':entry[0]==entry[1]?'translationSame':'translationDifferent'">{{entry[0]}}</td>
+					<td :class="entry[1]==''?'translationNull':entry[0]==entry[1]?'translationSame':'translationDifferent'">{{entry[1]}}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	
+	<translation-dialog v-if="showTranslationDialog" @close="showTranslationDialog = false" :translations="translationDialogData" :row="translationDialogRow">
+	</translation-dialog>
+  
+</div>
+<div v-else key="message">
+	{{message}}  
+</div>
+</transition>
+</script>
+
+<script src="table.js"></script>
+<script src="catalog.js"></script>
+<title>catalog</title>
+</head>
+<body ondragstart="return false;" ondrop="return false;">
+
+<div id="app" style="">
+	<transition name="fade">
+	<div v-if="appMessage==undefined" key="app">
+		Project 
+		<select v-model="project">
+			<option v-for="project in projects" v-bind:value="project[0]">
+				{{project[1]}}
+			</option>
+		</select>
+		&gt
+		Plots 
+		<select v-model="plotGroup">
+			<option v-for="entry in plotGroups" v-bind:value="entry[0]">
+			{{entry[1]}}
+			</option>
+		</select>
+		&gt
+		Plot
+		<select v-model="plot">
+			<option v-for="entry in plots" v-bind:value="entry[0]">
+			{{entry[0]}}
+			</option>
+		</select>
+		&gt
+		Year
+		<select v-model="year">
+			<option v-for="year in years" v-bind:value="year">
+			{{year}}
+			</option>
+		</select>
+		&gt
+		Search 
+		<input v-model="tableFilterKey" placeholder="search rows">
+		<br>
+		<i>(click on table row to view details)</i>
+		<catalog-table :header="tableHeader" :data="tableData" :message="tableMessage" :filter-key="tableFilterKey" :filter-year="year">
+		</catalog-table>
+	</div>
+	<div v-else key="message">
+		{{appMessage}}  
+	</div>
+	</transition>	
+</div> <!--end app-->
+</body>
+</html>

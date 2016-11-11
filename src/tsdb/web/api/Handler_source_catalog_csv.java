@@ -1,6 +1,9 @@
 package tsdb.web.api;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,9 +14,12 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Request;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import tsdb.StationProperties;
 import tsdb.component.SourceEntry;
 import tsdb.remote.RemoteTsDB;
+import tsdb.remote.VirtualPlotInfo;
 import tsdb.util.TimeUtil;
+import tsdb.util.TimestampInterval;
 
 /**
  * Get information about time series data files that have been imported into database.
@@ -37,9 +43,40 @@ public class Handler_source_catalog_csv extends MethodHandler {
 		baseRequest.setHandled(true);
 		response.setContentType("text/plain;charset=utf-8");
 
+		String plot = request.getParameter("plot");
+
 		SourceEntry[] catalog = tsdb.getSourceCatalogEntries();
 
-		CSVWriter writer = new CSVWriter(response.getWriter());
+
+		if(plot!=null) {
+			VirtualPlotInfo virtualPlotInfo = tsdb.getVirtualPlot(plot);
+			if(virtualPlotInfo==null) {
+				catalog = Arrays.stream(catalog).filter(entry->{
+					//log.info(entry.stationName+ "=="+plot);
+					if(entry.stationName.equals(plot)) {
+						return true;
+					}
+					return false;
+				}).toArray(SourceEntry[]::new);
+			} else {
+				Set<String> stationSet = virtualPlotInfo.intervalList.stream().map(i->i.value.get_serial()).collect(Collectors.toSet());
+				catalog = Arrays.stream(catalog).filter(entry->{
+					if(stationSet.contains(entry.stationName)) {
+						for(TimestampInterval<StationProperties> interval:virtualPlotInfo.intervalList) {
+							if(interval.value.get_serial().equals(entry.stationName)) {
+								if(interval.contains(entry.firstTimestamp, entry.lastTimestamp)) {
+									return true;
+								}
+							}
+						}
+					}
+					return false;
+				}).toArray(SourceEntry[]::new);
+			}
+		}
+
+
+		CSVWriter writer = new CSVWriter(response.getWriter(), ',', CSVWriter.NO_QUOTE_CHARACTER);
 
 		String[] headerLine = new String[]{"station", "first", "last", "rows", "timestep", "translation", "filename", "path"};
 		writer.writeNext(headerLine);		
@@ -66,5 +103,5 @@ public class Handler_source_catalog_csv extends MethodHandler {
 
 	}
 
-	
+
 }

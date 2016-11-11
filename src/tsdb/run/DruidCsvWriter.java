@@ -3,7 +3,6 @@ package tsdb.run;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.NavigableSet;
 
 import org.apache.logging.log4j.LogManager;

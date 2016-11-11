@@ -4,7 +4,6 @@ import static tsdb.util.AssumptionCheck.throwNull;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,14 +26,9 @@ import org.ini4j.Profile.Section;
 import org.ini4j.Wini;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Construct;
-import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
-import org.yaml.snakeyaml.constructor.SafeConstructor.ConstructYamlStr;
-import org.yaml.snakeyaml.constructor.SafeConstructor.ConstructYamlTimestamp;
 import org.yaml.snakeyaml.nodes.Tag;
 
 import au.com.bytecode.opencsv.CSVReader;

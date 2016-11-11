@@ -125,15 +125,15 @@ public class UniversalDataBinFile {
 			throw new RuntimeException("reading of additional optional data in header not implemented: "+moduleAdditionalDataLen);
 		}
 		this.startTimeToDayFactor = byteBuffer.getDouble();
-		log.info(startTimeToDayFactor+"\tstartTimeToDayFactor");
+		//log.info(startTimeToDayFactor+"\tstartTimeToDayFactor");
 		this.dActTimeDataType = byteBuffer.getShort();
-		log.info(dActTimeDataType+"\tdActTimeDataType");
+		//log.info(dActTimeDataType+"\tdActTimeDataType");
 		this.dActTimeToSecondFactor = byteBuffer.getDouble();
-		log.info(dActTimeToSecondFactor+"\tdActTimeToSecondFactor");
+		//log.info(dActTimeToSecondFactor+"\tdActTimeToSecondFactor");
 		this.startTime = byteBuffer.getDouble();
-		log.info(startTime+"\tstartTime");
+		//log.info(startTime+"\tstartTime");
 		double sampleRate = byteBuffer.getDouble();
-		log.info(sampleRate+"\tsampleRate");
+		//log.info(sampleRate+"\tsampleRate");
 		variableCount = byteBuffer.getShort();
 		//System.out.println(variableCount+" variableCount");
 		

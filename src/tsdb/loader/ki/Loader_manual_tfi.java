@@ -25,6 +25,8 @@ class Loader_manual_tfi {
 	private String[] inputSchema = null;
 
 	private int[] sourcePos = null;
+	
+	public String[] docuTranslation = null;
 
 	public Loader_manual_tfi(TimestampSeries timestampSeries) {
 		this.timestampSeries = timestampSeries;
@@ -32,6 +34,7 @@ class Loader_manual_tfi {
 	}
 
 	protected boolean createSourcePos(String[] targetSchema) {
+		docuTranslation = new String[inputSchema.length];
 		//sourcePos[targetIndex] => sourceIndex
 		sourcePos = new int[targetSchema.length];
 		for(int i=0;i<sourcePos.length;i++) {
@@ -44,6 +47,7 @@ class Loader_manual_tfi {
 			if(sensorName!=null) {
 				if(targetIndexMap.containsKey(sensorName)) {
 					sourcePos[targetIndexMap.get(sensorName)] = sourceIndex;
+					docuTranslation[sourceIndex] = sensorName;
 					containsValidColumns = true;
 				} else {
 					log.warn("sensor name not in target schema '"+sensorName+"' "+getClass().toGenericString()+"   "+timestampSeries.name);

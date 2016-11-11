@@ -29,7 +29,6 @@ import tsdb.util.DataQuality;
 import tsdb.util.Util;
 
 public final class QueryPlanGenerators {
-	@SuppressWarnings("unused")
 	private static final Logger log = LogManager.getLogger();	
 	private QueryPlanGenerators(){} 
 

@@ -15,6 +15,7 @@ public class YamlMap {
 		this.map = map;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static YamlMap ofObject(Object map) {
 		return new YamlMap((Map<String, Object>) map);
 	}
@@ -44,6 +45,7 @@ public class YamlMap {
 		return o.toString();
 	}
 	
+	@SuppressWarnings("unchecked")
 	YamlMap getMap(String name) {
 		Object o = getObject(name);
 		if(o instanceof Map) {
@@ -59,6 +61,7 @@ public class YamlMap {
 		return optFun.get();
 	}
 
+	@SuppressWarnings("unchecked")
 	public YamlList getList(String name) {
 		Object o = getObject(name);
 		if(o instanceof List) {

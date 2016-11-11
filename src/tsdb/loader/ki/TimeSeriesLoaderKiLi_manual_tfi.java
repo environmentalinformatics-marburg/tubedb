@@ -133,7 +133,7 @@ public class TimeSeriesLoaderKiLi_manual_tfi {
 				List<DataRow> events = loader.toDataRows();
 				if(events!=null) {
 					tsdb.streamStorage.insertDataRows(serial, events, start, end, targetSchema);
-					tsdb.sourceCatalog.insert(new SourceEntry(path,serial,start,end,events.size(),timestampSeries.sensorNames, targetSchema, TsSchema.NO_CONSTANT_TIMESTEP));
+					tsdb.sourceCatalog.insert(new SourceEntry(path,serial,start,end,events.size(),timestampSeries.sensorNames, loader.docuTranslation, TsSchema.NO_CONSTANT_TIMESTEP));
 				} else {
 					log.warn("no events inserted: "+path);
 				}
