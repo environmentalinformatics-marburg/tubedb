@@ -236,6 +236,7 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 				case AVERAGE_WIND_VELOCITY:
 				case AVERAGE_ALBEDO:
 				case SUM_OF_AVERAGE:
+				case SUM_SUNSHINE:
 					resultData[i] = aggSum[i]/aggCnt[i];
 					validValueCounter++;
 					columnEntryCounter[i]++;
@@ -272,9 +273,6 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 					} else {
 						resultData[i] = Float.NaN;
 					}
-					break;
-				case SUM_SUNSHINE:
-					resultData[i] = aggSum[i]/6;
 					break;
 				case SUM_RADIATION:
 					resultData[i] = aggSum[i]/(aggCnt[i]*1000);

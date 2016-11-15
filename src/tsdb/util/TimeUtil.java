@@ -140,16 +140,25 @@ public final class TimeUtil implements Serializable {
 
 
 	/**
-	 * example: 2010-10-07,24
-	 * example: 2010-10-08,1
+	 * 
+	 * 
+	 * 
+	 * example: 2010-10-07,24  ==> 2010-10-07T23:00
+	 * example: 2010-10-08,1   ==> 2010-10-08T00:00
+	 * example: 2010-10-08,0   ==> 2010-10-07,23:00 (special case)
 	 * 
 	 * @param dateTimeText
 	 * @return
 	 */
 	public static long parseTimestampDateFullHourFormat(String dateText, int fullHour) {
 		LocalDate date = LocalDate.parse(dateText, DateTimeFormatter.ISO_DATE);
-		LocalDateTime dt = LocalDateTime.of(date, LocalTime.of(fullHour-1, 0));
-		return TimeUtil.dateTimeToOleMinutes(dt);
+		if(fullHour==0) {
+			LocalDateTime dt = LocalDateTime.of(date, LocalTime.of(23, 0));
+			return TimeUtil.dateTimeToOleMinutes(dt.minusDays(1));
+		} else {
+			LocalDateTime dt = LocalDateTime.of(date, LocalTime.of(fullHour-1, 0));
+			return TimeUtil.dateTimeToOleMinutes(dt);
+		}		
 	}
 
 	public static long parseTimestamp(String dateText, String timeText, boolean isISOdate) {		

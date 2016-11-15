@@ -13,7 +13,7 @@ class SensorHeader implements Serializable {
 	
 	public final String name;
 	public final String unit;
-	public short dataType;
+	public final short dataType;
 
 	public SensorHeader(String name, String unit, short dataType) {
 		this.name = name;

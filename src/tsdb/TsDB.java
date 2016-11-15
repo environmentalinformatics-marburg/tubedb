@@ -161,17 +161,32 @@ public class TsDB implements AutoCloseable {
 	}
 
 	/**
-	 * get array of Sensor objects with given sensor names
+	 * Transform array of sensor names to array of sensor objects.
+	 * Complement missing sensors by new raw sensor objects.
 	 * @param outputTimeSeriesSchema
 	 * @return
 	 */
 	public Sensor[] getSensors(String[] names) {
+		return getSensors(names, true);
+	}
+	
+	
+	/**
+	 * Transform array of sensor names to array of sensor objects.
+	 * @param names
+	 * @param createMissing complement missing sensors by new raw sensor objects or set entry to null
+	 * @return
+	 */
+	public Sensor[] getSensors(String[] names, boolean createMissing) {
 		Sensor[] sensors = new Sensor[names.length];
 		for(int i=0;i<names.length;i++) {
 			Sensor sensor = sensorMap.get(names[i]);
 			sensors[i] = sensor;
 			if(sensor==null) {
 				log.warn("sensor "+names[i]+" not found");
+				if(createMissing) {
+					sensors[i] = new Sensor(names[i]);
+				}
 			}
 		}
 		return sensors;
@@ -238,6 +253,14 @@ public class TsDB implements AutoCloseable {
 			log.warn("override station (already exists): "+station.stationID);
 		}
 		stationMap.put(station.stationID, station);
+	}
+	
+	public void replaceStation(Station station) {
+		if(stationMap.containsKey(station.stationID)) {
+			stationMap.put(station.stationID, station);
+		} else {
+			log.warn("station does not exist already no insert: "+station.stationID);			
+		}
 	}
 
 	/**

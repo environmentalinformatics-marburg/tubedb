@@ -142,4 +142,33 @@ JSON object of one plot:
 
 example of returned data:
 
-`[{"plot":"AEW10","first_timestamp":1234,"last_timestamp":2234,"first_datetime":"2000-01-01T00:00","last_datetime":"2010-10-10T10:10","voltage":12.76,"message_date":"2010-10-10T10:20","message":"OK"},{"plot":"AEW11","first_timestamp":1244,"last_timestamp":2244,"first_datetime":"2000-01-02T00:00","last_datetime":"2010-10-10T10:30","voltage":11.92,"message_date":"2010-10-10T10:40","message":"OK"}]`  
+`[{"plot":"AEW10","first_timestamp":1234,"last_timestamp":2234,"first_datetime":"2000-01-01T00:00","last_datetime":"2010-10-10T10:10","voltage":12.76,"message_date":"2010-10-10T10:20","message":"OK"},{"plot":"AEW11","first_timestamp":1244,"last_timestamp":2244,"first_datetime":"2000-01-02T00:00","last_datetime":"2010-10-10T10:30","voltage":11.92,"message_date":"2010-10-10T10:40","message":"OK"}]`
+
+
+###plot_info
+
+Get plot positions (WGS 84) by region.
+
+syntax `plot_info?region=[REGION]`
+
+example: `plot_info?region=BE`
+
+Retrieves a JSON array of JSON objects for each plot.
+
+JSON object of one plot: 
+
+`{name:[PLOT], general:[GENERAL STATION], lat:[VALUE], lon:[VALUE], elevation:[VALUE]}`
+
+`plot`: plot identifier
+
+`general`: general station
+
+`lat`: latitude 
+
+`lon`: longitude
+
+`elevation`: elevation (metres above sea level)
+
+example of returned data:
+
+`[{"name":"AEG01","general":"Schwäbische Alb Grünland","lat":48.421234,"lon":9.331234},{"name":"AEG02","general":"Schwäbische Alb Grünland","lat":48.321234,"lon":9.431234}]`

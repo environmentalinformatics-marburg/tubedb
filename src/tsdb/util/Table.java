@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,6 +48,15 @@ public class Table {
 		public String get(String[] row) {
 			return row[rowIndex];
 		}
+		public ColumnReaderString then(UnaryOperator<String> func) {
+			ColumnReaderString outher = this;
+			return new ColumnReaderString(rowIndex) {				
+				@Override
+				public String get(String[] row) {
+					return func.apply(outher.get(row));
+				}				
+			};
+		}
 	}
 
 	public static class ColumnReaderFloat extends ColumnReader {
@@ -69,6 +79,15 @@ public class Table {
 					return Float.NaN;
 				}
 			}
+		}
+		public ColumnReaderFloat then(UnaryOperator<Float> func) {
+			ColumnReaderFloat outher = this;
+			return new ColumnReaderFloat(rowIndex) {				
+				@Override
+				public float get(String[] row, boolean warnIfEmpty) {	
+					return func.apply(outher.get(row, warnIfEmpty));
+				}				
+			};
 		}
 	}
 	
@@ -277,7 +296,15 @@ public class Table {
 
 			for(int i=0;i<table.names.length;i++) {
 				if(table.nameMap.containsKey(table.names[i])) {
-					log.error("dublicate name: "+table.names[i]);
+					int nameNumber = 2;
+					String name2 = table.names[i]+nameNumber;
+					while(table.nameMap.containsKey(name2)) {
+						nameNumber++;
+						name2 = table.names[i]+nameNumber;
+					}
+					log.warn("dublicate name: "+table.names[i]+ " replaced with "+name2);
+					table.names[i] = name2;
+					table.nameMap.put(table.names[i], i);
 				} else {
 					table.nameMap.put(table.names[i], i);
 				}
@@ -345,6 +372,10 @@ public class Table {
 			return -1;
 		}
 		return index;
+	}
+	
+	public boolean containsColumn(String name) {
+		return nameMap.containsKey(name);
 	}
 
 	public ColumnReaderString createColumnReader(String name) {

@@ -1208,10 +1208,16 @@ public class ConfigLoader {
 		}
 	}
 
-	public void readSaStation(String configFile) {
+	/**
+	 * 
+	 * @param configFile
+	 * @param update  only replace already inserted station with new entry
+	 */
+	public void readSaStation(String configFile, boolean update) {
 		Table table = Table.readCSV(configFile,',');
 		ColumnReaderString cr_stationID = table.createColumnReader("station");
 		ColumnReaderString cr_general = table.createColumnReader("general");
+		ColumnReaderString cr_logger = table.containsColumn("logger")?table.createColumnReader("logger"):cr_general.then(g->g+"_logger");
 
 		ColumnReaderFloat cr_lat = table.createColumnReaderFloat("lat");
 		ColumnReaderFloat cr_lon = table.createColumnReaderFloat("lon");
@@ -1223,9 +1229,11 @@ public class ConfigLoader {
 			GeneralStation generalStation = tsdb.getGeneralStation(generalStationName);
 			if(generalStation==null) {
 				log.error("general station not found: "+generalStationName+"  at "+stationID);
-				continue;
+				generalStationName = "SASSCAL";
+				generalStation = tsdb.getGeneralStation(generalStationName); //!!!!
+				//continue; //!!!!
 			}
-			String loggerTypeName = generalStationName+"_logger";
+			String loggerTypeName = cr_logger.get(row);
 			LoggerType loggerType = tsdb.getLoggerType(loggerTypeName);
 			if(loggerType==null) {
 				log.error("logger type not found: "+loggerTypeName+"  at "+stationID);
@@ -1250,8 +1258,14 @@ public class ConfigLoader {
 			} catch(Exception e) {
 				log.error(e);
 			}
-
-			tsdb.insertStation(station);
+			if(update) {
+				if(tsdb.getStation(station.stationID)!=null) {
+					//log.info("update");
+					tsdb.replaceStation(station);
+				}
+			} else {
+				tsdb.insertStation(station);
+			}
 		}
 	}
 

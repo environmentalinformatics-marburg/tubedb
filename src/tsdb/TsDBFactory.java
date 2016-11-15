@@ -209,7 +209,8 @@ public final class TsDBFactory {
 				configLoader.readRegion(configDirectory+"sa/sa_region.ini");
 				configLoader.readLoggerTypeSchema(configDirectory+"sa/sa_logger_type_schema.ini"); // [create LOGGER_TYPE] read schema of logger types and create: logger type objects, sensor objects (if new)
 				configLoader.readGeneralStation(configDirectory+"sa/sa_general_stations.ini"); // [create GENERAL_STATION]
-				configLoader.readSaStation(configDirectory+"sa/sa_station_inventory.csv"); //[create STATION] read station with geo position
+				configLoader.readSaStation(configDirectory+"sa/sa_station_inventory.csv", false); //[create STATION] read station with geo position
+				configLoader.readSaStation(configDirectory+"sa/sa_station_SASSCAL_inventory.csv", true); //[create STATION] read station and update geo position
 			}
 
 			if(JUST_ONE_REGION==null||JUST_ONE_REGION.toUpperCase().equals("SA_OWN")) {  //*** SA_OWN

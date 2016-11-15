@@ -67,10 +67,22 @@ public class SouthAfricaCreateStationInventory {
 			e.printStackTrace();
 		}
 
+		
 		System.out.println("read SASSCAL");
 
 		try {
 			DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("C:/timeseriesdatabase_source/sa/SASSCAL"));
+			for(Path filepath:ds) {
+				readOneFileSASSCAL(filepath);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("read SASSCAL_2016_11_13");
+
+		try {
+			DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("C:/timeseriesdatabase_source/sa/SASSCAL_2016_11_13"));
 			for(Path filepath:ds) {
 				readOneFileSASSCAL(filepath);
 			}
@@ -88,6 +100,8 @@ public class SouthAfricaCreateStationInventory {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		
 
 		System.out.println("create inventory");
 
