@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="robots" content="noindex" />
+	<link rel="shortcut icon" href="../favicon.png">
+    <title>Map of Plots</title>
+    <link rel="stylesheet" href="ol.css" type="text/css">
+	<link rel="stylesheet" href="map2.css" type="text/css">
+    <script src="ol-debug.js"></script>
+	<script src="vue.js"></script>
+	<script src="axios.js"></script>
+	<script src="map2.js"></script>
+  </head>
+  <body>
+	<div id="app">
+		<div v-if="message != undefined">
+		{{message}}
+		</div>
+		<div id="map" class="map" ></div>
+	</div>	
+  </body>
+</html>
