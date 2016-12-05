@@ -36,5 +36,6 @@
 	<classpathentry kind="lib" path="lib/snakeyaml-1.17.jar" sourcepath="lib_src/snakeyaml-1.17-sources.jar"/>
 	<classpathentry kind="lib" path="lib/influx/influxdb-java-2.3.jar" sourcepath="lib/influx/influxdb-java-2.3-sources.jar"/>
 	<classpathentry kind="lib" path="lib/h2-1.4.192.jar" sourcepath="lib_src/h2-1.4.192-sources.jar"/>
+	<classpathentry kind="lib" path="lib/monetdb-jdbc-2.23.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

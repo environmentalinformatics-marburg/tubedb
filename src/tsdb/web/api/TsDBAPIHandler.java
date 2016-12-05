@@ -244,6 +244,8 @@ public class TsDBAPIHandler extends AbstractHandler {
 					json_output.key("elevation");
 					json_output.value(plotInfo.elevation);
 				}
+				json_output.key("region");
+				json_output.value(plotInfo.generalStationInfo.region.name);
 				json_output.endObject();
 			}
 			json_output.endArray();

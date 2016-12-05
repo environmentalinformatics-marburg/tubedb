@@ -35,6 +35,7 @@ public interface RemoteTsDB extends Remote {
 	
 	//region
 	Region[] getRegions() throws RemoteException;
+	Region getRegionByName(String name) throws RemoteException;
 	@Deprecated
 	String[] getRegionLongNames() throws RemoteException;
 	@Deprecated

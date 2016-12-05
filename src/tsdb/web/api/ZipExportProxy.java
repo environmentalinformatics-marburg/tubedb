@@ -24,7 +24,6 @@ import tsdb.util.Pair;
  *
  */
 public class ZipExportProxy {
-
 	private static final Logger log = LogManager.getLogger();
 
 	private final RemoteTsDB tsdb;

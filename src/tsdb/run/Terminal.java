@@ -43,6 +43,8 @@ public class Terminal {
 		addCommand("h2_mean_read",H2MeanReader::main);
 		
 		addCommand("clear_import",ClearImportSources::main);
+		
+		addCommand("experiment_processing",ExperimentProcessing::main);
 	}
 
 	public static void main(String[] args) {

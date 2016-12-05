@@ -28,6 +28,8 @@ var sensor_rows = [];
 
 var tasks = 0;
 
+var pageParams = {};
+
 var region_select;
 var generalstation_select;
 var plot_select;
@@ -96,7 +98,37 @@ function decTask() {
 	}
 }
 
+function getUrlQueryParams(qs) { // based on http://stackoverflow.com/a/1099670
+    qs = qs.split('+').join(' ');
+    var params = {};
+    var tokens;
+    var re = /[?&]?([^=]+)=([^&]*)/g;
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+    }
+    return params;
+}
+
+function createUrlQueryParams(params) {
+	var qs = "";
+	for (var property in params) {
+		if (params.hasOwnProperty(property)) {
+			qs += encodeURIComponent(property)+'='+encodeURIComponent(params[property]);
+		}
+	}
+	if(qs.length>0) {
+		qs = '?'+qs;
+	}
+	return qs;
+}
+
 function document_ready() {
+	pageParams = getUrlQueryParams(document.location.search);
+	console.log(document.location.search);
+	console.log(pageParams);
+	console.log(createUrlQueryParams(pageParams));
+	console.log(document.location.pathname);
+	
 	region_select = $("#region_select");
 	generalstation_select = $("#generalstation_select");
 	plot_select = $("#plot_select");
@@ -143,6 +175,9 @@ function updateRegions() {
 	$.get(url_region_list).done(function(data) {
 		var rows = splitData(data);
 		$.each(rows, function(i,row) {region_select.append(new Option(row[1],row[0]));});
+		if(pageParams.region!=undefined) {
+			region_select.val(pageParams.region);
+		}
 		onRegionChange();
 		decTask();
 		if(rows.length==1) {
@@ -154,6 +189,12 @@ function updateRegions() {
 }
 
 function onRegionChange() {
+	console.log("region change "+region_select.val()+"    "+pageParams.region);
+	if(pageParams.region!=undefined && region_select.val()!=pageParams.region) {
+		pageParams = {};
+		var qs = createUrlQueryParams(pageParams);
+		history.replaceState(null, null, document.location.pathname+qs);		
+	}
 	updateGeneralStations();
 }
 
@@ -189,13 +230,23 @@ function updatePlots() {
 	}
 	$.get(url_plot_list+query).done(function(data) {
 		var rows = splitData(data);
-		$.each(rows, function(i,row) {plot_select.append(new Option(row[0]+(row[2]!="virtual"&&row[2]!="unknown"?" <"+row[2]+">":"")+(row[1]=="vip"?" (vip)":""),row[0]));})
+		$.each(rows, function(i,row) {plot_select.append(new Option(row[0]+(row[2]!="virtual"&&row[2]!="unknown"?" <"+row[2]+">":"")+(row[1]=="vip"?" (vip)":""),row[0]));});
+		if(pageParams.plot!=undefined) {
+			plot_select.val(pageParams.plot);
+		}/*else {
+			pageParams = {};
+		}*/
 		onPlotChange();
 		decTask();
 	}).fail(function() {plot_select.append(new Option("[error]","[error]"));decTask();});
 }
 
 function onPlotChange() {
+	if(pageParams.plot!=undefined && plot_select.val()!=pageParams.plot) {
+		delete pageParams.plot;
+		var qs = createUrlQueryParams(pageParams);
+		history.replaceState(null, null, document.location.pathname+qs);		
+	}
 	updateStations();
 }
 

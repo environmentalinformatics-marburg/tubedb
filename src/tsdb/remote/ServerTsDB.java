@@ -145,6 +145,11 @@ public class ServerTsDB implements RemoteTsDB {
 		Collection<Region> regions = tsdb.getRegions();
 		return regions.toArray(new Region[regions.size()]);
 	}
+	
+	@Override
+	public Region getRegionByName(String name) {
+		return tsdb.getRegion(name);
+	}
 
 	@Override
 	public String[] getRegionLongNames() {

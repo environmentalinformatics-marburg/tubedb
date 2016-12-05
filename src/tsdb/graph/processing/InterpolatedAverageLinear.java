@@ -177,7 +177,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 			for(int trainingIndex=0;trainingIndex<trainingIterators.length;trainingIndex++) {
 				double mse = weights[trainingIndex][column];
 				weights[trainingIndex][column] = Math.pow(min_mse/mse,5);
-				log.info("w "+mse+" -> "+weights[trainingIndex][column]);
+				//log.info("w "+mse+" -> "+weights[trainingIndex][column]);
 			}
 		}
 

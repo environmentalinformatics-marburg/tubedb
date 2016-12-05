@@ -8,6 +8,7 @@ import tsdb.util.TimeConverter;
 import tsdb.util.TimeUtil;
 import tsdb.util.TsEntry;
 import tsdb.util.TsSchema;
+import tsdb.util.iterator.TimestampSeries;
 import tsdb.util.iterator.TsIterator;
 
 /**
@@ -77,5 +78,16 @@ public class UDBFTimestampSeries {
 			return e;
 		}
 		
+	}
+
+	public TimestampSeries toTimestampSeries() {
+		String name = filename.getFileName().toString();
+		String[] sensorNames = SensorHeader.toSensorNames(sensorHeaders);
+		final int len = time.length;
+		TsEntry[] entries = new TsEntry[len];		
+		for(int i=0;i<len;i++) {
+			entries[i] = new TsEntry(time[i], data[i]);
+		}		
+		return new TimestampSeries(name, sensorNames, Arrays.asList(entries));		
 	}
 }
