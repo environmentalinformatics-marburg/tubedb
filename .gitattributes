@@ -1,0 +1,12 @@
+lib/* linguist-vendored
+lib_src/* linguist-vendored
+documentation/* linguist-documentation
+example/* linguist-documentation
+
+markerwithlabel.js linguist-vendored
+jquery-2.1.1.min.js linguist-vendored
+vue.js linguist-vendored
+axios.js linguist-vendored
+ol.css linguist-vendored
+ol.js linguist-vendored
+ol-debug.js linguist-vendored

@@ -2,15 +2,21 @@ package tsdb;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.ini4j.Profile.Section;
 import org.ini4j.Wini;
 
+import tsdb.component.Region;
 import tsdb.util.Util;
 
 /**
@@ -57,7 +63,7 @@ public final class TsDBFactory {
 	//public static String JUST_ONE_REGION = "SA";
 
 	public static boolean HIDE_INTENAL_SENSORS = true;
-	
+
 	private TsDBFactory(){}
 
 	static {
@@ -107,7 +113,7 @@ public final class TsDBFactory {
 			WEB_SERVER_LOGIN = getBoolean(pathMap,"WEB_SERVER_LOGIN", WEB_SERVER_LOGIN);
 			HIDE_INTENAL_SENSORS = getBoolean(pathMap,"HIDE_INTENAL_SENSORS",HIDE_INTENAL_SENSORS);
 			JUST_ONE_REGION = getString(pathMap, "JUST_ONE_REGION", JUST_ONE_REGION);			
-			
+
 			WEB_SERVER_HTTPS = getBoolean(pathMap,"WEB_SERVER_HTTPS",WEB_SERVER_HTTPS);
 			WEB_SERVER_HTTPS_KEY_STORE_PASSWORD = getString(pathMap, "WEB_SERVER_HTTPS_KEY_STORE_PASSWORD", WEB_SERVER_HTTPS_KEY_STORE_PASSWORD);
 		} catch (IOException e) {
@@ -179,71 +185,53 @@ public final class TsDBFactory {
 
 	public static TsDB createDefault(String databaseDirectory,String configPath, String cacheDirectory, String streamdbPathPrefix) {
 		String configDirectory = configPath+"/";
+
+		Set<String> specific_config_regions = new HashSet<String> () {{
+			addAll(Arrays.asList(new String[]{}));	
+		}};
+
 		try {
 			TsDB tsdb = new TsDB(databaseDirectory, cacheDirectory, streamdbPathPrefix);
 			ConfigLoader configLoader = new ConfigLoader(tsdb);
 
-			if(JUST_ONE_REGION==null||JUST_ONE_REGION.toUpperCase().equals("BE")) { //*** BE
-				configLoader.readRegion(configDirectory+"be/be_region.ini");
-				configLoader.readLoggerTypeSchema(configDirectory+"be/be_logger_type_schema.ini"); // [create LOGGER_TYPE] read schema of logger types and create: logger type objects, sensor objects (if new)
-				configLoader.readGeneralStation(configDirectory+"be/be_general_station.ini"); // [create GENERAL_STATION]
-				configLoader.readStation(configDirectory+"be/be_station_inventory.csv"); // [create STATION] read station list, generate general station name and properties and create station objects
-				configLoader.readStationGeoPosition(configDirectory+"be/be_station_master.csv"); // read geo position of stations and insert into existing stations
-				configLoader.readSensorTranslation(configDirectory+"be/be_sensor_translation.ini"); // read sensor translation and insert it into existing logger types, general stations and stations
-				configLoader.readSensorNameCorrection(configDirectory+"be/be_sensor_name_correction.json");  // read sensor translation and insert it into existing stations
-				configLoader.readStationProperties(configDirectory+"be/station_properties.yaml");
-			}
+			//loading generic config
+			DirectoryStream.Filter<Path> filter = path->path.toFile().isDirectory() && !specific_config_regions.contains(path.getFileName().toString().toLowerCase());
+			for(Path path : Files.newDirectoryStream(Paths.get(configDirectory), filter)) {
+				String dir = path.toString();
+				log.info("dir  "+path+"  "+path.getFileName());
+				try {
+					Region region = configLoader.readRegion(dir+"/region.ini", JUST_ONE_REGION);
+					if(region!=null) {
+						configLoader.readGeneralStation(dir+"/general_stations.ini");
+						configLoader.readLoggerTypeSchema(dir+"/logger_type_schema.ini");
 
-			if(JUST_ONE_REGION==null||JUST_ONE_REGION.toUpperCase().equals("KI")) { //*** KI
-				configLoader.readRegion(configDirectory+"ki/ki_region.ini");
-				configLoader.readLoggerTypeSchema(configDirectory+"ki/ki_logger_type_schema.ini"); // [create LOGGER_TYPE] read schema of logger types and create: logger type objects, sensor objects (if new)
-				configLoader.readGeneralStation(configDirectory+"ki/ki_general_stations.ini"); // [create GENERAL_STATION]
-				configLoader.readVirtualPlot(configDirectory+"ki/ki_station_master.csv"); // [create VIRTUAL_PLOT]
-				configLoader.readVirtualPlotGeoPosition(configDirectory+"ki/ki_plot_position.csv"); // read geo position of virtual plots and insert into existing virtual plots
-				configLoader.readVirtualPlotElevation(configDirectory+"ki/ki_plot_elevation.csv"); // read elevation of virtual plots and insert into existing virtual plots
-				configLoader.readKiStation(configDirectory+"ki/ki_station_inventory.csv"); // [create STATION] read time interval of stations and insert it in existing virtual plots			
-				configLoader.readSensorTranslation(configDirectory+"ki/ki_sensor_translation.ini"); // read sensor translation and insert it into existing logger types, general stations and stations
-			}
+						switch(region.name.toUpperCase()) {
+						case "BE":
+							configLoader.readStation(configDirectory+"be/be_station_inventory.csv"); // [create STATION] read station list, generate general station name and properties and create station objects
+							configLoader.readStationGeoPosition(configDirectory+"be/be_station_master.csv"); // read geo position of stations and insert into existing stations
+							break;
+						case "KI":
+							configLoader.readVirtualPlot(configDirectory+"ki/ki_station_master.csv"); // [create VIRTUAL_PLOT]
+							configLoader.readVirtualPlotGeoPosition(configDirectory+"ki/ki_plot_position.csv"); // read geo position of virtual plots and insert into existing virtual plots
+							configLoader.readVirtualPlotElevation(configDirectory+"ki/ki_plot_elevation.csv"); // read elevation of virtual plots and insert into existing virtual plots
+							configLoader.readKiStation(configDirectory+"ki/ki_station_inventory.csv"); // [create STATION] read time interval of stations and insert it in existing virtual plots			
+							break;
+						case "SA":
+							configLoader.readSaStation(configDirectory+"sa/sa_station_inventory.csv", false); //[create STATION] read station with geo position
+							configLoader.readSaStation(configDirectory+"sa/sa_station_SASSCAL_inventory.csv", true); //[create STATION] read station and update geo position
+							break;
+						default:
+							configLoader.readPlotInventory(dir+"/plot_inventory.csv");
+							configLoader.readGenericStationInventory(dir+"/station_inventory.csv");
+						}
 
-			if(JUST_ONE_REGION==null||JUST_ONE_REGION.toUpperCase().equals("SA")) {  //*** SA
-				configLoader.readRegion(configDirectory+"sa/sa_region.ini");
-				configLoader.readLoggerTypeSchema(configDirectory+"sa/sa_logger_type_schema.ini"); // [create LOGGER_TYPE] read schema of logger types and create: logger type objects, sensor objects (if new)
-				configLoader.readGeneralStation(configDirectory+"sa/sa_general_stations.ini"); // [create GENERAL_STATION]
-				configLoader.readSaStation(configDirectory+"sa/sa_station_inventory.csv", false); //[create STATION] read station with geo position
-				configLoader.readSaStation(configDirectory+"sa/sa_station_SASSCAL_inventory.csv", true); //[create STATION] read station and update geo position
-			}
-
-			if(JUST_ONE_REGION==null||JUST_ONE_REGION.toUpperCase().equals("SA_OWN")) {  //*** SA_OWN
-				String prefix = configDirectory+"sa_own/";
-
-				configLoader.readRegion(prefix+"sa_own_region.ini");
-				configLoader.readLoggerTypeSchema(prefix+"sa_own_logger_type_schema.ini"); // [create LOGGER_TYPE] read schema of logger types and create: logger type objects, sensor objects (if new)
-				configLoader.readGeneralStation(prefix+"sa_own_general_stations.ini"); // [create GENERAL_STATION]
-				configLoader.readSaOwnPlotInventory(prefix+"sa_own_plot_inventory.csv");
-				configLoader.readGenericStationInventory(prefix+"sa_own_station_inventory.csv");
-				configLoader.readSensorTranslation(prefix+"sa_own_sensor_translation.ini"); // read sensor translation and insert it into existing logger types, general stations and stations				
-			}
-			
-			if(JUST_ONE_REGION==null||JUST_ONE_REGION.toUpperCase().equals("MM")) {  //*** MM
-				String prefix = configDirectory+"mm/";
-
-				configLoader.readRegion(prefix+"mm_region.ini");
-				configLoader.readLoggerTypeSchema(prefix+"mm_logger_type_schema.ini"); // [create LOGGER_TYPE] read schema of logger types and create: logger type objects, sensor objects (if new)
-				configLoader.readGeneralStation(prefix+"mm_general_stations.ini"); // [create GENERAL_STATION]
-				configLoader.readSaOwnPlotInventory(prefix+"mm_plot_inventory.csv");
-				configLoader.readGenericStationInventory(prefix+"mm_station_inventory.csv");
-				configLoader.readSensorTranslation(prefix+"mm_sensor_translation.ini"); // read sensor translation and insert it into existing logger types, general stations and stations				
-			}
-			
-			if(JUST_ONE_REGION==null||JUST_ONE_REGION.toUpperCase().equals("BA")) {  //*** BA
-				String prefix = configDirectory+"ba/";
-
-				configLoader.readRegion(prefix+"ba_region.ini");
-				configLoader.readLoggerTypeSchema(prefix+"ba_logger_type_schema.ini"); // [create LOGGER_TYPE] read schema of logger types and create: logger type objects, sensor objects (if new)
-				configLoader.readGeneralStation(prefix+"ba_general_stations.ini"); // [create GENERAL_STATION]
-				configLoader.readBaPlotInventory(prefix+"ba_plot_inventory.csv");
-				configLoader.readGenericStationInventory(prefix+"ba_station_inventory.csv");
-				configLoader.readSensorTranslation(prefix+"ba_sensor_translation.ini"); // read sensor translation and insert it into existing logger types, general stations and stations				
+						configLoader.readOptinalSensorTranslation(dir+"/sensor_translation.ini");
+						configLoader.readOptionalSensorNameCorrection(dir+"/sensor_name_correction.json");  // read sensor translation and insert it into existing stations
+						configLoader.readOptionalStationProperties(dir+"/station_properties.yaml");
+					}
+				} catch(Exception e) {
+					log.info("could not load meta data of  "+path+"  "+e);
+				}
 			}
 
 			//*** global config start

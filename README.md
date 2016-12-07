@@ -17,6 +17,8 @@ Descriptions and specifications of TubeDB are located in subfolder `documentatio
 
 * [data import formats](documentation/import_formats.md)
 
+* [configuration](documentation/configuration.md)
+
 * [project subfolders and files](documentation/folders_and_files.md)
 
 * [package structure of source files](documentation/source_structure.md)

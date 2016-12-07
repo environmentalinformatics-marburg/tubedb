@@ -254,27 +254,30 @@ public class ConfigLoader {
 		}
 	}
 
-	public void readSensorTranslation(String iniFile) {
+	public void readOptinalSensorTranslation(String iniFile) {
 		try {
-			Wini ini = new Wini(new File(iniFile));
-			for(Section section:ini.values()) {
-				String sectionName = section.getName();
-				int index = sectionName.indexOf("_logger_type_sensor_translation");
-				if(index>-1) {
-					readLoggerTypeSensorTranslation(sectionName.substring(0,index),section);
-					continue;
+			File file = new File(iniFile);
+			if(file.exists()) {
+				Wini ini = new Wini(file);
+				for(Section section:ini.values()) {
+					String sectionName = section.getName();
+					int index = sectionName.indexOf("_logger_type_sensor_translation");
+					if(index>-1) {
+						readLoggerTypeSensorTranslation(sectionName.substring(0,index),section);
+						continue;
+					}
+					index = sectionName.indexOf("_generalstation_sensor_translation");
+					if(index>-1) {
+						readGeneralStationSensorTranslation(sectionName.substring(0,index),section);
+						continue;
+					}
+					index = sectionName.indexOf("_station_sensor_translation");
+					if(index>-1) {
+						readStationSensorTranslation(sectionName.substring(0,index),section);
+						continue;
+					}
+					log.warn("section unknown: "+sectionName);
 				}
-				index = sectionName.indexOf("_generalstation_sensor_translation");
-				if(index>-1) {
-					readGeneralStationSensorTranslation(sectionName.substring(0,index),section);
-					continue;
-				}
-				index = sectionName.indexOf("_station_sensor_translation");
-				if(index>-1) {
-					readStationSensorTranslation(sectionName.substring(0,index),section);
-					continue;
-				}
-				log.warn("section unknown: "+sectionName);
 			}
 		} catch (Exception e) {
 			log.error(e);
@@ -285,10 +288,10 @@ public class ConfigLoader {
 	 * Read and insert sensor name corrections with time intervals in json format.
 	 * @param jsonFile filename
 	 */
-	public void readSensorNameCorrection(String jsonFile) {
+	public void readOptionalSensorNameCorrection(String jsonFile) {
 		Path filename = Paths.get(jsonFile);
 		if(!Files.isRegularFile(filename)) {
-			log.error("ConfigJson file not found "+filename);
+			//log.error("ConfigJson file not found "+filename);
 			//throw new RuntimeException("file not found: "+filename);
 			return;
 		}
@@ -1014,8 +1017,19 @@ public class ConfigLoader {
 		}		
 	}
 
-	public void readRegion(String configFile) {
+	public Region readRegion(String configFile) {
+		return readRegion(configFile, null);
+	}
+
+	/**
+	 * read region config
+	 * @param configFile
+	 * @param justRegion if not null read just this region
+	 * @return
+	 */
+	public Region readRegion(String configFile, String justRegion) {
 		try {
+			Region region = null;
 			Wini ini = new Wini(new File(configFile));
 
 			Section section = ini.get("region");
@@ -1023,8 +1037,11 @@ public class ConfigLoader {
 				Map<String, String> regionNameMap = Util.readIniSectionMap(section);
 				for(Entry<String, String> entry:regionNameMap.entrySet()) {
 					String regionName = entry.getKey();
-					String regionLongName = entry.getValue();
-					tsdb.insertRegion(new Region(regionName, regionLongName));
+					if(justRegion==null || justRegion.toLowerCase().equals(regionName.toLowerCase())) {
+						String regionLongName = entry.getValue();
+						region = new Region(regionName, regionLongName);
+						tsdb.insertRegion(region);
+					}
 				}
 			} else {
 				log.warn("region section not found");
@@ -1035,28 +1052,32 @@ public class ConfigLoader {
 				Map<String, String> regionNameMap = Util.readIniSectionMap(section);
 				for(Entry<String, String> entry:regionNameMap.entrySet()) {
 					String regionName = entry.getKey();
-					String range = entry.getValue();
-					Interval interval = Interval.parse(range);
-					if(interval!=null) {
-						if(interval.start>=1900&&interval.start<=2100&&interval.end>=1900&&interval.end<=2100) {
-							int startTime = (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(interval.start, 1, 1, 0, 0));
-							int endTime = (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(interval.end, 12, 31, 23, 0));
-							Region region = tsdb.getRegion(regionName);
-							if(region!=null) {
-								region.viewTimeRange = Interval.of(startTime,endTime);
+					if(justRegion==null || justRegion.toLowerCase().equals(regionName.toLowerCase())) {
+						String range = entry.getValue();
+						Interval interval = Interval.parse(range);
+						if(interval!=null) {
+							if(interval.start>=1900&&interval.start<=2100&&interval.end>=1900&&interval.end<=2100) {
+								int startTime = (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(interval.start, 1, 1, 0, 0));
+								int endTime = (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(interval.end, 12, 31, 23, 0));
+								Region region1 = tsdb.getRegion(regionName);
+								if(region1!=null) {
+									region1.viewTimeRange = Interval.of(startTime,endTime);
+								} else {
+									log.warn("region not found: "+regionName);
+								}
 							} else {
-								log.warn("region not found: "+regionName);
+								log.warn("region_view_time_range section invalid year range "+range);
 							}
-						} else {
-							log.warn("region_view_time_range section invalid year range "+range);
 						}
 					}
 				}
 			} else {
 				log.warn("region_view_time_range section not found");
 			}
+			return region;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
 		}
 	}
 
@@ -1269,30 +1290,34 @@ public class ConfigLoader {
 		}
 	}
 
-	public void readSaOwnPlotInventory(String configFile) {
+	public void readPlotInventory(String configFile) {
 		Table table = Table.readCSV(configFile,',');
 		ColumnReaderString cr_plot = table.createColumnReader("plot");
 		ColumnReaderString cr_general = table.createColumnReader("general");		
-		ColumnReaderFloat cr_lat = table.createColumnReaderFloat("lat");
-		ColumnReaderFloat cr_lon = table.createColumnReaderFloat("lon");
+		ColumnReaderFloat cr_lat = table.createColumnReaderFloat("lat", Float.NaN);
+		ColumnReaderFloat cr_lon = table.createColumnReaderFloat("lon", Float.NaN);
+		ColumnReaderFloat cr_easting = table.createColumnReaderFloat("easting", Float.NaN);
+		ColumnReaderFloat cr_northing = table.createColumnReaderFloat("northing", Float.NaN);
+		ColumnReaderFloat cr_elevation = table.createColumnReaderFloat("elevation", Float.NaN);		
 
 		for(String[] row:table.rows) {
 			String plotID = cr_plot.get(row);
 			String generalStationName = cr_general.get(row);
-			float lat = cr_lat.get(row,true);
-			float lon = cr_lon.get(row,true);
 			GeneralStation generalStation = tsdb.getGeneralStation(generalStationName);
 			if(generalStation==null) {
 				log.error("GeneralStation not found "+generalStationName);
 				continue;
-			}
-
-			float geoPosEasting = Float.NaN;
-			float geoPosNorthing = Float.NaN;
+			}			
+			float lat = cr_lat.get(row,true);
+			float lon = cr_lon.get(row,true);
+			float easting = cr_easting.get(row,true);
+			float northing = cr_northing.get(row,true);
+			float elevation = cr_elevation.get(row,true);
 			boolean isFocalPlot = false;
-			VirtualPlot virtualPlot = new VirtualPlot(tsdb, plotID, generalStation, geoPosEasting, geoPosNorthing, isFocalPlot);
+			VirtualPlot virtualPlot = new VirtualPlot(tsdb, plotID, generalStation, easting, northing, isFocalPlot);
 			virtualPlot.geoPosLatitude = lat;
 			virtualPlot.geoPosLongitude = lon;
+			virtualPlot.elevation = elevation;
 			tsdb.insertVirtualPlot(virtualPlot);
 		}
 
@@ -1370,24 +1395,27 @@ public class ConfigLoader {
 
 	}
 
-	private static class MyConsturctor extends SafeConstructor {
-		MyConsturctor() {
+	private static class MyConstructor extends SafeConstructor {
+		MyConstructor() {
 			Construct stringConstructor = this.yamlConstructors.get(Tag.STR);
 			this.yamlConstructors.put(Tag.TIMESTAMP, stringConstructor);
 		}
 	}
 
-	public void readStationProperties(String yamlFile) {
+	public void readOptionalStationProperties(String yamlFile) {
 		log.trace("read yaml");
 		try {
-			Yaml yaml = new Yaml(new MyConsturctor());
-			InputStream in = new FileInputStream(new File(yamlFile));
-			Object yamlObject = yaml.load(in);
-			YamlList yamlList = new YamlList(yamlObject);
-			for(YamlMap entry:yamlList.asMaps()) {
-				List<LabeledProperty> properties = LabeledProperty.parse(entry);
-				for(LabeledProperty property:properties) {
-					tsdb.insertLabeledProperty(property);
+			File file = new File(yamlFile);
+			if(file.exists()) {
+				Yaml yaml = new Yaml(new MyConstructor());
+				InputStream in = new FileInputStream(file);
+				Object yamlObject = yaml.load(in);
+				YamlList yamlList = new YamlList(yamlObject);
+				for(YamlMap entry:yamlList.asMaps()) {
+					List<LabeledProperty> properties = LabeledProperty.parse(entry);
+					for(LabeledProperty property:properties) {
+						tsdb.insertLabeledProperty(property);
+					}
 				}
 			}
 		} catch (Exception e) {

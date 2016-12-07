@@ -1,0 +1,7 @@
+plot,logger,serial,start,end
+a1,xyl1,10001,*,*
+a2,xyl1,10002,*,*
+a3,xyl1,10003,*,*
+b1,xyl1,10004,*,*
+b2,xyl1,10005,*,*
+b3,xyl1,10006,*,*

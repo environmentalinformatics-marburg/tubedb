@@ -29,11 +29,12 @@ import tsdb.util.Table.ColumnReaderIntFunc.IntegerParser;
  */
 public class Table {
 	private static final Logger log = LogManager.getLogger();
-	
+
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 	private static final String UTF8_BOM = "\uFEFF";
 
 	public static class ColumnReader {
+		public static final int MISSING_COLUMN = Integer.MAX_VALUE;
 		public final int rowIndex;
 		public ColumnReader(int rowIndex) {
 			throwFalse(rowIndex>=0);
@@ -90,7 +91,19 @@ public class Table {
 			};
 		}
 	}
-	
+
+	public static class ColumnReaderFloatMissing extends ColumnReaderFloat {
+		private float missing;
+		public ColumnReaderFloatMissing(float missing) {
+			super(MISSING_COLUMN);
+			this.missing = missing;
+		}
+		@Override
+		public float get(String[] row, boolean warnIfEmpty) {
+			return missing;
+		}		
+	}
+
 	public static class ColumnReaderDouble extends ColumnReader {
 		public ColumnReaderDouble(int rowIndex) {
 			super(rowIndex);
@@ -113,7 +126,7 @@ public class Table {
 			}
 		}
 	}
-	
+
 	public static class ColumnReaderInt extends ColumnReader {
 		public ColumnReaderInt(int rowIndex) {
 			super(rowIndex);
@@ -122,7 +135,7 @@ public class Table {
 			return Integer.parseInt(row[rowIndex]);
 		}
 	}
-	
+
 	public static class ColumnReaderIntFunc extends ColumnReader {
 		private final IntegerParser parser;
 		public ColumnReaderIntFunc(int rowIndex, IntegerParser parser) {
@@ -136,7 +149,7 @@ public class Table {
 			int parse(String text);
 		}
 	}
-	
+
 	public static interface ColumnReaderTimestamp {
 		public long get(String[] row);
 	}
@@ -159,7 +172,7 @@ public class Table {
 			}
 		}
 	}
-	
+
 	public static class ColumnReaderSlashTimestamp implements ColumnReaderTimestamp {
 		private final int rowIndexDateTime;
 		public ColumnReaderSlashTimestamp(int rowIndexDateTime) {
@@ -174,7 +187,7 @@ public class Table {
 			}
 		}
 	}
-	
+
 	public static class ColumnReaderMonthNameTimestamp implements ColumnReaderTimestamp {
 		private final int rowIndexDateTime;
 		public ColumnReaderMonthNameTimestamp(int rowIndexDateTime) {
@@ -189,8 +202,8 @@ public class Table {
 			}
 		}
 	}
-	
-	
+
+
 	public static class ColumnReaderDateFullHourTimestamp implements ColumnReaderTimestamp {
 		private final int columnIndexDate;
 		private final int columnIndexFullHour;
@@ -207,7 +220,7 @@ public class Table {
 			}
 		}
 	}
-	
+
 	/**
 	 * example: "2014-04-14";"23";"45";"0"
 	 * example: "2014-04-14";"24";"0";"0"
@@ -262,7 +275,7 @@ public class Table {
 	public String[][] rows;
 
 	private Table() {}
-	
+
 	public static Table readCSV(Path filename, char separator) {
 		return readCSV(filename.toString(),separator);
 	}
@@ -279,17 +292,17 @@ public class Table {
 			//CSVReader reader = new CSVReader(new FileReader(filename),separator);
 			InputStreamReader in = new InputStreamReader(new FileInputStream(filename),UTF8);
 			CSVReader reader = new CSVReader(in,separator);
-			
+
 			List<String[]> list = reader.readAll();
 
 			table.names = list.get(0);
-			
+
 			if(table.names.length>0) { // filter UTF8 BOM
 				if(table.names[0].startsWith(UTF8_BOM)) {
 					table.names[0] = table.names[0].substring(1, table.names[0].length());
 				}
 			}
-			
+
 			//log.info("names: "+Arrays.toString(table.names)+"   in "+filename);
 
 			table.nameMap = new HashMap<String, Integer>();
@@ -326,16 +339,16 @@ public class Table {
 			return null;
 		}
 	}
-	
+
 	public static Table readCSVFirstDataRow(String filename, char separator) {
 		try {
 			Table table = new Table();
 
 			CSVReader reader = new CSVReader(new FileReader(filename),separator);
-			
+
 			String[] headerRow = reader.readNext();
 			String[] dataRow = reader.readNext();
-			
+
 			reader.close();
 
 			table.names = headerRow;
@@ -352,7 +365,7 @@ public class Table {
 
 			table.rows = new String[1][];
 			table.rows[0] = dataRow;			
-			
+
 			return table;
 		} catch(Exception e) {
 			log.error(e);
@@ -366,14 +379,25 @@ public class Table {
 	 * @return if name not found -1
 	 */
 	public int getColumnIndex(String name) {
+		return getColumnIndex(name, true);
+	}
+
+	/**
+	 * get column position of one header name
+	 * @param name
+	 * @return if name not found -1
+	 */
+	public int getColumnIndex(String name, boolean warn) {
 		Integer index = nameMap.get(name);
-		if(index==null) {
-			log.error("name not found in table: "+name);
+		if(index==null) {			
+			if(warn) {
+				log.error("name not found in table: "+name);
+			}
 			return -1;
 		}
 		return index;
 	}
-	
+
 	public boolean containsColumn(String name) {
 		return nameMap.containsKey(name);
 	}
@@ -393,7 +417,21 @@ public class Table {
 		}
 		return new ColumnReaderFloat(columnIndex);
 	}
-	
+
+	/**
+	 * Creates reader of column or producer of value "missing" if columns does not exist.
+	 * @param name
+	 * @param missing
+	 * @return
+	 */
+	public ColumnReaderFloat createColumnReaderFloat(String name, float missing) {
+		int columnIndex = getColumnIndex(name, false);
+		if(columnIndex<0) {
+			return new ColumnReaderFloatMissing(missing);
+		}
+		return new ColumnReaderFloat(columnIndex);
+	}
+
 	public ColumnReaderDouble createColumnReaderDouble(String name) {
 		int columnIndex = getColumnIndex(name);
 		if(columnIndex<0) {
@@ -401,7 +439,7 @@ public class Table {
 		}
 		return new ColumnReaderDouble(columnIndex);
 	}
-	
+
 	public ColumnReaderInt createColumnReaderInt(String name) {
 		int columnIndex = getColumnIndex(name);
 		if(columnIndex<0) {
@@ -409,7 +447,7 @@ public class Table {
 		}
 		return new ColumnReaderInt(columnIndex);
 	}
-	
+
 	public ColumnReaderIntFunc createColumnReaderInt(String name, IntegerParser parser) {
 		int columnIndex = getColumnIndex(name);
 		if(columnIndex<0) {
@@ -430,7 +468,7 @@ public class Table {
 
 		return new ColumnReaderTimestampTwoCols(columnIndexDate, columnIndexTime);	
 	}
-	
+
 	public ColumnReaderSlashTimestamp createColumnReaderSlashTimestamp(String name) {
 		int columnIndex = getColumnIndex(name);
 		if(columnIndex<0) {
@@ -438,7 +476,7 @@ public class Table {
 		}
 		return new ColumnReaderSlashTimestamp(columnIndex);
 	}
-	
+
 	public ColumnReaderMonthNameTimestamp createColumnReaderMonthNameTimestamp(String name) {
 		int columnIndex = getColumnIndex(name);
 		if(columnIndex<0) {
@@ -446,7 +484,7 @@ public class Table {
 		}
 		return new ColumnReaderMonthNameTimestamp(columnIndex);
 	}
-	
+
 	//parseTimestampDateFullHourFormat(String dateText, int fullHour)
 	public ColumnReaderDateFullHourTimestamp createColumnReaderDateFullHourTimestamp(String colDate, String colFullHour) {
 		int columnIndexDate = getColumnIndex(colDate);		
@@ -475,7 +513,7 @@ public class Table {
 		}
 		return new ColumnReaderDateHourWrapMinuteTimestamp(columnIndexDate,columnIndexHourWrap,columnIndexMinute);
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
