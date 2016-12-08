@@ -40,12 +40,15 @@ import tsdb.util.AggregationType;
 import tsdb.util.Interval;
 import tsdb.util.NamedInterval;
 import tsdb.util.Table;
+import tsdb.util.Table.ColumnReaderBoolean;
 import tsdb.util.Table.ColumnReaderDouble;
 import tsdb.util.Table.ColumnReaderFloat;
 import tsdb.util.Table.ColumnReaderString;
 import tsdb.util.TimeUtil;
 import tsdb.util.Util;
 import tsdb.util.Util.FloatRange;
+import tsdb.util.yaml.YamlList;
+import tsdb.util.yaml.YamlMap;
 
 /**
  * Reads config files and inserts meta data into TimeSeriesDatabase
@@ -772,54 +775,6 @@ public class ConfigLoader {
 				log.warn("serialName already inserted: "+serialName);
 			}
 		}
-
-
-		/*Map<String, List<StationProperties>> serialMap = readKiLiStationConfigInternal(configFile);
-		for(Entry<String, List<StationProperties>> entry:serialMap.entrySet()) {
-			String serial = entry.getKey();
-			//Map<String, String> firstProperyMap = entry.getValue().get(0); // !!
-			//final String GENERALSTATION_PROPERTY_NAME = "TYPE";
-			//String firstGeneralStationName = firstProperyMap.get(GENERALSTATION_PROPERTY_NAME); // not used
-			//String firstGeneralStationName = plotIdKiLiToGeneralStationName(firstProperyMap.get("PLOTID"));
-			//System.out.println("generalStationName: "+generalStationName+" serial: "+serial);
-			if(!stationMap.containsKey(serial)) {
-				//System.out.println(serial);
-				//String loggerName = loggerPropertyKiLiToLoggerName(entry.getValue().get(0).get("LOGGER"));
-				String loggerName = loggerPropertyKiLiToLoggerName(entry.getValue().get(entry.getValue().size()-1).get_logger_type_name());// !! better loggerType match of inventory
-				//System.out.println("logger name: "+loggerName);
-				LoggerType loggerType = loggerTypeMap.get(loggerName); 
-				if(loggerType!=null) {
-					//Station station = new Station(this, null, serial,loggerType, entry.getValue().get(0), entry.getValue()); // !!
-					Station station = new Station(this, null, serial,loggerType, entry.getValue());
-					stationMap.put(serial, station);
-					for(StationProperties properties:entry.getValue()) {
-						String plotid = properties.get_plotid();
-						//String generalStationName = properyMap.get(GENERALSTATION_PROPERTY_NAME);
-						VirtualPlot virtualplot = virtualplotMap.get(plotid);
-						if(virtualplot!=null) {
-							//if(!virtualplot.generalStationName.equals(generalStationName)) {
-						//log.warn("different general station names: "+virtualplot.generalStationName+"\t"+generalStationName+" in "+plotid);
-					//}
-
-							try {
-
-
-								virtualplot.addStationEntry(station, properties);
-							} catch (Exception e) {
-								log.warn("entry not added: "+e);
-							}
-						} else {
-							log.warn("virtual plotid not found: "+plotid+"    "+serial);
-						}
-					}
-				} else {				
-					log.error("logger type not found: "+entry.getValue().get(0).get_logger_type_name()+" -> station not created: "+serial);				
-				}						
-			}
-			else {
-				log.warn("serial already inserted: "+serial);
-			}
-		}*/
 	}
 
 	/**
@@ -1298,7 +1253,8 @@ public class ConfigLoader {
 		ColumnReaderFloat cr_lon = table.createColumnReaderFloat("lon", Float.NaN);
 		ColumnReaderFloat cr_easting = table.createColumnReaderFloat("easting", Float.NaN);
 		ColumnReaderFloat cr_northing = table.createColumnReaderFloat("northing", Float.NaN);
-		ColumnReaderFloat cr_elevation = table.createColumnReaderFloat("elevation", Float.NaN);		
+		ColumnReaderFloat cr_elevation = table.createColumnReaderFloat("elevation", Float.NaN);
+		ColumnReaderBoolean cr_focal = table.createColumnReaderBooleanYN("focal", false);
 
 		for(String[] row:table.rows) {
 			String plotID = cr_plot.get(row);
@@ -1308,12 +1264,12 @@ public class ConfigLoader {
 				log.error("GeneralStation not found "+generalStationName);
 				continue;
 			}			
-			float lat = cr_lat.get(row,true);
-			float lon = cr_lon.get(row,true);
-			float easting = cr_easting.get(row,true);
-			float northing = cr_northing.get(row,true);
-			float elevation = cr_elevation.get(row,true);
-			boolean isFocalPlot = false;
+			float lat = cr_lat.get(row,false);
+			float lon = cr_lon.get(row,false);
+			float easting = cr_easting.get(row,false);
+			float northing = cr_northing.get(row,false);
+			float elevation = cr_elevation.get(row,false);
+			boolean isFocalPlot = cr_focal.get(row);
 			VirtualPlot virtualPlot = new VirtualPlot(tsdb, plotID, generalStation, easting, northing, isFocalPlot);
 			virtualPlot.geoPosLatitude = lat;
 			virtualPlot.geoPosLongitude = lon;
@@ -1328,8 +1284,8 @@ public class ConfigLoader {
 		ColumnReaderString cr_plot = table.createColumnReader("plot");
 		ColumnReaderString cr_logger = table.createColumnReader("logger");
 		ColumnReaderString cr_serial = table.createColumnReader("serial");
-		ColumnReaderString cr_start = table.createColumnReader("start");
-		ColumnReaderString cr_end = table.createColumnReader("end");
+		ColumnReaderString cr_start = table.createColumnReader("start", "*");
+		ColumnReaderString cr_end = table.createColumnReader("end", "*");
 
 		for(String[] row:table.rows) {
 			String plotID = cr_plot.get(row);

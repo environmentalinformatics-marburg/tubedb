@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import tsdb.util.TimeUtil;
+import tsdb.util.yaml.YamlMap;
 
 public class LabeledProperty {
 	private static final Logger log = LogManager.getLogger();

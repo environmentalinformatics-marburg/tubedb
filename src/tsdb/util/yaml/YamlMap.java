@@ -1,4 +1,4 @@
-package tsdb;
+package tsdb.util.yaml;
 
 import java.util.ArrayList;
 import java.util.List;

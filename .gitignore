@@ -19,3 +19,7 @@ hs_err_pid*
 /gradle-app.setting
 /javadoc/
 /performance_testing/
+
+.Rproj.user
+.RData
+.Rhistory

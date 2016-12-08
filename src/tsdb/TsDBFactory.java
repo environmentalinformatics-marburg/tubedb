@@ -186,19 +186,14 @@ public final class TsDBFactory {
 	public static TsDB createDefault(String databaseDirectory,String configPath, String cacheDirectory, String streamdbPathPrefix) {
 		String configDirectory = configPath+"/";
 
-		Set<String> specific_config_regions = new HashSet<String> () {{
-			addAll(Arrays.asList(new String[]{}));	
-		}};
-
 		try {
 			TsDB tsdb = new TsDB(databaseDirectory, cacheDirectory, streamdbPathPrefix);
 			ConfigLoader configLoader = new ConfigLoader(tsdb);
 
 			//loading generic config
-			DirectoryStream.Filter<Path> filter = path->path.toFile().isDirectory() && !specific_config_regions.contains(path.getFileName().toString().toLowerCase());
-			for(Path path : Files.newDirectoryStream(Paths.get(configDirectory), filter)) {
+			for(Path path : Files.newDirectoryStream(Paths.get(configDirectory), path->path.toFile().isDirectory())) {
 				String dir = path.toString();
-				log.info("dir  "+path+"  "+path.getFileName());
+				//log.info("dir  "+path+"  "+path.getFileName());
 				try {
 					Region region = configLoader.readRegion(dir+"/region.ini", JUST_ONE_REGION);
 					if(region!=null) {
@@ -207,18 +202,16 @@ public final class TsDBFactory {
 
 						switch(region.name.toUpperCase()) {
 						case "BE":
-							configLoader.readStation(configDirectory+"be/be_station_inventory.csv"); // [create STATION] read station list, generate general station name and properties and create station objects
-							configLoader.readStationGeoPosition(configDirectory+"be/be_station_master.csv"); // read geo position of stations and insert into existing stations
+							configLoader.readStation(dir+"/be_station_inventory.csv"); // [create STATION] read station list, generate general station name and properties and create station objects
+							configLoader.readStationGeoPosition(dir+"/be_station_master.csv"); // read geo position of stations and insert into existing stations
 							break;
 						case "KI":
-							configLoader.readVirtualPlot(configDirectory+"ki/ki_station_master.csv"); // [create VIRTUAL_PLOT]
-							configLoader.readVirtualPlotGeoPosition(configDirectory+"ki/ki_plot_position.csv"); // read geo position of virtual plots and insert into existing virtual plots
-							configLoader.readVirtualPlotElevation(configDirectory+"ki/ki_plot_elevation.csv"); // read elevation of virtual plots and insert into existing virtual plots
-							configLoader.readKiStation(configDirectory+"ki/ki_station_inventory.csv"); // [create STATION] read time interval of stations and insert it in existing virtual plots			
+							configLoader.readPlotInventory(dir+"/plot_inventory.csv");
+							configLoader.readKiStation(dir+"/ki_station_inventory.csv"); // [create STATION] read time interval of stations and insert it in existing virtual plots			
 							break;
 						case "SA":
-							configLoader.readSaStation(configDirectory+"sa/sa_station_inventory.csv", false); //[create STATION] read station with geo position
-							configLoader.readSaStation(configDirectory+"sa/sa_station_SASSCAL_inventory.csv", true); //[create STATION] read station and update geo position
+							configLoader.readSaStation(dir+"/sa_station_inventory.csv", false); //[create STATION] read station with geo position
+							configLoader.readSaStation(dir+"/sa_station_SASSCAL_inventory.csv", true); //[create STATION] read station and update geo position
 							break;
 						default:
 							configLoader.readPlotInventory(dir+"/plot_inventory.csv");

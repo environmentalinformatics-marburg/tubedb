@@ -43,6 +43,20 @@ public class Table {
 	}
 
 	public static class ColumnReaderString extends ColumnReader {
+		public static class ColumnReaderSlashTimestamp implements ColumnReaderTimestamp {
+			private final int rowIndexDateTime;
+			public ColumnReaderSlashTimestamp(int rowIndexDateTime) {
+				this.rowIndexDateTime = rowIndexDateTime;
+			}
+			public long get(String[] row) {			
+				try {
+					return TimeUtil.parseTimestampSlashFormat(row[rowIndexDateTime]);				
+				} catch(NumberFormatException e) {
+					log.warn(row[rowIndexDateTime]+"  not parsed");
+					return -1;
+				}
+			}
+		}
 		public ColumnReaderString(int rowIndex) {
 			super(rowIndex);
 		}
@@ -59,6 +73,18 @@ public class Table {
 			};
 		}
 	}
+	
+	public static class ColumnReaderStringMissing extends ColumnReaderString {
+		private String missing;
+		public ColumnReaderStringMissing(String missing) {
+			super(MISSING_COLUMN);
+			this.missing = missing;
+		}
+		@Override
+		public String get(String[] row) {
+			return missing;
+		}		
+	}
 
 	public static class ColumnReaderFloat extends ColumnReader {
 		public ColumnReaderFloat(int rowIndex) {
@@ -67,7 +93,10 @@ public class Table {
 		public float get(String[] row, boolean warnIfEmpty) {			
 			try {
 				String textValue = row[rowIndex];
-				if(!warnIfEmpty&&textValue.isEmpty()) {
+				if(textValue.isEmpty()) {
+					if(warnIfEmpty) {
+						log.warn("empty");
+					}
 					return Float.NaN;
 				}
 				return Float.parseFloat(row[rowIndex]);
@@ -148,6 +177,54 @@ public class Table {
 		public interface IntegerParser {
 			int parse(String text);
 		}
+	}
+	
+	
+	public static abstract class ColumnReaderBoolean extends ColumnReader {
+		public ColumnReaderBoolean(int rowIndex) {
+			super(rowIndex);
+		}
+		public abstract boolean get(String[] row);
+	}
+	
+	public static class ColumnReaderBooleanMissing extends ColumnReaderBoolean {
+		private final boolean missing;
+		public ColumnReaderBooleanMissing(boolean missing) {
+			super(MISSING_COLUMN);
+			this.missing = missing;
+		}
+		@Override
+		public boolean get(String[] row) {
+			return missing;
+		}		
+	}
+	
+	public static class ColumnReaderBooleanYN extends ColumnReaderBoolean {
+		private final boolean missing;
+		public ColumnReaderBooleanYN(int rowIndex, boolean missing) {
+			super(rowIndex);
+			this.missing = missing;
+		}
+		@Override
+		public boolean get(String[] row) {
+			String text = row[rowIndex];
+			if(text.length()!=1) {
+				text = text.trim();
+				if(text.length()!=1) {
+					log.warn("boolean not parsed "+text);
+					return missing;
+				}
+			}
+			char c = text.toUpperCase().charAt(0);
+			if(c=='Y') {
+				return true;
+			}
+			if(c=='N') {
+				return false;
+			}
+			log.warn("boolean not parsed "+text);
+			return missing;
+		}		
 	}
 
 	public static interface ColumnReaderTimestamp {
@@ -409,6 +486,14 @@ public class Table {
 		}
 		return new ColumnReaderString(columnIndex);
 	}
+	
+	public ColumnReaderString createColumnReader(String name, String missing) {
+		int columnIndex = getColumnIndex(name);
+		if(columnIndex<0) {
+			return new ColumnReaderStringMissing(missing);
+		}
+		return new ColumnReaderString(columnIndex);
+	}
 
 	public ColumnReaderFloat createColumnReaderFloat(String name) {
 		int columnIndex = getColumnIndex(name);
@@ -454,6 +539,14 @@ public class Table {
 			return null;
 		}
 		return new ColumnReaderIntFunc(columnIndex, parser);
+	}
+	
+	public ColumnReaderBoolean createColumnReaderBooleanYN(String name, boolean missing) {
+		int columnIndex = getColumnIndex(name, false);
+		if(columnIndex<0) {
+			return new ColumnReaderBooleanMissing(missing);
+		}
+		return new ColumnReaderBooleanYN(columnIndex, missing);
 	}
 
 	public ColumnReaderTimestampTwoCols createColumnReaderTimestamp(String colDate, String colTime) {
