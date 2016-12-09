@@ -2,6 +2,7 @@ package tsdb.util;
 
 import static tsdb.util.AssumptionCheck.throwFalse;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
@@ -354,7 +355,11 @@ public class Table {
 	private Table() {}
 
 	public static Table readCSV(Path filename, char separator) {
-		return readCSV(filename.toString(),separator);
+		return readCSV(filename.toFile(),separator);
+	}
+	
+	public static Table readCSV(String filename, char separator) {
+		return readCSV(new File(filename), separator);
 	}
 
 	/**
@@ -362,12 +367,12 @@ public class Table {
 	 * @param filename
 	 * @return
 	 */
-	public static Table readCSV(String filename, char separator) {
+	public static Table readCSV(File file, char separator) {
 		try {
 			Table table = new Table();
 
 			//CSVReader reader = new CSVReader(new FileReader(filename),separator);
-			InputStreamReader in = new InputStreamReader(new FileInputStream(filename),UTF8);
+			InputStreamReader in = new InputStreamReader(new FileInputStream(file),UTF8);
 			CSVReader reader = new CSVReader(in,separator);
 
 			List<String[]> list = reader.readAll();
@@ -488,7 +493,7 @@ public class Table {
 	}
 	
 	public ColumnReaderString createColumnReader(String name, String missing) {
-		int columnIndex = getColumnIndex(name);
+		int columnIndex = getColumnIndex(name, false);
 		if(columnIndex<0) {
 			return new ColumnReaderStringMissing(missing);
 		}
@@ -623,5 +628,9 @@ public class Table {
 			s.append('\n');
 		}
 		return s.toString();
+	}
+	
+	public String getName(ColumnReader cr) {
+		return names[cr.rowIndex];
 	}
 }

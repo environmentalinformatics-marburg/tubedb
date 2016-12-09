@@ -27,7 +27,7 @@ inventory[inventory=="NaN"] <- ""
 
 setorder(inventory, plot, logger, start, serial)
 
-fwrite(inventory, "testing_inventory.csv")
+fwrite(inventory, "station_inventory.csv")
 
 # source columns:
 #

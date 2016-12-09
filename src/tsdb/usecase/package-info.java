@@ -1,4 +1,4 @@
 /**
- * Use cases of TubeDB and internal testing.
+ * internal use cases of TubeDB.
  */
 package tsdb.usecase;

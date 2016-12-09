@@ -1,0 +1,1 @@
+java -Xmx2g -classpath 'tsdb.jar:lib/*.jar' tsdb.run.ClearLoadMasks

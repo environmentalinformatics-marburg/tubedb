@@ -32,7 +32,7 @@ public class StationProperties implements Serializable{
 	public final static String PROPERTY_SERIAL = "SERIAL";
 	public final static String PROPERTY_TYPE = "TYPE"; //type: EP or VIP
 
-	private final static String TYPE_VIP = "VIP";
+	public final static String TYPE_VIP = "VIP";
 
 	private Map<String,String> propertyMap;
 

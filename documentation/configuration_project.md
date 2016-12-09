@@ -23,6 +23,8 @@ file structure:
 
 Ini-file lists plot groups ("general stations"). One plot is contained in exactly one plot group.
 
+Optionally several groups may form a super group. If present all plots of one super group are the set of plots for interpolation and reference generation purposes.
+
 file structure:
 
 `[general_stations]`
@@ -34,6 +36,12 @@ file structure:
 `[general_station_long_names]`
  
 `GROUP_NAME = GROUP_LONG_NAME`
+
+...
+
+`[general_station_groups]` (optional)
+
+`GROUP_NAME = SUPER_GROUP_NAME`
 
 ...
 
@@ -55,25 +63,33 @@ columns:
 
 * `plot` plot name
 * `general` plot group ("general station") of this plot
+* `focal` (optional) if plot is a focal plot (`Y`/`N`), defaults to `N`.
 * `lat` (optional) WGS84 position latitude 
 * `lon` (optional) WGS84 position longitude
 * `easting` (optional) project specific (planar) coordinate system position (e.g. one UTM zone) first axis
 * `northing` (optional) project specific (planar) coordinate system position (e.g. one UTM zone) second axis
 * `elevation` (optional) elevation a.s.l.
+* `is_station` (optional) if plot name denotes a station with same name (`Y`/`N`), defaults to `N`.
+* `logger` (required if plot is station) logger type name
+* `alternative_id` (optional) alternative plot id for information purposes only 
 
-### `station_inventory.csv`
+### `station_inventory.csv` (optional)
 
 Csv-file lists stations and their properties.
+
+If all plots are defined as stations (in `plot_inventory.csv`) this file may be omitted.
 
 columns:
 
 * `plot` plot name
 * `logger` logger type name
 * `serial` station name
-* `start` (optional) start of measurement
-* `end` (optional) end of measurement
+* `start` (optional) start of measurement, defaults to `*`
+* `end` (optional) end of measurement, defaults to `*`
 
-Columns `start` and `end` may be set to `*` to denote open start / open end. Missing start/end columns default to `*`.
+Columns `start` and `end` may be set to `*` to denote open start / open end.
+
+Additional custom columns are inserted into station properties. 
 
 ### `sensor_translation.ini` (optional)
 
@@ -158,7 +174,7 @@ This config file contains correction information for wrong sensor names from raw
 
 File format is JSON with block comments.
 
-file structure (as JSON array of entries):
+file structure (JSON array of entries):
 
 `[`
 
@@ -199,10 +215,26 @@ example file-content:
 
 ### `station_properties.yaml` (optional)
 
-Yaml-file lists custom station properties.
+Yaml-file lists custom station properties that are valid for a given interval of time.
 
 file structure:
 
 `- {station: STATION_NAME, start: START_DATE, end: END_DATE, content: {label: PROPERTY_NAME, C1_NAME: C1_VALUE, C2_NAME: C2_VALUE, ...} }`
 
 ...
+
+### `mask.csv` (optional)
+
+Csv-file lists time-ranges of sensor malfunctions.
+
+To assist automatic quality checks known time ranges of sensor malfunctions can be declared here.
+
+columns:
+
+* `station` station name
+* `sensor` sensor name
+* `start` date of malfunction start
+* `end` date of malfunction end
+* `comment` (optional) note about type of malfunction for information purposes only
+
+Note: In contrast to all other config files `mask.csv` changes need to be explicitly updated (`ClearLoadMasks.sh`).

@@ -12,11 +12,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -39,6 +42,7 @@ import tsdb.component.SensorCategory;
 import tsdb.util.AggregationType;
 import tsdb.util.Interval;
 import tsdb.util.NamedInterval;
+import tsdb.util.Pair;
 import tsdb.util.Table;
 import tsdb.util.Table.ColumnReaderBoolean;
 import tsdb.util.Table.ColumnReaderDouble;
@@ -550,7 +554,6 @@ public class ConfigLoader {
 
 
 	public static double[] transformCoordinates(double longitude, double latitude) {
-		// TODO: do real transformation
 		return new double[]{longitude,latitude};
 	}
 
@@ -633,67 +636,6 @@ public class ConfigLoader {
 				}
 
 			}
-
-			/*Table table = Table.readCSV(config_file);
-			int plotidIndex = table.getColumnIndex("PlotID"); // virtual plotid
-			int categoriesIndex = table.getColumnIndex("Categories"); // general station
-
-			for(String[] row:table.rows) {
-				String plotID = row[plotidIndex];
-
-				String generalStationName = row[categoriesIndex];
-
-
-
-
-				if(plotID.length()==4&&plotID.charAt(3)>='0'&&plotID.charAt(3)<='9') {
-					String gen = plotID.substring(0, 3);
-					if(timeseriesdatabase.generalStationExists(gen)) {
-						generalStationName = gen;
-					} else {
-						log.warn("unknown general station in: "+plotID+"\t"+gen);
-					}
-				} else {
-					log.warn("unknown general station in: "+plotID+"    config file: "+config_file);
-				}
-
-
-
-				if(!timeseriesdatabase.generalStationExists(generalStationName)) {// TODO
-					log.warn("unknown general station: "+generalStationName+"   in config file: "+config_file);
-				}				
-				timeseriesdatabase.insertVirtualPlot(new VirtualPlot(timeseriesdatabase, plotID, generalStationName));
-			}*/
-
-
-
-			/*int plotidIndex = table.getColumnIndex("PlotID");
-			int epplotidIndex = table.getColumnIndex("EP_Plotid"); 
-			int lonIndex = table.getColumnIndex("Lon");
-			int latIndex = table.getColumnIndex("Lat");			
-			for(String[] row:table.rows) {
-				String plotID = row[epplotidIndex];
-				if(!plotID.endsWith("_canceled")) { // ignore plotid canceled positions
-					Station station = stationMap.get(plotID);
-					if(station!=null) {					
-						try {					
-							double lon = Double.parseDouble(row[lonIndex]);
-							double lat = Double.parseDouble(row[latIndex]);					
-							station.geoPoslongitude = lon;
-							station.geoPosLatitude = lat;					
-						} catch(Exception e) {
-							log.warn("geo pos not read: "+plotID);
-						}
-						if(plotidIndex>-1) {
-							station.serialID = row[plotidIndex];
-						}
-					} else {
-						log.warn("station not found: "+row[epplotidIndex]+"\t"+row[lonIndex]+"\t"+row[latIndex]);
-					}
-				}
-
-			}*/
-
 		} catch(Exception e) {
 			log.error(e);
 		}				
@@ -1248,13 +1190,16 @@ public class ConfigLoader {
 	public void readPlotInventory(String configFile) {
 		Table table = Table.readCSV(configFile,',');
 		ColumnReaderString cr_plot = table.createColumnReader("plot");
-		ColumnReaderString cr_general = table.createColumnReader("general");		
+		ColumnReaderString cr_general = table.createColumnReader("general");
+		ColumnReaderBoolean cr_focal = table.createColumnReaderBooleanYN("focal", false);
 		ColumnReaderFloat cr_lat = table.createColumnReaderFloat("lat", Float.NaN);
 		ColumnReaderFloat cr_lon = table.createColumnReaderFloat("lon", Float.NaN);
 		ColumnReaderFloat cr_easting = table.createColumnReaderFloat("easting", Float.NaN);
 		ColumnReaderFloat cr_northing = table.createColumnReaderFloat("northing", Float.NaN);
 		ColumnReaderFloat cr_elevation = table.createColumnReaderFloat("elevation", Float.NaN);
-		ColumnReaderBoolean cr_focal = table.createColumnReaderBooleanYN("focal", false);
+		ColumnReaderBoolean cr_is_station = table.createColumnReaderBooleanYN("is_station", false); // if plot is station
+		ColumnReaderString cr_logger = table.containsColumn("logger")?table.createColumnReader("logger"):cr_general.then(g->g+"_logger"); // only for plots that are stations
+		ColumnReaderString cr_alternative_id = table.createColumnReader("alternative_id", null);  // only for plots that are stations
 
 		for(String[] row:table.rows) {
 			String plotID = cr_plot.get(row);
@@ -1270,56 +1215,124 @@ public class ConfigLoader {
 			float northing = cr_northing.get(row,false);
 			float elevation = cr_elevation.get(row,false);
 			boolean isFocalPlot = cr_focal.get(row);
-			VirtualPlot virtualPlot = new VirtualPlot(tsdb, plotID, generalStation, easting, northing, isFocalPlot);
-			virtualPlot.geoPosLatitude = lat;
-			virtualPlot.geoPosLongitude = lon;
-			virtualPlot.elevation = elevation;
-			tsdb.insertVirtualPlot(virtualPlot);
+			boolean is_station = cr_is_station.get(row);
+			if(is_station) {
+				String alternative_id = cr_alternative_id.get(row);
+				String loggerTypeName = cr_logger.get(row);
+				LoggerType loggerType = tsdb.getLoggerType(loggerTypeName);
+				if(loggerType==null) {
+					log.error("logger type not found: "+loggerTypeName+"  at "+plotID);
+					continue;
+				}
+				Map<String, String> propertyMap = new TreeMap<String, String>();
+				propertyMap.put("PLOTID", plotID);
+				propertyMap.put("DATE_START","1999-01-01");
+				propertyMap.put("DATE_END","2099-12-31");
+				propertyMap.put("TYPE", isFocalPlot?StationProperties.TYPE_VIP:"EP");
+				StationProperties stationProperties = new StationProperties(propertyMap);			
+				ArrayList<StationProperties> propertyList = new ArrayList<StationProperties>();
+				propertyList.add(stationProperties);
+				Station station = new Station(tsdb, generalStation, plotID, loggerType, propertyList, true);
+				station.geoPosLatitude = lat;
+				station.geoPosLongitude = lon;
+				station.alternativeID = alternative_id;
+				tsdb.insertStation(station);
+			} else {
+				VirtualPlot virtualPlot = new VirtualPlot(tsdb, plotID, generalStation, easting, northing, isFocalPlot);
+				virtualPlot.geoPosLatitude = lat;
+				virtualPlot.geoPosLongitude = lon;
+				virtualPlot.elevation = elevation;
+				tsdb.insertVirtualPlot(virtualPlot);
+			}
 		}
 
 	}
 
-	public void readGenericStationInventory(String configFile) {
-		Table table = Table.readCSV(configFile,',');
-		ColumnReaderString cr_plot = table.createColumnReader("plot");
-		ColumnReaderString cr_logger = table.createColumnReader("logger");
-		ColumnReaderString cr_serial = table.createColumnReader("serial");
-		ColumnReaderString cr_start = table.createColumnReader("start", "*");
-		ColumnReaderString cr_end = table.createColumnReader("end", "*");
+	private static final Set<String> usedColumns = new HashSet<String>(){{addAll(Arrays.asList(new String[]{"plot","logger","serial","start","end"}));}};
 
-		for(String[] row:table.rows) {
-			String plotID = cr_plot.get(row);
-			String loggerTypeName = cr_logger.get(row);
-			String serial = cr_serial.get(row);
-			String startText = cr_start.get(row);
-			String endText = cr_end.get(row);
 
-			VirtualPlot virtualPlot = tsdb.getVirtualPlot(plotID);
-			if(virtualPlot==null) {
-				log.error("virtualPlot not found "+plotID);
-				continue;
+	public void readOptionalGenericStationInventory(String configFile) {
+		File file = new File(configFile);
+		if(file.exists()) {
+			Table table = Table.readCSV(configFile,',');
+			ColumnReaderString cr_plot = table.createColumnReader("plot");
+			ColumnReaderString cr_logger = table.createColumnReader("logger");
+			ColumnReaderString cr_serial = table.createColumnReader("serial");
+			ColumnReaderString cr_start = table.createColumnReader("start", "*");
+			ColumnReaderString cr_end = table.createColumnReader("end", "*");
+
+			ColumnReaderString[] cr_properties = Arrays.stream(table.names)
+					.filter(name->!usedColumns.contains(name))
+					.map(name->table.createColumnReader(name))
+					.toArray(ColumnReaderString[]::new);
+			
+			Map<String, List<StationProperties>> stationPropertiesListMap = new HashMap<String, List<StationProperties>>();
+			
+			for(String[] row:table.rows) {
+				String plotID = cr_plot.get(row);
+				String loggerTypeName = cr_logger.get(row);
+				String serial = cr_serial.get(row);
+				String startText = cr_start.get(row);
+				String endText = cr_end.get(row);
+
+				Map<String, String> propertyMap = new TreeMap<String, String>();
+				propertyMap.put(StationProperties.PROPERTY_PLOTID, plotID);
+				propertyMap.put(StationProperties.PROPERTY_LOGGER, loggerTypeName);
+				propertyMap.put(StationProperties.PROPERTY_SERIAL, serial);
+				propertyMap.put(StationProperties.PROPERTY_START,startText);
+				propertyMap.put(StationProperties.PROPERTY_END,endText);
+				
+				for(ColumnReaderString cr_property:cr_properties) {
+					String value = cr_property.get(row);
+					if(value!=null && !value.isEmpty()) {
+						String key = table.getName(cr_property);
+						propertyMap.put(key, value);
+					}
+				}				
+				
+				List<StationProperties> list = stationPropertiesListMap.get(serial);
+				if(list==null) {
+					list = new ArrayList<StationProperties>();
+					stationPropertiesListMap.put(serial, list);
+				}
+				StationProperties stationProperties = new StationProperties(propertyMap);
+				list.add(stationProperties);				
 			}
-
-			LoggerType loggerType = tsdb.getLoggerType(loggerTypeName);
-			if(loggerType==null) {
-				log.error("logger not found "+loggerTypeName);
-				continue;
+			
+			for(List<StationProperties> list:stationPropertiesListMap.values()) {
+				LoggerType firstLoggerType = null;
+				List<Pair<VirtualPlot, StationProperties>> virtualPlotEntryList = new ArrayList<Pair<VirtualPlot, StationProperties>>();
+				for(StationProperties stationProperties:list) {
+					String plotID = stationProperties.get_plotid();
+					VirtualPlot virtualPlot = tsdb.getVirtualPlot(plotID);
+					if(virtualPlot==null) {
+						log.error("virtualPlot not found "+plotID);
+						continue;
+					}
+					String loggerTypeName = stationProperties.get_logger_type_name();
+					LoggerType loggerType = tsdb.getLoggerType(loggerTypeName);
+					if(loggerType==null) {
+						log.error("logger not found "+loggerTypeName);
+						continue;
+					}
+					if(firstLoggerType==null) {
+						firstLoggerType = loggerType;
+					} else if(firstLoggerType != loggerType) {
+						log.error("loggers need to be same type for one station "+firstLoggerType+"  "+loggerType);
+						continue;
+					}
+					virtualPlotEntryList.add(Pair.of(virtualPlot, stationProperties));
+				}
+				if(!virtualPlotEntryList.isEmpty()) {
+					Station station = new Station(tsdb,null,virtualPlotEntryList.get(0).b.get_serial(),firstLoggerType,list, false);
+					tsdb.insertStation(station);
+					for(Pair<VirtualPlot, StationProperties> pair:virtualPlotEntryList) {
+						VirtualPlot virtualPlot = pair.a;
+						StationProperties stationProperties = pair.b;
+						virtualPlot.addStationEntry(station, stationProperties);
+					}
+				}
 			}
-
-			Map<String, String> propertyMap = new TreeMap<String, String>();
-			propertyMap.put(StationProperties.PROPERTY_PLOTID, plotID);
-			propertyMap.put(StationProperties.PROPERTY_LOGGER, loggerTypeName);
-			propertyMap.put(StationProperties.PROPERTY_SERIAL, serial);
-			propertyMap.put(StationProperties.PROPERTY_START,startText);
-			propertyMap.put(StationProperties.PROPERTY_END,endText);
-			StationProperties stationProperties = new StationProperties(propertyMap);			
-			ArrayList<StationProperties> propertyList = new ArrayList<StationProperties>();
-			propertyList.add(stationProperties);
-
-			//new Station(tsdb, generalStation, stationID, loggerType, propertyMapList, false);
-			Station station = new Station(tsdb,null,serial,loggerType,propertyList, false);
-			tsdb.insertStation(station);
-			virtualPlot.addStationEntry(station, stationProperties);
 		}
 	}
 

@@ -93,8 +93,8 @@ public class TsDB implements AutoCloseable {
 	/**
 	 * create a new TimeSeriesDatabase object and connects to stored database files
 	 * @param databasePath
-	 * @param evenstoreConfigFile
-	 * @param streamdbPathPrefix 
+	 * @param cachePath
+	 * @param streamdbPathPrefix
 	 */
 	public TsDB(String databasePath, String cachePath, String streamdbPathPrefix) {		
 		log.info("open tsdb...");		
@@ -117,7 +117,7 @@ public class TsDB implements AutoCloseable {
 	}	
 
 	/**
-	 * clears all stream data in EventStore; deletes all database files
+	 * Clears all database files.
 	 */
 	public void clear() {
 		streamCache.clear();
@@ -126,7 +126,8 @@ public class TsDB implements AutoCloseable {
 	}
 
 	/**
-	 * close EventStore, all pending stream data is written to disk
+	 * Close database. All pending data is written to disk.
+	 * 
 	 */
 	@Override
 	public void close() {
@@ -273,16 +274,6 @@ public class TsDB implements AutoCloseable {
 		if(virtualPlot!=null) {
 			return virtualPlot.getTimestampInterval();
 		}
-		/*Iterator<Event> it = streamStorage.queryRawEvents(stationName, null, null);
-		if(it==null || !it.hasNext()) {
-			return null;
-		}
-		long start = it.next().getTimestamp();
-		long end = start;
-		while (it.hasNext()) {
-			end = it.next().getTimestamp();
-		}
-		return new long[]{start,end};*/
 		return streamStorage.getStationTimeInterval(stationName);
 	}
 

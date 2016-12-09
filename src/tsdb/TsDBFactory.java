@@ -2,14 +2,10 @@ package tsdb;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -190,7 +186,7 @@ public final class TsDBFactory {
 			TsDB tsdb = new TsDB(databaseDirectory, cacheDirectory, streamdbPathPrefix);
 			ConfigLoader configLoader = new ConfigLoader(tsdb);
 
-			//loading generic config
+			//*** region config start
 			for(Path path : Files.newDirectoryStream(Paths.get(configDirectory), path->path.toFile().isDirectory())) {
 				String dir = path.toString();
 				//log.info("dir  "+path+"  "+path.getFileName());
@@ -199,25 +195,8 @@ public final class TsDBFactory {
 					if(region!=null) {
 						configLoader.readGeneralStation(dir+"/general_stations.ini");
 						configLoader.readLoggerTypeSchema(dir+"/logger_type_schema.ini");
-
-						switch(region.name.toUpperCase()) {
-						case "BE":
-							configLoader.readStation(dir+"/be_station_inventory.csv"); // [create STATION] read station list, generate general station name and properties and create station objects
-							configLoader.readStationGeoPosition(dir+"/be_station_master.csv"); // read geo position of stations and insert into existing stations
-							break;
-						case "KI":
-							configLoader.readPlotInventory(dir+"/plot_inventory.csv");
-							configLoader.readKiStation(dir+"/ki_station_inventory.csv"); // [create STATION] read time interval of stations and insert it in existing virtual plots			
-							break;
-						case "SA":
-							configLoader.readSaStation(dir+"/sa_station_inventory.csv", false); //[create STATION] read station with geo position
-							configLoader.readSaStation(dir+"/sa_station_SASSCAL_inventory.csv", true); //[create STATION] read station and update geo position
-							break;
-						default:
-							configLoader.readPlotInventory(dir+"/plot_inventory.csv");
-							configLoader.readGenericStationInventory(dir+"/station_inventory.csv");
-						}
-
+						configLoader.readPlotInventory(dir+"/plot_inventory.csv");
+						configLoader.readOptionalGenericStationInventory(dir+"/station_inventory.csv"); // If all plots are stations then this file is not required.
 						configLoader.readOptinalSensorTranslation(dir+"/sensor_translation.ini");
 						configLoader.readOptionalSensorNameCorrection(dir+"/sensor_name_correction.json");  // read sensor translation and insert it into existing stations
 						configLoader.readOptionalStationProperties(dir+"/station_properties.yaml");
@@ -226,6 +205,7 @@ public final class TsDBFactory {
 					log.info("could not load meta data of  "+path+"  "+e);
 				}
 			}
+			//*** region config end
 
 			//*** global config start
 			configLoader.readBaseAggregationConfig(configDirectory+"global_sensor_aggregation.ini"); // read and insert type of aggregation to sensor objects
@@ -249,7 +229,7 @@ public final class TsDBFactory {
 			return tsdb;		
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error("create TimeSeriesDatabase"+e);
+			log.error("create TsDB"+e);
 			return null;
 		}		
 	}
