@@ -24,6 +24,10 @@ public class StationBase extends Base.Abstract {
 		throwNull(source);
 		this.source = source;
 	}
+	
+	public static StationBase of(TsDB tsdb, Node source) {
+		return new StationBase(tsdb, source);
+	}	
 
 	public static StationBase of(TsDB tsdb,Station station, String[] querySchema, NodeGen stationGen) {
 		if(querySchema==null) {

@@ -9,13 +9,65 @@ TubeDB is an on-demand processing database system for climate station data.
 <p>
 TubeDB consist of several components:
 <ul>
-<li>Storage backend: {@link tsdb.streamdb.StreamDB}</li>
-<li>Web HTTP API: {@link tsdb.web.api}</li> 
-<li>Processing graph: {@link tsdb.graph}</li> 
+<li>storage backend: {@link tsdb.streamdb.StreamDB}</li>
+<li>web HTTP API: {@link tsdb.web.api}</li> 
+<li>processing graph: {@link tsdb.graph}</li> 
 <li>data import units: {@link tsdb.loader}</li>
 <li>desktop application: {@link tsdb.explorer} </li>
-<li>Web user interface: in folder "webcontent"</li>
-</ul> 
+<li>web user interface: in folder "webcontent"</li>
+</ul>
+
+Users of TubeDB typically access TubeDB by web user interface or by web HTTP API.
+<br>
+<br>From within Java TubeDB can be acessed programatically by the high level interface {@link tsdb.remote.RemoteTsDB} or directly by {@link tsdb.TsDB} instance.
+<br>
+<br>In the following example one time series is processed with {@link tsdb.remote.RemoteTsDB}.
+<br>{@link tsdb.remote.RemoteTsDB} connects to an remote instance of {@link tsdb.TsDB} by Java RMI. In the example a direct connection is used.
+
+<pre><code>
+try(TsDB tsdbInternal = TsDBFactory.createDefault()) { // AutoCloseable instance created by TsDBFactory with default configuration file location
+	RemoteTsDB tsdb = new ServerTsDB(tsdbInternal); // create RemoteTsDB interface instance to local TsDB
+	String queryType = null;
+	String plotID = "HEG01";
+	String[] sensorNames = new String[]{"Ta_200", "rH_200"};
+	AggregationInterval aggregationInterval = AggregationInterval.MONTH;
+	DataQuality dataQuality = DataQuality.EMPIRICAL;
+	boolean interpolated = true;
+	Long start = TimeUtil.ofDateStartHour(2010);
+	Long end = TimeUtil.ofDateEndHour(2015);
+	TimestampSeries ts = tsdb.plot(queryType, plotID, sensorNames, aggregationInterval, dataQuality, interpolated, start, end); // query time series
+	System.out.println(ts);
+	for(GeneralStationInfo info:tsdb.getGeneralStations()) { // query meta data
+		System.out.println(info.longName);
+	}
+}
+</code></pre>
+
+<br>
+<br>In the following example one time series is processed (no quality check and no interpolation) with low level methods of {@link tsdb.TsDB} and manual processing graph creation.
+<br>More complex processing graphs can be created by nodes in subpackages of {@link tsdb.graph} and with helper methods in {@link tsdb.graph.QueryPlanGenerators} and {@link tsdb.graph.QueryPlan}.
+
+<pre><code>
+try(TsDB tsdb = TsDBFactory.createDefault()) {
+	String stationName = "HEG01";
+	String[] sensorNames = new String[]{"Ta_200", "rH_200"};
+	AggregationInterval aggregationInterval = AggregationInterval.MONTH;
+	Long start = TimeUtil.ofDateStartHour(2010);
+	Long end = TimeUtil.ofDateEndHour(2015);
+	Station station = tsdb.getStation(stationName); // get station
+	Node rawNode = StationRawSource.of(tsdb, station, sensorNames); // create raw source node
+	StationBase baseNode = StationBase.of(tsdb, rawNode); // create base aggregated (hourly value) node 
+	Continuous continuousNode = Continuous.of(baseNode); // fill gaps in time with NA entries
+	Aggregated aggregatedNode = Aggregated.of(tsdb, continuousNode, aggregationInterval); // aggregate data to months
+	TsIterator it = aggregatedNode.get(start, end); // create iterator of processing graph
+	System.out.println(it.getProcessingChain().getText()); // print processing graph
+	while(it.hasNext()) { // on demand process and print time series
+		System.out.println(it.next());
+	}
+	aggregatedNode.get(start, end).writeCSV(TsDBFactory.get_CSV_output_directory()+"data_month.csv"); // reuse processing graph and write time series directly to CSV-file
+	rawNode.get(start, end).writeCSV(TsDBFactory.get_CSV_output_directory()+"data_raw.csv"); // reuse processing graph and write raw time series directly to CSV-file
+}
+</code></pre>
 
 </body>
 </html>

@@ -75,8 +75,6 @@ public class SouthAfricaImport {
 
 	public static void readOneFile(TsDB tsdb, Path filepath) {
 		try {
-			/*TimestampSeries tss = TimestampSeries.readFromBinaryFile(filepath.toString());
-			tsdb.streamStorage.insertTimestampSeries(tss);*/
 			TimeSeriesArchivReader.importStationsFromFile(tsdb, filepath.toString());
 		} catch (Exception e) {
 			log.error(e);

@@ -61,7 +61,6 @@ public class ImportGenericCSV {
 				if(!Files.isDirectory(sub)) {
 					loadFile(sub);
 				}
-
 			}
 		} catch (Exception e) {
 			log.error(e);

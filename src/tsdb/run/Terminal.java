@@ -45,6 +45,8 @@ public class Terminal {
 		addCommand("clear_import",ClearImportSources::main);
 		
 		addCommand("experiment_processing",ExperimentProcessing::main);
+		
+		addCommand("testing_import", DataImport::main);
 	}
 
 	public static void main(String[] args) {

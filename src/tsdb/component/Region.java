@@ -17,7 +17,7 @@ public class Region implements Serializable {
 	
 	public final String name;
 	public final String longName;
-	public Interval viewTimeRange; //nullable  //TODO use entry
+	public Interval viewTimeRange; //nullable
 	
 	public Region(String name, String longName) {
 		throwNulls(name,longName);

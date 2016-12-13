@@ -36,10 +36,10 @@ class Loader_rad extends AbstractLoader {
 		String serial_PAR01_name = properties.getProperty("SERIAL_PAR01");
 		String serial_PAR02_name = properties.getProperty("SERIAL_PAR02");
 		
-		boolean serial_PYR01_is_value = serial_PYR01_name.equals(NaN)?false:true;
-		boolean serial_PYR02_is_value = serial_PYR02_name.equals(NaN)?false:true;
-		boolean serial_PAR01_is_value = serial_PAR01_name.equals(NaN)?false:true;
-		boolean serial_PAR02_is_value = serial_PAR02_name.equals(NaN)?false:true;
+		boolean serial_PYR01_is_value = (serial_PYR01_name==null || serial_PYR01_name.equals(NaN))?false:true;
+		boolean serial_PYR02_is_value = (serial_PYR02_name==null || serial_PYR02_name.equals(NaN))?false:true;
+		boolean serial_PAR01_is_value = (serial_PAR01_name==null || serial_PAR01_name.equals(NaN))?false:true;
+		boolean serial_PAR02_is_value = (serial_PAR02_name==null || serial_PAR02_name.equals(NaN))?false:true;
 
 		resultSchema = new String[inputSchema.length];
 		int place_holder_count = 0;
