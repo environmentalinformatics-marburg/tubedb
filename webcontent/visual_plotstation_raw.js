@@ -581,7 +581,8 @@ function addTable(plotName, sensors) {
 	incTask();
 	getID("div_result").innerHTML = "query...";
 	$.get(url_query_csv+"?"+getQueryCSV(plotName, sensors)).done(function(data) {
-		getID("div_result").innerHTML = getSensorTable(sensors);
+		getID("div_result").innerHTML = '<strong style="margin-left:100px;">'+plotName+'</strong><br>';
+		getID("div_result").innerHTML += getSensorTable(sensors);
 		var rows = splitCsv(data);
 		console.log("now");
 		var table = addTag(getID("div_result"),"table");
