@@ -1,1 +1,1 @@
-java -Djava.awt.headless=true -Xmx2g -classpath 'tubedb.jar:lib/*' tsdb.explorer.Explorer
+exec ./tsdb.sh explorer

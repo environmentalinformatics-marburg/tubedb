@@ -1,4 +1,4 @@
-package tsdb.run;
+package tsdb.run.command;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +23,7 @@ import tsdb.loader.mm.ImportGenericASC;
 import tsdb.loader.sa.SouthAfricaImport;
 import tsdb.loader.sa_own.ImportSaOwn;
 import tsdb.loader.sa_own.RemoveSouthAfricaStationBeginings;
+import tsdb.run.ImportGenericCSV;
 import tsdb.util.Interval;
 import tsdb.util.TimeUtil;
 

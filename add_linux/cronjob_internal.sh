@@ -33,7 +33,7 @@ echo "###				*** backup *** $(date +%Y-%m-%dT%H:%M:%S)   ###"
 
 # clear and import database
 echo "###				*** clear database and import timeseries files *** $(date +%Y-%m-%dT%H:%M:%S)   ###"
-./ClearImportSources.sh
+./tsdb.sh clear_import
 # TODO check if error
 
 

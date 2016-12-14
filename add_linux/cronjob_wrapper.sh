@@ -5,6 +5,6 @@
 # use this script as linux cron job entry
 
 # change following absolute path to correct TubeDB working directory
-cd /media/data/tsdb
+cd /path_to_tubedb
 
 ./cronjob.sh

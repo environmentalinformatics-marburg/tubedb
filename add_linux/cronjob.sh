@@ -9,10 +9,8 @@
 # - cronjob_internal.sh
 # - shutdown_server.sh
 # - backup_cron.sh
-# - ClearImportSources.sh
+# - tsdb.sh
 # - start_server_background.sh
-# - web.sh
-# - check_server.sh
 
 #root=$(dirname $0)
 #echo working directory: $root

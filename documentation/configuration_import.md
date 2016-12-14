@@ -45,7 +45,7 @@ For file format description see [import formats](import_formats.md).
 
 Ini-file defines imports. For each region one section specifies paths to data files.
 
-There may be multiple entries per section (possible of same import type).
+There may be multiple entries per section (possibly of same import type).
 
 file structure:
 
