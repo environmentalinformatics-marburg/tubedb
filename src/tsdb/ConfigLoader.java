@@ -34,7 +34,8 @@ import org.yaml.snakeyaml.constructor.Construct;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.Tag;
 
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.CSVReader;
+
 import tsdb.component.LoggerType;
 import tsdb.component.Region;
 import tsdb.component.Sensor;

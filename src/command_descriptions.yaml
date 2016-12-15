@@ -1,0 +1,23 @@
+clear: |
+ Removes all time series data in TubeDB.
+ So TubeDB is ready for a clean import of data.
+ Note: It's recommended to run "clear_import" instead.
+load: |
+ Reads all raw source time series data files specified in "import.ini" and stores them in TubeDB.
+ Note: It's recommended to run "clear_import" or "import" instead.
+masks: |
+ update mask config specified in "config/*/mask.csv".
+references: |
+ (Re)Creates reference time series needed for empirical check.
+ Note: It's recommended to run "clear_import" or "import" instead.
+compact: |
+ Removes free space clusters in TubeDB.
+ Note: It's recommended to run "clear_import" or "import" instead.
+import: |
+ Imports time series data files and runs additional tasks:
+ "load", "masks", "references", "compact"
+clear_import: |
+  Imports time series data files in empty TubeDB and runs additional tasks:
+  "clear", "import"
+  corresponds to:
+  "clear", "load", "masks", "references", "compact"

@@ -20,7 +20,8 @@ import java.util.function.UnaryOperator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.CSVReader;
+
 import tsdb.util.Table.ColumnReaderIntFunc.IntegerParser;
 
 /**

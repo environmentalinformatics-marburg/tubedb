@@ -9,7 +9,6 @@
 	<classpathentry kind="lib" path="lib/log4j-core-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-jcl-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/mapdb-1.0.6.jar" sourcepath="lib_src/mapdb-1.0.6-sources.jar"/>
-	<classpathentry kind="lib" path="lib/opencsv-2.3.jar" sourcepath="lib_src/opencsv-2.3-sources.jar"/>
 	<classpathentry kind="lib" path="lib/snappy-java-1.1.1.6.jar"/>
 	<classpathentry kind="lib" path="lib/influx/gson-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/influx/guava-18.0.jar"/>
@@ -37,5 +36,6 @@
 	<classpathentry kind="lib" path="lib/influx/influxdb-java-2.3.jar" sourcepath="lib/influx/influxdb-java-2.3-sources.jar"/>
 	<classpathentry kind="lib" path="lib/h2-1.4.192.jar" sourcepath="lib_src/h2-1.4.192-sources.jar"/>
 	<classpathentry kind="lib" path="lib/monetdb-jdbc-2.23.jar"/>
+	<classpathentry kind="lib" path="lib/opencsv-3.8.jar" sourcepath="lib_src/opencsv-3.8-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

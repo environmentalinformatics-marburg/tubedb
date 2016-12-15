@@ -12,7 +12,7 @@ import tsdb.component.Region;
  * immutable
  * @author woellauer
  */
-public class GeneralStationInfo implements Serializable {	
+public class GeneralStationInfo implements Serializable, Comparable<GeneralStationInfo> {	
 	private static final long serialVersionUID = -5021875538014695128L;
 	
 	public final String name;
@@ -47,6 +47,36 @@ public class GeneralStationInfo implements Serializable {
 	
 	public String getGroup() {
 		return group;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GeneralStationInfo other = (GeneralStationInfo) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int compareTo(GeneralStationInfo o) {
+		return this.name.compareTo(o.name);
 	}
 
 }

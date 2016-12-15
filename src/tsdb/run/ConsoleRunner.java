@@ -11,7 +11,7 @@ import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
 
 /**
- * TsDB console
+ * TubeDB Console
  * @author woellauer
  *
  */
@@ -190,9 +190,9 @@ public class ConsoleRunner implements Runnable {
 
 	public void command_intro() {
 		println();
-		println("tsdb*------------------------------------------*tsdb");
-		println("tsdb*----------------tsdb-console--------------*tsdb");
-		println("tsdb*------------------------------------------*tsdb");
+		println("*------------------------------------------*");
+		println("*----------------TubeDB Console--------------*");
+		println("*------------------------------------------*");
 		println();
 	}
 

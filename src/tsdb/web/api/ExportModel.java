@@ -89,12 +89,12 @@ public class ExportModel{
 		this.desc_sensor = true;
 		this.desc_plot = true;
 		this.desc_settings = true;
-		this.allinone = false;
+		this.allinone = true;
 		this.aggregationInterval = AggregationInterval.DAY;
 		this.quality = DataQuality.STEP;
 		this.region = null;
 		this.col_plotid = true;
-		this.col_timestamp = true;
+		this.col_timestamp = false;
 		this.col_datetime = true;
 		this.col_qualitycounter = false; //default true?
 		this.write_header = true;

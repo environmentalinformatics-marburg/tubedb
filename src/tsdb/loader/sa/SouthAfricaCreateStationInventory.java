@@ -11,7 +11,8 @@ import java.util.TreeMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import au.com.bytecode.opencsv.CSVWriter;
+import com.opencsv.CSVWriter;
+
 import tsdb.TsDBFactory;
 import tsdb.util.Table;
 import tsdb.util.Table.ColumnReaderString;

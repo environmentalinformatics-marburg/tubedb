@@ -6,6 +6,7 @@ sourceSets.main.java.srcDir 'src'
 
 jar {
 	from file('src/log4j2.xml')
+	from file('src/command_descriptions.yaml')
 	destinationDir file('package')
 	
 	manifest {	

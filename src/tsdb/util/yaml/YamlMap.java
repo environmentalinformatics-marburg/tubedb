@@ -1,6 +1,7 @@
 package tsdb.util.yaml;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -19,6 +20,8 @@ public class YamlMap {
 	public static YamlMap ofObject(Object map) {
 		return new YamlMap((Map<String, Object>) map);
 	}
+	
+	public static final YamlMap EMPTY_MAP = new YamlMap(new HashMap<>());
 	
 	public Object getObject(String name) {
 		Object o = map.get(name);

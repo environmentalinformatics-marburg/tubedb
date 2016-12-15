@@ -2,128 +2,40 @@ package tsdb.run;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.yaml.snakeyaml.Yaml;
 
+import tsdb.run.command.Command;
+import tsdb.run.command.CommandMain;
+import tsdb.run.command.CommandSequence;
+import tsdb.run.command.CommandType;
 import tsdb.run.command.DataClear;
 import tsdb.run.command.DataImport;
+import tsdb.run.command.MainRunnable;
+import tsdb.util.yaml.YamlMap;
 
 public class Terminal {
 	private static final Logger log = LogManager.getLogger();
 
-	public static enum CommandType {
-		NORMAL,
-		INTERNAL
-	};
-
-	public static interface Command {
-		String getName();
-		boolean run(String[] parameters);
-		CommandType getType();
-		default boolean isInternal() {
-			return getType()==CommandType.INTERNAL;
-		}
-		default String getShortDescription() {
-			return "";
-		}
-		default String getDetailedDescription() {
-			return getShortDescription();
-		}
-		default String getShortHelp() {
-			return getName()+" : "+getShortDescription();
-		}
-		default String getDetailedHelp() {
-			return getName()+"\n----\n"+getDetailedDescription();
-		}
-	}
-
-	public static abstract class AbstractCommand implements Command {
-		private final String name;
-		private final String shortDescription;
-		private final CommandType commandType;
-		public AbstractCommand(String name, CommandType commandType, String shortDescription) {
-			this.name = name;
-			this.shortDescription = shortDescription;
-			this.commandType = commandType;			
-		}
-		@Override
-		public String getName() {
-			return name;
-		}
-		@Override
-		public CommandType getType() {
-			return commandType;
-		}
-		@Override
-		public String getShortDescription() {
-			return shortDescription;
-		}
-
-	}
-
-	public static class CommandMain extends AbstractCommand {		
-		private final MainRunnable mainRunnable;
-
-		public CommandMain(String name, CommandType commandType, String description, MainRunnable mainRunnable) {
-			super(name, commandType, description);
-			this.mainRunnable = mainRunnable;
-		}		
-
-		@Override
-		public boolean run(String[] parameters) {			
-			try {
-				mainRunnable.main(parameters);
-			} catch(Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-			return true;
-		}
-	}
-
-	public static class CommandSequence extends AbstractCommand {
-		private final Command[] commands;
-		public CommandSequence(String name, CommandType commandType, String description, Command... commands) {
-			super(name, commandType, description);
-			this.commands = commands;
-		}
-		@Override
-		public boolean run(String[] parameters) {
-			for(Command command:commands) {
-				if(!command.run(EMPTY)) {
-					return false;
-				}
-			}
-			return true;
-		}		
-	}
-
+	private static final String COMMAND_DESCRIPTIONS_FILENAME = "/command_descriptions.yaml";
+	private static YamlMap commandDetailDescriptionMap = YamlMap.EMPTY_MAP;
 
 	static Map<String,Command> commandMap = new TreeMap<>();
 
-	@FunctionalInterface
-	private interface MainRunnable extends Runnable {
-		void main(String[] args) throws Exception;
-		@Override
-		default void run() {
-			try {
-				main(null);
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private static void addCommand(String name, String description, MainRunnable mainRunnable) {
-		Command command = new CommandMain(name, CommandType.NORMAL, description, mainRunnable);
+	private static void addCommand(String name, String shortDescription, MainRunnable mainRunnable) {
+		String detailedDescription = getDetailDescription(name, shortDescription);
+		Command command = new CommandMain(name, CommandType.NORMAL, shortDescription, detailedDescription, mainRunnable);
 		addCommand(command);
 	}
 
-	private static void addCommandSequence(String name, String description, String... commandNames) {
+	private static void addCommandSequence(String name, String shortDescription, String... commandNames) {
+		String detailedDescription = getDetailDescription(name, shortDescription);
 		Command[] commands = new Command[commandNames.length];
 		for(int i=0;i<commands.length;i++) {
 			commands[i] = commandMap.get(commandNames[i]);
@@ -132,12 +44,13 @@ public class Terminal {
 				return;
 			}
 		}
-		Command command = new CommandSequence(name, CommandType.NORMAL, description, commands);
+		Command command = new CommandSequence(name, CommandType.NORMAL, shortDescription, detailedDescription, commands);
 		addCommand(command);
 	}
 
-	private static void addInternalCommand(String name, String description, MainRunnable mainRunnable) {
-		Command command = new CommandMain(name, CommandType.INTERNAL, description, mainRunnable);
+	private static void addInternalCommand(String name, String shortDescription, MainRunnable mainRunnable) {
+		String detailedDescription = getDetailDescription(name, shortDescription);
+		Command command = new CommandMain(name, CommandType.INTERNAL, shortDescription, detailedDescription, mainRunnable);
 		addCommand(command);
 	}
 
@@ -145,7 +58,21 @@ public class Terminal {
 		commandMap.put(command.getName(), command);
 	}
 
+	private static String getDetailDescription(String commandName, String shortDescription) {
+		return commandDetailDescriptionMap.optString(commandName, shortDescription);
+	}
+
 	static {
+		try (InputStream descriptionStream = Terminal.class.getResourceAsStream(COMMAND_DESCRIPTIONS_FILENAME)) {
+			if(descriptionStream!=null) {
+				Object yamlObject = new Yaml().load(descriptionStream);
+				commandDetailDescriptionMap = YamlMap.ofObject(yamlObject);
+			} else {
+				System.err.println("file not found "+COMMAND_DESCRIPTIONS_FILENAME);
+			}
+		} catch(Exception e) {
+			System.err.println("ERROR loading "+COMMAND_DESCRIPTIONS_FILENAME+" "+e);
+		}
 
 		//internal commands
 
@@ -176,7 +103,7 @@ public class Terminal {
 
 		addCommand("server", "start web server", tsdb.web.Main::main);
 		addInternalCommand("server_rmi", "start web and rmi server", Terminal::command_interactive);
-		
+
 		addCommand("explorer", "run TubeDB desktop application", tsdb.explorer.Explorer::main);
 
 		//administrative commands
@@ -227,8 +154,8 @@ public class Terminal {
 		System.out.println();
 	}
 
-	private static final String[] EMPTY = new String[]{};
-	
+	static final String[] EMPTY = new String[]{};
+
 	private static String[] removeFirst(String[] array) {
 		if(array==null || array.length<=1) {
 			return EMPTY;
@@ -253,18 +180,14 @@ public class Terminal {
 			e.printStackTrace();
 		}		
 	}
-	
+
 	public static void command_help(String[] parameters) {
-		if(parameters.length>0) {
-		String name = parameters[0];
+		String name = parameters.length==0?"help":parameters[0];
 		Command command = commandMap.get(name);
 		if(command!=null) {
 			System.out.println(command.getDetailedHelp());
 		} else {
 			System.out.println("unknown command: "+name);
-		}
-		} else {
-			System.out.println("parameter needs to be a command: e.g. 'help server'");
-		}
+		}		
 	}
 }
