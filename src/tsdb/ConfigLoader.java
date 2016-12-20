@@ -493,18 +493,18 @@ public class ConfigLoader {
 			}
 
 			double[] geoPos = transformCoordinates(station.geoPosLongitude,station.geoPosLatitude);
-			List<Object[]> differenceList = new ArrayList<Object[]>();
+			List<Object[]> distanceList = new ArrayList<Object[]>();
 
 			List<Station> stationList = station.generalStation.stationList;
 			//System.out.println(station.plotID+" --> "+stationList);
 			for(Station targetStation:stationList) {
 				if(station!=targetStation) { // reference compare
 					double[] targetGeoPos = transformCoordinates(targetStation.geoPosLongitude,targetStation.geoPosLatitude);
-					double difference = getDifference(geoPos, targetGeoPos);
-					differenceList.add(new Object[]{difference,targetStation});
+					double distance = getDistance(geoPos, targetGeoPos);
+					distanceList.add(new Object[]{distance,targetStation});
 				}
 			}
-			differenceList.sort(new Comparator<Object[]>() {
+			distanceList.sort(new Comparator<Object[]>() {
 				@Override
 				public int compare(Object[] o1, Object[] o2) {
 					double d1 = (double) o1[0];
@@ -512,8 +512,8 @@ public class ConfigLoader {
 					return Double.compare(d1, d2);
 				}
 			});
-			List<Station> targetStationList = new ArrayList<Station>(differenceList.size());
-			for(Object[] targetStation:differenceList) {
+			List<Station> targetStationList = new ArrayList<Station>(distanceList.size());
+			for(Object[] targetStation:distanceList) {
 				targetStationList.add((Station) targetStation[1]);
 			}
 			station.nearestStations = targetStationList;
@@ -526,7 +526,7 @@ public class ConfigLoader {
 		tsdb.updateGeneralStations();
 
 		for(VirtualPlot virtualPlot:tsdb.getVirtualPlots()) {
-			List<Object[]> differenceList = new ArrayList<Object[]>();
+			List<Object[]> distanceList = new ArrayList<Object[]>();
 
 			String group = virtualPlot.generalStation.group;
 			List<VirtualPlot> virtualPlots = new ArrayList<VirtualPlot>();
@@ -534,11 +534,11 @@ public class ConfigLoader {
 
 			for(VirtualPlot targetVirtualPlot:virtualPlots) {
 				if(virtualPlot!=targetVirtualPlot) {
-					double difference = getDifference(virtualPlot, targetVirtualPlot);
-					differenceList.add(new Object[]{difference,targetVirtualPlot});
+					double distance = getDistance(virtualPlot, targetVirtualPlot);
+					distanceList.add(new Object[]{distance,targetVirtualPlot});
 				}
 			}
-			differenceList.sort(new Comparator<Object[]>() {
+			distanceList.sort(new Comparator<Object[]>() {
 				@Override
 				public int compare(Object[] o1, Object[] o2) {
 					double d1 = (double) o1[0];
@@ -547,7 +547,7 @@ public class ConfigLoader {
 				}
 			});
 
-			virtualPlot.nearestVirtualPlots = differenceList.stream().map(o->(VirtualPlot)o[1]).collect(Collectors.toList());
+			virtualPlot.nearestVirtualPlots = distanceList.stream().map(o->(VirtualPlot)o[1]).collect(Collectors.toList());
 			//System.out.println(virtualPlot.plotID+" --> "+virtualPlot.nearestVirtualPlots);
 		}
 	}
@@ -558,12 +558,12 @@ public class ConfigLoader {
 		return new double[]{longitude,latitude};
 	}
 
-	public static double getDifference(double[] geoPos, double[] targetGeoPos) {
-		return Math.sqrt((geoPos[0]-targetGeoPos[0])*(geoPos[0]-targetGeoPos[0])+(geoPos[1]-targetGeoPos[1])*(geoPos[1]-targetGeoPos[1]));
+	public static double getDistance(double[] geoPos, double[] targetGeoPos) {
+		return Math.hypot(geoPos[0]-targetGeoPos[0], geoPos[1]-targetGeoPos[1]);
 	}
 
-	public static double getDifference(VirtualPlot source, VirtualPlot target) {
-		return Math.sqrt((source.geoPosEasting-target.geoPosEasting)*(source.geoPosEasting-target.geoPosEasting)+(source.geoPosNorthing-target.geoPosNorthing)*(source.geoPosNorthing-target.geoPosNorthing));
+	public static double getDistance(VirtualPlot source, VirtualPlot target) {
+		return Math.hypot(source.geoPosEasting-target.geoPosEasting, source.geoPosNorthing-target.geoPosNorthing);
 	}
 
 	public void readVirtualPlot(String config_file) {

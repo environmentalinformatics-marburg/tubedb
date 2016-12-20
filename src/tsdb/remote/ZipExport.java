@@ -9,6 +9,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.rmi.RemoteException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -206,9 +208,12 @@ public class ZipExport {
 
 			if(allInOne) {				
 				zipOutputStream.putNextEntry(new ZipEntry("plots.csv"));
-				PrintStream csvOut = new PrintStream(zipOutputStream,false);
+				//PrintStream csvOut = new PrintStream(zipOutputStream,false);
+				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream);
+				BufferedWriter bufferedWriter = new BufferedWriter(writer);
 				if(write_header) {
-					writeCSVHeader(csvOut);
+					//writeCSVHeader_OLD(csvOut);
+					writeCSVHeader(bufferedWriter);
 				}
 				processedPlots = 0;
 				for(String plotID:plotIDs) {
@@ -218,7 +223,8 @@ public class ZipExport {
 						if(!Util.empty(schema)) {
 							TimestampSeries timeseries = tsdb.plot(null,plotID, schema, aggregationInterval, dataQuality, interpolated, startTimestamp, endTimestamp);
 							if(timeseries!=null) {								
-								writeTimeseries(timeseries,plotID,csvOut);								
+								//writeTimeseries_OLD(timeseries,plotID,csvOut);
+								writeTimeseries(timeseries, plotID, bufferedWriter);	
 							} else {
 								printLine("not processed: "+plotID);
 							}
@@ -230,7 +236,9 @@ public class ZipExport {
 					}
 					processedPlots++;
 				}
-				csvOut.flush();				
+				//csvOut.flush();
+				bufferedWriter.flush();
+				writer.flush();
 			} else {
 				processedPlots = 0;
 				for(String plotID:plotIDs) {
@@ -241,12 +249,18 @@ public class ZipExport {
 							TimestampSeries timeseries = tsdb.plot(null,plotID, schema, aggregationInterval, dataQuality, interpolated, startTimestamp, endTimestamp);
 							if(timeseries!=null) {
 								zipOutputStream.putNextEntry(new ZipEntry(plotID+".csv"));
-								PrintStream csvOut = new PrintStream(zipOutputStream,false);
+								//PrintStream csvOut = new PrintStream(zipOutputStream,false);
+								OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream);
+								BufferedWriter bufferedWriter = new BufferedWriter(writer);
 								if(write_header) {
-									writeCSVHeader(csvOut);
+									//writeCSVHeader_OLD(csvOut);
+									writeCSVHeader(bufferedWriter);
 								}
-								writeTimeseries(timeseries,plotID,csvOut);
-								csvOut.flush();
+								//writeTimeseries_OLD(timeseries,plotID,csvOut);
+								writeTimeseries(timeseries,plotID,bufferedWriter);
+								//csvOut.flush();
+								bufferedWriter.flush();
+								writer.flush();
 							} else {
 								printLine("not processed: "+plotID);
 							}
@@ -385,7 +399,47 @@ public class ZipExport {
 		}
 	}
 
-	private void writeCSVHeader(PrintStream csvOut) {
+	private void writeCSVHeader(BufferedWriter bufferedWriter) throws IOException {
+		boolean isFirst = true;
+		if(col_plotid) {
+			bufferedWriter.write("plotID");
+			isFirst = false;
+		}
+
+		if(col_timestamp) {
+			if(!isFirst) {
+				bufferedWriter.write(',');				
+			}
+			bufferedWriter.write("timestamp");
+			isFirst = false;
+		}
+
+		if(col_datetime) {
+			if(!isFirst) {
+				bufferedWriter.write(',');			
+			}
+			bufferedWriter.write("datetime");
+			isFirst = false;
+		}
+		for(String name:sensorNames) {
+			if(!isFirst) {
+				bufferedWriter.write(',');
+			}
+			bufferedWriter.write(name);
+			isFirst = false;
+		}
+		if(col_qualitycounter) {
+			if(!isFirst) {
+				bufferedWriter.write(',');				
+			}
+			bufferedWriter.write("qualitycounter");
+			isFirst = false;
+		}
+		bufferedWriter.write(LINE_SEPARATOR);
+	}
+
+	@Deprecated
+	private void writeCSVHeader_OLD(PrintStream csvOut) {
 		StringBuilder stringbuilder = new StringBuilder();
 		boolean isFirst = true;
 		if(col_plotid) {
@@ -535,8 +589,62 @@ public class ZipExport {
 			log.error(e);
 		}
 	}
+	
+	private static final DecimalFormat decimalFormat = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.ENGLISH));
 
-	private void writeTimeseries(TimestampSeries timeseries, String plotID, PrintStream csvOut) {		
+	private void writeTimeseries(TimestampSeries timeseries, String plotID, BufferedWriter bufferedWriter) throws IOException {
+		//@SuppressWarnings("resource") //don't close stream
+		//Formatter formatter = new Formatter(bufferedWriter,Locale.ENGLISH);
+		ProjectionFillIterator it = new ProjectionFillIterator(timeseries.tsIterator(), sensorNames);
+		while(it.hasNext()) {
+			TsEntry entry = it.next();
+			boolean isFirst = true;
+			if(col_plotid) {
+				bufferedWriter.write(plotID);
+				isFirst = false;
+			}
+			if(col_timestamp) {
+				if(!isFirst) {
+					bufferedWriter.write(',');
+				}
+				bufferedWriter.write(Integer.toString((int) entry.timestamp));
+				isFirst = false;
+			}
+			if(col_datetime) {
+				if(!isFirst) {
+					bufferedWriter.write(',');
+				}
+				LocalDateTime datetime = TimeUtil.oleMinutesToLocalDateTime(entry.timestamp);
+				//bufferedWriter.write(datetime.toString());
+				bufferedWriter.write(TimeUtil.fastDateTimeWrite(datetime));
+				isFirst = false;
+			}
+			for(int i=0;i<sensorNames.length;i++) {
+				float v = entry.data[i];
+				if(!isFirst) {
+					bufferedWriter.write(',');
+				}
+				isFirst = false;				
+				if(Float.isNaN(v)) {
+					bufferedWriter.write("NA");
+				} else {
+					//formatter.format(Locale.ENGLISH, "%.2f", v);
+					bufferedWriter.write(decimalFormat.format(v));
+				}
+			}
+			if(col_qualitycounter) {
+				if(!isFirst) {
+					bufferedWriter.write(',');
+				}
+				bufferedWriter.write(entry.qualityCountersToString());
+				isFirst = false;
+			}
+			bufferedWriter.write(LINE_SEPARATOR);	
+		}		
+	}
+
+	@Deprecated
+	private void writeTimeseries_OLD(TimestampSeries timeseries, String plotID, PrintStream csvOut) {		
 		ProjectionFillIterator it = new ProjectionFillIterator(timeseries.tsIterator(), sensorNames);
 		while(it.hasNext()) {
 			TsEntry entry = it.next();
@@ -557,7 +665,8 @@ public class ZipExport {
 				if(!isFirst) {
 					s.append(',');
 				}
-				s.append(TimeUtil.oleMinutesToText(entry.timestamp));
+				LocalDateTime datetime = TimeUtil.oleMinutesToLocalDateTime(entry.timestamp);
+				s.append(datetime.toString());
 				isFirst = false;
 			}
 			Formatter formater = new Formatter(s,Locale.ENGLISH);

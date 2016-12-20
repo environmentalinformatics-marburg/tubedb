@@ -22,8 +22,11 @@ import static tsdb.util.Util.msToText;
  * first creates empty database
  * then loads data files into database
  * @author woellauer
+ * 
+ * deprecated. use: Terminal clear_import 
  *
  */
+@Deprecated
 public class ClearImportSources {
 	private static final Logger log = LogManager.getLogger();
 

@@ -1,5 +1,6 @@
 package tsdb.util;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.time.DateTimeException;
 import java.time.Duration;
@@ -28,13 +29,15 @@ public final class TimeUtil implements Serializable {
 
 	public static final LocalDateTime OLE_AUTOMATION_TIME_START = LocalDateTime.of(1899,12,30,0,0);
 
-	public static LocalDateTime oleAutomatonTimeToDateTime(double oleAutomatonTimestamp) {
-		long oleAutomatonTimeSeconds = (long) Math.round(oleAutomatonTimestamp*24*60*60);
-		return TimeUtil.OLE_AUTOMATION_TIME_START.plus(Duration.ofSeconds(oleAutomatonTimeSeconds));
+	public static LocalDateTime oleAutomatonTimeToDateTime(double oleAutomatonTimestampDays) {
+		/*long oleAutomatonTimeSeconds = (long) Math.round(oleAutomatonTimestampDays*24*60*60);
+		return TimeUtil.OLE_AUTOMATION_TIME_START.plus(Duration.ofSeconds(oleAutomatonTimeSeconds));*/
+		return TimeUtil.OLE_AUTOMATION_TIME_START.plusSeconds((long) (oleAutomatonTimestampDays*24*60*60));
 	}
 
 	public static LocalDateTime oleMinutesToLocalDateTime(long oleTimeMinutes) {
-		return OLE_AUTOMATION_TIME_START.plus(Duration.ofMinutes(oleTimeMinutes));
+		//return OLE_AUTOMATION_TIME_START.plus(Duration.ofMinutes(oleTimeMinutes));
+		return OLE_AUTOMATION_TIME_START.plusMinutes(oleTimeMinutes);
 	}
 
 	public static Duration minutesToDuration(long minutes) {
@@ -409,5 +412,65 @@ public final class TimeUtil implements Serializable {
 		default:
 			throw new RuntimeException("unknown timestamp "+text);
 		}
+	}
+	
+	public static char[] fastTimeWrite(LocalTime localTime) throws IOException {
+		char[] c = new char[5];
+		int h = localTime.getHour();
+		c[0] = (char) ('0'+(h/10));
+		c[1] = (char) ('0'+(h%10));
+		c[2] = (char) (':');
+		int m = localTime.getMinute();
+		c[3] = (char) ('0'+(m/10));
+		c[4] = (char) ('0'+(m%10));
+		return c;
+	}
+	
+	public static char[] fastDateWrite(LocalDate localDate) throws IOException {
+		char[] c = new char[10];
+		int y = localDate.getYear();
+		c[0] = (char) ('0'+  y/1000);
+		c[1] = (char) ('0'+ ((y%1000)/100)  );
+		c[2] = (char) ('0'+ ((y%100)/10)  );
+		c[3] = (char) ('0'+ (y%10)  );
+		c[4] = (char) ('-');
+		int m = localDate.getMonthValue();
+		c[5] = (char) ('0'+(m/10));
+		c[6] = (char) ('0'+(m%10));
+		c[7] = (char) ('-');
+		int d = localDate.getDayOfMonth();
+		c[8] = (char) ('0'+(d/10));
+		c[9] = (char) ('0'+(d%10));
+		return c;
+	}
+	
+	public static char[] fastDateTimeWrite(LocalDateTime localDateTime) throws IOException {
+		char[] c = new char[16];
+
+		LocalDate localDate = localDateTime.toLocalDate();
+		int y = localDate.getYear();
+		c[0] = (char) ('0'+  y/1000);
+		c[1] = (char) ('0'+ ((y%1000)/100)  );
+		c[2] = (char) ('0'+ ((y%100)/10)  );
+		c[3] = (char) ('0'+ (y%10)  );
+		c[4] = (char) ('-');
+		int m = localDate.getMonthValue();
+		c[5] = (char) ('0'+(m/10));
+		c[6] = (char) ('0'+(m%10));
+		c[7] = (char) ('-');
+		int d = localDate.getDayOfMonth();
+		c[8] = (char) ('0'+(d/10));
+		c[9] = (char) ('0'+(d%10));
+		c[10] = (char) ('T');
+		LocalTime localTime = localDateTime.toLocalTime();
+		int h = localTime.getHour();
+		c[11] = (char) ('0'+(h/10));
+		c[12] = (char) ('0'+(h%10));
+		c[13] = (char) (':');
+		int mo = localTime.getMinute();
+		c[14] = (char) ('0'+(mo/10));
+		c[15] = (char) ('0'+(mo%10));
+		
+		return c;		
 	}
 }
