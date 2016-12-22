@@ -210,6 +210,7 @@ var runQuery = function() {
 			info += "<td id=\""+voltageMark+"\">"+voltage+"</td>";
 			var message = "-";
 			var message_date = "-";
+			var message_style = "white-space: nowrap;";
 			if(interval[i].message != undefined) {
 				message = interval[i].message;
 			}
@@ -217,11 +218,12 @@ var runQuery = function() {
 				message_date = interval[i].message_date;
 				if(message_date<interval[i].last_datetime) {
 					message_date += " (outdated)";
+					message_style += "font-style: italic; color:grey;";
 				}
 			}
-			info += "<td style=\"white-space: nowrap;\">"+message_date+"</td>";
-			info += "<td style=\"white-space: nowrap;\">"+message+"</td>";
-			info += "</tr>";
+			info += '<td style="'+message_style+'">'+message_date+'</td>';
+			info += '<td style="'+message_style+'">'+message+'</td>';
+			info += '</tr>';
 
 		}
 		

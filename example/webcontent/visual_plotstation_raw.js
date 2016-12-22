@@ -16,6 +16,7 @@ var aggregation_text = ["raw","hour","day","week","month","year"];
 var aggregation_raw_text = ["raw"];
 var quality_name = ["no", "physical", "step", "empirical"];
 var quality_text = ["0: no","1: physical","2: physical + step","3: physical + step + empirical"];
+var quality_raw_text = ["0: no","1: physical","2: physical + step"];
 var type_raw_text = ["graph","table","csv file"];
 var type_hour_text = ["graph","heatmap","table","csv file"];
 var type_high_aggregated_text = ["graph","boxplot","table","csv file"];
@@ -26,6 +27,8 @@ var height_entries = [{text:"small", value:100}, {text:"default", value:400}, {t
 var sensor_rows = [];
 
 var tasks = 0;
+
+var pageParams = {};
 
 var region_select;
 var generalstation_select;
@@ -95,7 +98,37 @@ function decTask() {
 	}
 }
 
+function getUrlQueryParams(qs) { // based on http://stackoverflow.com/a/1099670
+    qs = qs.split('+').join(' ');
+    var params = {};
+    var tokens;
+    var re = /[?&]?([^=]+)=([^&]*)/g;
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+    }
+    return params;
+}
+
+function createUrlQueryParams(params) {
+	var qs = "";
+	for (var property in params) {
+		if (params.hasOwnProperty(property)) {
+			qs += encodeURIComponent(property)+'='+encodeURIComponent(params[property]);
+		}
+	}
+	if(qs.length>0) {
+		qs = '?'+qs;
+	}
+	return qs;
+}
+
 function document_ready() {
+	pageParams = getUrlQueryParams(document.location.search);
+	console.log(document.location.search);
+	console.log(pageParams);
+	console.log(createUrlQueryParams(pageParams));
+	console.log(document.location.pathname);
+	
 	region_select = $("#region_select");
 	generalstation_select = $("#generalstation_select");
 	plot_select = $("#plot_select");
@@ -125,8 +158,8 @@ function document_ready() {
 	
 	updateRegions();
 	updateTimeYears();
-	//updateAggregations();
-	updateQualities();
+	//updateAggregations(); //moved
+	//updateQualities(); // moved
 	updateTypes();
 	updateMagnification();
 	updateHeight();
@@ -142,6 +175,9 @@ function updateRegions() {
 	$.get(url_region_list).done(function(data) {
 		var rows = splitData(data);
 		$.each(rows, function(i,row) {region_select.append(new Option(row[1],row[0]));});
+		if(pageParams.region!=undefined) {
+			region_select.val(pageParams.region);
+		}
 		onRegionChange();
 		decTask();
 		if(rows.length==1) {
@@ -153,6 +189,12 @@ function updateRegions() {
 }
 
 function onRegionChange() {
+	console.log("region change "+region_select.val()+"    "+pageParams.region);
+	if(pageParams.region!=undefined && region_select.val()!=pageParams.region) {
+		pageParams = {};
+		var qs = createUrlQueryParams(pageParams);
+		history.replaceState(null, null, document.location.pathname+qs);		
+	}
 	updateGeneralStations();
 }
 
@@ -188,13 +230,23 @@ function updatePlots() {
 	}
 	$.get(url_plot_list+query).done(function(data) {
 		var rows = splitData(data);
-		$.each(rows, function(i,row) {plot_select.append(new Option(row[0]+(row[2]!="virtual"&&row[2]!="unknown"?" <"+row[2]+">":"")+(row[1]=="vip"?" (vip)":""),row[0]));})
+		$.each(rows, function(i,row) {plot_select.append(new Option(row[0]+(row[2]!="virtual"&&row[2]!="unknown"?" <"+row[2]+">":"")+(row[1]=="vip"?" (vip)":""),row[0]));});
+		if(pageParams.plot!=undefined) {
+			plot_select.val(pageParams.plot);
+		}/*else {
+			pageParams = {};
+		}*/
 		onPlotChange();
 		decTask();
 	}).fail(function() {plot_select.append(new Option("[error]","[error]"));decTask();});
 }
 
 function onPlotChange() {
+	if(pageParams.plot!=undefined && plot_select.val()!=pageParams.plot) {
+		delete pageParams.plot;
+		var qs = createUrlQueryParams(pageParams);
+		history.replaceState(null, null, document.location.pathname+qs);		
+	}
 	updateStations();
 }
 
@@ -392,7 +444,7 @@ function addDiagram(plotName, sensorName, sensorDesc, sensorUnit, boxplot, width
 	incTask();
 	var sensorResult = getID("div_result").appendChild(document.createElement("div"));
 	var sensorResultTitle = sensorResult.appendChild(document.createElement("div"));
-	sensorResultTitle.innerHTML += "query "+sensorName+"...";
+	sensorResultTitle.innerHTML += "query "+plotName+"   "+sensorName+"...";
 	var aggregationName = aggregation_select.val();
 	var qualityName = "step";
 	var qualityName = quality_name[quality_select.val()];
@@ -428,7 +480,7 @@ function addHeatmap(plotName, sensorName, sensorDesc, sensorUnit) {
 	var sensorResult = getID("div_result").appendChild(document.createElement("div"));
 	var sensorResultTitle = sensorResult.appendChild(document.createElement("div"));
 	var sensorResultScale = sensorResult.appendChild(document.createElement("div"));
-	sensorResultTitle.innerHTML += "query "+sensorName+"...";
+	sensorResultTitle.innerHTML += "query "+plotName+"   "+sensorName+"...";
 	var aggregationName = aggregation_select.val();
 	var qualityName = "step";
 	var qualityName = quality_name[quality_select.val()];
@@ -529,7 +581,8 @@ function addTable(plotName, sensors) {
 	incTask();
 	getID("div_result").innerHTML = "query...";
 	$.get(url_query_csv+"?"+getQueryCSV(plotName, sensors)).done(function(data) {
-		getID("div_result").innerHTML = getSensorTable(sensors);
+		getID("div_result").innerHTML = '<strong style="margin-left:100px;">'+plotName+'</strong><br>';
+		getID("div_result").innerHTML += getSensorTable(sensors);
 		var rows = splitCsv(data);
 		console.log("now");
 		var table = addTag(getID("div_result"),"table");
@@ -654,18 +707,26 @@ function updateAggregations() {
 
 function onAggregationChange() {
 	if(aggregation_select.val()=="raw") {
-		$("#div_quality_select").hide();
+		//$("#div_quality_select").hide();
 		$("#div_interpolation").hide();
 	} else {
-		$("#div_quality_select").show();
+		//$("#div_quality_select").show();
 		$("#div_interpolation").show();
 	}
+	updateQualities();
 	updateTypes();
 }
 
 function updateQualities() {
-	$.each(quality_text, function(i,text) {quality_select.append(new Option(text,i));});
-	quality_select.val(2);
+	var prefQ = (quality_select.val()==undefined)?2:quality_select.val();
+	quality_select.empty();
+	if(aggregation_select.val()=="raw") {
+		$.each(quality_raw_text, function(i,text) {quality_select.append(new Option(text,i));});
+		quality_select.val(prefQ>2?2:prefQ);
+	} else {
+		$.each(quality_text, function(i,text) {quality_select.append(new Option(text,i));});
+		quality_select.val(prefQ);
+	}
 }
 
 function updateMagnification() {

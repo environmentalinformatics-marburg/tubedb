@@ -18,6 +18,7 @@ import tsdb.run.command.CommandType;
 import tsdb.run.command.DataClear;
 import tsdb.run.command.DataImport;
 import tsdb.run.command.MainRunnable;
+import tsdb.run.command.UpdateMasks;
 import tsdb.util.yaml.YamlMap;
 
 public class Terminal {
@@ -110,7 +111,7 @@ public class Terminal {
 
 		addCommand("clear", "remove all time series data in TubeDB", DataClear::main);
 		addCommand("load", "read all data source into TubeDB", DataImport::main);
-		addCommand("masks", "update masks", ClearLoadMasks::main);
+		addCommand("masks", "update masks", UpdateMasks::main);
 		addCommand("references", "refresh time series references", CreateStationGroupAverageCache::main);
 		addCommand("compact", "defragment free space", RunCompact::main);
 

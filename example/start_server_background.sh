@@ -11,6 +11,6 @@ then
 	#exit 1
 fi
 
-screen -S tubedb -d -m ./server.sh
+screen -S tubedb -d -m ./tsdb.sh server
 
 ./check_server_background.sh

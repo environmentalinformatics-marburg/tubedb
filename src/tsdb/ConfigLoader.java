@@ -271,20 +271,20 @@ public class ConfigLoader {
 					String sectionName = section.getName();
 					int index = sectionName.indexOf("_logger_type_sensor_translation");
 					if(index>-1) {
-						readLoggerTypeSensorTranslation(sectionName.substring(0,index),section);
+						readLoggerTypeSensorTranslation(sectionName.substring(0,index),section, iniFile);
 						continue;
 					}
 					index = sectionName.indexOf("_generalstation_sensor_translation");
 					if(index>-1) {
-						readGeneralStationSensorTranslation(sectionName.substring(0,index),section);
+						readGeneralStationSensorTranslation(sectionName.substring(0,index),section, iniFile);
 						continue;
 					}
 					index = sectionName.indexOf("_station_sensor_translation");
 					if(index>-1) {
-						readStationSensorTranslation(sectionName.substring(0,index),section);
+						readStationSensorTranslation(sectionName.substring(0,index),section, iniFile);
 						continue;
 					}
-					log.warn("section unknown: "+sectionName);
+					log.warn("section unknown: "+sectionName+"  at "+iniFile);
 				}
 			}
 		} catch (Exception e) {
@@ -343,52 +343,52 @@ public class ConfigLoader {
 		}		
 	}
 
-	private void readLoggerTypeSensorTranslation(String loggerTypeName, Section section) {
+	private void readLoggerTypeSensorTranslation(String loggerTypeName, Section section, String traceText) {
 		LoggerType loggerType = tsdb.getLoggerType(loggerTypeName);
 		if(loggerType==null) {
-			log.error("logger not found: "+loggerTypeName);
+			log.error("logger not found: "+loggerTypeName+"  at "+traceText);
 			return;
 		}
 		Map<String, String> translationMap = Util.readIniSectionMap(section);
 		for(Entry<String, String> entry:translationMap.entrySet()) {
 			if(loggerType.sensorNameTranlationMap.containsKey(entry.getKey())) {
-				log.warn("overwriting");
+				log.warn("overwriting"+"  at "+traceText);
 			}
 			if(entry.getKey().equals(entry.getValue())) {
-				log.info("redundant entry "+entry+" in "+section.getName());
+				log.info("redundant entry "+entry+" in "+section.getName()+"  at "+traceText);
 			}
 			loggerType.sensorNameTranlationMap.put(entry.getKey(), entry.getValue());
 		}
 	}
 
-	private void readGeneralStationSensorTranslation(String generalStationName, Section section) {
+	private void readGeneralStationSensorTranslation(String generalStationName, Section section, String traceText) {
 		GeneralStation generalStation = tsdb.getGeneralStation(generalStationName);
 		if(generalStation==null) {
-			log.error("generalStation not found: "+generalStationName);
+			log.error("generalStation not found: "+generalStationName+"  at "+traceText);
 			return;
 		}
 		Map<String, String> translationMap = Util.readIniSectionMap(section);
 		for(Entry<String, String> entry:translationMap.entrySet()) {
 			if(generalStation.sensorNameTranlationMap.containsKey(entry.getKey())) {
-				log.warn("overwriting");
+				log.warn("overwriting"+"  at "+traceText);
 			}
 			if(entry.getKey().equals(entry.getValue())) {
-				log.info("redundant entry "+entry+" in "+section.getName());
+				log.info("redundant entry "+entry+" in "+section.getName()+"  at "+traceText);
 			}
 			generalStation.sensorNameTranlationMap.put(entry.getKey(), entry.getValue());
 		}
 	}
 
-	private void readStationSensorTranslation(String stationName, Section section) {
+	private void readStationSensorTranslation(String stationName, Section section, String traceText) {
 		Station station = tsdb.getStation(stationName);
 		if(station==null) {
-			log.error("station not found: "+stationName);
+			log.error("station not found: "+stationName+"  at "+traceText);
 			return;
 		}
 		Map<String, String> translationMap = Util.readIniSectionMap(section);
 		for(Entry<String, String> entry:translationMap.entrySet()) {
 			if(station.sensorNameTranlationMap.containsKey(entry.getKey())) {
-				log.warn("overwriting");
+				log.warn("overwriting"+"  at "+traceText);
 			}
 			station.sensorNameTranlationMap.put(entry.getKey(), entry.getValue());
 		}

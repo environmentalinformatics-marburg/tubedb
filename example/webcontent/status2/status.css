@@ -1,0 +1,87 @@
+body {
+  font-family: Helvetica Neue, Arial, sans-serif;
+  font-size: 14px;
+  color: #444;
+}
+
+table {
+  border: 2px solid #666;
+  border-radius: 3px;
+  background-color: #fff;
+}
+
+th {
+  background-color: #666;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+table tr:nth-child(odd) {background-color:#efefef;}
+table tr:nth-child(even) {background-color:#f9f9f9;}
+
+th {
+  min-width: 0px;
+  padding: 10px 1px;
+}
+
+td {
+  min-width: 0px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+td.column_message {
+	white-space: normal;
+}
+
+td.column_elapsed ,td.column_voltage {
+	text-align: right;
+}
+
+th.active {
+  color: rgba(255,255,255,1);
+}
+
+th.active .arrow {
+  opacity: 1;
+}
+
+.arrow {
+  display: inline-block;
+  vertical-align: middle;
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  opacity: 0;
+}
+
+.arrow.asc {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid #fff;
+}
+
+.arrow.dsc {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #fff;
+}
+
+.timeMarkLost { background-color: #666666; }
+.timeMarkOneMonth { background-color: #ff4444; }
+.timeMarkTwoWeeks { background-color: #ff9944; }
+.timeMarkOneWeek { background-color: #ffff44; }
+.timeMarkNow { background-color: #44ff44; }
+
+.voltageMarkNaN{ background-color:#88888877; }
+.voltageMarkOK{ background-color: #44ff4477;  }
+.volageMarkWARN { background-color: #ffff4477; }
+.volageMarkWARN2 { background-color: #ff994477; }
+.volageMarkCRITICAL { background-color: #ff444477; }
+
+.messageOutdated {font-style: italic; color:grey;}
+

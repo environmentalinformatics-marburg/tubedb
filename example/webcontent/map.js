@@ -169,7 +169,7 @@ function addPlotMarker(plot, timeMark) {
 		var marker = new MarkerWithLabel({
 		   position: myLatlng,
 		   map: map,
-		   labelContent: plot.name+"<br>"+parseInt(plot.days),
+		   labelContent: "<div>"+plot.name+"<hr>"+parseInt(plot.days)+"</div>",
 		   labelClass: "plotlabels", // the CSS class for the label
 		   //labelInBackground: false,
 		   icon: 'plot_icon.png'

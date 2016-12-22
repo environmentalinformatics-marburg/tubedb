@@ -183,7 +183,7 @@ public final class TsDBFactory {
 		String configDirectory = configPath+"/";
 
 		try {
-			TsDB tsdb = new TsDB(databaseDirectory, cacheDirectory, streamdbPathPrefix);
+			TsDB tsdb = new TsDB(databaseDirectory, cacheDirectory, streamdbPathPrefix, configDirectory);
 			ConfigLoader configLoader = new ConfigLoader(tsdb);
 
 			//*** region config start

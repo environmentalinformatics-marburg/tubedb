@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="robots" content="noindex" />
+	<link rel="shortcut icon" href="../favicon.png">
+    <title>Map of Plots</title>
+    <link rel="stylesheet" href="ol.css" type="text/css">
+	<link rel="stylesheet" href="map2.css" type="text/css">
+    <script src="ol-debug.js"></script>
+	<script src="vue.js"></script>
+	<script src="axios.js"></script>
+	<script src="map2.js"></script>
+  </head>
+  
+  <script type="text/x-template" id="plot-dialog-template">
+  <transition name="modal">
+    <div class="modal-mask" @click="$emit('close')">
+      <div class="modal-wrapper">
+        <div class="modal-container-plot" @click.stop>
+
+          <div class="modal-header">
+              <b>{{plot.name}}</b>
+			  <button class="modal-default-button" @click="$emit('close')">
+                x
+              </button>			  
+          </div>
+
+          <div class="modal-body">
+			<a :href="'../visual_plotstation_raw.html?region='+encodeURIComponent(plot.region)+'&plot='+encodeURIComponent(plot.name)">view climate data</a>
+			<br>
+			<br>
+			<table>
+			<tbody>
+			<tr><td>project: </td><td>{{plot.region}}</td></tr>
+			<tr><td>group: </td><td>{{plot.general}}</td></tr>			
+			<tr><td>position (WGS84): </td><td>{{plot.lat.toFixed(4)}}, {{plot.lon.toFixed(4)}}</td></tr>
+			</tbody>
+			</table>
+          </div>
+
+          <div class="modal-footer">		  
+              <button class="modal-default-button" @click="$emit('close')">
+                close
+              </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
+  </script>
+  
+  
+  <script type="text/x-template" id="plots-dialog-template">
+  <transition name="modal">
+    <div class="modal-mask" @click="$emit('close')">
+      <div class="modal-wrapper">
+        <div class="modal-container-default" @click.stop>
+
+          <div class="modal-header">
+              <b>Select Plot</b>
+			  <button class="modal-default-button" @click="$emit('close')">
+                x
+              </button>			  
+          </div>
+
+          <div class="modal-body">
+				<table>
+					<tr v-for="plot in plots" @click="$emit('plot', plot)" style="cursor: pointer;">
+						<td>{{plot.name}}</td>
+					</tr>
+				</table>
+          </div>
+
+          <div class="modal-footer">		  
+              <button class="modal-default-button" @click="$emit('close')">
+                close
+              </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
+  </script>
+  
+  
+  <body>
+	<div id="app">
+		<div v-if="message != undefined">
+		{{message}}
+		</div>
+		<div id="map_container">
+			<div id="map" class="map"></div>
+			<div id="map_overlay">
+				<template v-for="plot in hoveredPlots">
+				{{plot.name}}<br>
+				</template>
+			</div>
+		</div>		
+		<plots-dialog v-if="showPlotsDialog" @close="showPlotsDialog = false" :plots="selectedPlots" @plot="viewPlot($event);">
+		</plots-dialog>
+		<plot-dialog v-if="showPlotDialog" @close="showPlotDialog = false" :plot="selectedPlot">
+		</plot-dialog>
+	</div>
+  </body>
+</html>

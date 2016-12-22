@@ -84,6 +84,8 @@ public class TsDB implements AutoCloseable {
 	public StreamStorageStreamDB streamCache;
 
 	public SourceCatalog sourceCatalog; 
+	
+	public final String configDirectory;
 
 
 	//*** end persistent information ***
@@ -95,8 +97,9 @@ public class TsDB implements AutoCloseable {
 	 * @param databasePath
 	 * @param cachePath
 	 * @param streamdbPathPrefix
+	 * @param configDirectory 
 	 */
-	public TsDB(String databasePath, String cachePath, String streamdbPathPrefix) {		
+	public TsDB(String databasePath, String cachePath, String streamdbPathPrefix, String configDirectory) {		
 		log.info("open tsdb...");		
 
 		this.regionMap = new TreeMap<String,Region>();
@@ -114,6 +117,8 @@ public class TsDB implements AutoCloseable {
 		this.virtualplotMap = new TreeMap<String, VirtualPlot>();
 
 		this.sourceCatalog = new SourceCatalog(databasePath);
+		
+		this.configDirectory = configDirectory;
 	}	
 
 	/**
