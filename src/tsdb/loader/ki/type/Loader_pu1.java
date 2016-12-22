@@ -51,7 +51,7 @@ class Loader_pu1 extends AbstractLoader {
 		for(int schemaIndex=0; schemaIndex<resultSchema.length; schemaIndex++) {
 			switch(resultSchema[schemaIndex]) {
 			case "P_RT_NRT":
-				calib_coefficient_P_RT_NRT = properties.getFloatProperty("pu1_P_RT_NRT");
+				calib_coefficient_P_RT_NRT = properties.getFloatProperty("pu1_P_RT_NRT", sourceInfo);
 				processingTypes[schemaIndex] = ProcessingType.P_RT_NRT;
 				break;
 			default:

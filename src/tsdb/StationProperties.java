@@ -66,18 +66,22 @@ public class StationProperties implements Serializable{
 			return null;
 		}
 	}
-
+	
 	public float getFloatProperty(String key) {
+		return getFloatProperty(key, "-");
+	}
+
+	public float getFloatProperty(String key, String traceText) {
 		String text = propertyMap.get(key);
 		if(text!=null) {
 			try {
 				return Float.parseFloat(text);
 			} catch(Exception e) {
-				log.warn("error in read float: "+e+"  for propery  "+key+" and value  "+text);
+				log.warn("error in read float: "+e+"  for propery  "+key+" and value  "+text+"   at "+traceText);
 				return Float.NaN;
 			}
 		} else {
-			log.warn("error in read float: not found for property "+key);
+			log.warn("error in read float: not found for property "+key+"   at "+traceText);
 			return Float.NaN;
 		}
 	}

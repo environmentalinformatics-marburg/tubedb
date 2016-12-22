@@ -81,15 +81,15 @@ class Loader_tfi extends AbstractLoader {
 			case "B_29": 
 			case "B_30":
 				processingTypes[schemaIndex] = ProcessingType.B;
-				calib_coefficient_b = properties.getFloatProperty("pu1_P_RT_NRT");
+				calib_coefficient_b = properties.getFloatProperty("pu1_P_RT_NRT", sourceInfo);
 				break;
 			case "Rainfall":
 				processingTypes[schemaIndex] = ProcessingType.RAINFALL;
-				calib_coefficient_rainfall = properties.getFloatProperty("pu2_1");
+				calib_coefficient_rainfall = properties.getFloatProperty("pu2_1", sourceInfo);
 				break;
 			case "Fog":
 				processingTypes[schemaIndex] = ProcessingType.FOG;
-				calib_coefficient_fog = properties.getFloatProperty("pu2_2");
+				calib_coefficient_fog = properties.getFloatProperty("pu2_2", sourceInfo);
 				break;
 			default:
 				processingTypes[schemaIndex] = ProcessingType.COPY;

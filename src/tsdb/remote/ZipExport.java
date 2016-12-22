@@ -7,19 +7,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.rmi.RemoteException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.function.Consumer;
@@ -31,35 +27,27 @@ import java.util.zip.ZipOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.DumperOptions.LineBreak;
 import org.yaml.snakeyaml.Yaml;
 
 import com.opencsv.CSVWriter;
 
 import tsdb.component.Region;
 import tsdb.component.Sensor;
-import tsdb.iterator.ProjectionFillIterator;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataQuality;
 import tsdb.util.TimeUtil;
-import tsdb.util.TsEntry;
 import tsdb.util.Util;
 import tsdb.util.iterator.TimestampSeries;
+import tsdb.util.iterator.TimestampSeriesCSVwriter;
 
 /**
  * Creates Zip-files of sets of time series
  * @author woellauer
  *
  */
-public class ZipExport {
-
+public class ZipExport extends TimestampSeriesCSVwriter{
 	private static final Logger log = LogManager.getLogger();
-
-	/**
-	 * Platform neutral line separator (windows style)
-	 */
-	private static final String LINE_SEPARATOR = "\r\n";
-	private static final LineBreak LINE_BREAK = LineBreak.WIN; //"\r\n"
+	private static final Charset charset = Charset.forName("UTF-8");
 
 	private final RemoteTsDB tsdb;
 
@@ -75,17 +63,14 @@ public class ZipExport {
 	private final boolean desc_sensor;
 	private final boolean desc_plot;
 	private final boolean desc_settings;
-	private final boolean col_plotid;
-	private final boolean col_timestamp;
-	private final boolean col_datetime;
-	private final boolean col_qualitycounter;
 	private final boolean write_header;
 	private final Long startTimestamp;
 	private final Long endTimestamp;
 
 	private int processedPlots = 0;
 
-	public ZipExport(RemoteTsDB tsdb, Region region, String[] sensorNames, String[] plotIDs,AggregationInterval aggregationInterval,DataQuality dataQuality,boolean interpolated, boolean allinone, boolean desc_sensor, boolean desc_plot, boolean desc_settings, boolean col_plotid, boolean col_timestamp, boolean col_datetime, boolean write_header, Long startTimestamp, Long endTimestamp, boolean col_qualitycounter) {
+	public ZipExport(RemoteTsDB tsdb, Region region, String[] sensorNames, String[] plotIDs, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated, boolean allinone, boolean desc_sensor, boolean desc_plot, boolean desc_settings, boolean col_plotid, boolean col_timestamp, boolean col_datetime, boolean write_header, Long startTimestamp, Long endTimestamp, boolean col_qualitycounter) {
+		super(col_plotid, col_timestamp, col_datetime, col_qualitycounter);
 		throwNull(tsdb);
 		this.tsdb = tsdb;
 
@@ -123,13 +108,9 @@ public class ZipExport {
 		this.desc_sensor = desc_sensor;
 		this.desc_plot = desc_plot;
 		this.desc_settings = desc_settings;
-		this.col_plotid = col_plotid;
-		this.col_timestamp = col_timestamp;
-		this.col_datetime = col_datetime;
 		this.write_header = write_header;
 		this.startTimestamp = startTimestamp;
 		this.endTimestamp = endTimestamp;
-		this.col_qualitycounter = col_qualitycounter;
 	}
 
 	public boolean createZipFile(String filename) {
@@ -168,12 +149,8 @@ public class ZipExport {
 			zipOutputStream.setLevel(9);
 
 			if(desc_settings) {
-				/*zipOutputStream.putNextEntry(new ZipEntry("processing_settings.txt"));
-				PrintStream printStream = new PrintStream(zipOutputStream, false);
-				write_settings_TXT(printStream);
-				printStream.flush();*/
 				zipOutputStream.putNextEntry(new ZipEntry("processing_settings.yaml"));
-				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream);
+				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
 				BufferedWriter bufferedWriter = new BufferedWriter(writer);
 				write_settings_YAML(bufferedWriter);
 				bufferedWriter.flush();
@@ -181,12 +158,8 @@ public class ZipExport {
 			}
 
 			if(desc_sensor) {
-				/*zipOutputStream.putNextEntry(new ZipEntry("sensor_description.txt"));
-				PrintStream printStream = new PrintStream(zipOutputStream, false);
-				write_sensor_description_TXT(printStream);
-				printStream.flush();*/
 				zipOutputStream.putNextEntry(new ZipEntry("sensor_description.csv"));
-				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream);
+				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
 				BufferedWriter bufferedWriter = new BufferedWriter(writer);
 				write_sensor_description_CSV(bufferedWriter);
 				bufferedWriter.flush();
@@ -194,12 +167,8 @@ public class ZipExport {
 			}
 
 			if(desc_plot) {
-				/*zipOutputStream.putNextEntry(new ZipEntry("plot_description.txt"));
-				PrintStream printStream = new PrintStream(zipOutputStream, false);
-				write_plot_description_TXT(printStream);
-				printStream.flush();*/
 				zipOutputStream.putNextEntry(new ZipEntry("plot_description.csv"));
-				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream);
+				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
 				BufferedWriter bufferedWriter = new BufferedWriter(writer);
 				write_plot_description_CSV(bufferedWriter);
 				bufferedWriter.flush();
@@ -208,12 +177,10 @@ public class ZipExport {
 
 			if(allInOne) {				
 				zipOutputStream.putNextEntry(new ZipEntry("plots.csv"));
-				//PrintStream csvOut = new PrintStream(zipOutputStream,false);
-				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream);
+				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
 				BufferedWriter bufferedWriter = new BufferedWriter(writer);
 				if(write_header) {
-					//writeCSVHeader_OLD(csvOut);
-					writeCSVHeader(bufferedWriter);
+					writeCSVHeader(bufferedWriter, sensorNames);
 				}
 				processedPlots = 0;
 				for(String plotID:plotIDs) {
@@ -223,8 +190,7 @@ public class ZipExport {
 						if(!Util.empty(schema)) {
 							TimestampSeries timeseries = tsdb.plot(null,plotID, schema, aggregationInterval, dataQuality, interpolated, startTimestamp, endTimestamp);
 							if(timeseries!=null) {								
-								//writeTimeseries_OLD(timeseries,plotID,csvOut);
-								writeTimeseries(timeseries, plotID, bufferedWriter);	
+								writeTimeseries(timeseries, plotID, sensorNames, aggregationInterval, bufferedWriter);	
 							} else {
 								printLine("not processed: "+plotID);
 							}
@@ -236,7 +202,6 @@ public class ZipExport {
 					}
 					processedPlots++;
 				}
-				//csvOut.flush();
 				bufferedWriter.flush();
 				writer.flush();
 			} else {
@@ -249,16 +214,12 @@ public class ZipExport {
 							TimestampSeries timeseries = tsdb.plot(null,plotID, schema, aggregationInterval, dataQuality, interpolated, startTimestamp, endTimestamp);
 							if(timeseries!=null) {
 								zipOutputStream.putNextEntry(new ZipEntry(plotID+".csv"));
-								//PrintStream csvOut = new PrintStream(zipOutputStream,false);
-								OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream);
+								OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
 								BufferedWriter bufferedWriter = new BufferedWriter(writer);
 								if(write_header) {
-									//writeCSVHeader_OLD(csvOut);
-									writeCSVHeader(bufferedWriter);
+									writeCSVHeader(bufferedWriter, sensorNames);
 								}
-								//writeTimeseries_OLD(timeseries,plotID,csvOut);
-								writeTimeseries(timeseries,plotID,bufferedWriter);
-								//csvOut.flush();
+								writeTimeseries(timeseries, plotID, sensorNames, aggregationInterval, bufferedWriter);
 								bufferedWriter.flush();
 								writer.flush();
 							} else {
@@ -283,37 +244,6 @@ public class ZipExport {
 			return false;
 		}		
 	}	
-
-	@Deprecated
-	private void write_settings_TXT(PrintStream printStream) {
-		printStream.print("Settings that were used to create this time series archive file:"+LINE_SEPARATOR);
-		printStream.print(LINE_SEPARATOR);
-		printStream.print("creation date: "+LocalDateTime.now()+LINE_SEPARATOR);
-		printStream.print(LINE_SEPARATOR);
-		printStream.print("sensor names ("+sensorNames.length+") : "+Util.arrayToString(sensorNames)+LINE_SEPARATOR);
-		printStream.print(LINE_SEPARATOR);
-		printStream.print("plot names ("+plotIDs.length+") : "+Util.arrayToString(plotIDs)+LINE_SEPARATOR);
-		printStream.print(LINE_SEPARATOR);
-		printStream.print("time steps : "+aggregationInterval.getText()+LINE_SEPARATOR);
-		printStream.print(LINE_SEPARATOR);
-		printStream.print("quality checks : "+dataQuality.getText()+LINE_SEPARATOR);
-		printStream.print(LINE_SEPARATOR);
-		if(interpolated) {
-			printStream.print("interpolate missing data"+LINE_SEPARATOR);
-			printStream.print(LINE_SEPARATOR);
-		} else {
-			printStream.print("no interpolation used"+LINE_SEPARATOR);
-			printStream.print(LINE_SEPARATOR);
-		}
-		if(allInOne) {
-			printStream.print("write all plots into one CSV-File"+LINE_SEPARATOR);
-			printStream.print(LINE_SEPARATOR);
-		} else {
-			printStream.print("for each plot write into separate CSV-File"+LINE_SEPARATOR);
-			printStream.print(LINE_SEPARATOR);			
-		}
-
-	}
 
 	private void write_settings_YAML(BufferedWriter bufferedWriter) {		
 		try {
@@ -399,105 +329,6 @@ public class ZipExport {
 		}
 	}
 
-	private void writeCSVHeader(BufferedWriter bufferedWriter) throws IOException {
-		boolean isFirst = true;
-		if(col_plotid) {
-			bufferedWriter.write("plotID");
-			isFirst = false;
-		}
-
-		if(col_timestamp) {
-			if(!isFirst) {
-				bufferedWriter.write(',');				
-			}
-			bufferedWriter.write("timestamp");
-			isFirst = false;
-		}
-
-		if(col_datetime) {
-			if(!isFirst) {
-				bufferedWriter.write(',');			
-			}
-			bufferedWriter.write("datetime");
-			isFirst = false;
-		}
-		for(String name:sensorNames) {
-			if(!isFirst) {
-				bufferedWriter.write(',');
-			}
-			bufferedWriter.write(name);
-			isFirst = false;
-		}
-		if(col_qualitycounter) {
-			if(!isFirst) {
-				bufferedWriter.write(',');				
-			}
-			bufferedWriter.write("qualitycounter");
-			isFirst = false;
-		}
-		bufferedWriter.write(LINE_SEPARATOR);
-	}
-
-	@Deprecated
-	private void writeCSVHeader_OLD(PrintStream csvOut) {
-		StringBuilder stringbuilder = new StringBuilder();
-		boolean isFirst = true;
-		if(col_plotid) {
-			stringbuilder.append("plotID");
-			isFirst = false;
-		}
-
-		if(col_timestamp) {
-			if(!isFirst) {
-				stringbuilder.append(',');				
-			}
-			stringbuilder.append("timestamp");
-			isFirst = false;
-		}
-
-		if(col_datetime) {
-			if(!isFirst) {
-				stringbuilder.append(',');				
-			}
-			stringbuilder.append("datetime");
-			isFirst = false;
-		}
-		for(String name:sensorNames) {
-			if(!isFirst) {
-				stringbuilder.append(',');
-			}
-			stringbuilder.append(name);
-			isFirst = false;
-		}
-		if(col_qualitycounter) {
-			if(!isFirst) {
-				stringbuilder.append(',');				
-			}
-			stringbuilder.append("qualitycounter");
-			isFirst = false;
-		}
-		csvOut.print(stringbuilder+LINE_SEPARATOR);
-	}
-
-	@Deprecated
-	private void write_sensor_description_TXT(PrintStream printStream) {
-		printStream.print("sensors:\t"+sensorNames.length+LINE_SEPARATOR);
-		printStream.print(LINE_SEPARATOR);
-		for(int i=0;i<sensorNames.length;i++) {
-			printStream.print((i+1)+". sensor:\t"+sensorNames[i]+LINE_SEPARATOR);
-			try {
-				Sensor sensor = tsdb.getSensor(sensorNames[i]);
-				if(sensor!=null) {
-					printStream.print("description:\t"+sensor.description+LINE_SEPARATOR);
-					printStream.print("unit:\t\t"+sensor.unitDescription+LINE_SEPARATOR);
-				}
-			} catch (RemoteException e) {
-				log.error(e);
-			}
-			printStream.print(LINE_SEPARATOR);
-		}		
-	}
-
 	private void write_sensor_description_CSV(BufferedWriter bufferedWriter) {
 		try {
 			@SuppressWarnings("resource") //don't close stream
@@ -518,43 +349,6 @@ public class ZipExport {
 				csvWriter.writeNext(new String[]{sensorName, sensorDescription, sensorUnit}, false);
 			}
 		} catch (Exception e) {
-			log.error(e);
-		}
-	}
-
-	@Deprecated
-	private void write_plot_description_TXT(PrintStream printStream) {
-		printStream.print("plots:\t"+plotIDs.length+LINE_SEPARATOR);
-		printStream.print("in region:\t"+region.longName+LINE_SEPARATOR);
-		printStream.print(LINE_SEPARATOR);
-
-		try {
-			PlotInfo[] plotInfos = tsdb.getPlots();
-			Map<String,PlotInfo> map = new HashMap<String,PlotInfo>();
-			for(PlotInfo plotInfo:plotInfos) {
-				map.put(plotInfo.name, plotInfo);
-			}
-
-			for(int i=0;i<plotIDs.length;i++) {
-				printStream.print((i+1)+". plot:\t"+plotIDs[i]+LINE_SEPARATOR);
-
-				PlotInfo plotInfo = map.get(plotIDs[i]);
-				if(plotInfo!=null) {
-					printStream.print("category:\t"+plotInfo.generalStationInfo.longName+LINE_SEPARATOR);
-					if(Double.isFinite(plotInfo.geoPosLatitude)) {
-						printStream.print("Latitude:\t"+plotInfo.geoPosLatitude+LINE_SEPARATOR);
-					}
-					if(Double.isFinite(plotInfo.geoPosLongitude)) {
-						printStream.print("Longitude:\t"+plotInfo.geoPosLongitude+LINE_SEPARATOR);
-					}
-					if(Float.isFinite(plotInfo.elevation)) {
-						printStream.print("Elevation:\t"+plotInfo.elevation+LINE_SEPARATOR);
-					}
-				}
-
-				printStream.print(LINE_SEPARATOR);
-			}
-		} catch (RemoteException e) {
 			log.error(e);
 		}
 	}
@@ -588,117 +382,6 @@ public class ZipExport {
 		} catch (Exception e) {
 			log.error(e);
 		}
-	}
-	
-	private static final DecimalFormat decimalFormat = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.ENGLISH));
-
-	private void writeTimeseries(TimestampSeries timeseries, String plotID, BufferedWriter bufferedWriter) throws IOException {
-		//@SuppressWarnings("resource") //don't close stream
-		//Formatter formatter = new Formatter(bufferedWriter,Locale.ENGLISH);
-		ProjectionFillIterator it = new ProjectionFillIterator(timeseries.tsIterator(), sensorNames);
-		while(it.hasNext()) {
-			TsEntry entry = it.next();
-			boolean isFirst = true;
-			if(col_plotid) {
-				bufferedWriter.write(plotID);
-				isFirst = false;
-			}
-			if(col_timestamp) {
-				if(!isFirst) {
-					bufferedWriter.write(',');
-				}
-				bufferedWriter.write(Integer.toString((int) entry.timestamp));
-				isFirst = false;
-			}
-			if(col_datetime) {
-				if(!isFirst) {
-					bufferedWriter.write(',');
-				}
-				LocalDateTime datetime = TimeUtil.oleMinutesToLocalDateTime(entry.timestamp);
-				//bufferedWriter.write(datetime.toString());
-				bufferedWriter.write(TimeUtil.fastDateTimeWrite(datetime));
-				isFirst = false;
-			}
-			for(int i=0;i<sensorNames.length;i++) {
-				float v = entry.data[i];
-				if(!isFirst) {
-					bufferedWriter.write(',');
-				}
-				isFirst = false;				
-				if(Float.isNaN(v)) {
-					bufferedWriter.write("NA");
-				} else {
-					//formatter.format(Locale.ENGLISH, "%.2f", v);
-					bufferedWriter.write(decimalFormat.format(v));
-				}
-			}
-			if(col_qualitycounter) {
-				if(!isFirst) {
-					bufferedWriter.write(',');
-				}
-				bufferedWriter.write(entry.qualityCountersToString());
-				isFirst = false;
-			}
-			bufferedWriter.write(LINE_SEPARATOR);	
-		}		
-	}
-
-	@Deprecated
-	private void writeTimeseries_OLD(TimestampSeries timeseries, String plotID, PrintStream csvOut) {		
-		ProjectionFillIterator it = new ProjectionFillIterator(timeseries.tsIterator(), sensorNames);
-		while(it.hasNext()) {
-			TsEntry entry = it.next();
-			boolean isFirst = true;
-			StringBuilder s = new StringBuilder();
-			if(col_plotid) {
-				s.append(plotID);
-				isFirst = false;
-			}
-			if(col_timestamp) {
-				if(!isFirst) {
-					s.append(',');
-				}
-				s.append(entry.timestamp);
-				isFirst = false;
-			}
-			if(col_datetime) {
-				if(!isFirst) {
-					s.append(',');
-				}
-				LocalDateTime datetime = TimeUtil.oleMinutesToLocalDateTime(entry.timestamp);
-				s.append(datetime.toString());
-				isFirst = false;
-			}
-			Formatter formater = new Formatter(s,Locale.ENGLISH);
-			for(int i=0;i<sensorNames.length;i++) {
-				float v = entry.data[i];
-				if(Float.isNaN(v)) {
-					if(isFirst) {
-						formater.format("NA");
-						isFirst = false;
-					} else {
-						formater.format(",NA");
-					}	
-				} else {
-					if(isFirst) {
-						formater.format("%.2f", v);
-						isFirst = false;
-					} else {
-						formater.format(",%.2f", v);
-					}
-				}
-			}
-			if(col_qualitycounter) {
-				if(!isFirst) {
-					s.append(',');
-				}
-				s.append(entry.qualityCountersToString());
-				isFirst = false;
-			}
-			s.append(LINE_SEPARATOR);
-			csvOut.print(s);
-			formater.close();			
-		}		
 	}
 
 	public int getProcessedPlots() {

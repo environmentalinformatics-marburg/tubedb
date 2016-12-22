@@ -53,11 +53,11 @@ class Loader_gp1 extends AbstractLoader {
 		for(int schemaIndex=0; schemaIndex<resultSchema.length; schemaIndex++) {
 			switch(resultSchema[schemaIndex]) {
 			case "WD":
-				calib_coefficient_wd = properties.getFloatProperty("pu2_1");
+				calib_coefficient_wd = properties.getFloatProperty("pu2_1", sourceInfo);
 				processingTypes[schemaIndex] = ProcessingType.WD;
 				break;
 			case "WV":
-				calib_coefficient_wv = properties.getFloatProperty("pu2_2");
+				calib_coefficient_wv = properties.getFloatProperty("pu2_2", sourceInfo);
 				processingTypes[schemaIndex] = ProcessingType.WV;
 				break;
 			

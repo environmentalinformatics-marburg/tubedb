@@ -16,7 +16,6 @@ import tsdb.loader.ki.AscParser;
 import tsdb.loader.ki.TimeSeriesLoaderKiLi;
 
 public class TestingAscParser {
-
 	private static final Logger log = LogManager.getLogger();
 
 	public static void main(String[] args) {

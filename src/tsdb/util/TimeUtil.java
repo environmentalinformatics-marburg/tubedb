@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
 import java.util.Comparator;
 import java.util.Locale;
 
@@ -444,6 +446,47 @@ public final class TimeUtil implements Serializable {
 		return c;
 	}
 	
+	private static final TemporalField weekOfYear = WeekFields.of(Locale.GERMANY).weekOfWeekBasedYear();
+	private static final TemporalField yearOfWeek = WeekFields.of(Locale.GERMANY).weekBasedYear();
+	
+	public static char[] fastDateWriteWeeks(LocalDate localDate) throws IOException {		
+		char[] c = new char[7];
+		int y = localDate.get(yearOfWeek);
+		c[0] = (char) ('0'+  y/1000);
+		c[1] = (char) ('0'+ ((y%1000)/100)  );
+		c[2] = (char) ('0'+ ((y%100)/10)  );
+		c[3] = (char) ('0'+ (y%10)  );
+		c[4] = (char) ('W');
+		int w = localDate.get(weekOfYear);
+		c[5] = (char) ('0'+(w/10));
+		c[6] = (char) ('0'+(w%10));
+		return c;
+	}
+	
+	public static char[] fastDateWriteMonths(LocalDate localDate) throws IOException {
+		char[] c = new char[7];
+		int y = localDate.getYear();
+		c[0] = (char) ('0'+  y/1000);
+		c[1] = (char) ('0'+ ((y%1000)/100)  );
+		c[2] = (char) ('0'+ ((y%100)/10)  );
+		c[3] = (char) ('0'+ (y%10)  );
+		c[4] = (char) ('-');
+		int m = localDate.getMonthValue();
+		c[5] = (char) ('0'+(m/10));
+		c[6] = (char) ('0'+(m%10));
+		return c;
+	}
+	
+	public static char[] fastDateWriteYears(LocalDate localDate) throws IOException {
+		char[] c = new char[4];
+		int y = localDate.getYear();
+		c[0] = (char) ('0'+  y/1000);
+		c[1] = (char) ('0'+ ((y%1000)/100)  );
+		c[2] = (char) ('0'+ ((y%100)/10)  );
+		c[3] = (char) ('0'+ (y%10)  );
+		return c;
+	}
+	
 	public static char[] fastDateTimeWrite(LocalDateTime localDateTime) throws IOException {
 		char[] c = new char[16];
 
@@ -473,4 +516,32 @@ public final class TimeUtil implements Serializable {
 		
 		return c;		
 	}
+	
+	public static char[] fastDateTimeWriteHours(LocalDateTime localDateTime) throws IOException {
+		char[] c = new char[13];
+
+		LocalDate localDate = localDateTime.toLocalDate();
+		int y = localDate.getYear();
+		c[0] = (char) ('0'+  y/1000);
+		c[1] = (char) ('0'+ ((y%1000)/100)  );
+		c[2] = (char) ('0'+ ((y%100)/10)  );
+		c[3] = (char) ('0'+ (y%10)  );
+		c[4] = (char) ('-');
+		int m = localDate.getMonthValue();
+		c[5] = (char) ('0'+(m/10));
+		c[6] = (char) ('0'+(m%10));
+		c[7] = (char) ('-');
+		int d = localDate.getDayOfMonth();
+		c[8] = (char) ('0'+(d/10));
+		c[9] = (char) ('0'+(d%10));
+		c[10] = (char) ('T');
+		LocalTime localTime = localDateTime.toLocalTime();
+		int h = localTime.getHour();
+		c[11] = (char) ('0'+(h/10));
+		c[12] = (char) ('0'+(h%10));
+		
+		return c;		
+	}
+	
+	
 }

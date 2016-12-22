@@ -106,4 +106,22 @@ public enum AggregationInterval {
 	public boolean isDay() {
 		return this==AggregationInterval.DAY;
 	}
+	
+	public boolean isWeek() {
+		return this==AggregationInterval.WEEK;
+	}
+	
+	public boolean isMonth() {
+		return this==AggregationInterval.MONTH;
+	}
+	
+	public boolean isYear() {
+		return this==AggregationInterval.YEAR;
+	}
+	
+	public boolean isDayOrHigher() {
+		return isDay() || isWeek() || isMonth() || isYear();
+	}
+	
+	
 }

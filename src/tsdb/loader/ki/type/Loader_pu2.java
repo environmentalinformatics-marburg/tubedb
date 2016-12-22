@@ -89,27 +89,27 @@ class Loader_pu2 extends AbstractLoader {
 		for(int schemaIndex=0; schemaIndex<resultSchema.length; schemaIndex++) {
 			switch(resultSchema[schemaIndex]) {
 			case "P_RT_NRT_01":
-				calib_coefficient_pu2_1 = properties.getFloatProperty("pu2_1");
+				calib_coefficient_pu2_1 = properties.getFloatProperty("pu2_1", sourceInfo);
 				processingTypes[schemaIndex] = ProcessingType.PU2_1;
 				break;
 			case "P_RT_NRT_02":
-				calib_coefficient_pu2_2 = properties.getFloatProperty("pu2_2");
+				calib_coefficient_pu2_2 = properties.getFloatProperty("pu2_2", sourceInfo);
 				processingTypes[schemaIndex] = ProcessingType.PU2_2;
 				break;
 			case "F_RT_NRT_01":
-				calib_coefficient_pu2_1 = properties.getFloatProperty("pu2_1");
+				calib_coefficient_pu2_1 = properties.getFloatProperty("pu2_1", sourceInfo);
 				processingTypes[schemaIndex] = ProcessingType.PU2_1;
 				break;
 			case "F_RT_NRT_02":
-				calib_coefficient_pu2_2 = properties.getFloatProperty("pu2_2");
+				calib_coefficient_pu2_2 = properties.getFloatProperty("pu2_2", sourceInfo);
 				processingTypes[schemaIndex] = ProcessingType.PU2_2;
 				break;
 			case "T_RT_NRT_01":
-				calib_coefficient_pu2_1 = properties.getFloatProperty("pu2_1");
+				calib_coefficient_pu2_1 = properties.getFloatProperty("pu2_1", sourceInfo);
 				processingTypes[schemaIndex] = ProcessingType.PU2_1;
 				break;
 			case "T_RT_NRT_02":
-				calib_coefficient_pu2_2 = properties.getFloatProperty("pu2_2");
+				calib_coefficient_pu2_2 = properties.getFloatProperty("pu2_2", sourceInfo);
 				processingTypes[schemaIndex] = ProcessingType.PU2_2;
 				break;				
 			default:

@@ -637,5 +637,18 @@ public final class Util {
 		T[] result = Arrays.copyOf(array, array.length+1);
 		result[array.length] = e;
 		return result;
-	}	
+	}
+	
+	public static char[] fastWriteFloat(float v) {
+		int i = (int) v;
+		String s = Integer.toString(i);
+		int slen = s.length();
+		char[] c = new char[slen+3];
+		s.getChars(0, slen, c, 0);
+		c[slen] = '.';
+		int d = (int) ((v-i)*100);
+		c[slen+1] = (char) ('0'+(d/10));
+		c[slen+2] = (char) ('0'+(d%10));
+		return c;
+	}
 }

@@ -193,19 +193,19 @@ class Loader_wxt extends AbstractLoader {
 			for(int schemaIndex=0; schemaIndex<resultSchema.length; schemaIndex++) {
 				switch(resultSchema[schemaIndex]) {
 				case "SWDR_300":
-					calib_coefficient_SWDR_300 = properties.getFloatProperty("wxt_SWDR_300");
+					calib_coefficient_SWDR_300 = properties.getFloatProperty("wxt_SWDR_300", sourceInfo);
 					processingTypes[schemaIndex] = ProcessingType.SWDR_300;
 					break;
 				case "SWUR_300":
-					calib_coefficient_SWUR_300 = properties.getFloatProperty("wxt_SWUR_300");
+					calib_coefficient_SWUR_300 = properties.getFloatProperty("wxt_SWUR_300", sourceInfo);
 					processingTypes[schemaIndex] = ProcessingType.SWUR_300;
 					break;
 				case "LWDR_300":
-					calib_coefficient_LWDR_300 = properties.getFloatProperty("wxt_LWDR_300");
+					calib_coefficient_LWDR_300 = properties.getFloatProperty("wxt_LWDR_300", sourceInfo);
 					processingTypes[schemaIndex] = ProcessingType.LWDR_300;
 					break;
 				case "LWUR_300":
-					calib_coefficient_LWUR_300 = properties.getFloatProperty("wxt_LWUR_300");
+					calib_coefficient_LWUR_300 = properties.getFloatProperty("wxt_LWUR_300", sourceInfo);
 					processingTypes[schemaIndex] = ProcessingType.LWUR_300;
 					break;
 				case "T_CNR":
