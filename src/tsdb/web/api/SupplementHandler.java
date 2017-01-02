@@ -75,11 +75,11 @@ public class SupplementHandler extends AbstractHandler {
 		divTopLine.setId("top_line");
 		Tag divTopLineRight = divTopLine.addDiv();
 		divTopLineRight.setId("top_line_right");
-		divTopLineRight.addLink("..", "main-page");
+		divTopLineRight.addLink("../content/index.html", "main-page");
 		divTopLineRight.addButton("?").setAttribute("onclick", "var h=document.getElementById('div_help').style;h.display=(h.display=='none')?'inline':'none'");
 		Tag h1 = divTop.addTag("h1");
 		//h1.addLink("../vis_tsm", "Precomputed Exploratories Visualizations");
-		h1.addLink("../supplement", "Supplementary Content");
+		h1.addLink("index.html", "Supplementary Content");
 		
 
 		int lastSlashIndex = page.lastIndexOf("/");
@@ -87,7 +87,7 @@ public class SupplementHandler extends AbstractHandler {
 			String parent = page.substring(0, lastSlashIndex);
 			String current = page.substring(lastSlashIndex);			
 			Tag h2 = divTop.addTag("h2");
-			h2.addLink("../supplement?page="+parent, parent);
+			h2.addLink("index.html?page="+parent, parent);
 			h2.addText(current);
 		} else {			
 			divTop.addTag("h2",page);
@@ -121,7 +121,7 @@ public class SupplementHandler extends AbstractHandler {
 					subPage += '/';
 				}
 				subPage += name;
-				divDirectories.addLink("../supplement?page="+subPage).addTag("b", name);
+				divDirectories.addLink("index.html?page="+subPage).addTag("b", name);
 				divDirectories.addText(" . . . ");
 			}
 
@@ -156,16 +156,10 @@ public class SupplementHandler extends AbstractHandler {
 					fileText = fileText.substring(0, fileText.length()-5);
 				}
 				tr.addTag("td").addLink("../files/supplement/"+subPage, fileText);
-
-			}
-
-
-			
+			}			
 		} catch (Exception e) {
 			log.error(e);
 		}
-
 		html.write(response.getWriter());
 	}
-
 }
