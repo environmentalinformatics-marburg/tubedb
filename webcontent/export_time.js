@@ -1,8 +1,10 @@
 var url_base = "../";
+
 var url_export_settings = url_base + "export/settings";
 var url_export_apply_settings = url_base + "export/apply_settings";
 var url_export_timespan = url_base + "export/timespan";
 var url_result_page = "export.html";
+var url_region_json = url_base + "tsdb/region.json";
 
 var tasks = 0;
 
@@ -132,7 +134,7 @@ var time_select_years_from;
 var time_select_years_to;
 var time_text_dates_from;
 var time_text_dates_to;
-var yearText = ["2008","2009","2010","2011","2012","2013","2014","2015","2016"];
+
 
 $(document).ready(function(){
 	incTask();
@@ -141,13 +143,7 @@ $(document).ready(function(){
 	time_select_years_from = $("#time_select_years_from");
 	time_select_years_to = $("#time_select_years_to");
 	time_text_dates_from = $("#time_text_dates_from");
-	time_text_dates_to = $("#time_text_dates_to");
-
-	$.each(yearText, function(i,text) {
-		time_select_year.append(new Option(text,text));
-		time_select_years_from.append(new Option(text,text));
-		time_select_years_to.append(new Option(text,text));
-	});	
+	time_text_dates_to = $("#time_text_dates_to");	
 	
 	document.getElementById("button_cancel").onclick = on_cancel;
 	document.getElementById("button_apply").onclick = on_apply;
@@ -172,6 +168,16 @@ $(document).ready(function(){
 		time_select_years_to.val(json_settings.timespan_years_to);
 		time_text_dates_from.val(json_settings.timespan_dates_from);
 		time_text_dates_to.val(json_settings.timespan_dates_to);
+		
+		incTask();
+		$.get(url_region_json+"?region="+json_settings.region).done(function(json) {
+			for(var year = json.view_year_range.start; year <= json.view_year_range.end; year++) {
+				time_select_year.append(new Option(year,year));
+				time_select_years_from.append(new Option(year,year));
+				time_select_years_to.append(new Option(year,year));
+			}			
+			decTask();
+		}).fail(function() {alert("error getting data");decTask();});		
 		
 		decTask();
 	})

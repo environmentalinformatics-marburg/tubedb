@@ -6,10 +6,10 @@ With methods of query API time series measurement data can be processed and retr
 API identifier: `tsdb`
 
 In the following methods of query API are specified and described: 
-* query_csv
-* query_heatmap
-* heatmap_scale 
-* query_image
+* `query_csv`
+* `query_heatmap`
+* `heatmap_scale` 
+* `query_image`
 
 
 ###query_csv

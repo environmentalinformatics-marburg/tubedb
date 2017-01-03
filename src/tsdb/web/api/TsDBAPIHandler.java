@@ -57,6 +57,7 @@ public class TsDBAPIHandler extends AbstractHandler {
 		addMethodHandler(new Handler_source_catalog_csv(tsdb));
 		addMethodHandler(new Handler_query(tsdb));
 		addMethodHandler(new Handler_timespan(tsdb));
+		addMethodHandler(new Handler_region_json(tsdb));
 	}
 
 	private void addMethodHandler(MethodHandler methodHandler) {

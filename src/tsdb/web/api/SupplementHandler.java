@@ -78,7 +78,6 @@ public class SupplementHandler extends AbstractHandler {
 		divTopLineRight.addLink("../content/index.html", "main-page");
 		divTopLineRight.addButton("?").setAttribute("onclick", "var h=document.getElementById('div_help').style;h.display=(h.display=='none')?'inline':'none'");
 		Tag h1 = divTop.addTag("h1");
-		//h1.addLink("../vis_tsm", "Precomputed Exploratories Visualizations");
 		h1.addLink("index.html", "Supplementary Content");
 		
 
@@ -114,7 +113,6 @@ public class SupplementHandler extends AbstractHandler {
 
 			Tag divDirectories = divTop.addTag("div");			
 			for(Path subPath:directorylist) { // directories
-				//Tag tr = dtable.addTag("tr");
 				String name = subPath.getFileName().toString();
 				String subPage = page;
 				if(!subPage.isEmpty()) {

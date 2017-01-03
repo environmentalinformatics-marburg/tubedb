@@ -37,5 +37,6 @@
 	<classpathentry kind="lib" path="lib/h2-1.4.192.jar" sourcepath="lib_src/h2-1.4.192-sources.jar"/>
 	<classpathentry kind="lib" path="lib/monetdb-jdbc-2.23.jar"/>
 	<classpathentry kind="lib" path="lib/opencsv-3.8.jar" sourcepath="lib_src/opencsv-3.8-sources.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

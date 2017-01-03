@@ -6,12 +6,14 @@ With methods of Meta Data API information associated with time series measuremen
 API identifier: `tsdb`
 
 In the following methods of Meta Data API are specified and described: 
-* `region_list` 
+* `region_list`
+* `region.json` 
 * `generalstation_list` 
 * `plot_list`  
 * `plotstation_list` 
 * `sensor_list` 
 * `status`
+* `plot_info`
 
 ###region_list
 
@@ -28,6 +30,21 @@ example of returned data:
 `BE;Exploratories`
 
 `KI;Kilimanjaro`
+
+
+###region.json
+
+Get meta data of region.
+
+syntax: `region.json?region=[REGION]`
+
+example: `http://localhost:8080/tsdb/region.json?region=BE`
+
+Retrieves a json object of region meta data or json list of objects if parameter `region` is missing.
+
+example of returned data:
+
+`{"id":"BE","name":"Exploratories","view_year_range":{"start":"2008","end":"2017"}}` 
 
 
 ###generalstation_list

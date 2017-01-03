@@ -269,6 +269,8 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 
 		JSONWriter json = new JSONWriter(writer);
 		json.object();
+		json.key("region");
+		json.value(model.region.name);
 		json.key("interpolate");
 		json.value(model.interpolate);
 		json.key("desc_sensor");
@@ -320,6 +322,13 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 		return true;
 	}
 
+	/**
+	 * apply new settings to ExportModel
+	 * Note: Region will not be updated.
+	 * @param reader
+	 * @param model
+	 * @return
+	 */
 	private boolean apply_settings(BufferedReader reader, ExportModel model) {
 		try {
 			String line = reader.readLine();
