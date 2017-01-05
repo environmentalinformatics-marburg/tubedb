@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="robots" content="noindex" />
+	<link rel="shortcut icon" href="../favicon.png">
+    <title>Visualisation</title>
+	<link rel="stylesheet" href="visualisation.css" type="text/css">
+	<script src="vue.js"></script>
+	<script src="axios.js"></script>
+	<script src="visualisation.js"></script>
+  </head>
+  
+  <script type="text/x-template" id="visualisation-template">
+	<div id="container">
+		<div v-if="appMessage != undefined">
+			{{appMessage}}
+		</div>
+		<div v-else>
+		
+			<div class="interactive" style="display: inline-block;" @mouseover="groupHover = true" @mouseleave="groupHover = false">
+			<div class="centered">Group</div>
+			<select v-model="groupID" v-show="groupHover" class="centered">
+				<option value="*">*</option>
+				<option v-for="group in groups" v-bind:value="group.id">
+				{{group.name}}
+				</option>
+			</select>
+			<div v-show="!groupHover" class="centered">{{groupMap[groupID].name}}</div>
+			</div>
+			
+			<div class="interactive" style="display: inline-block;" @mouseover="plotHover = true" @mouseleave="plotHover = false">
+			<div class="centered">Plot</div>
+			<select v-model="plotID" v-show="plotHover" class="centered">
+				<option v-for="plot in plots" v-bind:value="plot.id">
+				{{plot.id}}
+				</option>
+			</select>
+			<div v-show="!plotHover" class="centered">{{plotID}}</div>
+			</div>
+			
+			<div class="interactive" style="display: inline-block;" @mouseover="sensorHover = true" @mouseleave="sensorHover = false">
+			<div class="centered">Parameter</div>
+			<select multiple v-bind:size="sensors.length + 1 > 10 ? 10 : sensors.length + 1" v-model="sensorIDs" v-show="sensorHover" class="centered">
+				<option value="*">*</option>
+				<option v-for="sensor in sensors" v-bind:value="sensor.id">
+				{{sensor.id}}
+				</option>
+			</select>
+			<div v-show="!sensorHover" class="centered">{{sensorIDs[0]}}{{sensorIDs.length>1 && sensorIDs[0] != "*" ? " ...":""}}</div>
+			</div>
+			
+			<div>
+				<div v-for="view in views">
+					<img v-bind:src="getDiagramURL(view)"></img>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+  </script>
+  
+
+  
+  
+  <body ondragstart="return false;" ondrop="return false;">
+	<div id="app">
+	<transition name="fade">
+	<div v-if="appMessage != undefined">
+		{{appMessage}}
+	</div>
+	<div v-else>
+	
+	<div @mouseover="projectHover = true" @mouseleave="projectHover = false" class="interactive projects">
+		Project:
+		<select v-model="projectID" v-show="projectHover">
+			<option v-for="project in projects" v-bind:value="project.id">
+			{{project.name}}
+			</option>
+		</select>
+		<span v-show="!projectHover">{{projectMap[projectID].name}}</span>
+	</div>
+	
+	<div><div class="caption">Climate Data Explorer</div></div>
+	
+	<visualisation-interface :project-I-D="projectID">	
+	</visualisation-interface>
+	
+	</div>
+	</transition>
+	</div>
+  </body>
+</html>
