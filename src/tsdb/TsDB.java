@@ -462,6 +462,7 @@ public class TsDB implements AutoCloseable {
 	public void insertRegion(Region region) {
 		if(regionExists(region.name)) {
 			log.warn("overwrite region (already exists): "+region.name);
+			//new Throwable().printStackTrace();
 		}
 		regionMap.put(region.name, region);
 	}

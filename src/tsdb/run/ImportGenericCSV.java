@@ -77,8 +77,18 @@ public class ImportGenericCSV {
 			}
 
 			String filename = filePath.getFileName().toString();
+			
+			int postFixIndex = filename.indexOf('_'); //filename with station name and postfix
+			
+			if(postFixIndex<0) {
+				postFixIndex = filename.indexOf('.'); //filename with station name and without postfix
+			}
+			
+			if(postFixIndex<1) {
+				throw new RuntimeException("could not get station name from file name: "+filename);
+			}
 
-			String stationName = filename.substring(0, filename.indexOf('_'));
+			String stationName = filename.substring(0, postFixIndex);
 
 			log.trace("station "+stationName);
 

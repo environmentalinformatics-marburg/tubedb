@@ -25,4 +25,13 @@ si_final$logger[si_final$general %like% "^SASSCAL"] <- "SASSCAL_logger"
 
 setorder(si_final, plot)
 
-fwrite(si_final, "plot_inventory.csv")
+#fwrite(si_final, "plot_inventory.csv")
+
+si_add <- fread("sa_station_SAWS_inventory_2017_01_17.csv", colClasses="character")
+
+si_add <- si_add[ !(si_add$plot %in% si_final$plot),]
+
+si_final2 <- rbind(si_final, si_add)
+setorder(si_final2, plot)
+
+fwrite(si_final2, "plot_inventory.csv")

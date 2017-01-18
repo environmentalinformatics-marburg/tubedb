@@ -11,7 +11,6 @@ var url_query_heatmap = url_api_base + "tsdb/query_heatmap";
 
 function init() {
 	
-	
 Vue.component('visualisation-interface', {
 	
 template: '#visualisation-template',
@@ -155,8 +154,6 @@ methods: {
 			} else {
 				newIDs = prevIDs.filter(function(id) {return self.sensors.find(function(s) {return s.id==id;}) != undefined;});
 			}
-			
-			console.log(newIDs);
 			
 			if(newIDs.length == 0) {
 				newIDs.push('*');
