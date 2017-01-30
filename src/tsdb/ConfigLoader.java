@@ -1242,7 +1242,9 @@ public class ConfigLoader {
 				VirtualPlot virtualPlot = new VirtualPlot(tsdb, plotID, generalStation, easting, northing, isFocalPlot);
 				virtualPlot.geoPosLatitude = lat;
 				virtualPlot.geoPosLongitude = lon;
-				virtualPlot.elevation = elevation;
+				if(Float.isFinite(elevation)) {
+					virtualPlot.setElevation(elevation);
+				}
 				tsdb.insertVirtualPlot(virtualPlot);
 			}
 		}
@@ -1266,9 +1268,9 @@ public class ConfigLoader {
 					.filter(name->!usedColumns.contains(name))
 					.map(name->table.createColumnReader(name))
 					.toArray(ColumnReaderString[]::new);
-			
+
 			Map<String, List<StationProperties>> stationPropertiesListMap = new HashMap<String, List<StationProperties>>();
-			
+
 			for(String[] row:table.rows) {
 				String plotID = cr_plot.get(row);
 				String loggerTypeName = cr_logger.get(row);
@@ -1282,7 +1284,7 @@ public class ConfigLoader {
 				propertyMap.put(StationProperties.PROPERTY_SERIAL, serial);
 				propertyMap.put(StationProperties.PROPERTY_START,startText);
 				propertyMap.put(StationProperties.PROPERTY_END,endText);
-				
+
 				for(ColumnReaderString cr_property:cr_properties) {
 					String value = cr_property.get(row);
 					if(value!=null && !value.isEmpty()) {
@@ -1290,7 +1292,7 @@ public class ConfigLoader {
 						propertyMap.put(key, value);
 					}
 				}				
-				
+
 				List<StationProperties> list = stationPropertiesListMap.get(serial);
 				if(list==null) {
 					list = new ArrayList<StationProperties>();
@@ -1299,7 +1301,7 @@ public class ConfigLoader {
 				StationProperties stationProperties = new StationProperties(propertyMap);
 				list.add(stationProperties);				
 			}
-			
+
 			for(List<StationProperties> list:stationPropertiesListMap.values()) {
 				LoggerType firstLoggerType = null;
 				List<Pair<VirtualPlot, StationProperties>> virtualPlotEntryList = new ArrayList<Pair<VirtualPlot, StationProperties>>();
@@ -1359,7 +1361,7 @@ public class ConfigLoader {
 
 			boolean isFocalPlot = false;
 			VirtualPlot virtualPlot = new VirtualPlot(tsdb, plotID, generalStation, easting, northing, isFocalPlot);
-			virtualPlot.elevation = elevation;
+			virtualPlot.setElevation(elevation);
 			tsdb.insertVirtualPlot(virtualPlot);
 		}
 

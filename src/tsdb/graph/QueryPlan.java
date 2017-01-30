@@ -102,30 +102,14 @@ public final class QueryPlan {
 	 * @return
 	 */
 	private static Node plotWithoutSubStation(TsDB tsdb, String plotID, String[] schema, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated) {
-		/*if(aggregationInterval.isDay()) {
-			ContinuousGen dayGen = QueryPlanGenerators.getDayAggregationGen(tsdb, dataQuality);
-			if(interpolated) {
-				//continuous = Interpolated.of(tsdb, plotID, schema, dayGen);
-				Continuous interpolatedNode = InterpolatedAverageLinear.of(tsdb, plotID, schema, dayGen, AggregationInterval.DAY);
-				return QueryPlanGenerators.elementCopy(interpolatedNode, schema);
-			} else {
-				Continuous dayNode = dayGen.get(plotID, schema);
-				return QueryPlanGenerators.elementCopy(dayNode, schema);
-			}
-		} else {*/
-
 		ContinuousGen continuousGen = QueryPlanGenerators.getContinuousGen(tsdb, dataQuality);
 		Continuous continuous;
 		if(interpolated) {
-			//continuous = Interpolated.of(tsdb, plotID, schema, continuousGen);
 			continuous = InterpolatedAverageLinear.of(tsdb, plotID, schema, continuousGen, AggregationInterval.HOUR);
-			//continuous = QueryPlanGenerators.elementCopy(continuous);
 		} else {
 			continuous = continuousGen.get(plotID, schema);
-			//continuous = QueryPlanGenerators.elementCopy(continuous);
 		}
 		return Aggregated.of(tsdb, continuous, aggregationInterval);
-		//}
 	}
 
 	/**
@@ -145,7 +129,6 @@ public final class QueryPlan {
 			return null;
 		}
 		Continuous continuous = Continuous.of(base);
-		//continuous = QueryPlanGenerators.elementCopy(continuous);
 		return Aggregated.of(tsdb, continuous, aggregationInterval);
 	}
 

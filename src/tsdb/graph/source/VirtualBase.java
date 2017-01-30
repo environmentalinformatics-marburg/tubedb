@@ -65,7 +65,7 @@ public class VirtualBase extends Base.Abstract  {
 			String[] schema = virtualPlot.getSensorNames();
 			if(schema==null) {
 				throw new RuntimeException("empty VirtualPlot: "+virtualPlot.plotID);
-			}			
+			}
 			querySchema = tsdb.getBaseSchema(schema);
 			if(querySchema==null) {
 				log.warn("empty base schema in VirtualPlot: "+virtualPlot.plotID);
@@ -81,7 +81,8 @@ public class VirtualBase extends Base.Abstract  {
 		List<TsIterator> processing_iteratorList = new ArrayList<TsIterator>();				
 		for(TimestampInterval<StationProperties> interval:intervalList) {
 			String stationID = interval.value.get_serial();
-			String[] stationSchema = tsdb.getValidSchema(stationID, schema);
+			String[] stationSchema = tsdb.getValidSchemaWithVirtualSensors(stationID, schema);
+			//log.info("valid "+Arrays.toString(stationSchema));
 			if(stationSchema.length>0) {				
 				TimestampInterval<StationProperties> filteredInterval = interval.filterByInterval(start, end);
 				if(filteredInterval!=null) {

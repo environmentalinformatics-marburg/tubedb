@@ -39,7 +39,7 @@ public final class QueryPlanGenerators {
 	 * @return
 	 */
 	public static NodeGen getStationGen(TsDB tsdb, DataQuality dataQuality) {
-		return (String stationID, String[] schema)->{			
+		return (String stationID, String[] schema)->{
 			Station station = tsdb.getStation(stationID);
 			if(station==null) {
 				throw new RuntimeException("station not found: "+stationID);

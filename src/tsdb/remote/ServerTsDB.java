@@ -48,7 +48,6 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class ServerTsDB implements RemoteTsDB {
-
 	private static final Logger log = LogManager.getLogger();
 
 	private final TsDB tsdb; //not null
