@@ -1,15 +1,15 @@
-﻿plot,general,easting,northing,elevation,comment
-GF1,ba_loggers,383599,5419946,772,""
-GF2,ba_loggers,383143,5419686,774,""
-FS1,ba_loggers,374804,5438239,1292,""
-FS2,ba_loggers,374805,5438290,1295,""
-RS1,ba_loggers,383209,5425885,1097,""
-RS2,ba_loggers,382934,5425895,1088,""
-WH1,ba_loggers,370700,5439962,711,""
-WH2,ba_loggers,370510,5439887,718,""
-Falkenstein,ba_stations,374399,5437774,1307,""
-HausZurWildnis,ba_stations,371427,5435618,680,""
-Taferlruck,ba_stations,383566,5422004,707,""
-Waldschmidthaus,ba_stations,382196,5426481,1350,""
-Waldhäuser,ba_stations,387625.641940454,5420937.80097706,951.903868186288,"tranformed from GaussKrüger to UTM"
-KlingenbrunnBahnhof,ba_stations,378304.434057771,5423197.21083451,770.883400198072,"tranformed from GaussKrüger to UTM"
+﻿plot,general,easting,northing,elevation,comment,lat,lon
+GF1,ba_loggers,383599,5419946,772,"UTM 33N",48.921498,13.41104
+GF2,ba_loggers,383143,5419686,774,"UTM 33N",48.919074,13.404893
+FS1,ba_loggers,374804,5438239,1292,"UTM 33N",49.084265,13.285397
+FS2,ba_loggers,374805,5438290,1295,"UTM 33N",49.084724,13.285395
+RS1,ba_loggers,383209,5425885,1097,"UTM 33N",48.974829,13.404016
+RS2,ba_loggers,382934,5425895,1088,"UTM 33N",48.974867,13.400257
+WH1,ba_loggers,370700,5439962,711,"UTM 33N",49.098908,13.228668
+WH2,ba_loggers,370510,5439887,718,"UTM 33N",49.098194,13.226091
+Falkenstein,ba_stations,374399,5437774,1307,"UTM 33N",49.080001,13.279998
+HausZurWildnis,ba_stations,371427,5435618,680,"UTM 33N",49.060003,13.240004
+Taferlruck,ba_stations,383566,5422004,707,"UTM 33N",48.939998,13.410002
+Waldschmidthaus,ba_stations,382196,5426481,1350,"",48.979996,13.390006
+Waldhäuser,ba_stations,387555.4,5420744.5,951.903868186288,"UTM 33N tranformed from WGS84",48.929410,13.464808
+KlingenbrunnBahnhof,ba_stations,378234.2,5423003.8,770.883400198072,"UTM 33N tranformed from WGS84",48.947962,13.336926

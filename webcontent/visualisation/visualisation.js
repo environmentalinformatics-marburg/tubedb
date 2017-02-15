@@ -9,6 +9,7 @@ var url_sensor_list = url_api_base + "tsdb/sensor_list";
 var url_query_image = url_api_base + "tsdb/query_image";
 var url_query_heatmap = url_api_base + "tsdb/query_heatmap";
 
+
 function init() {
 	
 Vue.component('visualisation-interface', {
@@ -58,8 +59,11 @@ data: function () {
 		heightTextsMap: {small:100, normal:400, large:800},
 		heightText: "small",
 		heightCustom: 100,
+		hideNoData: true,
 		views: [],
 		max_display_views: 500,
+		loadedImageCount: 0,
+		errorImage: [],
 	}
 }, //end data
 
@@ -258,11 +262,31 @@ methods: {
 						boxplot: self.viewType=="boxplot"}; 
 			});
 		});
+		
+		this.errorImage = [];
+		this.loadedImageCount = 0;
 	},
 	
 	isValidSize: function(v) {
 		return v>=10 && v<=4096;
 	},
+	
+	onImageLoad: function(event) {
+		console.log(event);
+		this.loadedImageCount++;
+	},
+	
+	onImageError: function(event) {
+		console.log(event);
+		event.target.alt = 'no data';
+		var i = parseInt(event.target.id.substring(3));
+		console.log(i);
+		Vue.set(this.errorImage, i, true);
+		//this.errorImage.splice(i, 1, true); // this.errorImage[i] = true;
+		console.log(this.errorImage);
+		this.loadedImageCount++;
+	},
+	
 }, //end methods
 
 watch: {
