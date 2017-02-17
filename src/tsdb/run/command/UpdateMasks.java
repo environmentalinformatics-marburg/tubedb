@@ -70,7 +70,7 @@ public class UpdateMasks {
 	public static void loadMask(TsDB tsdb, String filename) {
 		try {
 			if(!Files.exists(Paths.get(filename))) {
-				log.warn("mask file not found: "+filename);
+				log.trace("mask file not found: "+filename);
 				return;
 			}
 			Table maskTable = Table.readCSV(filename, ',');

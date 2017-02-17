@@ -1,4 +1,4 @@
-package tsdb.usecase;
+package tsdb.run.command;
 
 import tsdb.TsDBFactory;
 import tsdb.streamdb.ChunkMeta;

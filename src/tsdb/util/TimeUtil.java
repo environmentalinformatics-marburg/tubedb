@@ -112,6 +112,7 @@ public final class TimeUtil implements Serializable {
 	}
 
 	private static final DateTimeFormatter DATE_TIME_FORMATER_SLASH = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+	private static final DateTimeFormatter DATE_TIME_FORMATER_SPACE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	/**
 	 * format: yyyy/MM/dd HH:mm
@@ -121,6 +122,17 @@ public final class TimeUtil implements Serializable {
 	 */
 	public static long parseTimestampSlashFormat(String dateTimeText) {		
 		LocalDateTime dt = LocalDateTime.parse(dateTimeText, DATE_TIME_FORMATER_SLASH);
+		return TimeUtil.dateTimeToOleMinutes(dt);
+	}
+	
+	/**
+	 * format: yyyy-MM-dd HH:mm:ss
+	 * example: 2010/08/25 00:05
+	 * @param dateTimeText
+	 * @return timestamp
+	 */
+	public static long parseTimestampSpaceFormat(String dateTimeText) {		
+		LocalDateTime dt = LocalDateTime.parse(dateTimeText, DATE_TIME_FORMATER_SPACE);
 		return TimeUtil.dateTimeToOleMinutes(dt);
 	}
 

@@ -21,7 +21,7 @@
 				<img src="busy.gif" />
 				processing {{loadedImageCount}} of {{display_views.length}}
 			</div>
-			<div class="interactive" style="display: inline-block;" @mouseover="groupHover = true" @mouseleave="groupHover = false">
+			<div v-show="groups.length>1" class="interactive" style="display: inline-block;" @mouseover="groupHover = true" @mouseleave="groupHover = false">
 				<div class="centered">Group</div>
 				<div class="centered">
 					<select @focus="groupHoverStay = true" @blur="groupHoverStay = false" v-model="groupID" v-show="(groupHover||groupHoverStay)">
@@ -34,26 +34,30 @@
 				<div v-show="!(groupHover||groupHoverStay)" class="centered  state">{{groupMap[groupID].name}}</div>
 			</div>
 			
-			<div class="interactive" style="display: inline-block;" @mouseover="plotHover = true" @mouseleave="plotHover = false">
-			<div class="centered">Plot</div>
-			<select multiple :size="plots.length + 1 > 10 ? 10 : plots.length + 1" v-model="plotIDs" v-show="plotHover" class="centered">
-				<option value="*">*</option>
-				<option v-for="plot in plots" v-bind:value="plot.id">
-				{{plot.id}}
-				</option>
-			</select>
-			<div v-show="!plotHover" class="centered state">{{plotIDs[0]}}{{plotIDs.length>1 && plotIDs[0] != "*" ? " ...":""}}</div>
+			<div v-show="plots.length!=1" class="interactive" style="display: inline-block;" @mouseover="plotHover = true" @mouseleave="plotHover = false">
+				<div class="centered">Plot</div>
+				<select multiple :size="plots.length + 1 > 10 ? 10 : plots.length + 1" v-model="plotIDs" v-show="plotHover" class="centered">
+					<option value="*">*</option>
+					<option v-for="plot in plots" v-bind:value="plot.id">
+					{{plot.id}}
+					</option>
+				</select>
+				<div v-show="!plotHover" class="centered state">{{plotIDs[0]}}{{plotIDs.length>1 && plotIDs[0] != "*" ? " ...":""}}</div>
+			</div>
+			<div v-show="plots.length==1" style="display: inline-block;">
+				<div class="centered">Plot</div>
+				<div class="centered">{{plotIDs[0]}}{{plotIDs.length>1 && plotIDs[0] != "*" ? " ...":""}}</div>
 			</div>
 			
-			<div class="interactive" style="display: inline-block;" @mouseover="sensorHover = true" @mouseleave="sensorHover = false">
-			<div class="centered">Parameter</div>
-			<select multiple :size="sensors.length + 1 > 10 ? 10 : sensors.length + 1" v-model="sensorIDs" v-show="sensorHover" class="centered">
-				<option value="*">*</option>
-				<option v-for="sensor in sensors" v-bind:value="sensor.id">
-				{{sensor.id}}
-				</option>
-			</select>
-			<div v-show="!sensorHover" class="centered state">{{sensorIDs[0]}}{{sensorIDs.length>1 && sensorIDs[0] != "*" ? " ...":""}}</div>
+			<div v-show="filteredSensors.length>1" class="interactive" style="display: inline-block;" @mouseover="sensorHover = true" @mouseleave="sensorHover = false">
+				<div class="centered">Parameter</div>
+				<select multiple :size="filteredSensors.length + 1 > 10 ? 10 : filteredSensors.length + 1" v-model="sensorIDs" v-show="sensorHover" class="centered">
+					<option value="*">*</option>
+					<option v-for="sensor in filteredSensors" v-bind:value="sensor.id">
+					{{sensor.id}}
+					</option>
+				</select>
+				<div v-show="!sensorHover" class="centered state">{{sensorIDs[0]}}{{sensorIDs.length>1 && sensorIDs[0] != "*" ? " ...":""}}</div>
 			</div>
 			
 			<div class="interactive" style="display: inline-block;" @mouseover="timeframeHover = true" @mouseleave="timeframeHover = false">
@@ -61,12 +65,15 @@
 				<div v-show="(timeframeHover||timeframeHoverStay)" class="centered">
 					<div style="display: inline-block;">
 						<div>Year</div>
-						<select @focus="timeframeHoverStay = true" @blur="timeframeHoverStay = false" v-model="timeframeYear">
+						<select v-show="timeframeYears.length != 1" @focus="timeframeHoverStay = true" @blur="timeframeHoverStay = false" v-model="timeframeYear">
 							<option value="*">*</option>
 							<option v-for="y in timeframeYears" v-bind:value="y">
 								{{y}}
 							</option>
 						</select>
+						<span v-show="timeframeYears.length == 1">
+							{{timeframeYear}}
+						</span>
 					</div>
 					<div style="display: inline-block;">
 						<div v-bind:style="{color: timeframeYear=='*'?'grey':'black'}">Month</div>
@@ -150,7 +157,7 @@
 				For raw data empirical qualitiy check is not available.
 			</div>
 						
-			<div class="results">
+			<div v-if="viewType != 'table'" class="results">
 				<div v-for="(view, i) in display_views" class="view" v-show="!(hideNoData && errorImage[i])">
 					<div class="view_title">{{view.plot}} / {{view.sensor}}</div>
 					<img v-if="view.type=='diagram'" :id="'img'+i" :src="getDiagramURL(view)" :width="view.width" :height="view.height"  alt="querying ..." @load="onImageLoad" @error="onImageError"></img>
@@ -158,6 +165,21 @@
 					<img v-if="view.type=='boxplot'" :id="'img'+i"  :src="getDiagramURL(view)" :width="view.width" :height="view.height"  alt="querying ..."  @load="onImageLoad" @error="onImageError"></img>
 				</div>
 			</div>
+			<div v-if="viewType == 'table' && tableData != undefined" class="results">
+				<button type="button" @click="onButtonTableToStart">|&lt;</button> <button type="button" @click="onButtonTableToPrev">&lt;</button> {{this.tableDataFilteredStart + 1}} - {{this.tableDataFilteredStart + filteredTableData.data.length}} <button type="button" @click="onButtonTableToNext">&gt;</button> <button type="button" @click="onButtonTableToEnd">&gt;|</button> ({{filteredTableData.data.length}} of {{tableData.data.length}})
+				<table class="result">
+					<thead>
+						<tr>
+							<th v-for="col in filteredTableData.header.split(',')">{{col}}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="row in filteredTableData.data">
+							<td v-for="col in row.split(',')">{{col}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>	
 			
 		</div>
 	</div>
@@ -174,7 +196,7 @@
 	</div>
 	<div v-else>
 	
-	<div @mouseover="projectHover = true" @mouseleave="projectHover = false" class="interactive projects">
+	<div v-show="projects.length > 1" @mouseover="projectHover = true" @mouseleave="projectHover = false" class="interactive projects">
 		Project:
 		<select @focus="projectHoverStay = true" @blur="projectHoverStay = false" v-model="projectID" v-show="(projectHover||projectHoverStay)">
 			<option v-for="project in projects" v-bind:value="project.id">
@@ -182,6 +204,9 @@
 			</option>
 		</select>
 		<span v-show="!(projectHover||projectHoverStay)" class="state">{{projectMap[projectID].name}}</span>
+	</div>
+	<div v-show="projects.length == 1">
+		Project: {{projectMap[projectID].name}}
 	</div>
 	
 	<div><div class="caption">Climate Data Explorer</div></div>

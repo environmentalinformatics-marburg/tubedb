@@ -45,20 +45,6 @@ public class Table {
 	}
 
 	public static class ColumnReaderString extends ColumnReader {
-		public static class ColumnReaderSlashTimestamp implements ColumnReaderTimestamp {
-			private final int rowIndexDateTime;
-			public ColumnReaderSlashTimestamp(int rowIndexDateTime) {
-				this.rowIndexDateTime = rowIndexDateTime;
-			}
-			public long get(String[] row) {			
-				try {
-					return TimeUtil.parseTimestampSlashFormat(row[rowIndexDateTime]);				
-				} catch(NumberFormatException e) {
-					log.warn(row[rowIndexDateTime]+"  not parsed");
-					return -1;
-				}
-			}
-		}
 		public ColumnReaderString(int rowIndex) {
 			super(rowIndex);
 		}
@@ -103,7 +89,7 @@ public class Table {
 				}
 				return Float.parseFloat(row[rowIndex]);
 			} catch(NumberFormatException e) {
-				if(row[rowIndex].toLowerCase().equals("na")||row[rowIndex].toLowerCase().equals("null")) {
+				if(row[rowIndex].toLowerCase().equals("na")||row[rowIndex].toLowerCase().equals("null")||row[rowIndex].toLowerCase().equals("nan")) {
 					return Float.NaN;
 				} else {
 					log.warn(row[rowIndex]+" not parsed");
@@ -266,6 +252,21 @@ public class Table {
 			}
 		}
 	}
+	
+	public static class ColumnReaderSpaceTimestamp implements ColumnReaderTimestamp {
+		private final int rowIndexDateTime;
+		public ColumnReaderSpaceTimestamp(int rowIndexDateTime) {
+			this.rowIndexDateTime = rowIndexDateTime;
+		}
+		public long get(String[] row) {			
+			try {
+				return TimeUtil.parseTimestampSpaceFormat(row[rowIndexDateTime]);				
+			} catch(NumberFormatException e) {
+				log.warn(row[rowIndexDateTime]+"  not parsed");
+				return -1;
+			}
+		}
+	}
 
 	public static class ColumnReaderMonthNameTimestamp implements ColumnReaderTimestamp {
 		private final int rowIndexDateTime;
@@ -353,7 +354,7 @@ public class Table {
 	 */
 	public String[][] rows;
 
-	private Table() {}
+	protected Table() {}
 
 	public static Table readCSV(Path filename, char separator) {
 		return readCSV(filename.toFile(),separator);
@@ -377,34 +378,18 @@ public class Table {
 			CSVReader reader = new CSVReader(in,separator);
 
 			List<String[]> list = reader.readAll();
-
-			table.names = list.get(0);
-
-			if(table.names.length>0) { // filter UTF8 BOM
-				if(table.names[0].startsWith(UTF8_BOM)) {
-					table.names[0] = table.names[0].substring(1, table.names[0].length());
+			
+			reader.close();
+			
+			String[] columnsNames = list.get(0);
+			if(columnsNames.length>0) { // filter UTF8 BOM
+				if(columnsNames[0].startsWith(UTF8_BOM)) {
+					columnsNames[0] = columnsNames[0].substring(1, columnsNames[0].length());
 				}
-			}
+			}			
+			table.updateNames(columnsNames);			
 
 			//log.info("names: "+Arrays.toString(table.names)+"   in "+filename);
-
-			table.nameMap = new HashMap<String, Integer>();
-
-			for(int i=0;i<table.names.length;i++) {
-				if(table.nameMap.containsKey(table.names[i])) {
-					int nameNumber = 2;
-					String name2 = table.names[i]+nameNumber;
-					while(table.nameMap.containsKey(name2)) {
-						nameNumber++;
-						name2 = table.names[i]+nameNumber;
-					}
-					log.warn("dublicate name: "+table.names[i]+ " replaced with "+name2);
-					table.names[i] = name2;
-					table.nameMap.put(table.names[i], i);
-				} else {
-					table.nameMap.put(table.names[i], i);
-				}
-			}
 
 			table.rows = new String[list.size()-1][];
 
@@ -412,15 +397,34 @@ public class Table {
 				table.rows[i-1] = list.get(i);
 			}
 
-			for(int i=0;i<table.rows.length;i++) {
-
-			}
-			reader.close();
 			return table;
 		} catch(Exception e) {
 			log.error(e);
 			return null;
 		}
+	}
+	
+	public void updateNames(String[] columnNames) {
+		HashMap<String, Integer> map = new HashMap<String, Integer>();
+
+		for(int i=0;i<columnNames.length;i++) {
+			if(map.containsKey(columnNames[i])) {
+				int nameNumber = 2;
+				String name2 = columnNames[i]+nameNumber;
+				while(map.containsKey(name2)) {
+					nameNumber++;
+					name2 = columnNames[i]+nameNumber;
+				}
+				log.warn("dublicate name: "+columnNames[i]+ " replaced with "+name2);
+				columnNames[i] = name2;
+				map.put(columnNames[i], i);
+			} else {
+				map.put(columnNames[i], i);
+			}
+		}
+		
+		this.names = columnNames;
+		this.nameMap = map;
 	}
 
 	public static Table readCSVFirstDataRow(String filename, char separator) {
@@ -433,18 +437,8 @@ public class Table {
 			String[] dataRow = reader.readNext();
 
 			reader.close();
-
-			table.names = headerRow;
-
-			table.nameMap = new HashMap<String, Integer>();
-
-			for(int i=0;i<table.names.length;i++) {
-				if(table.nameMap.containsKey(table.names[i])) {
-					log.error("dublicate name: "+table.names[i]);
-				} else {
-					table.nameMap.put(table.names[i], i);
-				}
-			}
+			
+			table.updateNames(headerRow);
 
 			table.rows = new String[1][];
 			table.rows[0] = dataRow;			
@@ -492,6 +486,19 @@ public class Table {
 		}
 		return new ColumnReaderString(columnIndex);
 	}
+	
+	public static interface Y<T> {
+		T a(int a);
+	}
+	
+	public <T> T getColumnReader(String name, Y<T> reader) {
+		int columnIndex = getColumnIndex(name);
+		if(columnIndex<0) {
+			return null;
+		}
+		return reader.a(columnIndex);
+	}
+	
 	
 	public ColumnReaderString createColumnReader(String name, String missing) {
 		int columnIndex = getColumnIndex(name, false);

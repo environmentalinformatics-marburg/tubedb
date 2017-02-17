@@ -8,6 +8,7 @@ var url_plot_list = url_api_base + "tsdb/plot_list";
 var url_sensor_list = url_api_base + "tsdb/sensor_list";
 var url_query_image = url_api_base + "tsdb/query_image";
 var url_query_heatmap = url_api_base + "tsdb/query_heatmap";
+var url_query_csv = url_api_base + "tsdb/query_csv";
 
 
 function init() {
@@ -51,7 +52,7 @@ data: function () {
 		interpolated: false,
 		settingsHover: false,
 		settingsHoverStay: false,
-		viewTypes: ["diagram", "heatmap", "boxplot"],
+		viewTypes: ["diagram", "heatmap", "boxplot", "table"],
 		viewType: "diagram",
 		widthText: "auto",
 		widthCustom: 1000,
@@ -64,6 +65,10 @@ data: function () {
 		max_display_views: 500,
 		loadedImageCount: 0,
 		errorImage: [],
+		tableView: undefined,
+		tableData: undefined,
+		tableDataFilteredStart: 0,
+		tableDataFilteredRange: 100,
 	}
 }, //end data
 
@@ -82,6 +87,9 @@ computed: {
 		for(var i=start; i<=end; i++) {
 			y.push(i);
 		}
+		if(y.length==1) {
+			this.timeframeYear = y[0];
+		}
 		return y;
 	},
 	display_views: function() {	
@@ -95,6 +103,36 @@ computed: {
 			return this.heightTextsMap[this.heightText];			
 		}
 	},
+	filteredSensors: function() {
+		var self = this;
+		return this.sensors.filter(function(sensor) {
+			return self.aggregation=="raw" || sensor.aggregation != "NONE";
+		});
+	},
+	filteredTableData: function() {
+		var data = this.tableData.data;
+		var len = data.length;
+		var rowRange = this.tableDataFilteredRange;
+		var start = this.tableDataFilteredStart;
+		if(len > rowRange) {
+			console.log("check1");
+			if(this.tableDataFilteredStart < 0) {
+				this.tableDataFilteredStart = 0;
+				console.log("check2");
+			} else if(this.tableDataFilteredStart > len-1) {
+				console.log("check3");
+				this.tableDataFilteredStart = len-1;
+			}
+			if(this.tableDataFilteredStart + rowRange > len) {
+				rowRange = len - this.tableDataFilteredStart;
+				console.log("check4");
+			}			
+			data = data.slice(this.tableDataFilteredStart, this.tableDataFilteredStart + rowRange);
+		} else {
+			this.tableDataFilteredStart = 0;
+		}
+		return {header: this.tableData.header, data: data};
+	}
 },
 
 mounted: function () {
@@ -148,12 +186,13 @@ methods: {
 		} else {
 			params = {plot: self.plotIDs[0]}; 
 		}
+		params.raw = true;
 		axios.get(url_sensor_list, {params: params})
 		.then(function(response) {
 			var prevIDs = self.sensorIDs;
 			self.sensors = response.data.split('\n').map(function(row) {
 				var cols = row.split(';');
-				return {id: cols[0], a: cols[1], b:cols[2]};
+				return {id: cols[0], description: cols[1], unitDescription:cols[2], aggregation:cols[3], internal:cols[4]};
 			});
 			
 			var newIDs = [];
@@ -216,7 +255,7 @@ methods: {
 		var container = document.getElementById("container");
 		var width = this.widthText=="auto" ? (container.clientWidth - 30 < 100? 100 : container.clientWidth - 30) : (this.isValidSize(this.widthCustom) ? this.widthCustom : 1000);
 		var height = 100; 
-		var sensors = this.sensorIDs[0]=="*" ? this.sensors : this.sensorIDs.map(function(sensorID){return self.sensorMap[sensorID]});
+		var sensors = this.sensorIDs[0]=="*" ? this.filteredSensors : this.sensorIDs.map(function(sensorID){return self.sensorMap[sensorID]});
 		/*this.views = sensors.map(function(sensor) {
 			return {type: "diagram", 
 			        plot: self.plotIDs[0], 
@@ -263,6 +302,12 @@ methods: {
 			});
 		});
 		
+		if(this.viewType == 'table') {
+			this.tableView = {};
+		} else {
+			this.tableView = undefined;
+		}
+		
 		this.errorImage = [];
 		this.loadedImageCount = 0;
 	},
@@ -285,6 +330,57 @@ methods: {
 		//this.errorImage.splice(i, 1, true); // this.errorImage[i] = true;
 		console.log(this.errorImage);
 		this.loadedImageCount++;
+	},
+	
+	updateTableData: function() {
+		var self = this;
+		var plotIDs = self.plotIDs[0]=='*' ? self.plots.map(function(p) {return p.id;}) : self.plotIDs;
+		var sensors = this.sensorIDs[0]=="*" ? this.filteredSensors : this.sensorIDs.map(function(sensorID){return self.sensorMap[sensorID]});
+		
+		var params = new URLSearchParams();
+		params.append('plot', plotIDs[0]);
+		sensors.map(function(s) {params.append('sensor', s.id)});
+		params.append('aggregation', self.aggregation);
+		params.append('quality', self.quality);
+		params.append('interpolated', self.interpolated);		
+		if(self.timeframeYear!='*') {
+			params.append('year', self.timeframeYear);
+			if(self.timeframeMonthsNumber[self.timeframeMonth]>0) {
+				params.append('month', self.timeframeMonthsNumber[self.timeframeMonth]);
+			}
+		}	
+		
+		//var params = {plot: plotIDs[0], sensor: [sensors[0].id, "TEST"], aggregation: self.aggregation, quality: self.quality}; 
+		axios.get(url_query_csv, {params: params})
+		.then(function(response) {
+			var data = response.data.split('\r\n');
+			var header = data.shift();
+			data.pop(); //remove last empty line
+			self.tableData = {header: header, data: data};
+		})
+		.catch(function(error) {
+			//self.appMessage = "ERROR: "+error;
+		});
+	},
+	
+	onButtonTableToStart: function() {
+		this.tableDataFilteredStart = 0;
+	},
+	
+	onButtonTableToPrev: function() {
+		this.tableDataFilteredStart -= this.tableDataFilteredRange;
+	},
+	
+	onButtonTableToNext: function() {
+		this.tableDataFilteredStart += this.tableDataFilteredRange;		
+	},
+	
+	onButtonTableToEnd: function() {
+		if(this.tableData != undefined) {
+			console.log(this.tableDataFilteredStart);
+			this.tableDataFilteredStart = this.tableData.data.length - this.tableDataFilteredRange;
+			console.log(this.tableDataFilteredStart);
+		}
 	},
 	
 }, //end methods
@@ -332,6 +428,9 @@ watch: {
 	viewHeight: function() {
 		this.updateViews();
 	},
+	tableView: function() {
+		this.updateTableData();
+	}
 }, //end watch
 
 });	//end visualisation-interface

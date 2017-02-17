@@ -16,6 +16,7 @@ import org.ini4j.Wini;
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.component.Region;
+import tsdb.loader.bale.TOA5Loader;
 import tsdb.loader.be.TimeSeriesLoaderBE;
 import tsdb.loader.ki.TimeSeriesLoaderKiLi;
 import tsdb.loader.ki.TimeSeriesLoaderKiLi_manual_tfi;
@@ -111,6 +112,10 @@ public class DataImport {
 			}
 			case "tsa": {
 				SouthAfricaImport.readDirectoryRecursive(tsdb, rootDirectory);
+				break;
+			}
+			case "toa5": {
+				new TOA5Loader(tsdb).loadDirectoryRecursive(rootDirectory);
 				break;
 			}
 			default:

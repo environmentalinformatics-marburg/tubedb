@@ -20,6 +20,8 @@ import tsdb.util.TsEntry;
 public class CSV {	
 	@SuppressWarnings("unused")
 	private static final Logger log = LogManager.getLogger();
+	
+	private static final String NEW_LINE = "\r\n"; // windows new line
 
 	public static void writeNoHeader(TsIterator it, String filename, String separator, String nanText, CSVTimeType csvTimeType) {
 		write(it, false, filename, separator, nanText, csvTimeType, false, false);
@@ -109,7 +111,7 @@ public class CSV {
 				}
 
 
-				printStream.println();
+				printStream.print(NEW_LINE); // windows new line
 
 			}
 
@@ -206,7 +208,7 @@ public class CSV {
 
 				}
 
-				printStream.println();
+				printStream.print(NEW_LINE); // windows new line
 			}
 			//printStream.close();
 	}

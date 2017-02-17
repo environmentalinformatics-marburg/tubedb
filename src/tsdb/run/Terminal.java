@@ -15,6 +15,7 @@ import tsdb.run.command.Command;
 import tsdb.run.command.CommandMain;
 import tsdb.run.command.CommandSequence;
 import tsdb.run.command.CommandType;
+import tsdb.run.command.CountTsDBValues;
 import tsdb.run.command.DataClear;
 import tsdb.run.command.DataImport;
 import tsdb.run.command.MainRunnable;
@@ -114,6 +115,7 @@ public class Terminal {
 		addCommand("masks", "update masks", UpdateMasks::main);
 		addCommand("references", "refresh time series references", CreateStationGroupAverageCache::main);
 		addCommand("compact", "defragment free space", RunCompact::main);
+		addCommand("count", "count values in database", CountTsDBValues::main);
 
 		addCommandSequence("import", "composite of: load - masks - references - compact", "load", "masks", "references", "compact");
 

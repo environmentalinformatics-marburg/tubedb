@@ -82,7 +82,26 @@ option {
 }
 
 
+.result th, .result td {
+    padding: 8px;
+}
 
+.result td {
+    text-align: right;
+    padding: 8px;
+}
+
+.result thead tr {
+	background-color: rgba(87, 75, 70, 0.3);
+}
+
+.result tbody tr {
+	background-color: rgba(132, 104, 76, 0.2);
+}
+
+.result tbody tr:hover {background-color: rgba(132, 104, 76, 0.4);}
+
+.result tr:nth-child(even){background-color: rgba(132, 104, 76, 0.1);}
 
 
 
