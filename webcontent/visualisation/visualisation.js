@@ -61,8 +61,11 @@ data: function () {
 		heightText: "small",
 		heightCustom: 100,
 		hideNoData: true,
+		magnifications : ["1", "2", "3", "4"],
+		magnification: "1",
+		by_year: true,
 		views: [],
-		max_display_views: 500,
+		max_display_views: 150,
 		loadedImageCount: 0,
 		errorImage: [],
 		tableView: undefined,
@@ -243,6 +246,10 @@ methods: {
 				query += '&month='+view.month;
 			}
 		}
+		query += '&time_scale='+"true";
+		if(this.timeframeYear=='*' && this.by_year) {
+			query += '&by_year='+"true";
+		}
 		return url_query_heatmap+"?"+query;
 	},
 	updateViews: function() {
@@ -256,33 +263,6 @@ methods: {
 		var width = this.widthText=="auto" ? (container.clientWidth - 30 < 100? 100 : container.clientWidth - 30) : (this.isValidSize(this.widthCustom) ? this.widthCustom : 1000);
 		var height = 100; 
 		var sensors = this.sensorIDs[0]=="*" ? this.filteredSensors : this.sensorIDs.map(function(sensorID){return self.sensorMap[sensorID]});
-		/*this.views = sensors.map(function(sensor) {
-			return {type: "diagram", 
-			        plot: self.plotIDs[0], 
-					sensor: sensor.id, 
-					width: width, 
-					height: height, 
-					year: self.timeframeYear, 
-					month: self.timeframeMonthsNumber[self.timeframeMonth], 
-					aggregation: self.aggregation,
-					quality: self.quality,
-					interpolated: self.interpolated}; 
-		});*/
-		
-		/*this.views = flatMap(self.plotIDs, function(plotID) {
-			return sensors.map(function(sensor) {
-				return {type: "diagram", 
-						plot: self.plotIDs[0], 
-						sensor: sensor.id, 
-						width: width, 
-						height: height, 
-						year: self.timeframeYear, 
-						month: self.timeframeMonthsNumber[self.timeframeMonth], 
-						aggregation: self.aggregation,
-						quality: self.quality,
-						interpolated: self.interpolated}; 
-			});
-		});*/
 		
 		var plotIDs = self.plotIDs[0]=='*' ? self.plots.map(function(p) {return p.id;}) : self.plotIDs;
 		
@@ -317,8 +297,17 @@ methods: {
 	},
 	
 	onImageLoad: function(event) {
-		console.log(event);
 		this.loadedImageCount++;
+		//console.log(event);	
+		this.updateImageDimension(event.target);
+	},
+	
+	updateImageDimension(image) {
+		if(this.viewType == "heatmap") {
+			var f = this.magnification;
+			image.width = image.naturalWidth*f;
+			image.height = image.naturalHeight*f;
+		}
 	},
 	
 	onImageError: function(event) {
@@ -348,7 +337,8 @@ methods: {
 			if(self.timeframeMonthsNumber[self.timeframeMonth]>0) {
 				params.append('month', self.timeframeMonthsNumber[self.timeframeMonth]);
 			}
-		}	
+		}
+		params.append('nan_text', '');		
 		
 		//var params = {plot: plotIDs[0], sensor: [sensors[0].id, "TEST"], aggregation: self.aggregation, quality: self.quality}; 
 		axios.get(url_query_csv, {params: params})
@@ -430,7 +420,14 @@ watch: {
 	},
 	tableView: function() {
 		this.updateTableData();
-	}
+	},
+	magnification: function() {
+		console.log(document.querySelectorAll('#results div img'))
+		document.querySelectorAll('#results div img').forEach(this.updateImageDimension);
+	},
+	by_year: function() {
+		this.updateViews();
+	},
 }, //end watch
 
 });	//end visualisation-interface

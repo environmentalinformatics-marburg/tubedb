@@ -15,7 +15,6 @@ import tsdb.util.DataEntry;
 import tsdb.util.TOA5Table;
 import tsdb.util.Table.ColumnReaderFloat;
 import tsdb.util.Table.ColumnReaderSpaceTimestamp;
-import tsdb.util.Table.ColumnReaderString;
 
 public class TOA5Loader {
 	private static final Logger log = LogManager.getLogger();
@@ -33,7 +32,8 @@ public class TOA5Loader {
 					try {
 						loadFile(sub);
 					} catch (Exception e) {
-						log.error(e);
+						e.printStackTrace();
+						log.error(e+"  in "+sub);
 					}
 				} else {
 					loadDirectoryRecursive(sub);
@@ -55,9 +55,10 @@ public class TOA5Loader {
 
 		ColumnReaderSpaceTimestamp timestampReader = table.getColumnReader("TIMESTAMP", ColumnReaderSpaceTimestamp::new);
 		//ColumnReaderInt recordReader = table.createColumnReaderInt("RECORD");
-		ColumnReaderString stationNameReader = table.createColumnReader("StationName");
+		//ColumnReaderString stationNameReader = table.createColumnReader("StationName");
 
-		String stationName = stationNameReader.get(table.rows[0]);
+		//String stationName = stationNameReader.get(table.rows[0]);
+		String stationName = table.recordingName;
 
 		if(!tsdb.stationExists(stationName)) {
 			log.error("station not in database "+stationName+"  at  "+filename);
@@ -74,8 +75,11 @@ public class TOA5Loader {
 				//just exclude
 				break;
 			default:
-				valueNameList.add(name);
-				valueReaderList.add(table.createColumnReaderFloat(name));				
+				String translation = tsdb.getStation(stationName).translateInputSensorName(name, true);
+				if(translation==null || !translation.equals("NaN")) {
+					valueNameList.add(name);
+					valueReaderList.add(table.createColumnReaderFloat(name));
+				}
 			}
 		}
 		String[] valueNames = valueNameList.toArray(new String[0]);
@@ -87,23 +91,38 @@ public class TOA5Loader {
 		for (int rowIndex = 0; rowIndex < rowLen; rowIndex++) {
 			timestamps[rowIndex] = (int) timestampReader.get(rows[rowIndex]);
 		}
+		int safeTimestamp = Integer.MAX_VALUE;
+		for (int rowIndex = rowLen-1; rowIndex>=0; rowIndex--) { // remove error rows
+			if(timestamps[rowIndex]<safeTimestamp) {
+				safeTimestamp = timestamps[rowIndex];
+			} else {
+				timestamps[rowIndex] = -1; // mark row as removed
+			}
+		}
 		ArrayList<DataEntry> vList = new ArrayList<DataEntry>();
 		for (int i = 0; i < vLen; i++) {
-			vList.clear();
-			int colIndex = table.nameMap.get(valueNames[i]);
-			for (int rowIndex = 0; rowIndex < rowLen; rowIndex++) {
-				String text = rows[rowIndex][colIndex];
-				if(!text.equals("NAN")) {
-					float v = Float.parseFloat(text);
-					if(Float.isFinite(v)) {
-						vList.add(new DataEntry(timestamps[rowIndex], v));
+			try {
+				vList.clear();
+				int colIndex = table.nameMap.get(valueNames[i]);
+				for (int rowIndex = 0; rowIndex < rowLen; rowIndex++) {
+					if(timestamps[rowIndex]!=-1) {
+						String text = rows[rowIndex][colIndex];
+						if(!text.equals("NAN")) {
+							float v = Float.parseFloat(text);
+							if(Float.isFinite(v)) {
+								vList.add(new DataEntry(timestamps[rowIndex], v));
+							}
+						}
 					}
 				}
+				DataEntry[] dataEntries = vList.toArray(new DataEntry[0]);
+				String translation = tsdb.getStation(stationName).translateInputSensorName(valueNames[i], true);
+				String sensorName = translation == null ? valueNames[i] : translation;
+				tsdb.streamStorage.insertDataEntryArray(stationName, sensorName, dataEntries);
+			} catch(Exception e) {
+				e.printStackTrace();
+				log.error(e+" with name "+valueNames[i]+"  in "+filename);
 			}
-			DataEntry[] dataEntries = vList.toArray(new DataEntry[0]);
-			String translation = tsdb.getStation(stationName).translateInputSensorName(valueNames[i], true);
-			String sensorName = translation == null ? valueNames[i] : translation;
-			tsdb.streamStorage.insertDataEntryArray(stationName, sensorName, dataEntries);
 		}
 	}
 }

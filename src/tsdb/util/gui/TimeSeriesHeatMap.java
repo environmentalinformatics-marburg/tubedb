@@ -42,6 +42,30 @@ public class TimeSeriesHeatMap {
 		}
 	}
 
+	public void drawByYear(TimeSeriesPainter tsp, String sensorName, float xMin, float yMin) {
+		setRange(tsp,sensorName);
+		tsp.setColorRectWater();		
+		int yearBaseTimestamp = TimeUtil.roundLowerYear((int)ts.entryList.get(0).timestamp);
+		int yearNextTimestamp = TimeUtil.roundNextYear((int)ts.entryList.get(0).timestamp);
+		int yBase = (int) yMin;
+		for(TsEntry entry:ts.entryList) {
+			int t = (int) entry.timestamp;
+			if(t>=yearNextTimestamp) {
+				yearBaseTimestamp = TimeUtil.roundLowerYear(t);
+				yearNextTimestamp = TimeUtil.roundNextYear(t);
+				yBase += 24;
+			}
+			float value = entry.data[0];
+			if(!Float.isNaN(value)) {
+				tsp.setIndexedColor(value);
+				float x = (((t-yearBaseTimestamp)/60)/24)*1+xMin;
+				float y = yBase + (((t-yearBaseTimestamp)/60)%24)*1;
+				tsp.drawLine(x, y, x, y);
+				//tsp.fillRect(x, y, x+4, y+4);
+			}
+		}
+	}
+
 	/**
 	 * 
 	 * @param tsp
@@ -53,7 +77,7 @@ public class TimeSeriesHeatMap {
 	 */
 	public void drawTimescale(TimeSeriesPainterGraphics2D tsp, float xMin, float yMin, float xMax, float yMax, boolean yearMark) {
 		tsp.setColor(255, 255, 255);
-		tsp.fillRect(xMin, yMin, xMax, yMax+1);
+		tsp.fillRect(xMin, yMin, xMax, yMax);
 
 		long start = ts.entryList.get(0).timestamp-ts.entryList.get(0).timestamp%(60*24);
 		//log.info("start "+TimeConverter.oleMinutesToText(start));
@@ -110,38 +134,114 @@ public class TimeSeriesHeatMap {
 				}
 			}
 
-			
+
 
 		} finally {
 			tsp.setFontDefault();
 		}
 
 	}
-	
+
 	public void leftField(TimeSeriesPainterGraphics2D tsp, float xMin, float yMin, float xMax, float yMax) {
 		try {
-			
+
 			tsp.setColor(255, 255, 255);
 			tsp.fillRect(xMin, yMin, xMax, yMax);
-			
+
 			/*tsp.drawLine(xMin, yMin, xMin, yMax);
 			tsp.drawLine(xMin, yMin, xMax, yMin);
 			tsp.drawLine(xMax, yMin, xMax, yMax);
 			tsp.drawLine(xMin, yMax, xMax, yMax);*/
-			
+
 			tsp.setColor(150, 150, 150);
-			
+
 			tsp.drawLine(xMax-4, 0, xMax, 0);
 			tsp.drawLine(xMax-2, 6, xMax, 6);
 			tsp.drawLine(xMax-4, 12, xMax, 12);
 			tsp.drawLine(xMax-2, 18, xMax, 18);
 			tsp.drawLine(xMax-4, 24, xMax, 24);
-			
-			
+
+
 			tsp.setFontSmall();
 			tsp.setColor(170, 170, 170);
 			tsp.drawText(""+TimeUtil.oleMinutesToLocalDateTime(ts.entryList.get(0).timestamp).toLocalDate().getYear(), 0, 26, PosHorizontal.LEFT, PosVerical.TOP);
-			
+
+		} finally {
+			tsp.setFontDefault();
+		}
+	}
+	
+	public void leftFieldByYear(TimeSeriesPainterGraphics2D tsp, float xMin, float yMin, float xMax, float yMax) {
+		try {
+
+			tsp.setColor(255, 255, 255);
+			tsp.fillRect(xMin, yMin, xMax, yMax);
+
+			/*tsp.drawLine(xMin, yMin, xMin, yMax);
+			tsp.drawLine(xMin, yMin, xMax, yMin);
+			tsp.drawLine(xMax, yMin, xMax, yMax);
+			tsp.drawLine(xMin, yMax, xMax, yMax);*/
+
+			int startYear = TimeUtil.oleMinutesToLocalDateTime(TimeUtil.roundLowerYear((int)ts.getFirstTimestamp())).getYear();
+			int endYear = TimeUtil.oleMinutesToLocalDateTime(TimeUtil.roundLowerYear((int)ts.getLastTimestamp())).getYear();
+
+			for(int year = startYear; year <= endYear; year++) {
+				
+				int base = (int) (yMin + (year-startYear) * 24);
+
+				tsp.setColor(150, 150, 150);
+
+				tsp.drawLine(xMin, base + 0, xMax, base + 0);
+				tsp.drawLine(xMax-1, base + 6, xMax, base + 6);
+				tsp.drawLine(xMax-2, base + 12, xMax, base + 12);
+				tsp.drawLine(xMax-1, base + 18, xMax, base + 18);
+				tsp.drawLine(xMin, base + 24, xMax, base + 24);
+
+
+				tsp.setFontSmall();
+				tsp.setColor(170, 170, 170);
+				tsp.drawText(""+year, xMin, base + 13, PosHorizontal.LEFT, PosVerical.CENTER);
+
+			}
+
+		} finally {
+			tsp.setFontDefault();
+		}
+	}
+	
+	public void rightFieldByYear(TimeSeriesPainterGraphics2D tsp, float xMin, float yMin, float xMax, float yMax) {
+		try {
+
+			tsp.setColor(255, 255, 255);
+			tsp.fillRect(xMin, yMin, xMax, yMax);
+
+			/*tsp.drawLine(xMin, yMin, xMin, yMax);
+			tsp.drawLine(xMin, yMin, xMax, yMin);
+			tsp.drawLine(xMax, yMin, xMax, yMax);
+			tsp.drawLine(xMin, yMax, xMax, yMax);*/
+
+			int startYear = TimeUtil.oleMinutesToLocalDateTime(TimeUtil.roundLowerYear((int)ts.getFirstTimestamp())).getYear();
+			int endYear = TimeUtil.oleMinutesToLocalDateTime(TimeUtil.roundLowerYear((int)ts.getLastTimestamp())).getYear();
+
+			for(int year = startYear; year <= endYear; year++) {
+				
+				int base = (int) (yMin + (year-startYear) * 24);
+
+				tsp.setColor(150, 150, 150);
+
+				tsp.drawLine(xMin, base + 0, xMax, base + 0);
+				tsp.drawLine(xMin, base + 6, xMin+1, base + 6);
+				tsp.drawLine(xMin, base + 12, xMin+2, base + 12);
+				tsp.drawLine(xMin, base + 18, xMin+1, base + 18);
+				tsp.drawLine(xMin, base + 24, xMax, base + 24);
+
+
+				tsp.setFontSmall();
+				tsp.setColor(170, 170, 170);
+				tsp.drawText(""+year, xMin+4, base + 13, PosHorizontal.LEFT, PosVerical.CENTER);
+
+			}
+
 		} finally {
 			tsp.setFontDefault();
 		}
@@ -229,14 +329,14 @@ public class TimeSeriesHeatMap {
 
 		@SuppressWarnings("unchecked")
 		Pair<String, Float>[] wds = new Pair[]{
-			Pair.of("N",0f),
-			Pair.of("NE",45f),
-			Pair.of("E",90f),
-			Pair.of("SE",135f),
-			Pair.of("S",180f),
-			Pair.of("SW",225f),
-			Pair.of("W",270f),
-			Pair.of("NW",315f),
+				Pair.of("N",0f),
+				Pair.of("NE",45f),
+				Pair.of("E",90f),
+				Pair.of("SE",135f),
+				Pair.of("S",180f),
+				Pair.of("SW",225f),
+				Pair.of("W",270f),
+				Pair.of("NW",315f),
 		}; 
 
 		tsp.setColor(0, 0, 0);

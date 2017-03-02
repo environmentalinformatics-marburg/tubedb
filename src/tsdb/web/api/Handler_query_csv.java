@@ -155,7 +155,10 @@ public class Handler_query_csv extends MethodHandler {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return;
 			}
-		}		
+		}
+		
+		String nanText = request.getParameter("nan_text") == null ? "NA" : request.getParameter("nan_text");
+	
 
 		try {
 			sensorNames = tsdb.supplementSchema(sensorNames);
@@ -186,7 +189,7 @@ public class Handler_query_csv extends MethodHandler {
 			
 			ServletOutputStream out = response.getOutputStream();
 			
-			CSV.write(ts.tsIterator(), true, out, ",", "NA", CSVTimeType.DATETIME, false, false);
+			CSV.write(ts.tsIterator(), true, out, ",", nanText, CSVTimeType.DATETIME, false, false);
 
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {

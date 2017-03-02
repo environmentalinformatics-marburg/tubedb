@@ -148,6 +148,9 @@ public class Handler_query_heatmap extends MethodHandler {
 			}
 		}
 
+		boolean timeScale = request.getParameter("time_scale") == null ? true : !request.getParameter("time_scale").equals("false");
+		boolean byYear = request.getParameter("by_year") == null ? false : request.getParameter("by_year").equals("true");
+		
 		try {
 			String[] sensorNames = tsdb.supplementSchema(sensorName);
 			/*String[] sensorNames;
@@ -171,30 +174,79 @@ public class Handler_query_heatmap extends MethodHandler {
 				return;
 			}
 
+			
+
 			float xDiagramMin = 24;
 
-			int imageWidth = (int) ((ts.getLastTimestamp()-ts.getFirstTimestamp())/(60*24))+(int)xDiagramMin;
-			int imageHeight = (24+12);
-			BufferedImage bufferedImage = new BufferedImage(imageWidth, imageHeight, java.awt.image.BufferedImage.TYPE_INT_RGB);
 
-			TimeSeriesPainterGraphics2D tsp = new TimeSeriesPainterGraphics2D(bufferedImage);		
+			if(byYear) {
+				
+				float yDiagramMin = 12;
 
-			TimeSeriesHeatMap tshm = new TimeSeriesHeatMap(ts);
+				int imageWidth = ((TimeUtil.roundNextYear((int)ts.getFirstTimestamp())-TimeUtil.roundLowerYear((int)ts.getFirstTimestamp()))/(60*24)) + (int)xDiagramMin + (int)xDiagramMin;
+
+				int imageHeight = (TimeUtil.oleMinutesToLocalDateTime(TimeUtil.roundNextYear((int)ts.getLastTimestamp())).getYear() - TimeUtil.oleMinutesToLocalDateTime(TimeUtil.roundLowerYear((int)ts.getFirstTimestamp())).getYear()) * 24;
+				imageHeight += timeScale ? 12 : 0;
+				imageHeight += yDiagramMin;
+				BufferedImage bufferedImage = new BufferedImage(imageWidth, imageHeight, java.awt.image.BufferedImage.TYPE_INT_RGB);
+
+				TimeSeriesPainterGraphics2D tsp = new TimeSeriesPainterGraphics2D(bufferedImage);		
+
+				TimeSeriesHeatMap tshm = new TimeSeriesHeatMap(ts);
 
 
+				tshm.drawByYear(tsp,sensorName, xDiagramMin, yDiagramMin);
+				
+				tshm.leftFieldByYear(tsp,0,yDiagramMin,xDiagramMin-1,imageHeight-1);
+				tshm.rightFieldByYear(tsp,imageWidth-(int)xDiagramMin,yDiagramMin,imageWidth-1,imageHeight-1);
 
-			tshm.draw(tsp,sensorName, xDiagramMin);
-			tshm.drawTimescale(tsp, xDiagramMin, 24, imageWidth+1, imageHeight-1, true);
-			tshm.leftField(tsp,0,0,xDiagramMin-1,imageHeight-1);
+				if(timeScale) {
+					tsp.setColor(255, 255, 255);
+					tsp.fillRect(0, 0, xDiagramMin-1, yDiagramMin-1);
+					tshm.drawTimescale(tsp, xDiagramMin, 0, imageWidth+1, 11, false);
+					tshm.drawTimescale(tsp, xDiagramMin, imageHeight-12, imageWidth+1, imageHeight-1, false);
+				}
+				
+				tsp.setColor(255, 255, 255);
+				tsp.fillRect(imageWidth-xDiagramMin+1, 0, imageWidth-1, yDiagramMin-1);
+				tsp.fillRect(imageWidth-xDiagramMin+1, imageHeight-yDiagramMin+1, imageWidth-1, imageHeight-1);
+				tsp.setColor(150, 150, 150);
+				tsp.drawLine(imageWidth-xDiagramMin+1, imageHeight-yDiagramMin, imageWidth-1, imageHeight-yDiagramMin);
+				
+				try {
+					ImageRGBA.ofBufferedImage(bufferedImage).writePngCompressed(response.getOutputStream());
+					response.setStatus(HttpServletResponse.SC_OK);
+				} catch (IOException e) {
+					log.error(e);
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				}
+			} else {
 
-			try {
-				//ImageIO.write(bufferedImage, "png", response.getOutputStream());
-				ImageRGBA.ofBufferedImage(bufferedImage).writePngCompressed(response.getOutputStream());
-				response.setStatus(HttpServletResponse.SC_OK);
-			} catch (IOException e) {
-				log.error(e);
-				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			}
+				int imageWidth = (int) ((ts.getLastTimestamp()-ts.getFirstTimestamp())/(60*24)) + (int)xDiagramMin;
+
+				int imageHeight = 24;
+				imageHeight += timeScale ? 12 : 0;
+				BufferedImage bufferedImage = new BufferedImage(imageWidth, imageHeight, java.awt.image.BufferedImage.TYPE_INT_RGB);
+
+				TimeSeriesPainterGraphics2D tsp = new TimeSeriesPainterGraphics2D(bufferedImage);		
+
+				TimeSeriesHeatMap tshm = new TimeSeriesHeatMap(ts);
+
+				tshm.draw(tsp,sensorName, xDiagramMin);
+				if(timeScale) {
+					tshm.drawTimescale(tsp, xDiagramMin, 24, imageWidth+1, imageHeight-1, true);
+				}
+				tshm.leftField(tsp,0,0,xDiagramMin-1,imageHeight-1);
+				
+				try {
+					ImageRGBA.ofBufferedImage(bufferedImage).writePngCompressed(response.getOutputStream());
+					response.setStatus(HttpServletResponse.SC_OK);
+				} catch (IOException e) {
+					log.error(e);
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				}
+
+			}			
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error(e);

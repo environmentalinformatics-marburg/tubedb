@@ -13,15 +13,28 @@ import com.opencsv.CSVReader;
 public class TOA5Table extends Table {
 	private static final Logger log = LogManager.getLogger();
 	
+	public final String[] metaHeader;
+	public final String[] columnsHeader;
+	public final String[] unitsHaeder;
+	public final String[] aggregationsHeader;
 	
+	public final String recordingName;	
 
 	public TOA5Table(String filename) throws FileNotFoundException, IOException {
 		try(CSVReader reader = new CSVReader(new FileReader(filename))) {
 			
-			String[] metaHeader = reader.readNext();
-			String[] columnsHeader = reader.readNext();
-			String[] unitsHaeder = reader.readNext();
-			String[] aggregationsHeader = reader.readNext();
+			this.metaHeader = reader.readNext();
+			
+			if(!metaHeader[0].equals("TOA5")) {
+				throw new RuntimeException("missing TOA5 marker");
+			}
+			
+			this.recordingName = metaHeader[1];
+			
+			
+			this.columnsHeader = reader.readNext();
+			this.unitsHaeder = reader.readNext();
+			this.aggregationsHeader = reader.readNext();
 
 			//log.info("meta ("+metaHeader.length+") "+Arrays.toString(metaHeader));
 			//log.info("columns ("+columnsHeader.length+") "+Arrays.toString(columnsHeader));
@@ -31,12 +44,6 @@ public class TOA5Table extends Table {
 			this.updateNames(columnsHeader);
 			List<String[]> rows = reader.readAll();			
 			this.rows = rows.toArray(new String[0][]);
-			
-			
-			
-			
-			Y y = ColumnReaderSpaceTimestamp::new;
-
 		}
 
 	}

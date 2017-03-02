@@ -135,8 +135,18 @@
 						</select>
 						<input v-show="heightText=='custom'" v-model="heightCustom" placeholder="height" maxlength="4" size="4" v-bind:class="{ invalid: !isValidSize(heightCustom) }">
 					</div>
+					<div v-show="viewType=='heatmap'" style="display: inline-block;">
+						<select @focus="settingsHoverStay = true" @blur="settingsHoverStay = false" v-model="magnification">
+							<option v-for="magnification in magnifications" v-bind:value="magnification">
+								{{magnification}}x
+							</option>
+						</select>
+						<input v-show="heightText=='custom'" v-model="heightCustom" placeholder="height" maxlength="4" size="4" v-bind:class="{ invalid: !isValidSize(heightCustom) }">
+					</div>
+					<input type="checkbox" id="by_year" v-model="by_year">
+					<label for="by_year">by year</label>					
 					<input type="checkbox" id="hideNoData" v-model="hideNoData">
-					<label for="hideNoData">hide no data</label>					
+					<label for="hideNoData">hide no data</label>
 				</div>
 				<div v-show="!(settingsHover||settingsHoverStay)" class="centered  state">{{viewType}}</div>
 			</div>
@@ -157,7 +167,7 @@
 				For raw data empirical qualitiy check is not available.
 			</div>
 						
-			<div v-if="viewType != 'table'" class="results">
+			<div v-if="viewType != 'table'" class="results" id="results">
 				<div v-for="(view, i) in display_views" class="view" v-show="!(hideNoData && errorImage[i])">
 					<div class="view_title">{{view.plot}} / {{view.sensor}}</div>
 					<img v-if="view.type=='diagram'" :id="'img'+i" :src="getDiagramURL(view)" :width="view.width" :height="view.height"  alt="querying ..." @load="onImageLoad" @error="onImageError"></img>
