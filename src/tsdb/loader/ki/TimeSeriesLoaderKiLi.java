@@ -47,31 +47,34 @@ public class TimeSeriesLoaderKiLi {
 	}
 
 	/**
-	 * load load directory with directories of files: structure of tsm
+	 * load files of structure tsm and recursive directories
 	 * @param root
 	 */
-	public void loadDirectory_with_stations_flat(Path root, boolean checkExcluded) {
-		log.info("load directory with directories of files:      "+root);		
+	public void loadDirectory_with_stations_recursive(Path root, boolean checkExcluded) {
+		log.info("load directory:      "+root);		
 		TreeMap<String,Path> ascCollectorMap = new TreeMap<String,Path>();		
+		loadDirectory_with_stations_recursive_internal(root, checkExcluded, ascCollectorMap);
+		//loadWithAscCollectorMap(ascCollectorMap);
+		loadWithAscCollectorMapNewParser(ascCollectorMap);
+	}
+
+	private void loadDirectory_with_stations_recursive_internal(Path root, boolean checkExcluded, TreeMap<String,Path> ascCollectorMap) {
+		readOneDirectory_structure_kili(root, ascCollectorMap, checkExcluded);		
 		try {
 			DirectoryStream<Path> stream = Files.newDirectoryStream(root);
 			for(Path subPath:stream) {
 				if(Files.isDirectory(subPath)) {
-					readOneDirectory_structure_kili(subPath, ascCollectorMap, checkExcluded);
-				} else {
-					log.warn("file in root directory: "+subPath+"   of   "+root);
+					loadDirectory_with_stations_recursive_internal(subPath, checkExcluded, ascCollectorMap);
 				}
 			}
 			stream.close();
 		} catch (IOException e) {
 			log.error(e);
 		}
-		//loadWithAscCollectorMap(ascCollectorMap);
-		loadWithAscCollectorMapNewParser(ascCollectorMap);
 	}
 
 	/**
-	 * Collects all kili-Files from one directory and adds them to ascCollectorMap.
+	 * Collects all kili-Files from one directory (no sub directories) and adds them to ascCollectorMap.
 	 * @param kiliPath
 	 * @param ascCollectorMap
 	 */
@@ -81,30 +84,32 @@ public class TimeSeriesLoaderKiLi {
 				DirectoryStream<Path> stream = Files.newDirectoryStream(kiliPath);
 				//log.info("read directory of files:    "+kiliPath);
 				for(Path path:stream) {
-					String filename = path.getName(path.getNameCount()-1).toString();
-					int ascIndex = filename.toLowerCase().indexOf(".asc");
-					if(ascIndex!=-1) {
-						boolean excluded = false;
-						if(checkExcluded) {
-							excluded = excludes.contains(filename);
-							if(!excluded) {
-								for(String prefix:excludePrefixes) {
-									if(filename.startsWith(prefix)) {
-										excluded = true;
-										break;
+					if(!Files.isDirectory(path)) {
+						String filename = path.getName(path.getNameCount()-1).toString();
+						int ascIndex = filename.toLowerCase().indexOf(".asc");
+						if(ascIndex!=-1) {
+							boolean excluded = false;
+							if(checkExcluded) {
+								excluded = excludes.contains(filename);
+								if(!excluded) {
+									for(String prefix:excludePrefixes) {
+										if(filename.startsWith(prefix)) {
+											excluded = true;
+											break;
+										}
 									}
 								}
 							}
-						}
-						if(!excluded) {
-							String fileKey = filename.substring(0, ascIndex);
-							if(ascCollectorMap.containsKey(fileKey)) {
-								log.warn("file already inserted in map "+fileKey+"   "+ascCollectorMap.get(fileKey)+"   "+path);
+							if(!excluded) {
+								String fileKey = filename.substring(0, ascIndex);
+								if(ascCollectorMap.containsKey(fileKey)) {
+									log.warn("file already inserted in map "+fileKey+"   "+ascCollectorMap.get(fileKey)+"   "+path);
+								}
+								ascCollectorMap.putIfAbsent(fileKey, path);
 							}
-							ascCollectorMap.putIfAbsent(fileKey, path);
+						} else {
+							log.warn("no asc file: "+filename);
 						}
-					} else {
-						log.warn("no asc file: "+filename);
 					}
 				}
 				stream.close();

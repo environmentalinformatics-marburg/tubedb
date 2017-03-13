@@ -1,5 +1,8 @@
 package tsdb.iterator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import tsdb.util.BaseAggregationTimeUtil;
 import tsdb.util.DataQuality;
 import tsdb.util.TimeUtil;
@@ -16,7 +19,7 @@ import tsdb.util.processingchain.ProcessingChain;
  *
  */
 public class EmpiricalIterator extends TsIterator {
-	//private static final Logger log = LogManager.getLogger();
+	private static final Logger log = LogManager.getLogger();
 
 	private TsIterator input_iterator;
 	private TsIterator compare_iterator;
@@ -57,6 +60,7 @@ public class EmpiricalIterator extends TsIterator {
 	public TsEntry next() {
 		TsEntry element = input_iterator.next();
 		TsEntry compareElement = compare_iterator.next();
+		//log.info("ec "+element.toString()+"  "+element.qualityFlagToString());
 		long timestamp = element.timestamp;
 		if(timestamp!= compareElement.timestamp) {
 			throw new RuntimeException("iterator error");
@@ -67,6 +71,7 @@ public class EmpiricalIterator extends TsIterator {
 		for(int colIndex=0;colIndex<schema.length;colIndex++) {
 			if(element.qualityFlag[colIndex]==DataQuality.STEP) {
 				if(maxDiff[colIndex]!=null&&!Float.isNaN(compareElement.data[colIndex])) {
+					//log.info("check");
 					if(Math.abs((element.data[colIndex]-refValues[colIndex])-compareElement.data[colIndex])<=maxDiff[colIndex]) { // check successful
 						resultQf[colIndex] = DataQuality.EMPIRICAL;
 						result[colIndex] = element.data[colIndex];
@@ -79,12 +84,15 @@ public class EmpiricalIterator extends TsIterator {
 					result[colIndex] = element.data[colIndex];
 				}
 			} else {
+				//log.info("no "+element);
 				resultQf[colIndex] = element.qualityFlag[colIndex]; // Na, NO or PYSICAL 
 				result[colIndex] = Float.NaN;
 			}
 			//System.out.println(element.qualityFlag[colIndex]+"  "+element.data[colIndex]+":  "+genElement.data[colIndex]+"  "+maxDiff[colIndex]+" -> "+Math.abs(result[colIndex]-genElement.data[colIndex])+"  "+resultQf[colIndex]+"  "+result[colIndex]);
 		}
-		return new TsEntry(timestamp,result,resultQf);
+		TsEntry r = new TsEntry(timestamp,result,resultQf);
+		//log.info("r "+r);
+		return r;
 	}
 
 	@Override

@@ -97,7 +97,7 @@ public class DataImport {
 			}
 			case "asc_ki": {
 				TimeSeriesLoaderKiLi timeseriesloaderKiLi = new TimeSeriesLoaderKiLi(tsdb);
-				timeseriesloaderKiLi.loadDirectory_with_stations_flat(rootDirectory, true);
+				timeseriesloaderKiLi.loadDirectory_with_stations_recursive(rootDirectory, true);
 				break;
 			}
 			case "asc_sa_own": {

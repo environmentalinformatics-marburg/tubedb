@@ -75,7 +75,9 @@ public class EmpiricalFiltered_NEW extends Continuous.Abstract {
 			return input_iterator;
 		}		
 		Float[] maxDiff = tsdb.getEmpiricalDiff(source.getSchema());
+		//log.info("maxDiff "+Arrays.toString(maxDiff));
 		float[] refValues = tsdb.getReferenceValues(stationName,source.getSchema());
+		//log.info("refValues "+Arrays.toString(refValues));
 		EmpiricalIterator empirical_iterator = new EmpiricalIterator(input_iterator, compare_iterator, maxDiff, refValues);
 		return empirical_iterator;
 	}

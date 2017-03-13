@@ -118,43 +118,44 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 		wind_cnt=0;
 	}
 
-	private void collectQuality(DataQuality[] inputQuality) {
+	private void collectQuality(DataQuality[] inputQuality, float[] inputData) {
 		if(inputQuality==null) {
 			//System.out.println("inputQuality==null");
 			aggQuality = null;
 		} else {		
 			for(int i=0;i<schema.length;i++) {
-				switch(aggQuality[i]) {
-				case Na:
-					aggQuality[i] = inputQuality[i]; // Na, NO, PHYSICAL, STEP, EMPIRICAL 
-					break;
-				case NO: // aggQuality[i] is lowest quality
-					break;
-				case PHYSICAL:
-					if(inputQuality[i] == DataQuality.NO) {
-						aggQuality[i] = DataQuality.NO; 
+				if(!Float.isNaN(inputData[i])) { // collect aggQuality for contained values only
+					switch(aggQuality[i]) {
+					case Na:
+						aggQuality[i] = inputQuality[i]; // Na, NO, PHYSICAL, STEP, EMPIRICAL 
+						break;
+					case NO: // aggQuality[i] is lowest quality
+						break;
+					case PHYSICAL:
+						if(inputQuality[i] == DataQuality.NO) {
+							aggQuality[i] = DataQuality.NO; 
+						}
+						break;
+					case STEP:
+						if(inputQuality[i] == DataQuality.NO) {
+							aggQuality[i] = DataQuality.NO; 
+						} else if(inputQuality[i] == DataQuality.PHYSICAL) {
+							aggQuality[i] = DataQuality.PHYSICAL;
+						}
+						break;
+					case EMPIRICAL:
+						if(inputQuality[i] == DataQuality.NO) {
+							aggQuality[i] = DataQuality.NO; 
+						} else if(inputQuality[i] == DataQuality.PHYSICAL) {
+							aggQuality[i] = DataQuality.PHYSICAL;
+						} else if(inputQuality[i] == DataQuality.STEP) {
+							aggQuality[i] = DataQuality.STEP;
+						}
+						break;
+					default:
+						log.warn("quality not found");
 					}
-					break;
-				case STEP:
-					if(inputQuality[i] == DataQuality.NO) {
-						aggQuality[i] = DataQuality.NO; 
-					} else if(inputQuality[i] == DataQuality.PHYSICAL) {
-						aggQuality[i] = DataQuality.PHYSICAL;
-					}
-					break;
-				case EMPIRICAL:
-					if(inputQuality[i] == DataQuality.NO) {
-						aggQuality[i] = DataQuality.NO; 
-					} else if(inputQuality[i] == DataQuality.PHYSICAL) {
-						aggQuality[i] = DataQuality.PHYSICAL;
-					} else if(inputQuality[i] == DataQuality.STEP) {
-						aggQuality[i] = DataQuality.STEP;
-					}
-					break;
-				default:
-					log.warn("quality not found");
 				}
-
 			}
 		}
 	}
@@ -317,21 +318,21 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 					if(aggregatedPair!=null) {
 						TsEntry resultElement = new TsEntry(aggregation_timestamp,aggregatedPair);					
 						aggregation_timestamp = nextAggTimestamp;
-						collectQuality(entry.qualityFlag);
+						collectQuality(entry.qualityFlag, inputData);
 						collectValues(inputData, timestamp);
 						return resultElement;
 					} else {
 						aggregation_timestamp = nextAggTimestamp;
-						collectQuality(entry.qualityFlag);
+						collectQuality(entry.qualityFlag, inputData);
 						collectValues(inputData, timestamp);
 					}
 				} else {
 					aggregation_timestamp = nextAggTimestamp;
-					collectQuality(entry.qualityFlag);
+					collectQuality(entry.qualityFlag, inputData);
 					collectValues(inputData, timestamp);
 				}
 			} else {
-				collectQuality(entry.qualityFlag);
+				collectQuality(entry.qualityFlag, inputData);
 				collectValues(inputData, timestamp);
 			}
 		}  // end of while-loop for raw input-events

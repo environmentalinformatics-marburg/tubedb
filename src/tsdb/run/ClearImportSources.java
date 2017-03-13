@@ -124,7 +124,7 @@ public class ClearImportSources {
 			log.info("from "+TsDBFactory.SOURCE_KI_TSM_PATH);
 			timeStartKI = System.currentTimeMillis();
 			TimeSeriesLoaderKiLi timeseriesloaderKiLi = new TimeSeriesLoaderKiLi(tsdb);
-			timeseriesloaderKiLi.loadDirectory_with_stations_flat(Paths.get(TsDBFactory.SOURCE_KI_TSM_PATH),true);
+			timeseriesloaderKiLi.loadDirectory_with_stations_recursive(Paths.get(TsDBFactory.SOURCE_KI_TSM_PATH),true);
 			timeEndKI = System.currentTimeMillis();
 			System.gc();
 		}

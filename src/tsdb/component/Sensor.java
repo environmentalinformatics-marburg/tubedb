@@ -2,6 +2,9 @@ package tsdb.component;
 
 import java.io.Serializable;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import tsdb.util.AggregationType;
 
 /**
@@ -10,6 +13,8 @@ import tsdb.util.AggregationType;
  *
  */
 public class Sensor implements Serializable {
+	@SuppressWarnings("unused")
+	private static final Logger log = LogManager.getLogger();
 	
 	private static final long serialVersionUID = -4139931796468207965L;
 
@@ -83,6 +88,7 @@ public class Sensor implements Serializable {
 	 * @return if false value should not be included in further processing
 	 */
 	public boolean checkPhysicalRange(float value) {
+		//log.info("check physical "+physicalMin+"  "+physicalMax);
 		if(Float.isNaN(value)) {
 			return false;
 		}
@@ -96,6 +102,7 @@ public class Sensor implements Serializable {
 	 * @return
 	 */
 	public boolean checkStepRange(float prevValue, float value) {
+		//log.info("check step "+stepMin+"  "+stepMax);
 		float step = Math.abs(value-prevValue);		
 		return stepMin<=step&&step<=stepMax;
 	}

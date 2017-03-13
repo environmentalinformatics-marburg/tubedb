@@ -114,7 +114,7 @@ public class SensorView {
 		detailEntryList.add(new DetailEntry("Step Range",s->{
 			String max;
 			if(s.stepMax!=Float.MAX_VALUE) {
-				max = Float.toString(s.physicalMax);
+				max = Float.toString(s.stepMax);
 			} else {
 				max = "...";
 			}

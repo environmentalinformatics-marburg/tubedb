@@ -79,7 +79,7 @@ public class TsEntry implements Serializable {
 		return timestamp+"|"+TimeUtil.oleMinutesToLocalDateTime(timestamp)+" "+Util.arrayToString(data)+/*" "+qualityFlagToString()+" "+interpolatedFlagToString()+*/" "+qualityCountersToString();
 	}
 
-	/*public String qualityFlagToString() {
+	public String qualityFlagToString() {
 		if(qualityFlag==null) {
 			return "q-";
 		} else {
@@ -108,9 +108,9 @@ public class TsEntry implements Serializable {
 			}
 			return s;
 		}
-	}*/
+	}
 
-	/*private String interpolatedFlagToString() {
+	public String interpolatedFlagToString() {
 		if(interpolated==null) {
 			return "i-";
 		} else {
@@ -120,7 +120,7 @@ public class TsEntry implements Serializable {
 			}
 			return s;			
 		}
-	}*/
+	}
 
 	public String qualityCountersToString() {
 		String s = "";	

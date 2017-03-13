@@ -66,6 +66,9 @@ public class LowQualityToNanIterator extends InputIterator {
 				resultData[i] = Float.NaN;
 			}
 		}
-		return new TsEntry(next.timestamp,resultData,qualityFlag);
+		TsEntry f = new TsEntry(next.timestamp,resultData,qualityFlag);
+		//log.info("e "+next+" "+next.qualityFlagToString());
+		//log.info("f "+f+" "+f.qualityFlagToString());
+		return f;
 	}
 }
