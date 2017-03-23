@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.UserIdentity;
 
 import tsdb.TsDBFactory;
 import tsdb.remote.PlotInfo;
@@ -23,6 +24,7 @@ import tsdb.remote.RemoteTsDB;
 import tsdb.util.Table;
 import tsdb.util.Table.ColumnReaderInt;
 import tsdb.util.Table.ColumnReaderString;
+import tsdb.web.util.Web;
 
 /**
  * Get list of plots with name and long name.
@@ -59,10 +61,16 @@ public class Handler_plot_list extends MethodHandler {
 
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		UserIdentity userIdentity = Web.getUserIdentity(baseRequest);
 		baseRequest.setHandled(true);
 		response.setContentType("text/plain;charset=utf-8");
 		String generalstationName = request.getParameter("generalstation");
 		String regionName = request.getParameter("region");
+		if(regionName!=null && !Web.isAllowed(userIdentity, regionName)) {
+			log.warn("no access to region "+regionName);
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return;
+		}
 		if((generalstationName==null&&regionName==null)||(generalstationName!=null&&regionName!=null)) {
 			log.warn("wrong call");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -115,7 +123,7 @@ public class Handler_plot_list extends MethodHandler {
 			}
 			Predicate<PlotInfo> plotFilter;
 			if(generalstationName!=null) {
-				plotFilter = p->p.generalStationInfo.name.equals(generalstationName);
+				plotFilter = p->Web.isAllowed(userIdentity, p.generalStationInfo.region.name) && p.generalStationInfo.name.equals(generalstationName);
 			} else {
 				plotFilter = p->p.generalStationInfo.region.name.equals(regionName);
 			}

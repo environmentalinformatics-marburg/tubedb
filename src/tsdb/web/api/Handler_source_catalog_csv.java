@@ -21,6 +21,7 @@ import tsdb.remote.RemoteTsDB;
 import tsdb.remote.VirtualPlotInfo;
 import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
+import tsdb.web.util.Web;
 
 /**
  * Get information about time series data files that have been imported into database.
@@ -45,6 +46,12 @@ public class Handler_source_catalog_csv extends MethodHandler {
 		response.setContentType("text/plain;charset=utf-8");
 
 		String plot = request.getParameter("plot");
+		if(plot==null && !Web.isAllowed(baseRequest, Web.ROLE_ADMIN)) {
+			log.warn("no admin access");
+			response.getWriter().write("no admin access");
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return;
+		}
 
 		SourceEntry[] catalog = tsdb.getSourceCatalogEntries();
 

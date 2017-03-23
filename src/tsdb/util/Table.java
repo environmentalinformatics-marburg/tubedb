@@ -487,16 +487,16 @@ public class Table {
 		return new ColumnReaderString(columnIndex);
 	}
 	
-	public static interface Y<T> {
-		T a(int a);
+	public static interface ReaderConstructor<T> {
+		T create(int a);
 	}
 	
-	public <T> T getColumnReader(String name, Y<T> reader) {
+	public <T> T getColumnReader(String name, ReaderConstructor<T> readerConstructor) {
 		int columnIndex = getColumnIndex(name);
 		if(columnIndex<0) {
 			return null;
 		}
-		return reader.a(columnIndex);
+		return readerConstructor.create(columnIndex);
 	}
 	
 	

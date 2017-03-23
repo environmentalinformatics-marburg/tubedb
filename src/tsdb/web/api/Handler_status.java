@@ -17,6 +17,7 @@ import org.json.JSONWriter;
 import tsdb.remote.PlotStatus;
 import tsdb.remote.RemoteTsDB;
 import tsdb.util.TimeUtil;
+import tsdb.web.util.Web;
 
 /**
  * Get status information of plots.
@@ -56,6 +57,11 @@ public class Handler_status extends MethodHandler {
 		if((generalstationName!=null&&regionName!=null)) {
 			log.warn("wrong call");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return;
+		}
+		if(regionName!=null && !Web.isAllowed(baseRequest, regionName)) {
+			log.warn("no access to region "+regionName);
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return;
 		}
 		try {

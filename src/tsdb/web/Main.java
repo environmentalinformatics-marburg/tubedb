@@ -6,6 +6,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -41,6 +43,8 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import tsdb.TsDBFactory;
 import tsdb.remote.RemoteTsDB;
 import tsdb.remote.ServerTsDB;
+import tsdb.util.Table;
+import tsdb.util.Table.ColumnReaderString;
 import tsdb.util.gui.TimeSeriesPainterGraphics2D;
 import tsdb.web.api.SupplementHandler;
 import tsdb.web.api.TsDBAPIHandler;
@@ -70,10 +74,11 @@ public class Main {
 
 	private static final String SUPPLEMENT_PART_URL = "/supplement";
 	private static final String FILES_PART_URL = "/files";
-	
+
 	private static final String WEB_SERVER_LOGIN_PROPERTIES_FILENAME = "realm.properties";
+	private static final String REALM_IP_CSV_FILENAME = "realm_ip.csv";
 	private static final String WEB_SERVER_HTTPS_KEY_STORE_FILENAME = "https_keystore.jks";
-	
+
 	public static void main(String[] args) throws Exception {
 		RemoteTsDB tsdb = new ServerTsDB(TsDBFactory.createDefault());
 		run(tsdb);
@@ -83,9 +88,9 @@ public class Main {
 
 		final int secure_port = 443;
 		//final int secure_port = 8443; //?? alternative
-		
+
 		boolean use_https = TsDBFactory.WEB_SERVER_HTTPS;
-		
+
 
 		createRainbowScale();
 
@@ -106,14 +111,14 @@ public class Main {
 
 		if(use_https) {
 			if(Files.exists(Paths.get(WEB_SERVER_HTTPS_KEY_STORE_FILENAME))) {
-			SslContextFactory sslContextFactory = new SslContextFactory(WEB_SERVER_HTTPS_KEY_STORE_FILENAME);
-			sslContextFactory.setKeyStorePassword(TsDBFactory.WEB_SERVER_HTTPS_KEY_STORE_PASSWORD);
-			sslContextFactory.setKeyManagerPassword(TsDBFactory.WEB_SERVER_HTTPS_KEY_STORE_PASSWORD);
-			SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory,"http/1.1");
-			ServerConnector sslServerConnector = new ServerConnector(server, sslConnectionFactory, httpConnectionFactory);
-			sslServerConnector.setPort(secure_port);		
+				SslContextFactory sslContextFactory = new SslContextFactory(WEB_SERVER_HTTPS_KEY_STORE_FILENAME);
+				sslContextFactory.setKeyStorePassword(TsDBFactory.WEB_SERVER_HTTPS_KEY_STORE_PASSWORD);
+				sslContextFactory.setKeyManagerPassword(TsDBFactory.WEB_SERVER_HTTPS_KEY_STORE_PASSWORD);
+				SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory,"http/1.1");
+				ServerConnector sslServerConnector = new ServerConnector(server, sslConnectionFactory, httpConnectionFactory);
+				sslServerConnector.setPort(secure_port);		
 
-			server.setConnectors(new Connector[]{httpServerConnector, sslServerConnector});
+				server.setConnectors(new Connector[]{httpServerConnector, sslServerConnector});
 			} else {
 				use_https = false;
 				log.error("key store file for https not found");
@@ -253,16 +258,34 @@ public class Main {
 	private static ContextHandler wrapLogin(ContextHandler contextHandler, boolean wrap) {
 		if(!wrap) {
 			return contextHandler;
-		}		
+		}
+
+		HashLoginService loginService = new HashLoginService("Web Server Login", WEB_SERVER_LOGIN_PROPERTIES_FILENAME);
+
+		Map<String, String> ipMap = new HashMap<String, String>();
+		if(Files.exists(Paths.get(REALM_IP_CSV_FILENAME))) {
+			Table ipTable = Table.readCSV(REALM_IP_CSV_FILENAME, ',');
+			ColumnReaderString ipReader = ipTable.createColumnReader("ip");
+			ColumnReaderString userReader = ipTable.createColumnReader("user");
+			for(String[] row:ipTable.rows) {
+				String ip = ipReader.get(row);
+				String user = userReader.get(row);
+				if(ipMap.containsKey(ip)) {
+					log.warn("overwrite existing entry of"+ip+"  "+ipMap.get(ip)+" with "+user+"    in "+REALM_IP_CSV_FILENAME);
+				}
+				ipMap.put(ip, user);
+			}
+		}
+
+		IpAuthentication ipAuthentication = new IpAuthentication(loginService, ipMap);		
+
 		ConstraintSecurityHandler security = new ConstraintSecurityHandler();
 		security.setHandler(contextHandler);
-		ContextHandler security_context = new ContextHandler();
-		security_context.setHandler(security);
 
 		Constraint constraint = new Constraint();
 		constraint.setName("auth1");
 		constraint.setAuthenticate(true);
-		constraint.setRoles(new String[] { "user", "admin" });
+		constraint.setRoles(new String[] {"**"}); // any authenticated user is permitted
 
 
 		ConstraintMapping mapping = new ConstraintMapping();
@@ -271,47 +294,16 @@ public class Main {
 
 		security.setConstraintMappings(Collections.singletonList(mapping));
 		security.setAuthenticator(new DigestAuthenticator());
-		HashLoginService loginService = new HashLoginService("Web Server Login", WEB_SERVER_LOGIN_PROPERTIES_FILENAME);
-		/*String userName = "uu";
-		Credential credential = new Password("pp");
-		String[] roles = new String[]{"admin"};
-		loginService.putUser(userName, credential, roles);*/
 		security.setLoginService(loginService);
+
+		HandlerList handlerList = new HandlerList();
+		handlerList.addHandler(ipAuthentication);
+		handlerList.addHandler(security);
+
+		ContextHandler security_context = new ContextHandler();
+		security_context.setHandler(handlerList);		
 		return security_context;
 	}
-
-	/*private static ContextHandler createContextTestingLogin() {		
-		ContextHandler context = new ContextHandler(TsDBFactory.WEB_SERVER_PREFIX_BASE_URL+"/login");
-		ConstraintSecurityHandler security = new ConstraintSecurityHandler();
-		context.setHandler(security);
-
-		Constraint constraint = new Constraint();
-        constraint.setName("auth");
-        constraint.setAuthenticate(true);
-        constraint.setRoles(new String[] { "user", "admin" });
-
-		ConstraintMapping mapping = new ConstraintMapping();
-        mapping.setPathSpec("/*");
-        mapping.setConstraint(constraint);
-
-		security.setConstraintMappings(Collections.singletonList(mapping));
-		security.setAuthenticator(new DigestAuthenticator());
-		HashLoginService loginService = new HashLoginService("Login"/*, "realm.properties"*///);
-	/*String userName = "uu";
-		Credential credential = new Password("pp");
-		String[] roles = new String[]{"admin"};
-		loginService.putUser(userName, credential, roles);
-		security.setLoginService(loginService);
-
-		ResourceHandler resourceHandler = new ResourceHandler();
-		resourceHandler.setDirectoriesListed(true); // show directory content
-		resourceHandler.setResourceBase(TsDBFactory.WEBDOWNLOAD_PATH);
-		HandlerList handlers = new HandlerList();
-		handlers.setHandlers(new Handler[] {resourceHandler, new DefaultHandler()});
-		security.setHandler(handlers);
-
-		return context;
-	}*/
 
 	private static ContextHandler createContextWebcontent() {
 		ContextHandler contextStatic = new ContextHandler(TsDBFactory.WEB_SERVER_PREFIX_BASE_URL+WEBCONTENT_PART_URL);

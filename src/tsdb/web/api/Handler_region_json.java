@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.UserIdentity;
 import org.json.JSONException;
 import org.json.JSONString;
 import org.json.JSONWriter;
@@ -19,6 +20,7 @@ import tsdb.component.Region;
 import tsdb.remote.PlotStatus;
 import tsdb.remote.RemoteTsDB;
 import tsdb.util.TimeUtil;
+import tsdb.web.util.Web;
 
 /**
  * get meta data of region 
@@ -27,7 +29,7 @@ import tsdb.util.TimeUtil;
  */
 public class Handler_region_json extends MethodHandler {	
 	private static final Logger log = LogManager.getLogger();
-	
+
 	public Handler_region_json(RemoteTsDB tsdb) {
 		super(tsdb, "region.json");
 	}
@@ -37,28 +39,37 @@ public class Handler_region_json extends MethodHandler {
 		baseRequest.setHandled(true);
 		response.setContentType("application/json;charset=utf-8");
 		String regionName = request.getParameter("region");
+		UserIdentity userIdentity = Web.getUserIdentity(baseRequest);
 		if(regionName==null) {
 			JSONWriter json_output = new JSONWriter(response.getWriter());
 			json_output.array();
 			for(Region region:tsdb.getRegions()) {
-				writeRegion(json_output, region);	
+				if(Web.isAllowed(userIdentity, region.name)) {
+					writeRegion(json_output, region);	
+				}
 			}
 			json_output.endArray();
 			response.setStatus(HttpServletResponse.SC_OK);
 		} else {
-			Region region = tsdb.getRegionByName(regionName);
-			if(region==null) {
-				log.warn("region not found");
-				response.getWriter().write("region not found");
-				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			if(Web.isAllowed(userIdentity, regionName)) {
+				Region region = tsdb.getRegionByName(regionName);
+				if(region==null) {
+					log.warn("region not found");
+					response.getWriter().write("region not found");
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				} else {
+					JSONWriter json_output = new JSONWriter(response.getWriter());
+					writeRegion(json_output, region);
+					response.setStatus(HttpServletResponse.SC_OK);
+				}
 			} else {
-				JSONWriter json_output = new JSONWriter(response.getWriter());
-				writeRegion(json_output, region);
-				response.setStatus(HttpServletResponse.SC_OK);
+				log.warn("no access to region "+regionName);
+				response.getWriter().write("no access to region "+regionName);
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			}
 		}		
 	}
-	
+
 	private void writeRegion(JSONWriter json_output, Region region) throws JSONException, IOException {
 		json_output.object();
 		json_output.key("id");

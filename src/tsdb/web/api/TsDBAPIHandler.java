@@ -17,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.UserIdentity;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -26,7 +27,7 @@ import tsdb.remote.GeneralStationInfo;
 import tsdb.remote.PlotInfo;
 import tsdb.remote.RemoteTsDB;
 import tsdb.util.Pair;
-import tsdb.web.util.WebUtil;
+import tsdb.web.util.Web;
 
 /**
  * Central web API class, that dispatches requests to method handlers.
@@ -58,6 +59,7 @@ public class TsDBAPIHandler extends AbstractHandler {
 		addMethodHandler(new Handler_query(tsdb));
 		addMethodHandler(new Handler_timespan(tsdb));
 		addMethodHandler(new Handler_region_json(tsdb));
+		addMethodHandler(new Handler_identity(tsdb));
 	}
 
 	private void addMethodHandler(MethodHandler methodHandler) {
@@ -66,7 +68,8 @@ public class TsDBAPIHandler extends AbstractHandler {
 
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {	
-		log.info(WebUtil.requestMarker,WebUtil.getRequestLogString("tsdb", target, baseRequest));
+		log.info(Web.requestMarker,Web.getRequestLogString("tsdb", target, baseRequest));
+		UserIdentity userIdentity = Web.getUserIdentity(baseRequest);
 
 		/*log.info("auth   "+request.getAuthType());
 		UserAuthentication userAuthentication = (UserAuthentication) baseRequest.getAuthentication();
@@ -147,7 +150,7 @@ public class TsDBAPIHandler extends AbstractHandler {
 		case "/plot_info": {
 			String region = request.getParameter("region");
 			response.setContentType("application/json");
-			ret = handle_plot_info(response.getWriter(),region);
+			ret = handle_plot_info(response.getWriter(), region, userIdentity);
 			break;
 		}
 		default:
@@ -216,7 +219,7 @@ public class TsDBAPIHandler extends AbstractHandler {
 		}
 	}
 
-	private boolean handle_plot_info(PrintWriter writer, String region) {
+	private boolean handle_plot_info(PrintWriter writer, String region, UserIdentity userIdentity) {
 		try {
 			PlotInfo[] plotInfos = tsdb.getPlots();
 			JSONWriter json_output = new JSONWriter(writer);
@@ -224,6 +227,10 @@ public class TsDBAPIHandler extends AbstractHandler {
 			for(PlotInfo plotInfo:plotInfos) {
 				
 				if(region!=null && !region.equals(plotInfo.generalStationInfo.region.name)) {
+					continue;
+				}
+				
+				if(!Web.isAllowed(userIdentity, plotInfo.generalStationInfo.region.name)) {
 					continue;
 				}
 

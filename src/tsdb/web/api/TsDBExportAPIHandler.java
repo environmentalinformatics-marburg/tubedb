@@ -36,7 +36,7 @@ import tsdb.util.AggregationInterval;
 import tsdb.util.DataQuality;
 import tsdb.util.Pair;
 import tsdb.web.api.ExportModel.TimespanType;
-import tsdb.web.util.WebUtil;
+import tsdb.web.util.Web;
 
 /**
  * Web API handler to export serveral time series as ZIP-file.
@@ -89,7 +89,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		log.info(WebUtil.requestMarker,WebUtil.getRequestLogString("export", target, baseRequest));
+		log.info(Web.requestMarker,Web.getRequestLogString("export", target, baseRequest));
 
 		//response.setHeader("Server", "");
 		//response.setHeader("Date", null);

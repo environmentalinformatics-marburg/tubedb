@@ -1,0 +1,5 @@
+ip,user,comment
+#127.0.0.1,admin,"local admin account"
+#0:0:0:0:0:0:0:1,admin,"local admin account"
+127.0.0.1,exp,"local account"
+0:0:0:0:0:0:0:1,exp,"local account"

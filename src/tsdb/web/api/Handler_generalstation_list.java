@@ -14,6 +14,7 @@ import org.eclipse.jetty.server.Request;
 
 import tsdb.remote.GeneralStationInfo;
 import tsdb.remote.RemoteTsDB;
+import tsdb.web.util.Web;
 
 /**
  * Get general stations.
@@ -41,6 +42,7 @@ public class Handler_generalstation_list extends MethodHandler {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
+		if(Web.isAllowed(baseRequest, regionName)) {
 		try {
 			GeneralStationInfo[] generalStationInfos = tsdb.getGeneralStationsOfRegion(regionName);
 			if(generalStationInfos==null) {
@@ -55,6 +57,10 @@ public class Handler_generalstation_list extends MethodHandler {
 		} catch (Exception e) {
 			log.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
+		} else {
+			log.warn("no access to region "+regionName);
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 		}
 	}
 }
