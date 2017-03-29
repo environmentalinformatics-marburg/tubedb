@@ -1,8 +1,5 @@
 package tsdb.iterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import tsdb.util.BaseAggregationTimeUtil;
 import tsdb.util.DataQuality;
 import tsdb.util.TimeUtil;
@@ -19,7 +16,7 @@ import tsdb.util.processingchain.ProcessingChain;
  *
  */
 public class EmpiricalIterator extends TsIterator {
-	private static final Logger log = LogManager.getLogger();
+	//private static final Logger log = LogManager.getLogger();
 
 	private TsIterator input_iterator;
 	private TsIterator compare_iterator;

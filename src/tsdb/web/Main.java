@@ -201,10 +201,8 @@ public class Main {
 				wrapLogin(createContextWebFiles(),wrap),
 				contextRedirect,
 				Robots_txt_Handler.CONTEXT_HANDLER,
-				//x,
 				createContextShutdown(),
-				createContextInvalidURL(),
-				//createContextTestingLogin()
+				createContextInvalidURL()
 		};
 
 		ContextHandlerCollection contextCollection = new ContextHandlerCollection();

@@ -5,13 +5,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.opencsv.CSVReader;
 
 public class TOA5Table extends Table {
-	private static final Logger log = LogManager.getLogger();
+	//private static final Logger log = LogManager.getLogger();
 	
 	public final String[] metaHeader;
 	public final String[] columnsHeader;
@@ -45,7 +42,15 @@ public class TOA5Table extends Table {
 			List<String[]> rows = reader.readAll();			
 			this.rows = rows.toArray(new String[0][]);
 		}
-
+	}
+	
+	public boolean metaHeaderContains(String s) {
+		for(String h:metaHeader) {
+			if(h.equals(s)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

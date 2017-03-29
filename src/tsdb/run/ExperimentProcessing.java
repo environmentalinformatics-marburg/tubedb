@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
-import tsdb.component.Region;
 import tsdb.remote.RemoteTsDB;
 import tsdb.remote.ServerTsDB;
 import tsdb.util.AggregationInterval;
@@ -25,20 +24,20 @@ public class ExperimentProcessing {
 		log.info("start...");
 		try(TsDB tsdb = TsDBFactory.createDefault()) {
 			RemoteTsDB remoteTsdb = new ServerTsDB(tsdb);
-			Region region = remoteTsdb.getRegionByName("BE");
+			//Region region = remoteTsdb.getRegionByName("BE");
 			String[] sensorNames = new String[]{"Ta_200"};
 			String[] plotIDs = remoteTsdb.getStationNames(); //new String[]{"HEG10"}; 
-			boolean allinone = true;
-			boolean desc_sensor = false;
-			boolean desc_plot = false;
-			boolean desc_settings = false;
-			boolean col_plotid = true;
-			boolean col_timestamp = false;
-			boolean col_datetime = true;
-			boolean write_header = true;
+			//boolean allinone = true;
+			//boolean desc_sensor = false;
+			//boolean desc_plot = false;
+			//boolean desc_settings = false;
+			//boolean col_plotid = true;
+			//boolean col_timestamp = false;
+			//boolean col_datetime = true;
+			//boolean write_header = true;
 			Long startTimestamp = TimeUtil.ofDateStartHour(2014);
 			Long endTimestamp = TimeUtil.ofDateEndHour(2015);
-			boolean col_qualitycounter = false;
+			//boolean col_qualitycounter = false;
 
 			String[] mode = new String[]{
 					"raw",
@@ -100,7 +99,7 @@ public class ExperimentProcessing {
 	}
 
 
-	private static OutputStream NULL_OUTPUT_STREAM = new OutputStream() {
+	public static OutputStream NULL_OUTPUT_STREAM = new OutputStream() {
 		@Override
 		public void write(int b) throws IOException {/*nothing*/}
 		@Override

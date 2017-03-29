@@ -114,10 +114,10 @@ public class Station {
 	/**
 	 * This method determines the database sensor name out of an input sensor name.
 	 * Steps:
-	 * 1. check if there an entry in the plotID specific sensorNameTranlationMap
-	 * 2. else check if there is an entry in the general station  sensorNameTranlationMap
-	 * 3. else check if there is an entry in the logger type sensorNameTranlationMap
-	 * 4. else return null (either input sensor name and database sensor name are identical or sensor name is unknown / not used)
+	 * <br>1. check if there an entry in the plotID specific sensorNameTranlationMap
+	 * <br>2. else check if there is an entry in the general station  sensorNameTranlationMap
+	 * <br>3. else check if there is an entry in the logger type sensorNameTranlationMap
+	 * <br>4. else return null (either input sensor name and database sensor name are identical or sensor name is unknown / not used)
 	 * @param sensorName
 	 * @return
 	 */

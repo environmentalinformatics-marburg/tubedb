@@ -20,7 +20,7 @@ public class BaseRedirector extends AbstractHandler
 	{
 		if(target.equals("/")) {
 			response.setHeader(HttpHeader.LOCATION.asString(),redirect_target);
-			response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
+			response.setStatus(HttpServletResponse.SC_FOUND);
 			response.setContentLength(0);
 			baseRequest.setHandled(true);
 		}

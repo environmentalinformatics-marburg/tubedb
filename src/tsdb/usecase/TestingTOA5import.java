@@ -4,24 +4,21 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.loader.bale.TOA5Loader;
 import tsdb.util.DataEntry;
 import tsdb.util.TOA5Table;
-import tsdb.util.Timer;
 import tsdb.util.Table.ColumnReaderFloat;
 import tsdb.util.Table.ColumnReaderInt;
 import tsdb.util.Table.ColumnReaderSpaceTimestamp;
 import tsdb.util.Table.ColumnReaderString;
+import tsdb.util.Timer;
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.TimestampSeries;
 
 public class TestingTOA5import {
-	private static final Logger log = LogManager.getLogger();
+	//private static final Logger log = LogManager.getLogger();
 
 
 	public static void main(String[] args) throws IOException {

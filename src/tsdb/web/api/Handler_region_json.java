@@ -1,8 +1,6 @@
 package tsdb.web.api;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,11 +11,9 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
 import org.json.JSONException;
-import org.json.JSONString;
 import org.json.JSONWriter;
 
 import tsdb.component.Region;
-import tsdb.remote.PlotStatus;
 import tsdb.remote.RemoteTsDB;
 import tsdb.util.TimeUtil;
 import tsdb.web.util.Web;

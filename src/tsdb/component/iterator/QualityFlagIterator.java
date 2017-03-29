@@ -1,8 +1,5 @@
 package tsdb.component.iterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import tsdb.component.Sensor;
 import tsdb.util.DataQuality;
 import tsdb.util.TsEntry;
@@ -17,7 +14,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class QualityFlagIterator extends InputProcessingIterator {
-	private static final Logger log = LogManager.getLogger();
+	//private static final Logger log = LogManager.getLogger();
 
 	private static final int MAX_TIME_STEP = 60;
 	

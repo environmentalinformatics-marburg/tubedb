@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import tsdb.TsDB;
+import tsdb.component.SourceEntry;
 import tsdb.util.DataEntry;
 import tsdb.util.TOA5Table;
 import tsdb.util.Table.ColumnReaderFloat;
@@ -26,6 +27,7 @@ public class TOA5Loader {
 	}
 
 	public void loadDirectoryRecursive(Path path) {
+		//log.info("import "+path);
 		try(DirectoryStream<Path> rootStream = Files.newDirectoryStream(path)) {
 			for(Path sub:rootStream) {
 				if(!Files.isDirectory(sub)) {
@@ -67,11 +69,16 @@ public class TOA5Loader {
 
 		ArrayList<String> valueNameList = new ArrayList<>();
 		ArrayList<ColumnReaderFloat> valueReaderList = new ArrayList<>();
+		ArrayList<String> traceHeaderList = new ArrayList<>();
+		ArrayList<String> traceTranslatedList = new ArrayList<>();
 		for(String name:table.names) {
 			switch(name) {
 			case "TIMESTAMP":
 			case "RECORD":
 			case "StationName":
+			case "Latitude":
+			case "Longitude":
+			case "Altitude":
 				//just exclude
 				break;
 			default:
@@ -79,7 +86,11 @@ public class TOA5Loader {
 				if(translation==null || !translation.equals("NaN")) {
 					valueNameList.add(name);
 					valueReaderList.add(table.createColumnReaderFloat(name));
+					traceTranslatedList.add(translation == null ? name : translation);
+				} else {
+					traceTranslatedList.add(null);
 				}
+				traceHeaderList.add(name);
 			}
 		}
 		String[] valueNames = valueNameList.toArray(new String[0]);
@@ -118,11 +129,27 @@ public class TOA5Loader {
 				DataEntry[] dataEntries = vList.toArray(new DataEntry[0]);
 				String translation = tsdb.getStation(stationName).translateInputSensorName(valueNames[i], true);
 				String sensorName = translation == null ? valueNames[i] : translation;
-				tsdb.streamStorage.insertDataEntryArray(stationName, sensorName, dataEntries);
+				tsdb.streamStorage.insertDataEntryArray(stationName, sensorName, dataEntries);				
 			} catch(Exception e) {
 				e.printStackTrace();
 				log.error(e+" with name "+valueNames[i]+"  in "+filename);
 			}
 		}
+		long firstTimestamp = -1;
+		int rowIndex = 0;
+		while( rowIndex < rowLen && firstTimestamp == -1) {
+			firstTimestamp = timestamps[rowIndex++];
+		}
+		long lastTimestamp = -1;
+		rowIndex = rowLen-1;
+		while( rowIndex >= 0 && lastTimestamp == -1) {
+			lastTimestamp = timestamps[rowIndex--];
+		}
+		int rowCount = rowLen;
+		String[] headerNames = traceHeaderList.toArray(new String[0]);
+		String[] sensorNames = traceTranslatedList.toArray(new String[0]);
+		int timeStep = table.metaHeaderContains("TableMetHour") ? 60 : -1;
+		SourceEntry sourceEntry = new SourceEntry(filename, stationName, firstTimestamp, lastTimestamp, rowCount, headerNames, sensorNames, timeStep);
+		tsdb.sourceCatalog.insert(sourceEntry);
 	}
 }
