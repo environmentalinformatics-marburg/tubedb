@@ -10,9 +10,11 @@ import org.apache.logging.log4j.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
+import tsdb.component.SourceEntry;
 import tsdb.loader.ki.AscParser;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataEntry;
+import tsdb.util.TsSchema;
 import tsdb.util.iterator.TimestampSeries;
 
 /**
@@ -84,16 +86,19 @@ public class ImportGenericASC {
 				log.error("station not found "+timestampseries.name+"   in "+filePath);
 				return;
 			}
-			
+
 			if(timestampseries.entryList.isEmpty()) {
 				log.info("no entries in timeseries "+filePath);
 				return;
 			}
 
-			for(String sensorName:timestampseries.sensorNames) {
-				String targetName = station.translateInputSensorName(sensorName, false);
+			String[] sensorNames = new String[timestampseries.sensorNames.length];
+
+			for (int s = 0; s < sensorNames.length; s++) {
+				String targetName = station.translateInputSensorName(timestampseries.sensorNames[s], false);
+				sensorNames[s] = targetName;
 				if(targetName!=null) {
-					DataEntry[] data = timestampseries.toDataEntyArray(sensorName);
+					DataEntry[] data = timestampseries.toDataEntyArray(timestampseries.sensorNames[s]);
 
 					if(targetName.equals("P_RT_NRT")) {
 						//log.info("P_RT_NRT corrected");
@@ -107,9 +112,13 @@ public class ImportGenericASC {
 						tsdb.streamStorage.insertDataEntryArray(timestampseries.name, targetName, data);
 					}
 				} else {
-					log.warn("sensor not found   "+sensorName+"     at logger "+station.loggerType.typeName+"   station "+station.stationID+"    "+filePath);
+					log.warn("sensor not found   "+timestampseries.sensorNames[s]+"     at logger "+station.loggerType.typeName+"   station "+station.stationID+"    "+filePath);
 				}
 			}
+
+			SourceEntry sourceEntry = new SourceEntry(filePath, timestampseries.name, timestampseries.getFirstTimestamp(), timestampseries.getLastTimestamp(), timestampseries.size(), timestampseries.sensorNames, sensorNames, TsSchema.NO_CONSTANT_TIMESTEP);
+			tsdb.sourceCatalog.insert(sourceEntry);
+
 		} catch (Exception e) {
 			log.error(e+"   "+filePath);
 		}
