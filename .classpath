@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="dsl/src_generated"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/commons-math3-3.5.jar"/>
 	<classpathentry kind="lib" path="lib/ini4j-0.5.2.jar"/>
@@ -38,5 +39,6 @@
 	<classpathentry kind="lib" path="lib/monetdb-jdbc-2.23.jar"/>
 	<classpathentry kind="lib" path="lib/opencsv-3.8.jar" sourcepath="lib_src/opencsv-3.8-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang3-3.5.jar"/>
+	<classpathentry kind="lib" path="lib/antlr-4.7-complete.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

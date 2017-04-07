@@ -1,4 +1,4 @@
-package tsdb;
+package tsdb.component.labeledproperty;
 
 import java.util.ArrayList;
 import java.util.HashMap;

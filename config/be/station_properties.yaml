@@ -1,2 +1,4 @@
 - {station: AEG01, start: 2015-05-12, end: 2016-06-17, content: {label: CNR4, SWDR: 13.67, SWUR: 16.82, LWDR: 9.74, LWUR: 10.93} }
 - {station: AEG11, start: 2014-06-05, end: 2016-06-20, content: {label: CNR4, SWDR: 17.38, SWUR: 16.88, LWDR: 10.89, LWUR: 10.01} }
+
+- {station: AEG01, start: "2016-06-18T14:20", content: {label: computation, target: PAR_300, formula: "PAR_300_U*1000/5.59", comment: "2017-04-07 calculate missing PAR_300 values"}}

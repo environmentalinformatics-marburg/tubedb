@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import tsdb.component.LoggerType;
+import tsdb.component.labeledproperty.LabeledProperties;
 import tsdb.util.AggregationType;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.Interval;

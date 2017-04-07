@@ -1,4 +1,4 @@
-package tsdb;
+package tsdb.component.labeledproperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +29,18 @@ public class LabeledProperty {
 	}
 
 	private Object parseContent(String label, YamlMap map) {
-		switch(label) {
-		case "CNR4":
-			return PropertyCNR4.parse(map);
-		default:
-			return map;
+		try {
+			switch(label) {
+			case "computation":
+				return PropertyComputation.parse(map);
+			case "CNR4":
+				return PropertyCNR4.parse(map);
+			default:
+				return map;
+			}
+		} catch(Exception e) {
+			log.error(e);
+			return null;
 		}
 	}
 
@@ -49,10 +56,10 @@ public class LabeledProperty {
 		List<LabeledProperty> result = new ArrayList<LabeledProperty>();
 		for(YamlMap map:entry.getList("content").asMaps()) {
 			try {
-			String label = map.getString("label");
-			LabeledProperty labeledProperty = new LabeledProperty(station, label, start, end, map);
-			result.add(labeledProperty);
-			log.trace(labeledProperty);
+				String label = map.getString("label");
+				LabeledProperty labeledProperty = new LabeledProperty(station, label, start, end, map);
+				result.add(labeledProperty);
+				log.trace(labeledProperty);
 			} catch (Exception e) {
 				log.warn("could not parse entry "+entry+"  "+e);
 			}

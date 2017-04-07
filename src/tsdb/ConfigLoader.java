@@ -40,6 +40,7 @@ import tsdb.component.LoggerType;
 import tsdb.component.Region;
 import tsdb.component.Sensor;
 import tsdb.component.SensorCategory;
+import tsdb.component.labeledproperty.LabeledProperty;
 import tsdb.util.AggregationType;
 import tsdb.util.Interval;
 import tsdb.util.NamedInterval;

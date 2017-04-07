@@ -17,6 +17,7 @@ import tsdb.component.LoggerType;
 import tsdb.component.Region;
 import tsdb.component.Sensor;
 import tsdb.component.SourceCatalog;
+import tsdb.component.labeledproperty.LabeledProperty;
 import tsdb.streamdb.StreamStorageStreamDB;
 import tsdb.util.AggregationType;
 import tsdb.util.AssumptionCheck;

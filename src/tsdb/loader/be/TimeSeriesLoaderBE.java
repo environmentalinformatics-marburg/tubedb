@@ -19,11 +19,12 @@ import java.util.stream.StreamSupport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import tsdb.LabeledProperty;
-import tsdb.PropertyCNR4;
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
+import tsdb.component.labeledproperty.LabeledProperty;
+import tsdb.component.labeledproperty.PropertyCNR4;
+import tsdb.component.labeledproperty.PropertyComputation;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataRow;
 import tsdb.util.Interval;
@@ -234,7 +235,7 @@ public class TimeSeriesLoaderBE {
 		if(eventMap.size()>0) {
 			List<LabeledProperty> cnr4List = station.labeledProperties.query("CNR4", eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
 			if(cnr4List.size()>0) {
-				log.info("****************** CNR4 found **************");				
+				log.info("LabeledProperty CNR4");				
 				for(LabeledProperty prop:cnr4List) {					
 					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
 					try {
@@ -244,6 +245,20 @@ public class TimeSeriesLoaderBE {
 					}
 				}
 			}
+			
+			List<LabeledProperty> computationList = station.labeledProperties.query("computation", eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
+			if(cnr4List.size()>0) {
+				log.info("LabeledProperty computation");				
+				for(LabeledProperty prop:computationList) {					
+					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
+					try {
+						((PropertyComputation)prop.content).calculate(rows, station.loggerType.sensorNames);
+					} catch(Exception e) {
+						log.warn(e);
+					}
+				}
+			}
+			
 			tsdb.streamStorage.insertData(station.stationID, eventMap, station.loggerType.sensorNames);			
 		} else {
 			log.warn("no data to insert: "+station);
