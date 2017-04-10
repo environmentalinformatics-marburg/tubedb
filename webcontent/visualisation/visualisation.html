@@ -85,6 +85,15 @@
 						</select>
 					</div>
 					<div style="display: inline-block;">
+						<div v-bind:style="{color: timeframeYear=='*' || timeframeMonth=='*'?'grey':'black'}">Day</div>
+						<select @focus="timeframeHoverStay = true" @blur="timeframeHoverStay = false" v-model="timeframeDay" :disabled="timeframeYear=='*' || timeframeMonth=='*'">
+							<option value="*">*</option>
+							<option v-for="d in timeframeDays" v-bind:value="d">
+								{{d}}
+							</option>
+						</select>
+					</div>
+					<div style="display: inline-block;">
 						<div>Aggregation</div>
 						<select @focus="timeframeHoverStay = true" @blur="timeframeHoverStay = false" v-model="aggregation">
 							<option v-for="a in aggregations" v-bind:value="a">
@@ -93,7 +102,7 @@
 						</select>
 					</div>
 				</div>			
-				<div v-show="!(timeframeHover||timeframeHoverStay)" class="centered  state">{{timeframeYear!='*'?timeframeYear:'all data'}}{{timeframeYear!='*'?(timeframeMonth!='*'?' '+timeframeMonth:''):''}} by {{aggregationsText[aggregation]}}</div>
+				<div v-show="!(timeframeHover||timeframeHoverStay)" class="centered  state">{{timeframeYear!='*' ? timeframeYear : 'all data'}}{{(timeframeYear!='*' && timeframeMonth!='*') ? ' '+timeframeMonth : ''}} {{(timeframeYear!='*' && timeframeMonth!='*' && timeframeDay!='*') ? ' '+timeframeDay : ''}} by {{aggregationsText[aggregation]}}</div>
 			</div>
 			
 			<div class="interactive" style="display: inline-block;" @mouseover="qualityHover = true" @mouseleave="qualityHover = false">
@@ -158,6 +167,11 @@
 			<div v-if="viewType=='heatmap' && aggregation!='hour'" class="invalid">
 				Heatmaps are based on hourly aggregated data.
 			</div>
+			
+			<div v-if="viewType=='heatmap' && timeframeYear!='*' && timeframeMonth!='*' && timeframeDay!='*'" class="invalid">
+				Heatmaps smallest view are one month of data.
+			</div>
+			
 			
 			<div v-if="viewType=='boxplot' && (aggregation=='raw' || aggregation=='hour')" class="invalid">
 				Boxplots need day aggregated data or higher.

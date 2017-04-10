@@ -141,9 +141,28 @@ public class Handler_query_csv extends MethodHandler {
 							response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 							return;
 						}
-						LocalDateTime dateMonth = LocalDateTime.of(year, month, 1, 0, 0);
-						startTime = TimeUtil.dateTimeToOleMinutes(dateMonth);
-						endTime = TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, dateMonth.toLocalDate().lengthOfMonth(), 23, 0));
+						String timeDay = request.getParameter("day");
+						if(timeDay == null) {
+							LocalDateTime dateMonth = LocalDateTime.of(year, month, 1, 0, 0);
+							startTime = TimeUtil.dateTimeToOleMinutes(dateMonth);
+							endTime = TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, dateMonth.toLocalDate().lengthOfMonth(), 23, 0));
+						} else {
+							try {
+								int day = Integer.parseInt(timeDay);
+								if(day < 1 || day > 31) {
+									log.error("day out of range "+day);
+									response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+									return;
+								}
+								LocalDateTime dateDay = LocalDateTime.of(year, month, day, 0, 0);
+								startTime = TimeUtil.dateTimeToOleMinutes(dateDay);
+								endTime = TimeUtil.dateTimeToOleMinutes(dateDay.plusDays(1));
+							} catch (Exception e) {
+								log.error(e);
+								response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+								return;
+							}	
+						}
 					} catch (Exception e) {
 						log.error(e);
 						response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

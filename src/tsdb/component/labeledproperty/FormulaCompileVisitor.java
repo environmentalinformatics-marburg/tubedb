@@ -126,7 +126,7 @@ public class FormulaCompileVisitor extends FormulaBaseVisitor<Formula> {
 		}
 		ParseTree op = parseTrees[pos-1];
 		Formula f0 = createTerm(pos-2, parseTrees);
-		log.info("op "+op.getClass());
+		//log.info("op "+op.getClass());
 		return op.accept(new FormulaExpressionVisitor(f0, f1));
 	}
 }

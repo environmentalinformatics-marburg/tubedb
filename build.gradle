@@ -3,6 +3,7 @@ apply plugin: 'java'
 dependencies.compile fileTree('lib')
 
 sourceSets.main.java.srcDir 'src'
+sourceSets.main.java.srcDir 'dsl/src_generated'
 
 jar {
 	from file('src/log4j2.xml')

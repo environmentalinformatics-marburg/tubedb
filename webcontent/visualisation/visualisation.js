@@ -41,6 +41,8 @@ data: function () {
 		timeframeMonths: ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"],
 		timeframeMonthsNumber: {"*":0, "jan":1, "feb":2, "mar":3, "apr":4, "may":5, "jun":6, "jul":7, "aug":8, "sep":9, "oct":10 ,"nov":11, "dec":12},
 		timeframeMonth: "*",
+		timeframeDays: ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"],
+		timeframeDay: "*",
 		aggregations: ["raw","hour","day","week","month","year"],
 		aggregationsText: {raw:"raw data", hour:"hours", day:"days", week:"weeks", month:"months", year:"years"},
 		aggregation: "hour",
@@ -234,6 +236,9 @@ methods: {
 			query += '&year='+view.year;
 			if(view.month>0) {
 				query += '&month='+view.month;
+				if(view.day!='*') {
+					query += '&day='+view.day;
+				}
 			}
 		}
 		return url_query_image+"?"+query;
@@ -275,6 +280,7 @@ methods: {
 						height: self.viewHeight, 
 						year: self.timeframeYear, 
 						month: self.timeframeMonthsNumber[self.timeframeMonth], 
+						day: self.timeframeDay,
 						aggregation: self.aggregation,
 						quality: self.quality,
 						interpolated: self.interpolated,
@@ -336,6 +342,9 @@ methods: {
 			params.append('year', self.timeframeYear);
 			if(self.timeframeMonthsNumber[self.timeframeMonth]>0) {
 				params.append('month', self.timeframeMonthsNumber[self.timeframeMonth]);
+				if(self.timeframeDay!='*') {
+					params.append('day', self.timeframeDay);
+				}
 			}
 		}
 		params.append('nan_text', '');		
@@ -397,6 +406,9 @@ watch: {
 	timeframeMonth: function() {
 		this.updateViews();
 	},
+	timeframeDay: function() {
+		this.updateViews();
+	},	
 	aggregation: function() {
 		this.updateViews();
 	},

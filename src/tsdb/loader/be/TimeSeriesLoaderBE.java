@@ -247,7 +247,7 @@ public class TimeSeriesLoaderBE {
 			}
 			
 			List<LabeledProperty> computationList = station.labeledProperties.query("computation", eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
-			if(cnr4List.size()>0) {
+			if(computationList.size()>0) {
 				log.info("LabeledProperty computation");				
 				for(LabeledProperty prop:computationList) {					
 					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
