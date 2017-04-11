@@ -23,6 +23,7 @@ props: {
 	data: Array,
 	filterKey: String,
 	filterYear: String,
+	filterMonth: Number,
 },
 
 data: function () {
@@ -50,10 +51,32 @@ computed: {
 
 		var filterKey = this.filterKey && this.filterKey.toLowerCase();
 		if(this.filterYear!='*') {
-			var year = parseInt(this.filterYear);
-			data = data.filter(function (row) {
-				return self.getFirstYear(row)<=year && year<=self.getLastYear(row);
-			});
+			if(this.filterMonth > 0) {
+				var year = parseInt(this.filterYear);
+				var month = this.filterMonth;
+				data = data.filter(function (row) {
+					var firstYear = self.getFirstYear(row);
+					var lastYear = self.getLastYear(row);
+					var firstMonth = self.getFirstMonth(row);
+					var lastMonth = self.getLastMonth(row);					
+					if(firstYear == year) {
+						if(year == lastYear) {
+							return firstMonth <= month && month <= lastMonth;
+						} else {
+							return firstMonth <= month;
+						}
+					} else if(year == lastYear) {
+						return month <= lastMonth;
+					} else {
+						return firstYear <= year && year <= lastYear;
+					}					
+				});
+			} else {
+				var year = parseInt(this.filterYear);
+				data = data.filter(function (row) {
+					return self.getFirstYear(row)<=year && year<=self.getLastYear(row);
+				});
+			}
 		}
 		if (filterKey) {			
 			data = data.filter(function (row) {
@@ -116,10 +139,16 @@ methods: {
 	  this.sortKey = key;
     },
 	getFirstYear: function(entry) {
-		return parseInt(entry[1].substring(0,4));
+		return parseInt(entry[1].substr(0,4));
 	},
 	getLastYear: function(entry) {
-		return parseInt(entry[2].substring(0,4));
+		return parseInt(entry[2].substr(0,4));
+	},
+	getFirstMonth: function(entry) {
+		return parseInt(entry[1].substr(5,2));
+	},
+	getLastMonth: function(entry) {
+		return parseInt(entry[2].substr(5,2));
 	},
 	viewRow: function(row) {
 		this.selectedRow = row;

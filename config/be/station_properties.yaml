@@ -5,3 +5,7 @@
 
 - {station: HEG19, start: "2016-12", content: {label: computation, target: PAR_300_U, formula: "PAR_300_U - 2.1", comment: "2017-04-10 corrected offset"}}
 - {station: HEG19, start: "2016-12", content: {label: computation, target: PAR_300, formula: "PAR_300_U * 1000 / 5.33", comment: "2017-04-10 recalculate PAR_300 values (with corrected offset)"}}
+
+- {station: HEG03, end: "2013-07-31T16:40", content: {label: CNR4, SWDR: 19.87, SWUR: 17.05, LWDR: 8.74, LWUR: 9.99, comment: "2017-04-11 recalculate with corrected factors"} }
+- {station: SEG03, end: "2013-09-06T12:30", content: {label: CNR4, SWDR: 17.63, SWUR: 16.69, LWDR: 8.98, LWUR: 8.59, comment: "2017-04-11 recalculate with corrected factors"} }
+
