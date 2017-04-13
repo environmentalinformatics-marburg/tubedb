@@ -339,7 +339,7 @@ public class ConfigLoader {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error("readSensorNameCorrection ConfigJson file error "+e);
+			log.error("readSensorNameCorrection ConfigJson file error "+e+"  in "+jsonFile);
 			//throw new RuntimeException(e);
 		}		
 	}

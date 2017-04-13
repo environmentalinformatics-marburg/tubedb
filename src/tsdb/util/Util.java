@@ -20,6 +20,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,7 +37,7 @@ import org.ini4j.Wini;
  */
 public final class Util {
 	public static final Charset CHARSET_UTF_8 = Charset.forName("UTF-8");
-	
+
 	private Util(){}
 
 	/**
@@ -56,7 +58,7 @@ public final class Util {
 		}
 		return String.format("%.2f", value);
 	}
-	
+
 	public static String floatToString0(float value) {
 		if(Float.isNaN(value)) {
 			value = 0f;
@@ -70,42 +72,42 @@ public final class Util {
 		}
 		return String.format("%.2f", value);
 	}
-	
+
 	public static String doubleToString0(double value) {
 		if(Double.isNaN(value)) {
 			return " --- ";
 		}
 		return String.format("%.0f", value);
 	}
-	
+
 	public static String doubleToString1(double value) {
 		if(Double.isNaN(value)) {
 			return " --- ";
 		}
 		return String.format("%.1f", value);
 	}
-	
+
 	public static String doubleToString2(double value) {
 		if(Double.isNaN(value)) {
 			return " --- ";
 		}
 		return String.format("%.2f", value);
 	}
-	
+
 	public static String doubleToString3(double value) {
 		if(Double.isNaN(value)) {
 			return " --- ";
 		}
 		return String.format("%.3f", value);
 	}
-	
+
 	public static String doubleToString4(double value) {
 		if(Double.isNaN(value)) {
 			return " --- ";
 		}
 		return String.format("%.4f", value);
 	}	
-	
+
 	public static String doubleToStringFull(double value) {
 		if(Double.isNaN(value)) {
 			return " --- ";
@@ -209,7 +211,7 @@ public final class Util {
 		}
 		return result;
 	}
-	
+
 	public static <T> String arrayToString(T[] a) {
 		if(a==null) {
 			return "[null]";
@@ -250,6 +252,54 @@ public final class Util {
 			this.min = min;
 			this.max = max;
 		}
+
+		/**
+		 * throws if parse error
+		 * @param name
+		 * @param s
+		 * @return notnull
+		 */
+		public static FloatRange parse_no_regex(String name, String s) {
+			s = s.trim();
+			int len = s.length();
+			if(len<5) {
+				throw new RuntimeException("could not parse FloatRange: "+s);
+			}
+			if(s.charAt(0) != '[') {
+				throw new RuntimeException("could not parse FloatRange: "+s);
+			}
+			if(s.charAt(len-1) != ']') {
+				throw new RuntimeException("could not parse FloatRange: "+s);
+			}
+			s = s.substring(1, len-1);
+			String[] minmax = s.split(",");
+			if(minmax.length != 2) {
+				throw new RuntimeException("could not parse FloatRange: "+s);
+			}
+			float min = Float.parseFloat(minmax[0]);
+			float max = Float.parseFloat(minmax[1]);
+			return new FloatRange(name, min, max);
+		}
+
+		//private static final Pattern PATTERN = Pattern.compile("\\s*+\\[\\s*+(?<min>[+-]?+([0-9]*+[.])?+[0-9]++)\\s*+,\\s*+(?<max>[+-]?+([0-9]*+[.])?+[0-9]++)\\s*+\\]\\s*+"); //slower
+		private static final Pattern PATTERN = Pattern.compile("\\s*+\\[\\s*+(?<min>[+-]?+[0-9]++([.][0-9]++)?+)\\s*+,\\s*+(?<max>[+-]?+[0-9]++([.][0-9]++)?+)\\s*+\\]\\s*+");
+
+		/**
+		 * throws if parse error
+		 * @param name
+		 * @param s
+		 * @return notnull
+		 */
+		public static FloatRange parse(String name, String s) { // slower than parse_no_regex
+			Matcher matcher = PATTERN.matcher(s);
+			if(matcher.matches()) {
+				float min = Float.parseFloat(matcher.group("min"));
+				float max = Float.parseFloat(matcher.group("max"));
+				return new FloatRange(name, min, max);
+			} else {
+				throw new RuntimeException("could not parse FloatRange: "+s);
+			}
+		}
 	}
 
 	/**
@@ -268,11 +318,7 @@ public final class Util {
 					String name = entry.getKey();
 					String range = entry.getValue();
 					try {
-						String minString = range.substring(range.indexOf('[')+1, range.indexOf(','));
-						String maxString = range.substring(range.indexOf(',')+2, range.indexOf(']'));
-						float min=Float.parseFloat(minString);
-						float max=Float.parseFloat(maxString);
-						resultList.add(new FloatRange(name, min, max));
+						resultList.add(FloatRange.parse(name, range));
 					} catch (Exception e) {
 						log.warn("error in read: "+name+"\t"+range+"\t"+e);
 					}
@@ -443,7 +489,7 @@ public final class Util {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * transforms an array of strings to string with removed null elements.
 	 * @param a
@@ -526,7 +572,7 @@ public final class Util {
 		}
 		return false;
 	}
-	
+
 	public static String[] concat(String[] array, String lastEntry) {
 		throwNulls(array,lastEntry);
 		String[] result = Arrays.copyOf(array, array.length+1);
@@ -553,11 +599,11 @@ public final class Util {
 	public static <T> ArrayList<T> streamToList(Stream<T> stream) {
 		return (ArrayList<T>) stream.collect(Collectors.toList());
 	}
-	
+
 	public static boolean empty(Object[] array) {
 		return array==null||array.length==0;
 	}
-	
+
 	public static String[] toArray(String e) {
 		return new String[]{e};
 	}
@@ -570,11 +616,11 @@ public final class Util {
 			log.error(e);
 		}
 	}
-	
+
 	public static boolean notNull(Object e) {
 		return e!=null;
 	}
-	
+
 	public static String msToText(long start, long end) {
 		long diff = end-start;
 		long h = diff%1000/100;
@@ -582,7 +628,7 @@ public final class Util {
 		long e = diff%10;
 		return diff/1000+"."+h+z+e+" s";
 	}
-	
+
 	/**
 	 * remove block comments from data.
 	 * @param data in UTF-8 with block comments
@@ -620,7 +666,7 @@ public final class Util {
 		}
 		return new String(result, 0, r, CHARSET_UTF_8);
 	}
-	
+
 	/**
 	 * Concatenates an array and an element and returns the new array
 	 * @param array may be null
@@ -638,7 +684,7 @@ public final class Util {
 		result[array.length] = e;
 		return result;
 	}
-	
+
 	public static char[] fastWriteFloat(float v) {
 		int i = (int) v;
 		String s = Integer.toString(i);

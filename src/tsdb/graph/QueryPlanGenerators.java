@@ -64,13 +64,13 @@ public final class QueryPlanGenerators {
 	}
 
 	public static Node rawProcessing(TsDB tsdb, Node rawSource, String[] schema, DataQuality dataQuality) {
-		rawSource = elementRawCopy(rawSource);
 		if(DataQuality.Na!=dataQuality) {
 			if(DataQuality.NO!=dataQuality) {
 				rawSource = Mask.of(tsdb, rawSource);
 			}
 			rawSource = RangeStepFiltered.of(tsdb, rawSource, dataQuality);
 		}
+		rawSource = elementRawCopy(rawSource);
 		if(Util.containsString(schema, "SD")) {
 			rawSource = Sunshine.of(tsdb, rawSource);
 		}
