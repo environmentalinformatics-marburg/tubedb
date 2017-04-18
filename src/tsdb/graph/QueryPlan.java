@@ -1,5 +1,7 @@
 package tsdb.graph;
 
+import java.util.Arrays;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,6 +40,7 @@ public final class QueryPlan {
 	 * @return
 	 */
 	public static Node plot(TsDB tsdb, String plotID, String[] schema, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated) {
+		//log.info("schema "+Arrays.toString(schema));
 		if(plotID.indexOf(':')<0) { //plotID
 			if(aggregationInterval!=AggregationInterval.RAW) { //plotID aggregated
 				return plotWithoutSubStation(tsdb, plotID, schema, aggregationInterval, dataQuality, interpolated);

@@ -564,10 +564,33 @@ public final class Util {
 		}
 	}
 
+	/**
+	 * check if text is contained in array
+	 * @param array
+	 * @param text
+	 * @return
+	 */
 	public static boolean containsString(String[] array, String text) {
 		for(String s:array) {
 			if(s.equals(text)) {
 				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * checks if at least one text is contained in array
+	 * @param array
+	 * @param texts
+	 * @return
+	 */
+	public static boolean containsOneString(String[] array, String[] texts) {
+		for(String s:array) {
+			for(String text:texts) {
+				if(s.equals(text)) {
+					return true;
+				}
 			}
 		}
 		return false;

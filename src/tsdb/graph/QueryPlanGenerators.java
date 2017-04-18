@@ -54,8 +54,23 @@ public final class QueryPlanGenerators {
 		};
 	}
 
-	public static String[] stationSchemaSupplement(TsDB tsdb, Station station, String[] schema) {		
-		if(station.generalStation!=null && station.generalStation.region.name.equals("BE") && Util.containsString(schema, "P_RT_NRT")) {
+	public static String[] stationSchemaSupplement(TsDB tsdb, Station station, String[] schema) {
+		String[] stationSensorNames = station.getSensorNames();
+		for(VirtualCopyList p:QueryPlanGenerators.VIRTUAL_COPY_LISTS) {
+			if(Util.containsString(schema, p.target)) {				
+				innerLoop: for(String source:p.sources) {
+					if(Util.containsString(schema, source)) {
+						break innerLoop;
+					}
+					if(Util.containsString(stationSensorNames, source)) {
+						schema = Util.concat(schema, source);
+						break innerLoop;
+					}
+				}
+			}
+		}	
+
+		if(station.generalStation!=null && station.generalStation.region.name.equals("BE") && Util.containsString(schema, "P_RT_NRT")) { // add virtual P_RT_NRT of P_container_RT for stations in BE
 			if(!Util.containsString(schema, "P_container_RT")) {
 				return Util.concat(schema,"P_container_RT");
 			}
@@ -80,6 +95,58 @@ public final class QueryPlanGenerators {
 		return rawSource;
 	}
 
+	public static class VirtualCopyPair {
+		public final String source;
+		public final String target;
+		public VirtualCopyPair(String source, String target) {
+			this.source = source;
+			this.target = target;
+		}
+		public static VirtualCopyPair of(String source, String target) {
+			return new VirtualCopyPair(source, target);
+		}
+	}
+
+	public static class VirtualCopyList {
+		public final String[] sources;
+		public final String target;
+		public VirtualCopyList(String[] sources, String target) {
+			this.sources = sources;
+			this.target = target;
+		}
+		public static VirtualCopyList of(String[] sources, String target) {
+			return new VirtualCopyList(sources, target);
+		}
+	}
+
+	public static final VirtualCopyPair[] VIRTUAL_COPY_PAIRS = new VirtualCopyPair[]{
+			VirtualCopyPair.of("Ta_200", "Ta_200_min"),			
+			VirtualCopyPair.of("Ta_200", "Ta_200_max"),
+			VirtualCopyPair.of("rH_200", "rH_200_min"),
+			VirtualCopyPair.of("rH_200", "rH_200_max"),			
+	};
+
+	public static final VirtualCopyList[] VIRTUAL_COPY_LISTS = new VirtualCopyList[]{
+			VirtualCopyList.of(new String[] {"SWDR_300", "SWDR_3700", "SWDR_4400"}, "SWDR"),
+			VirtualCopyList.of(new String[] {"SWUR_300", "SWUR_3700", "SWUR_4400"}, "SWUR"),
+			VirtualCopyList.of(new String[] {"LWDR_300", "LWDR_3700", "LWDR_4400"}, "LWDR"),
+			VirtualCopyList.of(new String[] {"LWUR_300", "LWUR_3700", "LWUR_4400"}, "LWUR"),
+	};
+
+	private static final String[] VIRTUAL_COPY_SENSORS;
+
+	static {		
+		ArrayList<String> list = new ArrayList<>();
+		for(VirtualCopyPair p:VIRTUAL_COPY_PAIRS) {
+			list.add(p.target);
+		}
+		for(VirtualCopyList p:VIRTUAL_COPY_LISTS) {
+			list.add(p.target);
+		}
+		VIRTUAL_COPY_SENSORS = list.toArray(new String[0]);
+	}
+
+
 	/**
 	 * Copy elements for virtual sensors.
 	 * @param schema 
@@ -88,51 +155,22 @@ public final class QueryPlanGenerators {
 	 */
 	public static Node elementRawCopy(Node source) {
 		String[] schema = source.getSchema();
-		if(Util.containsString(schema, "Ta_200_min") 
-				|| Util.containsString(schema, "Ta_200_max")
-				|| Util.containsString(schema, "rH_200_min") 
-				|| Util.containsString(schema, "rH_200_max")) {
+		if(Util.containsOneString(schema, VIRTUAL_COPY_SENSORS)) {
 			List<Action> actions = new ArrayList<>();
-			if(Util.containsString(schema, "Ta_200_min")) {
-				actions.add(Action.of(schema, "Ta_200", "Ta_200_min"));
+			for(VirtualCopyPair pair:VIRTUAL_COPY_PAIRS) {
+				if(Util.containsString(schema, pair.target)) {
+					actions.add(Action.of(schema, pair.source, pair.target));
+				}
 			}
-			if(Util.containsString(schema, "Ta_200_max")) {
-				actions.add(Action.of(schema, "Ta_200", "Ta_200_max"));
+			for(VirtualCopyList p:VIRTUAL_COPY_LISTS) { 
+				if(Util.containsString(schema, p.target)) {
+					actions.add(Action.of(schema, p.sources, p.target));
+				}
 			}
-			if(Util.containsString(schema, "rH_200_min")) {
-				actions.add(Action.of(schema, "rH_200", "rH_200_min"));
-			}
-			if(Util.containsString(schema, "rH_200_max")) {
-				actions.add(Action.of(schema, "rH_200", "rH_200_max"));
-			}				
 			source = ElementRawCopy.of(source, actions.toArray(new Action[0]));
 		}
 		return source;
 	}
-
-	/*public static Continuous elementCopy(Continuous source) {
-		String[] schema = source.getSchema();
-		if(Util.containsString(schema, "Ta_200_min") 
-				|| Util.containsString(schema, "Ta_200_max")
-				|| Util.containsString(schema, "rH_200_min") 
-				|| Util.containsString(schema, "rH_200_max")) {
-			List<Action> actions = new ArrayList<>();
-			if(Util.containsString(schema, "Ta_200_min")) {
-				actions.add(Action.of(schema, "Ta_200", "Ta_200_min"));
-			}
-			if(Util.containsString(schema, "Ta_200_max")) {
-				actions.add(Action.of(schema, "Ta_200", "Ta_200_max"));
-			}
-			if(Util.containsString(schema, "rH_200_min")) {
-				actions.add(Action.of(schema, "rH_200", "rH_200_min"));
-			}
-			if(Util.containsString(schema, "rH_200_max")) {
-				actions.add(Action.of(schema, "rH_200", "rH_200_max"));
-			}				
-			source = ElementCopy.of(source, actions.toArray(new Action[0]));
-		}
-		return source;
-	}*/
 
 	/**
 	 * Creates a generator of a continuous source.

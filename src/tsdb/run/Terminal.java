@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 
+import tsdb.run.command.ClearMasks;
 import tsdb.run.command.Command;
 import tsdb.run.command.CommandMain;
 import tsdb.run.command.CommandSequence;
@@ -19,7 +20,7 @@ import tsdb.run.command.CountTsDBValues;
 import tsdb.run.command.DataClear;
 import tsdb.run.command.DataImport;
 import tsdb.run.command.MainRunnable;
-import tsdb.run.command.UpdateMasks;
+import tsdb.run.command.LoadMasks;
 import tsdb.util.yaml.YamlMap;
 
 public class Terminal {
@@ -110,9 +111,10 @@ public class Terminal {
 
 		//administrative commands
 
-		addCommand("clear", "remove all time series data in TubeDB", DataClear::main);
+		addCommand("clear", "remove all time series data and masks in TubeDB", DataClear::main);
 		addCommand("load", "read all data source into TubeDB", DataImport::main);
-		addCommand("masks", "update masks", UpdateMasks::main);
+		addCommand("clear_masks", "clear all masks", ClearMasks::main);
+		addCommand("masks", "load masks", LoadMasks::main);
 		addCommand("references", "refresh time series references", CreateStationGroupAverageCache::main);
 		addCommand("compact", "defragment free space", RunCompact::main);
 		addCommand("count", "count values in database", CountTsDBValues::main);
@@ -120,6 +122,7 @@ public class Terminal {
 		addCommandSequence("import", "composite of: load - masks - references - compact", "load", "masks", "references", "compact");
 
 		addCommandSequence("clear_import", "composite of: clear - import", "clear", "import");
+		addCommandSequence("clear_load_masks", "composite of: clear_masks - masks", "clear_masks", "masks");
 
 	}
 

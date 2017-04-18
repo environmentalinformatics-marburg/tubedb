@@ -59,6 +59,9 @@
 				</select>
 				<div v-show="!sensorHover" class="centered state">{{sensorIDs[0]}}{{sensorIDs.length>1 && sensorIDs[0] != "*" ? " ...":""}}</div>
 			</div>
+			<div v-show="filteredSensors.length == 1" style="display: inline-block;">
+				no sensors
+			</div>
 			
 			<div class="interactive" style="display: inline-block;" @mouseover="timeframeHover = true" @mouseleave="timeframeHover = false">
 				<div class="centered" v-show="!(timeframeHover||timeframeHoverStay)">Timeframe</div>
@@ -151,9 +154,9 @@
 							</option>
 						</select>
 						<input v-show="heightText=='custom'" v-model="heightCustom" placeholder="height" maxlength="4" size="4" v-bind:class="{ invalid: !isValidSize(heightCustom) }">
+											<input type="checkbox" id="by_year" v-model="by_year">
+						<label for="by_year">by year</label>	
 					</div>
-					<input type="checkbox" id="by_year" v-model="by_year">
-					<label for="by_year">by year</label>					
 					<input type="checkbox" id="hideNoData" v-model="hideNoData">
 					<label for="hideNoData">hide no data</label>
 				</div>

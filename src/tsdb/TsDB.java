@@ -18,6 +18,9 @@ import tsdb.component.Region;
 import tsdb.component.Sensor;
 import tsdb.component.SourceCatalog;
 import tsdb.component.labeledproperty.LabeledProperty;
+import tsdb.graph.QueryPlanGenerators;
+import tsdb.graph.QueryPlanGenerators.VirtualCopyList;
+import tsdb.graph.QueryPlanGenerators.VirtualCopyPair;
 import tsdb.streamdb.StreamStorageStreamDB;
 import tsdb.util.AggregationType;
 import tsdb.util.AssumptionCheck;
@@ -678,26 +681,26 @@ public class TsDB implements AutoCloseable {
 			return null;
 		}
 		Map<String, Integer> schemaMap = Util.stringArrayToMap(schema);
-		LinkedHashSet<String> additionalSensorNames = new LinkedHashSet<>(); // no duplicates		
+		LinkedHashSet<String> additionalSensorNames = new LinkedHashSet<>(); // no duplicates
+		
+		for(VirtualCopyPair pair:QueryPlanGenerators.VIRTUAL_COPY_PAIRS) {
+			if(schemaMap.containsKey(pair.source)) {
+				additionalSensorNames.add(pair.target);
+			}
+		}
+		for(VirtualCopyList p:QueryPlanGenerators.VIRTUAL_COPY_LISTS) {
+			innerLoop: for(String source:p.sources) {
+				if(schemaMap.containsKey(source)) {
+					additionalSensorNames.add(p.target);
+					break innerLoop;
+				}
+			}
+		}		
+		
 		if(schemaMap.containsKey("Rn_300")&&!schemaMap.containsKey("SD")) {
 			additionalSensorNames.add("SD");
-		}		
-		if(schemaMap.containsKey("Ta_200")) {
-			if(!schemaMap.containsKey("Ta_200_min")) {
-				additionalSensorNames.add("Ta_200_min");
-			}
-			if(!schemaMap.containsKey("Ta_200_max")) {
-				additionalSensorNames.add("Ta_200_max");
-			}
 		}
-		if(schemaMap.containsKey("rH_200")) {
-			if(!schemaMap.containsKey("rH_200_min")) {
-				additionalSensorNames.add("rH_200_min");
-			}
-			if(!schemaMap.containsKey("rH_200_max")) {
-				additionalSensorNames.add("rH_200_max");
-			}
-		}
+		
 		if(schemaMap.containsKey("P_container_RT")&&!schemaMap.containsKey("P_RT_NRT")) {
 			additionalSensorNames.add("P_RT_NRT");
 		}
@@ -720,32 +723,19 @@ public class TsDB implements AutoCloseable {
 
 		Map<String, Integer> schemaMap = Util.stringArrayToMap(schema);
 		LinkedHashSet<String> additionalSensorNames = new LinkedHashSet<>(); // no duplicates
+		
+		for(VirtualCopyPair pair:QueryPlanGenerators.VIRTUAL_COPY_PAIRS) {
+			if(schemaMap.containsKey(pair.target)&&!schemaMap.containsKey(pair.source)) {
+				additionalSensorNames.add(pair.source);
+			}
+		}		
+		
 		if(schemaMap.containsKey("WD")&&!schemaMap.containsKey("WV")) {
 			additionalSensorNames.add("WV");
 		}
 		if(schemaMap.containsKey("SD")&&!schemaMap.containsKey("Rn_300")) {
 			additionalSensorNames.add("Rn_300");
 		}
-
-		if(schemaMap.containsKey("Ta_200_min")&&!schemaMap.containsKey("Ta_200")) {
-			additionalSensorNames.add("Ta_200");
-		}
-
-		if(schemaMap.containsKey("Ta_200_max")&&!schemaMap.containsKey("Ta_200")) {
-			additionalSensorNames.add("Ta_200");
-		}
-
-		if(schemaMap.containsKey("rH_200_min")&&!schemaMap.containsKey("rH_200")) {
-			additionalSensorNames.add("rH_200");
-		}
-
-		if(schemaMap.containsKey("rH_200_max")&&!schemaMap.containsKey("rH_200")) {
-			additionalSensorNames.add("rH_200");
-		}
-
-		/*if(schemaMap.containsKey("P_RT_NRT")&&!schemaMap.containsKey("P_container_RT")) { // P_RT_NRT is not always virtual
-			additionalSensorNames.add("P_container_RT");
-		}*/
 
 		if(additionalSensorNames.isEmpty()) {
 			return schema;

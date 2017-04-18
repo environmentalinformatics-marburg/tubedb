@@ -10,7 +10,7 @@ import tsdb.util.iterator.TsIterator;
 /**
  * Copies value data to different columns.
  * <p>
- * Meta data (quality flags, quality counter, interpolation flag) is copied togehter with values if present.
+ * Meta data (quality flags, quality counter, interpolation flag) is copied together with values if present.
  * @author woellauer
  *
  */
@@ -24,7 +24,7 @@ public class ElementCopyIterator extends InputIterator {
 	public static class Action {
 		public final int sourceIndex;
 		public final int targetIndex;
-		
+
 		/**
 		 * Creates one copy operation with source and target-index.
 		 * @param sourceIndex
@@ -34,7 +34,7 @@ public class ElementCopyIterator extends InputIterator {
 			this.sourceIndex = sourceIndex;
 			this.targetIndex = targetIndex;
 		}
-		
+
 		/**
 		 * Creates one copy operation with source and target-column-name.
 		 * @param schema
@@ -55,6 +55,36 @@ public class ElementCopyIterator extends InputIterator {
 			}
 			if(source<0 || target<0) {
 				throw new RuntimeException("names not found in schema");
+			}
+			return new Action(source, target);
+		}
+
+		/**
+		 * Creates one copy operation with one of sourceNames and target-column-name.
+		 * First in schema contained sourceName will be used.
+		 * @param schema
+		 * @param sourceName
+		 * @param targetName
+		 * @return
+		 */
+		public static Action of(String[] schema, String[] sourceNames, String targetName) {
+			int source = -1;
+			searchSourceLoop: for(String sourceName:sourceNames) {
+				for (int i = 0; i < schema.length; i++) {
+					if(schema[i].equals(sourceName)) {
+						source = i;
+						break searchSourceLoop;
+					}
+				}
+			}
+			int target = -1;
+			for (int i = 0; i < schema.length; i++) {
+				if(schema[i].equals(targetName)) {
+					target = i;					
+				}
+			}
+			if(source<0 || target<0) {
+				throw new RuntimeException("names not found in schema: "+Arrays.toString(schema)+" sourceNames: "+Arrays.toString(sourceNames)+" targetName: "+targetName);
 			}
 			return new Action(source, target);
 		}

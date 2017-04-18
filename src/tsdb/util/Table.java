@@ -404,6 +404,26 @@ public class Table {
 		}
 	}
 	
+	/**
+	 * Comment line starts with '#'
+	 * @param row
+	 * @return
+	 */
+	public static boolean isComment(String[] row) {
+		return row.length > 0 && row[0].length() > 0 && row[0].charAt(0) == '#';
+		
+	}
+	
+	/**
+	 * Comment line starts with '#'
+	 * @param row
+	 * @return
+	 */
+	public static boolean isNoComment(String[] row) {
+		return row.length == 0 || row[0].length() == 0 || row[0].charAt(0) != '#';
+		
+	}
+	
 	public void updateNames(String[] columnNames) {
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
 
