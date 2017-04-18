@@ -59,7 +59,7 @@ public class PropertyCNR4 {
 		boolean is_lwur = Double.isFinite(lwur);
 
 		for(DataRow row:rows) {
-			Float[] v = row.data;
+			float[] v = row.data;
 			if(is_swdr) {
 				v[i_swdr] = (float) (v[i_swdr_u]*1000d/swdr);
 			}

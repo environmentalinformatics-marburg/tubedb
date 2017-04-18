@@ -110,7 +110,7 @@ class Loader_rad extends AbstractLoader {
 	protected List<DataRow> toDataRows(TimestampSeries timestampSeries) {
 		List<DataRow> eventList = new ArrayList<DataRow>(timestampSeries.entryList.size());
 		for(TsEntry entry:timestampSeries.entryList) {
-			Float[] eventData = new Float[sourcePos.length];
+			float[] eventData = new float[sourcePos.length];
 			for(int schemaIndex=0;schemaIndex<sourcePos.length;schemaIndex++) {
 				int sourceIndex = sourcePos[schemaIndex];
 				if(sourceIndex==-1) {

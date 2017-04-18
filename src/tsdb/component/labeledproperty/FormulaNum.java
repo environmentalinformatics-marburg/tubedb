@@ -18,7 +18,7 @@ public class FormulaNum extends Formula {
 		return new Computation(){
 			float v = value;
 			@Override
-			public float eval(Float[] data) {
+			public float eval(float[] data) {
 				return v;				
 			}
 		};

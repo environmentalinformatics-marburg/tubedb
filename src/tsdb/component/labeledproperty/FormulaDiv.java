@@ -15,7 +15,7 @@ public class FormulaDiv extends Formula {
 			Computation x = a.compile(sensorMap);
 			Computation y = b.compile(sensorMap);
 			@Override
-			public float eval(Float[] data) {
+			public float eval(float[] data) {
 				return x.eval(data) / y.eval(data);
 			}
 		};

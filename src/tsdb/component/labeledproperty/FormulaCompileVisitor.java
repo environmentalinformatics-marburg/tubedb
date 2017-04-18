@@ -37,7 +37,18 @@ public class FormulaCompileVisitor extends FormulaBaseVisitor<Formula> {
 	
 	@Override
 	public Formula visitAtom(AtomContext ctx) {
-		return visitChildren(ctx);
+		if(ctx.getChildCount() == 1) {
+			return ctx.getChild(0).accept(DEFAULT);
+		}
+		if(ctx.getChildCount() == 3) {
+			ParseTree leftP = ctx.getChild(0);
+			ParseTree content = ctx.getChild(1);
+			ParseTree rightP = ctx.getChild(2);
+			if(leftP.getText().equals("(") && rightP.getText().equals(")")) {
+				return content.accept(DEFAULT);
+			}
+		}
+		throw new RuntimeException("unknown input: "+ctx.getText());
 	}	
 
 	@Override
@@ -125,8 +136,7 @@ public class FormulaCompileVisitor extends FormulaBaseVisitor<Formula> {
 			return f1;
 		}
 		ParseTree op = parseTrees[pos-1];
-		Formula f0 = createTerm(pos-2, parseTrees);
-		//log.info("op "+op.getClass());
+		Formula f0 = createExpression(pos-2, parseTrees);
 		return op.accept(new FormulaExpressionVisitor(f0, f1));
 	}
 }

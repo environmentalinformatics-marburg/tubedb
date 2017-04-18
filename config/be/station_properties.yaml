@@ -9,3 +9,6 @@
 - {station: HEG03, end: "2013-07-31T16:40", content: {label: CNR4, SWDR: 19.87, SWUR: 17.05, LWDR: 8.74, LWUR: 9.99, comment: "2017-04-11 recalculate with corrected factors"} }
 - {station: SEG03, end: "2013-09-06T12:30", content: {label: CNR4, SWDR: 17.63, SWUR: 16.69, LWDR: 8.98, LWUR: 8.59, comment: "2017-04-11 recalculate with corrected factors"} }
 
+- {station: HET38, content: {label: computation, target: p_QNH, formula: "p_QNH * ( 1 - (0.0065 * (439+44)) / (Ta_200 + 0.0065 * (439+44) + 273.15) )^(-5.257)", comment: "local pressure to sea level pressure"}}
+- {station: HET44, content: {label: computation, target: p_QNH, formula: "p_QNH * ( 1 - (0.0065 * (451+44)) / (Ta_200 + 0.0065 * (451+44) + 273.15) )^(-5.257)", comment: "local pressure to sea level pressure"}}
+

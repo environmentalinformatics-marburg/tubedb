@@ -2,6 +2,7 @@ package tsdb.streamdb;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.NavigableSet;
 import java.util.TreeMap;
@@ -192,6 +193,23 @@ public class StreamStorageStreamDB implements StreamStorage {
 			}
 		}
 
+	}
+	
+	public void insertDataRows(String stationName, String[] sensorNames, Collection<DataRow> dataRows) {
+		int sensors = sensorNames.length;
+		ArrayList<DataEntry> dataEntryList = new ArrayList<DataEntry>(dataRows.size());
+		for(int i=0;i<sensors;i++) {
+			dataEntryList.clear();
+			for(DataRow dataRow:dataRows) {
+				float v = dataRow.data[i];
+				if(Float.isFinite(v)) {
+					dataEntryList.add(new DataEntry((int)dataRow.timestamp, v));
+				}
+
+			}
+			DataEntry[] dataEntries = dataEntryList.toArray(new DataEntry[0]);
+			insertDataEntryArray(stationName, sensorNames[i], dataEntries);
+		}		
 	}
 
 	public void insertDataEntryArray(String stationName, String sensorName, DataEntry[] dataEntries) {

@@ -72,7 +72,7 @@ class Loader_manual_tfi {
 	public List<DataRow> toDataRows() {
 		List<DataRow> rowList = new ArrayList<DataRow>(timestampSeries.entryList.size());
 		for(TsEntry entry:timestampSeries.entryList) {
-			Float[] rowData = new Float[sourcePos.length];
+			float[] rowData = new float[sourcePos.length];
 			for(int schemaIndex=0;schemaIndex<sourcePos.length;schemaIndex++) {
 				int sourceIndex = sourcePos[schemaIndex];
 				if(sourceIndex==-1) {

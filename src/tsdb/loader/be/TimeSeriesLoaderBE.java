@@ -136,8 +136,8 @@ public class TimeSeriesLoaderBE {
 	private void merge(DataRow collector, DataRow add) {
 		//log.info("merge "+Arrays.toString(collector.data));
 		if(collector!=add) {
-			Float[] collectorData = collector.data;
-			Float[] currentData = add.data;
+			float[] collectorData = collector.data;
+			float[] currentData = add.data;
 			int len = collectorData.length;
 			for(int i=0;i<len;i++) {
 				if(Float.isNaN(collectorData[i])) {
@@ -369,7 +369,7 @@ public class TimeSeriesLoaderBE {
 		}
 
 		//create events
-		Float[] payload = new Float[station.loggerType.sensorNames.length];
+		float[] payload = new float[station.loggerType.sensorNames.length];
 		//short sampleRate = (short) udbfTimeSeries.timeConverter.getTimeStep().toMinutes();
 		//iterate over input rows
 		for(int rowIndex=0;rowIndex<udbfTimeSeries.time.length;rowIndex++) {			

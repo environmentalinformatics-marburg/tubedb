@@ -2,7 +2,9 @@ package tsdb.component;
 
 import java.io.Serializable;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
+import tsdb.util.DataRow;
 import tsdb.util.TimeUtil;
 import tsdb.util.TsSchema;
 import tsdb.util.Util;
@@ -43,6 +45,12 @@ public class SourceEntry implements Serializable {
 		return new SourceEntry(filename,timestampSeries.name,timestampSeries.getFirstTimestamp(),timestampSeries.getLastTimestamp(),timestampSeries.size(),timestampSeries.sensorNames,sensorNames, TsSchema.NO_CONSTANT_TIMESTEP);
 	}
 	
+	public static SourceEntry of(String stationName, String[] sensorNames, ArrayList<DataRow> dataRows, Path filename) {
+		long firstTimestamp = dataRows.get(0).timestamp;
+		long lastTimestamp = dataRows.get(dataRows.size()-1).timestamp;
+		return new SourceEntry(filename, stationName, firstTimestamp, lastTimestamp, dataRows.size(), sensorNames, sensorNames, TsSchema.NO_CONSTANT_TIMESTEP);
+	}
+	
 	@Override
 	public String toString() {
 		return filename+"\t"+stationName+"\t"+TimeUtil.oleMinutesToText(firstTimestamp)+"\t"+TimeUtil.oleMinutesToText(lastTimestamp);
@@ -75,5 +83,4 @@ public class SourceEntry implements Serializable {
 			return Util.arrayToStringNullable(translation);
 		}		
 	}
-
 }

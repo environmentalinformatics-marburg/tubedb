@@ -39,6 +39,7 @@ public class LabeledProperty {
 				return map;
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			log.error(e);
 			return null;
 		}
