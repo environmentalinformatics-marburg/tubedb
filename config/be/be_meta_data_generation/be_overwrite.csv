@@ -1,0 +1,6 @@
+plot,lat,lon,elevation,comment
+HEW51,51.1936589392,10.3536382393,,
+SET39,52.92506,13.86874,66,
+HET38,51.079,10.460,439,"estimated lat lon"
+HET44,51.333,10.368,451,"estimated lat lon"
+AET06,48.394,9.445,,"estimated lat lon"

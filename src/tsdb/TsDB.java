@@ -21,6 +21,7 @@ import tsdb.component.labeledproperty.LabeledProperty;
 import tsdb.graph.QueryPlanGenerators;
 import tsdb.graph.QueryPlanGenerators.VirtualCopyList;
 import tsdb.graph.QueryPlanGenerators.VirtualCopyPair;
+import tsdb.iterator.SunshineIterator;
 import tsdb.streamdb.StreamStorageStreamDB;
 import tsdb.util.AggregationType;
 import tsdb.util.AssumptionCheck;
@@ -680,29 +681,34 @@ public class TsDB implements AutoCloseable {
 		if(schema==null) {
 			return null;
 		}
-		Map<String, Integer> schemaMap = Util.stringArrayToMap(schema);
 		LinkedHashSet<String> additionalSensorNames = new LinkedHashSet<>(); // no duplicates
+		LinkedHashSet<String> allSensorNames = new LinkedHashSet<>(Arrays.asList(schema)); // no duplicates
+		
 		
 		for(VirtualCopyPair pair:QueryPlanGenerators.VIRTUAL_COPY_PAIRS) {
-			if(schemaMap.containsKey(pair.source)) {
+			if(allSensorNames.contains(pair.source)) {
 				additionalSensorNames.add(pair.target);
+				allSensorNames.add(pair.target);
 			}
 		}
 		for(VirtualCopyList p:QueryPlanGenerators.VIRTUAL_COPY_LISTS) {
 			innerLoop: for(String source:p.sources) {
-				if(schemaMap.containsKey(source)) {
+				if(allSensorNames.contains(source)) {
 					additionalSensorNames.add(p.target);
+					allSensorNames.add(p.target);
 					break innerLoop;
 				}
 			}
 		}		
 		
-		if(schemaMap.containsKey("Rn_300")&&!schemaMap.containsKey("SD")) {
-			additionalSensorNames.add("SD");
+		if(additionalSensorNames.contains(SunshineIterator.RADIATION_SENSOR_NAME)&&!additionalSensorNames.contains(SunshineIterator.SUNSHINE_SENSOR_NAME)) {
+			additionalSensorNames.add(SunshineIterator.SUNSHINE_SENSOR_NAME);
+			allSensorNames.add(SunshineIterator.SUNSHINE_SENSOR_NAME);
 		}
 		
-		if(schemaMap.containsKey("P_container_RT")&&!schemaMap.containsKey("P_RT_NRT")) {
+		if(additionalSensorNames.contains("P_container_RT")&&!additionalSensorNames.contains("P_RT_NRT")) {
 			additionalSensorNames.add("P_RT_NRT");
+			allSensorNames.add("P_RT_NRT");
 		}
 		if(additionalSensorNames.isEmpty()) {
 			return schema;
@@ -733,8 +739,8 @@ public class TsDB implements AutoCloseable {
 		if(schemaMap.containsKey("WD")&&!schemaMap.containsKey("WV")) {
 			additionalSensorNames.add("WV");
 		}
-		if(schemaMap.containsKey("SD")&&!schemaMap.containsKey("Rn_300")) {
-			additionalSensorNames.add("Rn_300");
+		if(schemaMap.containsKey(SunshineIterator.SUNSHINE_SENSOR_NAME)&&!schemaMap.containsKey(SunshineIterator.RADIATION_SENSOR_NAME)) {
+			additionalSensorNames.add(SunshineIterator.RADIATION_SENSOR_NAME);
 		}
 
 		if(additionalSensorNames.isEmpty()) {

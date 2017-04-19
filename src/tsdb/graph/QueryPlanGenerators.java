@@ -24,6 +24,7 @@ import tsdb.graph.processing.Virtual_P_RT_NRT;
 import tsdb.graph.source.BaseFactory;
 import tsdb.graph.source.StationRawSource;
 import tsdb.iterator.ElementCopyIterator.Action;
+import tsdb.iterator.SunshineIterator;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataQuality;
 import tsdb.util.Util;
@@ -86,7 +87,7 @@ public final class QueryPlanGenerators {
 			rawSource = RangeStepFiltered.of(tsdb, rawSource, dataQuality);
 		}
 		rawSource = elementRawCopy(rawSource);
-		if(Util.containsString(schema, "SD")) {
+		if(Util.containsString(schema, SunshineIterator.SUNSHINE_SENSOR_NAME)) {
 			rawSource = Sunshine.of(tsdb, rawSource);
 		}
 		if(Util.containsString(schema, "P_RT_NRT") && Util.containsString(schema, "P_container_RT")) {

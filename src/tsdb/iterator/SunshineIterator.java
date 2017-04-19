@@ -17,7 +17,9 @@ import tsdb.util.iterator.TsIterator;
  */
 public class SunshineIterator extends InputIterator {
 	
-	private int Rn_300_pos = -1;
+	public static final String RADIATION_SENSOR_NAME = "SWDR";
+	public static final String SUNSHINE_SENSOR_NAME = "SD";
+	private int radiation_pos = -1;
 	private int SD_pos = -1;	
 
 	public SunshineIterator(TsIterator input_iterator) {
@@ -25,26 +27,26 @@ public class SunshineIterator extends InputIterator {
 		String[] names = this.getNames();
 		System.out.println(Arrays.toString(names));
 		for(int i=0;i<names.length;i++) {
-			if(names[i].equals("Rn_300")) {
-				Rn_300_pos = i;
+			if(names[i].equals(RADIATION_SENSOR_NAME)) {
+				radiation_pos = i;
 			}
-			if(names[i].equals("SD")) {
+			if(names[i].equals(SUNSHINE_SENSOR_NAME)) {
 				SD_pos = i;
 			}
 		}
-		AssumptionCheck.throwTrue(Rn_300_pos<0||SD_pos<0,"no Rn_300 or SD for SunshineIterator");		
+		AssumptionCheck.throwTrue(radiation_pos<0||SD_pos<0,"no radiation or sunshine for SunshineIterator");		
 	}
 
 	@Override
 	public TsEntry next() {
 		TsEntry entry = input_iterator.next();
 		float[] data = Arrays.copyOf(entry.data, entry.data.length);
-		float value = entry.data[Rn_300_pos];
+		float value = entry.data[radiation_pos];
 		data[SD_pos] = Float.isNaN(value)?Float.NaN:(value>=120?1f:0f);
 		DataQuality[] qf;
 		if(entry.qualityFlag!=null) {
 			qf = Arrays.copyOf(entry.qualityFlag, entry.qualityFlag.length);
-			qf[SD_pos] = entry.qualityFlag[Rn_300_pos];
+			qf[SD_pos] = entry.qualityFlag[radiation_pos];
 		} else {
 			qf = null;
 		}
