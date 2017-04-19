@@ -13,6 +13,7 @@
   
   <script type="text/x-template" id="visualisation-template">
 	<div id="container">
+		<a class="main_page_link" href="../index.html">main-page</a>
 		<div v-if="appMessage != undefined">
 			{{appMessage}}
 		</div>
@@ -182,6 +183,10 @@
 			
 			<div v-if="aggregation=='raw' && quality=='empirical' && viewType!='heatmap'" class="invalid">
 				For raw data empirical qualitiy check is not available.
+			</div>
+			
+			<div v-if="aggregation=='raw' && interpolated" class="invalid">
+				For raw data interpolation is not available.
 			</div>
 						
 			<div v-if="viewType != 'table'" class="results" id="results">

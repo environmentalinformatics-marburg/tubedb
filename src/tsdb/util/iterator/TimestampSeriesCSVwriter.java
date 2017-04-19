@@ -105,28 +105,8 @@ public class TimestampSeriesCSVwriter {
 			if(col_datetime) {
 				if(!isFirst) {
 					bufferedWriter.write(',');
-				}
-				LocalDateTime datetime = TimeUtil.oleMinutesToLocalDateTime(entry.timestamp);				
-				switch(datetimeFormat) {
-				case YEAR:
-					bufferedWriter.write(TimeUtil.fastDateWriteYears(datetime.toLocalDate()));
-					break;
-				case MONTH:
-					bufferedWriter.write(TimeUtil.fastDateWriteMonths(datetime.toLocalDate()));
-					break;
-				case WEEK:
-					bufferedWriter.write(TimeUtil.fastDateWriteWeeks(datetime.toLocalDate()));
-					break;
-				case DAY:
-					bufferedWriter.write(TimeUtil.fastDateWrite(datetime.toLocalDate()));
-					break;
-				case HOUR:
-					bufferedWriter.write(TimeUtil.fastDateTimeWriteHours(datetime));
-					break;
-				default:
-					//bufferedWriter.write(datetime.toString());
-					bufferedWriter.write(TimeUtil.fastDateTimeWrite(datetime));	
 				}				
+				bufferedWriter.write(TimeUtil.fastTimestampWrite(entry.timestamp, datetimeFormat));
 				isFirst = false;
 			}
 			for(int i=0;i<sensorNames.length;i++) {

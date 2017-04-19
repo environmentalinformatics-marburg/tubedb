@@ -2,6 +2,7 @@ package tsdb.usecase;
 
 import java.time.LocalDateTime;
 
+import tsdb.util.AggregationInterval;
 import tsdb.util.TimeUtil;
 import tsdb.util.iterator.CSV;
 import tsdb.util.iterator.CSVTimeType;
@@ -77,7 +78,7 @@ public class UseCaseGapFiller {
     	
     	System.out.println("write to file...");
     	
-    	CSV.write(targetBaseTimeSeries,"c:/timeseriesdatabase_output/result.csv", " ", "NaN", CSVTimeType.TIMESTAMP_AND_DATETIME);
+    	CSV.write(targetBaseTimeSeries,"c:/timeseriesdatabase_output/result.csv", " ", "NaN", CSVTimeType.TIMESTAMP_AND_DATETIME, AggregationInterval.RAW);
 
     	
     	

@@ -242,6 +242,11 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 					validValueCounter++;
 					columnEntryCounter[i]++;
 					break;
+				case SUM_SECOND_TO_HOUR:
+					resultData[i] = aggSum[i]/3600f;
+					validValueCounter++;
+					columnEntryCounter[i]++;
+					break;					
 				case SUM:
 					resultData[i] = aggSum[i];
 					validValueCounter++;

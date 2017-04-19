@@ -208,7 +208,7 @@ public class Handler_query_csv extends MethodHandler {
 			
 			ServletOutputStream out = response.getOutputStream();
 			
-			CSV.write(ts.tsIterator(), true, out, ",", nanText, CSVTimeType.DATETIME, false, false);
+			CSV.write(ts.tsIterator(), true, out, ",", nanText, CSVTimeType.DATETIME, false, false, agg);
 
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {

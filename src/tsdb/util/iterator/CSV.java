@@ -9,6 +9,7 @@ import java.util.Locale;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import tsdb.util.AggregationInterval;
 import tsdb.util.TimeUtil;
 import tsdb.util.TsEntry;
 
@@ -23,47 +24,47 @@ public class CSV {
 	
 	private static final String NEW_LINE = "\r\n"; // windows new line
 
-	public static void writeNoHeader(TsIterator it, String filename, String separator, String nanText, CSVTimeType csvTimeType) {
-		write(it, false, filename, separator, nanText, csvTimeType, false, false);
+	public static void writeNoHeader(TsIterator it, String filename, String separator, String nanText, CSVTimeType csvTimeType, AggregationInterval datetimeFormat) {
+		write(it, false, filename, separator, nanText, csvTimeType, false, false, datetimeFormat);
 	}
 
 
-	public static void write(TsIterable input, String filename, String separator, String nanText, CSVTimeType csvTimeType) {
-		write(input, filename, separator, nanText, csvTimeType, false);
+	public static void write(TsIterable input, String filename, String separator, String nanText, CSVTimeType csvTimeType, AggregationInterval datetimeFormat) {
+		write(input, filename, separator, nanText, csvTimeType, false, datetimeFormat);
 	}
 	
-	public static void write(TsIterable input, String filename) {
-		write(input, filename, ",", "NA", CSVTimeType.TIMESTAMP_AND_DATETIME);
+	public static void write(TsIterable input, String filename, AggregationInterval datetimeFormat) {
+		write(input, filename, ",", "NA", CSVTimeType.TIMESTAMP_AND_DATETIME, datetimeFormat);
 	}
 
-	public static void write(TsIterable input, String filename, String separator, String nanText, CSVTimeType csvTimeType, boolean qualityFlag) {
-		write(input.tsIterator(), filename, separator, nanText, csvTimeType, qualityFlag, false);
+	public static void write(TsIterable input, String filename, String separator, String nanText, CSVTimeType csvTimeType, boolean qualityFlag, AggregationInterval datetimeFormat) {
+		write(input.tsIterator(), filename, separator, nanText, csvTimeType, qualityFlag, false, datetimeFormat);
 	}
 	
-	public static void write(TsIterator it, String filename) {
-		write(it, filename, ",", "NA", CSVTimeType.TIMESTAMP_AND_DATETIME);
+	public static void write(TsIterator it, String filename, AggregationInterval datetimeFormat) {
+		write(it, filename, ",", "NA", CSVTimeType.TIMESTAMP_AND_DATETIME, datetimeFormat);
 	}
 
-	public static void write(TsIterator it, String filename, String separator, String nanText, CSVTimeType csvTimeType) {
-		write(it, filename, separator, nanText, csvTimeType, false, false);
+	public static void write(TsIterator it, String filename, String separator, String nanText, CSVTimeType csvTimeType, AggregationInterval datetimeFormat) {
+		write(it, filename, separator, nanText, csvTimeType, false, false, datetimeFormat);
 	}
 
-	public static void write(TsIterator it, String filename, String separator, String nanText, CSVTimeType csvTimeType, boolean qualityFlag, boolean qualityCounter) {
-		write(it, true, filename, separator, nanText, csvTimeType, qualityFlag, qualityCounter);
+	public static void write(TsIterator it, String filename, String separator, String nanText, CSVTimeType csvTimeType, boolean qualityFlag, boolean qualityCounter, AggregationInterval datetimeFormat) {
+		write(it, true, filename, separator, nanText, csvTimeType, qualityFlag, qualityCounter, datetimeFormat);
 	}
 	
 	
 		
 
-	public static void write(TsIterator it, boolean header, String filename, String separator, String nanText, CSVTimeType csvTimeType, boolean qualityFlag, boolean qualityCounter) {
+	public static void write(TsIterator it, boolean header, String filename, String separator, String nanText, CSVTimeType csvTimeType, boolean qualityFlag, boolean qualityCounter, AggregationInterval datetimeFormat) {
 		try {
 			FileOutputStream out = new FileOutputStream(filename);
-			write(it, header, out, separator, nanText, csvTimeType, qualityFlag, qualityCounter);
+			write(it, header, out, separator, nanText, csvTimeType, qualityFlag, qualityCounter, datetimeFormat);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-	public static void write(TsIterator it, boolean header, OutputStream out, String separator, String nanText, CSVTimeType csvTimeType, boolean qualityFlag, boolean qualityCounter) {		
+	public static void write(TsIterator it, boolean header, OutputStream out, String separator, String nanText, CSVTimeType csvTimeType, boolean qualityFlag, boolean qualityCounter, AggregationInterval datetimeFormat) {		
 		boolean time=false;
 		if(csvTimeType==CSVTimeType.TIMESTAMP||csvTimeType==CSVTimeType.DATETIME||csvTimeType==CSVTimeType.TIMESTAMP_AND_DATETIME) {
 			time=true;
@@ -127,12 +128,14 @@ public class CSV {
 						printStream.print(timestamp);
 						break;
 					case DATETIME:
-						printStream.print(TimeUtil.oleMinutesToLocalDateTime(timestamp));
+						//printStream.print(TimeUtil.oleMinutesToLocalDateTime(timestamp));
+						printStream.print(TimeUtil.fastTimestampWrite(timestamp, datetimeFormat));
 						break;
 					case TIMESTAMP_AND_DATETIME:
 						printStream.print(timestamp);
 						printStream.print(separator);
-						printStream.print(TimeUtil.oleMinutesToLocalDateTime(timestamp));
+						//printStream.print(TimeUtil.oleMinutesToLocalDateTime(timestamp));
+						printStream.print(TimeUtil.fastTimestampWrite(timestamp, datetimeFormat));
 						break;
 					default:
 						printStream.print("---");

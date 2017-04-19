@@ -3,6 +3,7 @@ package tsdb.util.iterator;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import tsdb.util.AggregationInterval;
 import tsdb.util.TsEntry;
 import tsdb.util.TsSchema;
 import tsdb.util.processingchain.ProcessingChainNode;
@@ -58,7 +59,7 @@ public abstract class TsIterator implements Iterator<TsEntry>, ProcessingChainNo
 	 * @param filename
 	 */
 	public void writeCSV(String filename) {
-		CSV.write(this,filename);
+		CSV.write(this, filename, AggregationInterval.RAW);
 	}
 	
 	/**
