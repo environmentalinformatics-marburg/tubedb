@@ -20,4 +20,10 @@ public class FormulaPow extends Formula {
 			}
 		};
 	}
+	@Override
+	public String compileToString(Map<String, Integer> sensorMap) {
+		String ja = a.compileToString(sensorMap);
+		String jb = b.compileToString(sensorMap);
+		return "((float) Math.pow((double)"+ja+",(double)"+jb+"))";
+	}
 }

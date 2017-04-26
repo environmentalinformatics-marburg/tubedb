@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.time.LocalDateTime;
 import java.util.Locale;
 
 import org.yaml.snakeyaml.DumperOptions.LineBreak;

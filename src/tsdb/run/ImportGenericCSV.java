@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -146,11 +145,12 @@ public class ImportGenericCSV {
 
 				List<LabeledProperty> computationList = station.labeledProperties.query("computation", (int)firstTimestamp, (int)lastTimestamp);
 				if(computationList.size()>0) {
-					log.info("LabeledProperty computation");
+					log.trace("LabeledProperty computations");
 					for(LabeledProperty prop:computationList) {					
 						try {
 							PropertyComputation computation = ((PropertyComputation)prop.content);
 							if(Util.containsString(sensorNames, computation.target)) {
+								log.trace("LabeledProperty computation "+computation.target);
 								computation.calculate(dataRows, sensorNames, firstTimestamp, lastTimestamp);
 							}
 						} catch(Exception e) {

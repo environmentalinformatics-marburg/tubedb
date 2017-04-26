@@ -24,4 +24,9 @@ public class FormulaNum extends Formula {
 		};
 		
 	}
+
+	@Override
+	public String compileToString(Map<String, Integer> sensorMap) {
+		return Float.toString(value)+"f";
+	}
 }
