@@ -1394,5 +1394,33 @@ public class ConfigLoader {
 		} catch (Exception e) {
 			log.error("could not read station properties yaml file: "+e);
 		}		
+	}
+
+	public void readSensorConfig(String yamlFile) {
+		log.trace("read sensors yaml");
+		try {
+			File file = new File(yamlFile);
+			if(file.exists()) {
+				Yaml yaml = new Yaml(new MyConstructor());
+				InputStream in = new FileInputStream(file);
+				Object yamlObject = yaml.load(in);
+				YamlMap yamlMap = YamlMap.ofObject(yamlObject);
+				for(String sensorName:yamlMap.keys()) {
+					try {
+						YamlMap sensorYaml = yamlMap.getMap(sensorName);
+						Sensor sensor = Sensor.ofYaml(sensorName, sensorYaml);
+						tsdb.insertSensor(sensor);
+						//log.info(sensorName+" "+sensor.baseAggregationType);
+					} catch(Exception e) {
+						log.warn("could not read sensor yaml of: "+sensorName+"   in "+yamlFile);
+					}
+				}
+			} else {
+				log.warn("missing sensors yaml file: "+yamlFile);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("could not read sensors yaml file: "+e);
+		}		
 	}	
 }

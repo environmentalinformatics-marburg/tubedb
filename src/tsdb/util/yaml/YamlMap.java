@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -31,6 +32,10 @@ public class YamlMap {
 		return o;
 	}
 	
+	public Object optObject(String name) {
+		return map.get(name);
+	}
+	
 	public Object optObject(String name, Object def) {
 		if(contains(name)) {
 			return getObject(name);
@@ -49,7 +54,7 @@ public class YamlMap {
 	}
 	
 	@SuppressWarnings("unchecked")
-	YamlMap getMap(String name) {
+	public YamlMap getMap(String name) {
 		Object o = getObject(name);
 		if(o instanceof Map) {
 			return new YamlMap((Map<String, Object>) o);
@@ -133,6 +138,10 @@ public class YamlMap {
 	@Override
 	public String toString() {
 		return map.toString();
+	}
+	
+	public Set<String> keys() {
+		return map.keySet();
 	}
 
 

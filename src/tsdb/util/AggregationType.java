@@ -1,5 +1,8 @@
 package tsdb.util;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * aggregation type of sensor data
  * @author woellauer
@@ -19,6 +22,8 @@ public enum AggregationType {
 	SUM_OF_AVERAGE, // sum of values, average for base aggregation
 	SUM_RADIATION, // sum of values, special average for base aggregation - used for radiation sensors ( W/m^2 -> Wh/m^2)
 	SUM_SECOND_TO_HOUR; // sum of values, unit second to hour conversion for base aggregation
+	
+	private static final Logger log = LogManager.getLogger();
 
 	public static AggregationType getAggregationType(String aggregateTypeText) {
 		switch(aggregateTypeText.toLowerCase()) {
@@ -49,6 +54,7 @@ public enum AggregationType {
 		case "sum_second_to_hour":
 			return SUM_SECOND_TO_HOUR;			
 		default:
+			log.warn("unknown aggregation: "+aggregateTypeText);
 			return null;
 		}
 	}

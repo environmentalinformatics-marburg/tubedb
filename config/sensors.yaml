@@ -1,0 +1,849 @@
+Ta_200:
+  description: Air temperature at 2 meters above ground
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+
+Ta_200_min:
+  description: Minimum value of Ta_200
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: minimum
+  physical_range: [-40.0, 60.0]
+
+Ta_200_max:
+  description: Maximum value of Ta_200
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: maximum
+  physical_range: [-40.0, 60.0]
+  
+rH_200:
+  description: Relative air humidity at 2 meters above ground
+  unit: '% (percentage of relative humidity, 0-100)'
+  aggregation: average
+  physical_range: [0.0, 100.0] 
+  
+rH_200_min:
+  description: Minimum value of rH_200
+  unit: '% (percentage of relative humidity, 0-100)'
+  aggregation: minimum
+  physical_range: [0.0, 100.0] 
+
+rH_200_max:
+  description: Maximum value of rH_200
+  unit: '% (percentage of relative humidity, 0-100)'
+  aggregation: maximum
+  physical_range: [0.0, 100.0] 
+
+Ta_10:
+  description: Air temperature 10 centimeters above surface within the ground vegetation layer
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0]  
+
+Ts_5:
+  description: Soil temperature at 5 centimeters below surface
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0] 
+  
+Ts_10:
+  description: Soil temperature at 10 centimeters below surface 
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  
+Ts_20: 
+  description: Soil temperature at 20 centimeters below surface 
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0] 
+  
+Ts_50:
+  description: Soil temperature at 50 centimeters below surface
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+
+SM_10:
+  description: Soil moisture at 10 centimeters below surface
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+
+SM_15:
+  description: Soil moisture at 15 centimeters below surface (BeCycles sensor type at Exploratories) 
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+
+SM_20:
+  description: Soil moisture at 20 centimeters below surface
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+
+SM_30: 
+  description: Soil moisture at 30 centimeters below surface (BeCycles sensor type at Exploratories) 
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+
+SM_40:
+  description: Soil moisture at 40 centimeters below surface (BeCycles sensor type at Exploratories)
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+ 
+SM_50:   
+  description: Soil moisture at 50 centimeters below surface (BeCycles sensor type at Exploratories) 
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+
+#****** new BeCycles sensors ********
+
+SM_10_2:
+  description: Soil moisture at 10 centimeters below surface (BeCycles sensor type at Exploratories)
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  
+SM_20_2:
+  description: Soil moisture at 20 centimeters below surface (BeCycles sensor type at Exploratories)
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  
+SM_35:
+  description: Soil moisture at 35 centimeters below surface (BeCycles sensor type at Exploratories)
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  
+#************************************
+
+PAR_200:
+  description: Photosynthetically activ radiation at 2 meters height
+  unit: µmol/(m^2*s) (micromol photons per square meter per second)
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  
+PAR_300:
+  description: Photosynthetically activ radiation at 3 meters height
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+   
+Albedo:
+  description: Albedo (SWUR/SWDR)
+  unit: ratio (0 to 1) 
+  aggregation: average_albedo
+  physical_range: [0.0, 1.0]
+  
+SWDR_300:
+  description: Shortwave Downward Radiation at 3 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+   
+SWUR_300:
+  description: Shortwave Upward Radiation at 3 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+   
+LWDR_300:
+  description: Longwave Downward Radiation at 3 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  
+LWUR_300:
+  description: Longwave Upward Radiation at 3 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+   
+Rn_300:
+  description: Net radiation at 3 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+   
+Tsky:
+  description: Sky temperature
+  unit: °C (degree Celcius) 
+  aggregation: average
+  physical_range: [-40.0, 60.0] 
+  
+Tgnd:
+  description: Ground temperature
+  unit: °C (degree Celcius) 
+  aggregation: average
+  physical_range: [-40.0, 60.0] 
+  
+Trad:
+  description: Radiation temperature
+  unit: °C (degree Celcius) 
+  aggregation: average
+  physical_range: [-40.0, 60.0]   
+  
+WD:
+  description: Wind direction
+  unit: ° (degree of arc 0-360)
+  aggregation: average_wind_direction
+  physical_range: [0.0, 360.0]   
+  
+WV:
+  description: Wind velocity
+  unit: m/s (meter per second) 
+  aggregation: average_wind_velocity
+  physical_range: [0.0, 100.0]
+  
+WV_gust:
+  description: Max. wind velocity (gust of wind)
+  unit: m/s (meter per second)
+  aggregation: maximum
+  physical_range: [0.0, 100.0]  
+  
+p_QNH:
+  description: Barometric pressure QNH/MSL, adjusted to mean sea level
+  unit: hPa (hectopascal)
+  aggregation: average
+  physical_range: [300.0, 1100.0]
+  
+p_local:
+  description: Barometric pressure, local
+  unit: hPa (hectopascal)
+  aggregation: average
+  physical_range: [300.0, 1100.0]
+  
+P_RT_NRT:
+  description: Precipitation
+  unit: mm (millimeter)
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+   
+P_container_RT:
+  description: Precipitation, actual unfiltered amount in container
+  unit: mm (millimeter)
+  aggregation: average
+  physical_range: [20.0, 850.0]  
+  
+P_container_NRT:
+  description: Precipitation, actual filtered amount in container   
+  unit: mm (millimeter) 
+  aggregation: average
+  physical_range: [20.0, 850.0]
+
+#general radiation
+
+SWDR:
+  description: Shortwave Downward Radiation
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  
+SWUR:
+  description: Shortwave Upward Radiation
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  
+LWDR:
+  description: Longwave Downward Radiation
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  
+LWUR:
+  description: Longwave Upward Radiation
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+
+#****** new sensors in AET06 ********
+
+SWDR_3700:
+  description: Shortwave Downward Radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  
+SWUR_3700:
+  description: Shortwave Upward Radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  
+LWDR_3700:
+  description: Longwave Downward Radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  
+LWUR_3700:
+  description: Longwave Upward Radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  
+PAR_2000:
+  description: Photosynthetically activ radiation at 20 meters height
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+ 
+PAR_1000:
+  description: Photosynthetically activ radiation at 10 meters height
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+ 
+Ta_1000:
+  description: Air temperature at 10 meters above ground
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [0.0, 100.0] 
+  
+rH_1000:
+  description: Relative air humidity at 10 meters above ground
+  unit: '% (percentage of relative humidity, 0-100)'
+  aggregation: average
+  physical_range: [0.0, 100.0] 
+  
+Ta_2000:
+  description: Air temperature at 20 meters above ground
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [0.0, 100.0] 
+ 
+rH_2000:
+  description: Relative air humidity at 20 meters above ground
+  unit: '% (percentage of relative humidity, 0-100)' 
+  aggregation: average
+  physical_range: [0.0, 100.0] 
+  
+Ta_3000:
+  description: Air temperature at 30 meters above ground
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [0.0, 100.0] 
+  
+rH_3000:
+  description: Relative air humidity at 30 meters above ground
+  unit: '% (percentage of relative humidity, 0-100)' 
+  aggregation: average
+  physical_range: [0.0, 100.0]
+  
+Ta_3700:
+  description: Air temperature at 37 meters above ground
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [0.0, 100.0] 
+  
+rH_3700:
+  description: Relative air humidity at 37 meters above ground
+  unit: '% (percentage of relative humidity, 0-100)'
+  aggregation: average
+
+#added 2016_03_08
+Rn_3700:
+  description: Net radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+
+#****** new sensors in SET39 ********
+
+SWDR_4400:
+  description: Shortwave Downward Radiation at 44 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  
+SWUR_4400:
+  description: Shortwave Upward Radiation at 44 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  
+LWDR_4400:
+  description: Longwave Downward Radiation at 44 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  
+LWUR_4400:
+  description: Longwave Upward Radiation at 44 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+ 
+Ta_4400:
+  description: Air temperature at 44 meters above ground
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [0.0, 100.0] 
+
+rH_4400:
+  description: Relative air humidity at 44 meters above ground
+  unit: '% (percentage of relative humidity, 0-100)' 
+  aggregation: average
+
+#added 2016_03_08
+Rn_4400:
+  description: Net radiation at 44 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+
+#****** Kili Sensors ********** (sensors that are not in BE)
+
+p_200:
+  description: Barometric pressure at 2 meters above ground
+  unit: hPa (hectopascal)
+  aggregation: average
+  
+T_CNR:
+  description: (T_CNR)
+  unit: [T_CNR]
+  aggregation: average
+  
+P_RT_NRT_01:
+  description: Precipitation
+  unit: mm (millimeter)
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+P_RT_NRT_02:
+  description: Precipitation
+  unit: mm (millimeter)
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+F_RT_NRT_01:
+  description: Fog
+  unit: mm (millimeter)
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+F_RT_NRT_02:
+  description: Fog
+  unit: mm (millimeter)
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+T_RT_NRT_01:
+  description: (T_RT_NRT_01)
+  unit: mm (millimeter)
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+T_RT_NRT_02:
+  description: (T_RT_NRT_02)
+  unit: mm (millimeter)
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+par_01:
+  description: Photosynthetically active radiation
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  
+par_02:
+  description: Photosynthetically active radiation
+  unit: µmol/(m^2*s) (micromol photons per square meter per second)
+  aggregation: average  
+  physical_range: [0.0, 3000.0]
+  
+swdr_01:
+  description: Shortwave downward radiation
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  
+swdr_02:
+  description: Shortwave downward radiation
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  
+B_01:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements) 
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_02:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_03:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_04:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_05:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_06:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_07:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_08:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_09:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_10:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_11:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_12:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+ 
+B_13:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_14:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_15:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_16:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_17:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_18:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_19:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_20:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_21:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_22:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_23:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_24:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_25:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_26:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_27:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_28:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_29:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+B_30:
+  description: Specific precipitation measurement
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+Fog:
+  description: Fog
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  
+Rainfall:
+  description: Precipitation
+  unit: mm (millimeter) (based on approx. weekly measurements)  
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+
+#************* south africa sensors at own stations *********
+
+DecagonECH2O:
+  description: Soil moisture
+  unit: mV (millivolt)
+  aggregation: average
+
+#************* isotope sensors at kili tfi *********
+
+fog_d18_16:
+  description: fog isotope ratio d<sup>18</sup>O = <sup>18</sup>O/<sup>16</sup>O  relative to VSMOW (Vienna Standard Mean Ocean Water)
+  unit: ratio
+  
+fog_dD_H:
+  description: fog isotope ratio dD = deuterium/protium  relative to VSMOW (Vienna Standard Mean Ocean Water)
+  unit: ratio 
+  
+fog_d_excess:
+  description: fog deuterium excess d = dD - 8d<sup>18</sup>O
+  unit:  ratio
+
+rain_d18_16:
+  description: rain isotope ratio d<sup>18</sup>O = <sup>18</sup>O/<sup>16</sup>O  relative to VSMOW (Vienna Standard Mean Ocean Water)
+  unit: ratio 
+  
+rain_dD_H:
+  description: rain isotope ratio dD = deuterium/protium  relative to VSMOW (Vienna Standard Mean Ocean Water)
+  unit: ratio 
+  
+rain_d_excess:
+  description: rain deuterium excess d = dD - 8d<sup>18</sup>O
+  unit: ratio 
+
+tf_d18_16:
+  description: thrufall isotope ratio d<sup>18</sup>O = <sup>18</sup>O/<sup>16</sup>O  relative to VSMOW (Vienna Standard Mean Ocean Water)
+  unit: ratio 
+ 
+tf_dD_H:
+  description: thrufall isotope ratio dD = deuterium/protium  relative to VSMOW (Vienna Standard Mean Ocean Water)
+  unit: ratio 
+  
+tf_d_excess:
+  description: thrufall deuterium excess d = dD - 8d<sup>18</sup>O
+  unit: ratio 
+
+#************* virtual sensors for exploratories *********
+
+SD:
+  description: sunshine duration (time of radiation >= 120 W/m^2)
+  unit: h (hour)
+  aggregation: sum_sunshine
+
+SDUR_SPN1:
+  description: sunshine duration (time of radiation >= 120 W/m^2)
+  unit: h (hour)  
+  aggregation: sum_second_to_hour
+
+#new sensors 2015_01_27 south africa own (station 10)
+
+dew_point:
+  description: dew point temperature
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  
+absH_200:
+  description: Absolute air humidity at 2 meters above ground
+  unit: g/m^3 (gram per cubic meter)
+  aggregation: average  
+  
+wet_bulb_temp:
+  description: Wet-bulb temperature  
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+
+#************* raw sensors at exploratories *********
+
+SM_15_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  
+UOtt:
+  aggregation: none
+  physical_range: [0.0, 30.0]   
+  
+SM_50_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  
+Trad_R:
+  aggregation: none
+  physical_range: [80.0, 125.0]
+  
+T_Ott:
+  aggregation: none
+  
+SWUR_300_U:
+  aggregation: none
+  physical_range: [-10.0, 10.0]
+  
+SM_30_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  
+SWDR_300_U:
+  aggregation: none
+  physical_range: [-10.0, 100.0]
+  
+LWUR_300_U:
+  aggregation: none
+  physical_range: [-10.0, 10.0]
+  
+SM_20_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  
+SM_10_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  
+SM_40_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  
+UB:
+  aggregation: none
+  physical_range: [0.0, 30.0]
+  
+LWDR_300_U:
+  aggregation: none
+  physical_range: [-40.0, 60.0]
+  
+PAR_200_U:
+  aggregation: none
+  physical_range: [0.0, 15.0]
+  
+PAR_300_U:
+  aggregation: none
+  physical_range: [0.0, 15.0]
+  
+SM_50_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  
+UOtt:
+  aggregation: none
+  
+SM_30_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  
+UB:
+  aggregation: none
+  
+PAR_200_U:
+  aggregation: none
+  physical_range: [0.0, 15.0]
+  
+PAR_300_U:
+  aggregation: none
+  physical_range: [0.0, 15.0]
+  
+SM_20_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  
+SM_40_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  
+T_Ott:
+  aggregation: none
+  
+Trad_R:
+  aggregation: none
+  
+SM_15_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  
+SM_10_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  
+LWDR_300_U:
+  aggregation: none
