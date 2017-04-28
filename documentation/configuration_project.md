@@ -210,7 +210,9 @@ For unspecified start or end `*` can be used.
 
 example file-content:
 `[`
+
 `{plot:"AEG00", raw:"Ta_2000", correct:"Ta_200", start:"2001-11-22T00:57", end:"2011-12-21T22:33"},`
+
 `]`
 
 ### `station_properties.yaml` (optional)

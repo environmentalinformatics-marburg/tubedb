@@ -113,7 +113,7 @@ public class StationProperties implements Serializable{
 	}
 
 	public String get_logger_type_name() {
-		return ConfigLoader.loggerPropertyKiLiToLoggerName(propertyMap.get(PROPERTY_LOGGER));
+		return propertyMap.get(PROPERTY_LOGGER);
 	}
 
 	public TimestampInterval<StationProperties> createTimestampInterval() {

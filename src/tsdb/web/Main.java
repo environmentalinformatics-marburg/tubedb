@@ -391,7 +391,7 @@ public class Main {
 	private static void createRainbowScale() {
 
 		try{
-			BufferedImage rainbow = ImageIO.read(new File(TsDBFactory.CONFIG_PATH,"global_scale_round_rainbow.png"));
+			BufferedImage rainbow = ImageIO.read(new File(TsDBFactory.CONFIG_PATH,"scale_round_rainbow.png"));
 			Color[] indexedColors = new Color[rainbow.getWidth()];
 			for(int i=0;i<indexedColors.length;i++) {
 				int c = rainbow.getRGB(i, 0);
@@ -405,7 +405,7 @@ public class Main {
 
 
 		try{
-			BufferedImage rainbow = ImageIO.read(new File(TsDBFactory.CONFIG_PATH,"global_scale_rainbow.png"));
+			BufferedImage rainbow = ImageIO.read(new File(TsDBFactory.CONFIG_PATH,"scale_rainbow.png"));
 			Color[] indexedColors = new Color[rainbow.getWidth()];
 			for(int i=0;i<indexedColors.length;i++) {
 				int c = rainbow.getRGB(i, 0);

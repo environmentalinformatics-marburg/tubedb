@@ -5,21 +5,47 @@ Climate parameters are defined by sensor configuration.
 
 Sensor definitions are global to all projects of one TubeDB instance.
 
-### `global_scale_rainbow.png`
+### `scale_rainbow.png`
 
 Image-file defines the color map used by heatmap visualisations.
 
 The image does have a an arbitrary width and height of 1 pixel. Range of values is mapped to colors from left to right.
 
-### `global_scale_round_rainbow.png`
+### `scale_round_rainbow.png`
 
 Image-file defines the color map used by heatmap visualisations with same start and end color (e.g. wind direction).
 
 The image does have a an arbitrary width and height of 1 pixel. Range of values is mapped to colors from left to right.
 
-### `global_sensor_aggregation.ini`
+### `sensor_ignore.ini`
 
-Ini-file defines default aggregation per sensor.
+Ini-file lists sensor names that are ignored at data import.
+
+file structure:
+
+`[ignore_sensors]`
+
+`SENSOR_NAME`
+ 
+...
+
+### `sensors.yaml`
+
+Yaml-file defines sensor meta data.
+
+properties:
+
+(optional) description: `DESCRIPTION`
+
+Description of the sensor.
+
+(optional) unit: `UNIT DESCRIPTION`
+
+Measurement unit and description.
+
+(optional) aggregation: `AGGREGATION TYPE`
+
+Type of measurement time aggregation.
 
 * `average` average of values
 * `average_albedo` albedo specific	
@@ -34,124 +60,70 @@ Ini-file defines default aggregation per sensor.
 * `sum_radiation` radiation specific
 * `sum_sunshine`  sunshine specific
 
-file structure:
+(optional) physical_range: `[MIN, MAX]`
 
-`[base_aggregation]`
+Valid range of measurement values for physical quality check.
 
-`SENSOR_NAME = AGGREGATION_TYPE`
+(optional) step_range: `[MIN, MAX]`
+
+Valid step range of consecutive measurement values for step quality check.
+
+(optional) empirical_diff: `[MAX]`
+
+Absolute maximum difference to reference time series for empirical quality check.
+
+(optional) interpolation_mse: `[MAX_MSE]`
+
+Maximum acceptable MSE (mean square error) of regression models used for Interpolated.
+
+Defaults to no interpolation.
+
+(optional) category: `[CATEGORY]`
+
+Sensor category for visualisation purposes.
+
+Valid values: `temperature`, `water`, `other`.
+
+Defaults to `other`.
+
+(optional) visibility: `[VISIBILITY_TYPE]`
+
+Valid values: `internal`, `public`.
+
+Defaults to `public`.
+
+Internal sensor are visible only if TubeDB is run in internal mode.
  
-...
-
-### `global_sensor_category.ini`
-
-Ini-file defines visualisation category per sensor.
-
-* `temperature` xy plot with red color
-* `water` xy bar plot with blue color
-* `other` xy plot with black color
-
-file structure:
-
-`[sensor_category]`
-
-`SENSOR_NAME = CATEGORY`
- 
-...
-
-
-### `global_sensor_description.ini`
-
-Ini-file defines text description per sensor.
-
-file structure:
-
-`[sensor_description]`
-
-`SENSOR_NAME = DESCRIPTION`
- 
-...
-
-
-### `global_sensor_empirical_diff.ini`
-
-Ini-file defines absolute maximum difference value for empirical quality check per sensor.
 
 file structure:
 
-`[parameter_empirical_diff]`
+`SENSOR_NAME:`
 
-`SENSOR_NAME = MAX_DIFF`
- 
+`  PROPERTY_NAME: PROPERTY_VALUE`
+
 ...
 
-### `global_sensor_ignore.ini`
+example file-content:
 
-Ini-file lists sensor names that are ignored at data import.
+```YAML
 
-file structure:
+Ta_200:
+  description: Air temperature at 2 meters above ground
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
 
-`[ignore_sensors]`
+rH_200:
+  description: Relative air humidity at 2 meters above ground
+  unit: '% (percentage of relative humidity, 0-100)'
+  aggregation: average
+  physical_range: [0.0, 100.0]
+  step_range: [0.0, 100.0] #high fluctuation possible
+  empirical_diff: 50
+  interpolation_mse: 100 
 
-`SENSOR_NAME`
- 
-...
-
-### `global_sensor_internal.ini`
-
-Ini-file lists administrative sensors that should be visible only if TubeDB is run in "internal" mode.
-
-file structure:
-
-`[internal_sensors]`
-
-`SENSOR_NAME`
- 
-...
-
-### `global_sensor_interpolation.ini`
-
-Ini-file lists sensors that can be interpolated and for each sensor maximum acceptable MSE (mean square error) of regression.
-
-file structure:
-
-`[interpolation_sensors]`
-
-`SENSOR_NAME = MAX_MSE`
- 
-...
-
-### `global_sensor_physical_range.ini`
-
-Ini-file defines range of values for physical quality check per sensor.
-
-file structure:
-
-`[parameter_physical_range]`
-
-`SENSOR_NAME = [MIN, MAX]`
- 
-...
-
-### `global_sensor_step_range.ini`
-
-Ini-file defines range of step values per time step for step quality check per sensor.
-
-file structure:
-
-`[paramter_step_range]`
-
-`SENSOR_NAME = [MIN, MAX]`
- 
-...
-
-### `global_sensor_unit.ini`
-
-Ini-file defines text description of measurement unit per sensor.
-
-file structure:
-
-`[sensor_unit]`
-
-`SENSOR_NAME = UNIT`
- 
-...
+```

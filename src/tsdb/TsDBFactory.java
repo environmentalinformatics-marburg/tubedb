@@ -184,24 +184,12 @@ public final class TsDBFactory {
 
 		try {
 			TsDB tsdb = new TsDB(databaseDirectory, cacheDirectory, streamdbPathPrefix, configDirectory);
-			ConfigLoader configLoader = new ConfigLoader(tsdb);
-			
+			ConfigLoader configLoader = new ConfigLoader(tsdb);			
 			
 			//*** global config start
-			configLoader.readSensorConfig(configDirectory+"sensors.yaml");
-			
-			//OLD configLoader.readBaseAggregationConfig(configDirectory+"global_sensor_aggregation.ini"); // read and insert type of aggregation to sensor objects
-			configLoader.readIgnoreSensorName(configDirectory+"global_sensor_ignore.ini"); // read and insert sensor names that should be not inserted in database
-			//OLD configLoader.readSensorPhysicalRangeConfig(configDirectory+"global_sensor_physical_range.ini"); // read and insert physical range to sensor objects
-			//OLD configLoader.readSensorStepRangeConfig(configDirectory+"global_sensor_step_range.ini"); // read and insert step range to sensor objects			
-			//OLD configLoader.readInterpolationSensorNameConfig(configDirectory+"global_sensor_interpolation.ini"); // read list of sensor names for interpolation and mark sensor objects
-			//configLoader.readEmpiricalDiffConfig(configDirectory+"global_sensor_empirical_diff.ini"); // read empirical max diff and insert it in sensor objects
-			//OLD configLoader.readSensorDescriptionConfig(configDirectory+"global_sensor_description.ini");
-			//OLD configLoader.readSensorUnitConfig(configDirectory+"global_sensor_unit.ini");
-			//OLD configLoader.readSensorCategoryConfig(configDirectory+"global_sensor_category.ini");
-			//OLD configLoader.readSensorInternalConfig(configDirectory+"global_sensor_internal.ini");
-			//*** global config end
-			
+			configLoader.readSensorMetaData(configDirectory+"sensors.yaml"); // read sensor meta data
+			configLoader.readIgnoreSensorName(configDirectory+"sensor_ignore.ini"); // read and insert sensor names that should be not inserted in database
+			//*** global config end			
 
 			//*** region config start
 			for(Path path : Files.newDirectoryStream(Paths.get(configDirectory), path->path.toFile().isDirectory())) {
@@ -213,7 +201,7 @@ public final class TsDBFactory {
 						configLoader.readGeneralStation(dir+"/general_stations.ini");
 						configLoader.readLoggerTypeSchema(dir+"/logger_type_schema.ini");
 						configLoader.readPlotInventory(dir+"/plot_inventory.csv");
-						configLoader.readOptionalGenericStationInventory(dir+"/station_inventory.csv"); // If all plots are stations then this file is not required.
+						configLoader.readOptionalStationInventory(dir+"/station_inventory.csv"); // If all plots are stations then this file is not required.
 						configLoader.readOptinalSensorTranslation(dir+"/sensor_translation.ini");
 						configLoader.readOptionalSensorNameCorrection(dir+"/sensor_name_correction.json");  // read sensor translation and insert it into existing stations
 						configLoader.readOptionalStationProperties(dir+"/station_properties.yaml");
@@ -222,9 +210,7 @@ public final class TsDBFactory {
 					log.info("could not load meta data of  "+path+"  "+e);
 				}
 			}
-			//*** region config end
-
-			
+			//*** region config end			
 
 			//*** calc additional data start
 			tsdb.updateGeneralStations();
