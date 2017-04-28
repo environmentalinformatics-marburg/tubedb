@@ -193,13 +193,13 @@ public final class TsDBFactory {
 			//OLD configLoader.readBaseAggregationConfig(configDirectory+"global_sensor_aggregation.ini"); // read and insert type of aggregation to sensor objects
 			configLoader.readIgnoreSensorName(configDirectory+"global_sensor_ignore.ini"); // read and insert sensor names that should be not inserted in database
 			//OLD configLoader.readSensorPhysicalRangeConfig(configDirectory+"global_sensor_physical_range.ini"); // read and insert physical range to sensor objects
-			configLoader.readSensorStepRangeConfig(configDirectory+"global_sensor_step_range.ini"); // read and insert step range to sensor objects			
-			configLoader.readInterpolationSensorNameConfig(configDirectory+"global_sensor_interpolation.ini"); // read list of sensor names for interpolation and mark sensor objects
-			configLoader.readEmpiricalDiffConfig(configDirectory+"global_sensor_empirical_diff.ini"); // read empirical max diff and insert it in sensor objects
+			//OLD configLoader.readSensorStepRangeConfig(configDirectory+"global_sensor_step_range.ini"); // read and insert step range to sensor objects			
+			//OLD configLoader.readInterpolationSensorNameConfig(configDirectory+"global_sensor_interpolation.ini"); // read list of sensor names for interpolation and mark sensor objects
+			//configLoader.readEmpiricalDiffConfig(configDirectory+"global_sensor_empirical_diff.ini"); // read empirical max diff and insert it in sensor objects
 			//OLD configLoader.readSensorDescriptionConfig(configDirectory+"global_sensor_description.ini");
 			//OLD configLoader.readSensorUnitConfig(configDirectory+"global_sensor_unit.ini");
-			configLoader.readSensorCategoryConfig(configDirectory+"global_sensor_category.ini");
-			configLoader.readSensorInternalConfig(configDirectory+"global_sensor_internal.ini");
+			//OLD configLoader.readSensorCategoryConfig(configDirectory+"global_sensor_category.ini");
+			//OLD configLoader.readSensorInternalConfig(configDirectory+"global_sensor_internal.ini");
 			//*** global config end
 			
 

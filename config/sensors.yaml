@@ -3,102 +3,161 @@ Ta_200:
   unit: °C (degree Celcius, -40 to 60)
   aggregation: average
   physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
 
 Ta_200_min:
   description: Minimum value of Ta_200
   unit: °C (degree Celcius, -40 to 60)
   aggregation: minimum
   physical_range: [-40.0, 60.0]
-
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+  
 Ta_200_max:
   description: Maximum value of Ta_200
   unit: °C (degree Celcius, -40 to 60)
   aggregation: maximum
   physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]  
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
   
 rH_200:
   description: Relative air humidity at 2 meters above ground
   unit: '% (percentage of relative humidity, 0-100)'
   aggregation: average
-  physical_range: [0.0, 100.0] 
+  physical_range: [0.0, 100.0]
+  step_range: [0.0, 100.0] #high fluctuation possible
+  empirical_diff: 50
+  interpolation_mse: 100   
   
 rH_200_min:
   description: Minimum value of rH_200
   unit: '% (percentage of relative humidity, 0-100)'
   aggregation: minimum
   physical_range: [0.0, 100.0] 
-
+  step_range: [0.0, 100.0] #high fluctuation possible 
+  empirical_diff: 50  
+  interpolation_mse: 100   
+  
 rH_200_max:
   description: Maximum value of rH_200
   unit: '% (percentage of relative humidity, 0-100)'
   aggregation: maximum
   physical_range: [0.0, 100.0] 
-
+  step_range: [0.0, 100.0] #high fluctuation possible 
+  empirical_diff: 50  
+  interpolation_mse: 100   
+  
 Ta_10:
   description: Air temperature 10 centimeters above surface within the ground vegetation layer
   unit: °C (degree Celcius, -40 to 60) 
   aggregation: average
-  physical_range: [-40.0, 60.0]  
-
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 100.0]  
+  empirical_diff: 3.38
+  interpolation_mse: 7
+  category: temperature
+  
 Ts_5:
   description: Soil temperature at 5 centimeters below surface
   unit: °C (degree Celcius, -40 to 60) 
   aggregation: average
-  physical_range: [-40.0, 60.0] 
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 1.85]   
+  empirical_diff: 3.31 
+  interpolation_mse: 7
+  category: temperature
   
 Ts_10:
   description: Soil temperature at 10 centimeters below surface 
   unit: °C (degree Celcius, -40 to 60) 
   aggregation: average
   physical_range: [-40.0, 60.0]
+  step_range: [0.0, 1.7]  
+  empirical_diff: 3.6
+  interpolation_mse: 7
+  category: temperature
   
 Ts_20: 
   description: Soil temperature at 20 centimeters below surface 
   unit: °C (degree Celcius, -40 to 60) 
   aggregation: average
   physical_range: [-40.0, 60.0] 
+  step_range: [0.0, 0.9]
+  empirical_diff: 3.03  
+  interpolation_mse: 7
+  category: temperature
   
 Ts_50:
   description: Soil temperature at 50 centimeters below surface
   unit: °C (degree Celcius, -40 to 60) 
   aggregation: average
-
+  step_range: [0.0, 0.6]   
+  empirical_diff: 3.18
+  interpolation_mse: 7
+  category: temperature
+  
 SM_10:
   description: Soil moisture at 10 centimeters below surface
   unit: '% (percentage of volumetric water content)'
   aggregation: average
   physical_range: [0.1, 65.0]
-
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 29.04
+  interpolation_mse: 100   
+  
 SM_15:
   description: Soil moisture at 15 centimeters below surface (BeCycles sensor type at Exploratories) 
   unit: '% (percentage of volumetric water content)' 
   aggregation: average
   physical_range: [0.1, 65.0]
-
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 18.28
+  interpolation_mse: 100   
+  
 SM_20:
   description: Soil moisture at 20 centimeters below surface
   unit: '% (percentage of volumetric water content)' 
   aggregation: average
   physical_range: [0.1, 65.0]
-
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 23.13
+  interpolation_mse: 100   
+  
 SM_30: 
   description: Soil moisture at 30 centimeters below surface (BeCycles sensor type at Exploratories) 
   unit: '% (percentage of volumetric water content)' 
   aggregation: average
   physical_range: [0.1, 65.0]
-
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 23.83
+  interpolation_mse: 100   
+  
 SM_40:
   description: Soil moisture at 40 centimeters below surface (BeCycles sensor type at Exploratories)
   unit: '% (percentage of volumetric water content)' 
   aggregation: average
   physical_range: [0.1, 65.0]
- 
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 27.53
+  interpolation_mse: 100   
+  
 SM_50:   
   description: Soil moisture at 50 centimeters below surface (BeCycles sensor type at Exploratories) 
   unit: '% (percentage of volumetric water content)' 
   aggregation: average
   physical_range: [0.1, 65.0]
-
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 11.71
+  interpolation_mse: 100   
+  
 #****** new BeCycles sensors ********
 
 SM_10_2:
@@ -106,18 +165,27 @@ SM_10_2:
   unit: '% (percentage of volumetric water content)' 
   aggregation: average
   physical_range: [0.1, 65.0]
-  
+  step_range: [0.0, 1000.0]
+  empirical_diff: 29.04  
+  interpolation_mse: 100   
+ 
 SM_20_2:
   description: Soil moisture at 20 centimeters below surface (BeCycles sensor type at Exploratories)
   unit: '% (percentage of volumetric water content)' 
   aggregation: average
   physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 23.13  
+  interpolation_mse: 100   
   
 SM_35:
   description: Soil moisture at 35 centimeters below surface (BeCycles sensor type at Exploratories)
   unit: '% (percentage of volumetric water content)' 
   aggregation: average
   physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 23.83
+  interpolation_mse: 100   
   
 #************************************
 
@@ -126,114 +194,164 @@ PAR_200:
   unit: µmol/(m^2*s) (micromol photons per square meter per second)
   aggregation: average
   physical_range: [0.0, 3000.0]
+  step_range: [0.0, 1000.0]
   
 PAR_300:
   description: Photosynthetically activ radiation at 3 meters height
   unit: µmol/(m^2*s) (micromol photons per square meter per second) 
   aggregation: average
   physical_range: [0.0, 3000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 610.46
+  interpolation_mse: 10000   
    
 Albedo:
   description: Albedo (SWUR/SWDR)
   unit: ratio (0 to 1) 
   aggregation: average_albedo
   physical_range: [0.0, 1.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 0.31
   
 SWDR_300:
   description: Shortwave Downward Radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1500.0]
-   
+  step_range: [0.0, 1000.0]
+  empirical_diff: 157.2
+  interpolation_mse: 10000   
+  
 SWUR_300:
   description: Shortwave Upward Radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1000.0]
-   
+  step_range: [0.0, 1000.0]
+  empirical_diff: 43.03
+  interpolation_mse: 10000   
+  
 LWDR_300:
   description: Longwave Downward Radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 220.0]
+  empirical_diff: 34.29
+  interpolation_mse: 10000   
   
 LWUR_300:
   description: Longwave Upward Radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1000.0]
-   
+  step_range: [0.0, 1000.0]
+  empirical_diff: 18.31
+  interpolation_mse: 10000   
+  
 Rn_300:
   description: Net radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1500.0]
-   
+  step_range: [0.0, 1000.0]
+  empirical_diff: 112.19
+  interpolation_mse: 10000   
+  
 Tsky:
   description: Sky temperature
   unit: °C (degree Celcius) 
   aggregation: average
-  physical_range: [-40.0, 60.0] 
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]  
+  empirical_diff: 5.8
+  interpolation_mse: 7
+  category: temperature
   
 Tgnd:
   description: Ground temperature
   unit: °C (degree Celcius) 
   aggregation: average
   physical_range: [-40.0, 60.0] 
+  step_range: [0.0, 10.0]
+  empirical_diff: 2.65
+  interpolation_mse: 7
+  category: temperature
   
 Trad:
   description: Radiation temperature
   unit: °C (degree Celcius) 
   aggregation: average
   physical_range: [-40.0, 60.0]   
+  step_range: [0.0, 10.0] 
+  empirical_diff: 3.07
+  interpolation_mse: 7
+  category: temperature
   
 WD:
   description: Wind direction
   unit: ° (degree of arc 0-360)
   aggregation: average_wind_direction
   physical_range: [0.0, 360.0]   
+  step_range: [0.0, 1000.0]
   
 WV:
   description: Wind velocity
   unit: m/s (meter per second) 
   aggregation: average_wind_velocity
   physical_range: [0.0, 100.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 2.93
   
 WV_gust:
   description: Max. wind velocity (gust of wind)
   unit: m/s (meter per second)
   aggregation: maximum
   physical_range: [0.0, 100.0]  
+  step_range: [0.0, 1000.0]
   
 p_QNH:
   description: Barometric pressure QNH/MSL, adjusted to mean sea level
   unit: hPa (hectopascal)
   aggregation: average
   physical_range: [300.0, 1100.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 1.83
+  interpolation_mse: 2500
   
 p_local:
   description: Barometric pressure, local
   unit: hPa (hectopascal)
   aggregation: average
   physical_range: [300.0, 1100.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 1.83
+  interpolation_mse: 2500
   
 P_RT_NRT:
   description: Precipitation
   unit: mm (millimeter)
   aggregation: sum
   physical_range: [0.0, 500.0]
-   
+  step_range: [0.0, 1000.0]
+  interpolation_mse: 4
+  category: water 
+  
 P_container_RT:
   description: Precipitation, actual unfiltered amount in container
   unit: mm (millimeter)
   aggregation: average
   physical_range: [20.0, 850.0]  
+  step_range: [0.0, 1000.0]
+  category: water 
   
 P_container_NRT:
   description: Precipitation, actual filtered amount in container   
   unit: mm (millimeter) 
   aggregation: average
   physical_range: [20.0, 850.0]
+  step_range: [0.0, 1000.0]
+  category: water 
 
 #general radiation
 
@@ -242,24 +360,36 @@ SWDR:
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1500.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 157.2
+  interpolation_mse: 10000   
   
 SWUR:
   description: Shortwave Upward Radiation
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 43.03
+  interpolation_mse: 10000   
   
 LWDR:
   description: Longwave Downward Radiation
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 220.0]
+  empirical_diff: 34.29
+  interpolation_mse: 10000   
   
 LWUR:
   description: Longwave Upward Radiation
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 18.31
+  interpolation_mse: 10000   
 
 #****** new sensors in AET06 ********
 
@@ -268,42 +398,49 @@ SWDR_3700:
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1500.0]
+  interpolation_mse: 10000   
   
 SWUR_3700:
   description: Shortwave Upward Radiation at 37 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1000.0]
+  interpolation_mse: 10000   
   
 LWDR_3700:
   description: Longwave Downward Radiation at 37 meters height
   unit: kWh/m^2 (kilo watt hour per square meter)
   aggregation: sum_radiation
   physical_range: [-100.0, 1000.0]
+  interpolation_mse: 10000   
   
 LWUR_3700:
   description: Longwave Upward Radiation at 37 meters height
   unit: kWh/m^2 (kilo watt hour per square meter)
   aggregation: sum_radiation
   physical_range: [-100.0, 1000.0]
+  interpolation_mse: 10000   
   
 PAR_2000:
   description: Photosynthetically activ radiation at 20 meters height
   unit: µmol/(m^2*s) (micromol photons per square meter per second) 
   aggregation: average
   physical_range: [0.0, 3000.0]
- 
+  interpolation_mse: 40000   
+  
 PAR_1000:
   description: Photosynthetically activ radiation at 10 meters height
   unit: µmol/(m^2*s) (micromol photons per square meter per second) 
   aggregation: average
   physical_range: [0.0, 3000.0]
- 
+  interpolation_mse: 40000   
+  
 Ta_1000:
   description: Air temperature at 10 meters above ground
   unit: °C (degree Celcius, -40 to 60) 
   aggregation: average
   physical_range: [0.0, 100.0] 
+  category: temperature
   
 rH_1000:
   description: Relative air humidity at 10 meters above ground
@@ -316,6 +453,7 @@ Ta_2000:
   unit: °C (degree Celcius, -40 to 60) 
   aggregation: average
   physical_range: [0.0, 100.0] 
+  category: temperature
  
 rH_2000:
   description: Relative air humidity at 20 meters above ground
@@ -328,6 +466,7 @@ Ta_3000:
   unit: °C (degree Celcius, -40 to 60)
   aggregation: average
   physical_range: [0.0, 100.0] 
+  category: temperature
   
 rH_3000:
   description: Relative air humidity at 30 meters above ground
@@ -340,6 +479,7 @@ Ta_3700:
   unit: °C (degree Celcius, -40 to 60) 
   aggregation: average
   physical_range: [0.0, 100.0] 
+  category: temperature
   
 rH_3700:
   description: Relative air humidity at 37 meters above ground
@@ -352,6 +492,9 @@ Rn_3700:
   unit: kWh/m^2 (kilo watt hour per square meter)
   aggregation: sum_radiation
   physical_range: [-100.0, 1500.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 112.19
+  interpolation_mse: 10000   
 
 #****** new sensors in SET39 ********
 
@@ -360,30 +503,35 @@ SWDR_4400:
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1500.0]
+  interpolation_mse: 10000   
   
 SWUR_4400:
   description: Shortwave Upward Radiation at 44 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1000.0]
+  interpolation_mse: 10000   
   
 LWDR_4400:
   description: Longwave Downward Radiation at 44 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1000.0]
+  interpolation_mse: 10000   
   
 LWUR_4400:
   description: Longwave Upward Radiation at 44 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1000.0]
+  interpolation_mse: 10000   
  
 Ta_4400:
   description: Air temperature at 44 meters above ground
   unit: °C (degree Celcius, -40 to 60) 
   aggregation: average
   physical_range: [0.0, 100.0] 
+  category: temperature
 
 rH_4400:
   description: Relative air humidity at 44 meters above ground
@@ -396,7 +544,10 @@ Rn_4400:
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
   physical_range: [-100.0, 1500.0]
-
+  step_range: [0.0, 1000.0]
+  empirical_diff: 112.19
+  interpolation_mse: 10000   
+  
 #****** Kili Sensors ********** (sensors that are not in BE)
 
 p_200:
@@ -408,258 +559,333 @@ T_CNR:
   description: (T_CNR)
   unit: [T_CNR]
   aggregation: average
+  category: temperature
   
 P_RT_NRT_01:
   description: Precipitation
   unit: mm (millimeter)
   aggregation: sum
   physical_range: [0.0, 500.0]
+  category: water 
   
 P_RT_NRT_02:
   description: Precipitation
   unit: mm (millimeter)
   aggregation: sum
   physical_range: [0.0, 500.0]
+  category: water 
   
 F_RT_NRT_01:
   description: Fog
   unit: mm (millimeter)
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 10.0]
+  category: water 
   
 F_RT_NRT_02:
   description: Fog
   unit: mm (millimeter)
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 10.0]
+  category: water 
   
 T_RT_NRT_01:
   description: (T_RT_NRT_01)
   unit: mm (millimeter)
   aggregation: sum
   physical_range: [0.0, 500.0]
+  category: water 
   
 T_RT_NRT_02:
   description: (T_RT_NRT_02)
   unit: mm (millimeter)
   aggregation: sum
   physical_range: [0.0, 500.0]
+  category: water 
   
 par_01:
   description: Photosynthetically active radiation
   unit: µmol/(m^2*s) (micromol photons per square meter per second) 
   aggregation: average
   physical_range: [0.0, 3000.0]
-  
+  interpolation_mse: 40000   
+   
 par_02:
   description: Photosynthetically active radiation
   unit: µmol/(m^2*s) (micromol photons per square meter per second)
   aggregation: average  
   physical_range: [0.0, 3000.0]
-  
+  interpolation_mse: 40000   
+   
 swdr_01:
   description: Shortwave downward radiation
   unit: kWh/m^2 (kilo watt hour per square meter)
   aggregation: sum_radiation
   physical_range: [-100.0, 1500.0]
-  
+  interpolation_mse: 10000   
+   
 swdr_02:
   description: Shortwave downward radiation
   unit: kWh/m^2 (kilo watt hour per square meter)
   aggregation: sum_radiation
   physical_range: [-100.0, 1500.0]
-  
+  interpolation_mse: 10000   
+   
 B_01:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements) 
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_02:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
-  
+  step_range: [0.0, 1000.0]
+  category: water 
+ 
 B_03:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_04:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_05:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_06:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_07:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_08:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_09:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_10:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_11:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_12:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
  
 B_13:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_14:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_15:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_16:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_17:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_18:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_19:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_20:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_21:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_22:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_23:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_24:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_25:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_26:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_27:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_28:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_29:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 B_30:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  category: water 
   
 Fog:
   description: Fog
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  category: water 
   
 Rainfall:
   description: Precipitation
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
   physical_range: [0.0, 500.0]
+  category: water 
 
 #************* south africa sensors at own stations *********
 
@@ -667,6 +893,7 @@ DecagonECH2O:
   description: Soil moisture
   unit: mV (millivolt)
   aggregation: average
+  visibility: internal  
 
 #************* isotope sensors at kili tfi *********
 
@@ -712,6 +939,7 @@ SD:
   description: sunshine duration (time of radiation >= 120 W/m^2)
   unit: h (hour)
   aggregation: sum_sunshine
+  visibility: internal  # set virtual sensor temporarily to internal  
 
 SDUR_SPN1:
   description: sunshine duration (time of radiation >= 120 W/m^2)
@@ -725,6 +953,7 @@ dew_point:
   unit: °C (degree Celcius, -40 to 60) 
   aggregation: average
   physical_range: [-40.0, 60.0]
+  category: temperature
   
 absH_200:
   description: Absolute air humidity at 2 meters above ground
@@ -735,115 +964,173 @@ wet_bulb_temp:
   description: Wet-bulb temperature  
   unit: °C (degree Celcius, -40 to 60)
   aggregation: average
+  category: temperature
 
 #************* raw sensors at exploratories *********
 
 SM_15_U:
   aggregation: none
   physical_range: [0.0, 1.5]
+  visibility: internal
   
 UOtt:
   aggregation: none
   physical_range: [0.0, 30.0]   
+  visibility: internal
   
 SM_50_U:
   aggregation: none
   physical_range: [0.0, 1.5]
+  visibility: internal
   
 Trad_R:
   aggregation: none
   physical_range: [80.0, 125.0]
+  visibility: internal
   
 T_Ott:
   aggregation: none
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 SWUR_300_U:
   aggregation: none
   physical_range: [-10.0, 10.0]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 SM_30_U:
   aggregation: none
   physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 SWDR_300_U:
   aggregation: none
   physical_range: [-10.0, 100.0]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 LWUR_300_U:
   aggregation: none
   physical_range: [-10.0, 10.0]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 SM_20_U:
   aggregation: none
   physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 SM_10_U:
   aggregation: none
   physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 SM_40_U:
   aggregation: none
   physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 UB:
   aggregation: none
   physical_range: [0.0, 30.0]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 LWDR_300_U:
   aggregation: none
   physical_range: [-40.0, 60.0]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 PAR_200_U:
   aggregation: none
   physical_range: [0.0, 15.0]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 PAR_300_U:
   aggregation: none
   physical_range: [0.0, 15.0]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 SM_50_U:
   aggregation: none
   physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 UOtt:
   aggregation: none
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 SM_30_U:
   aggregation: none
   physical_range: [0.0, 1.5]
-  
-UB:
-  aggregation: none
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 PAR_200_U:
   aggregation: none
   physical_range: [0.0, 15.0]
+  visibility: internal
   
 PAR_300_U:
   aggregation: none
   physical_range: [0.0, 15.0]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 SM_20_U:
   aggregation: none
   physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 SM_40_U:
   aggregation: none
   physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 T_Ott:
   aggregation: none
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 Trad_R:
   aggregation: none
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 SM_15_U:
   aggregation: none
   physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 SM_10_U:
   aggregation: none
   physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
   
 LWDR_300_U:
   aggregation: none
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+CycleCounter:
+  visibility: internal
+  
+# other raw sensors
+
+rain_container:
+  visibility: internal  
+  

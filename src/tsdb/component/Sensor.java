@@ -16,7 +16,6 @@ import tsdb.util.yaml.YamlMap;
  *
  */
 public class Sensor implements Serializable {
-	@SuppressWarnings("unused")
 	private static final Logger log = LogManager.getLogger();
 
 	private static final long serialVersionUID = -4139931796468207965L;
@@ -159,6 +158,7 @@ public class Sensor implements Serializable {
 		String unit = yamlMap.optString("unit", "no unit");
 		AggregationType agg = AggregationType.getAggregationType(yamlMap.optString("aggregation", "none"));
 		AggregationType aggregation = agg == null ? AggregationType.NONE : agg;
+
 		float physicalMin = -Float.MAX_VALUE;
 		float physicalMax = Float.MAX_VALUE;
 
@@ -169,9 +169,39 @@ public class Sensor implements Serializable {
 				physicalMax = range[1];
 			}
 		} catch(Exception e) {
-			log.warn("could not read physicalRange of "+sensorName+"   "+e);
+			log.warn("could not read physical range of "+sensorName+"   "+e);
 		}
 
+		float stepMin = -Float.MAX_VALUE;
+		float stepMax = Float.MAX_VALUE;
+
+		try {
+			float[] range = parseYamlRange(yamlMap.optObject("step_range"));
+			if(range != null) {
+				stepMin = range[0];
+				stepMax = range[1];
+			}
+		} catch(Exception e) {
+			log.warn("could not read step range of "+sensorName+"   "+e);
+		}
+
+		Float empiricalDiff = null;
+		try {
+			empiricalDiff = yamlMap.optFloat("empirical_diff", null);
+		} catch(Exception e) {
+			log.warn("could not read empirical_diff of "+sensorName+"   "+e);
+		}
+
+		boolean[] useInterpolation = new boolean[]{false};
+		double[] interpolation_mse = new double[]{1d};
+
+		yamlMap.funDouble("interpolation_mse", 
+				mse -> {useInterpolation[0] = true; interpolation_mse[0] = mse;}, 
+				e -> log.warn("could not read interpolation_mse of "+sensorName+"   "+e)
+				);
+		
+		SensorCategory category = SensorCategory.parse(yamlMap.optString("category", "other"));
+		boolean internal = yamlMap.optString("visibility", "public").equals("internal");
 
 		Sensor sensor = new Sensor(sensorName);
 		sensor.description = description;
@@ -179,6 +209,13 @@ public class Sensor implements Serializable {
 		sensor.baseAggregationType = aggregation;
 		sensor.physicalMin = physicalMin;
 		sensor.physicalMax = physicalMax;
+		sensor.stepMin = stepMin;
+		sensor.stepMax = stepMax;
+		sensor.empiricalDiff = empiricalDiff;
+		sensor.useInterpolation = useInterpolation[0];
+		sensor.maxInterpolationMSE = interpolation_mse[0];
+		sensor.category = category;
+		sensor.internal = internal;
 
 		return sensor;
 	}

@@ -131,6 +131,7 @@ public class SensorView {
 
 		detailEntryList.add(new DetailEntry("Aggregation",s->s.baseAggregationType.toString()));
 		detailEntryList.add(new DetailEntry("Interpolation",s->s.useInterpolation?"yes":"no"));
+		detailEntryList.add(new DetailEntry("Visibility",s->s.internal?"internal":"public"));
 
 
 		int columnCounter = 0;

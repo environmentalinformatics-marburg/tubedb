@@ -6,24 +6,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class YamlMap {
-	
+
 	private Map<String, Object> map;
-	
+
 	public YamlMap(Map<String, Object> map) {
 		this.map = map;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static YamlMap ofObject(Object map) {
 		return new YamlMap((Map<String, Object>) map);
 	}
-	
+
 	public static final YamlMap EMPTY_MAP = new YamlMap(new HashMap<>());
-	
+
 	public Object getObject(String name) {
 		Object o = map.get(name);
 		if(o==null) {
@@ -31,28 +32,28 @@ public class YamlMap {
 		}
 		return o;
 	}
-	
+
 	public Object optObject(String name) {
 		return map.get(name);
 	}
-	
+
 	public Object optObject(String name, Object def) {
 		if(contains(name)) {
 			return getObject(name);
 		}
 		return def;
 	}	
-	
-	
+
+
 	public boolean contains(String name) {
 		return map.containsKey(name);
 	}
-		
+
 	public String getString(String name) {
 		Object o = getObject(name);
 		return o.toString();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public YamlMap getMap(String name) {
 		Object o = getObject(name);
@@ -61,7 +62,7 @@ public class YamlMap {
 		}
 		throw new RuntimeException("element is not a map "+name);
 	}
-	
+
 	<T> T funMap(String name, Function<YamlMap, T> fun, Supplier<T> optFun) {
 		if(contains(name)) {
 			return fun.apply(getMap(name));
@@ -80,14 +81,14 @@ public class YamlMap {
 		list.add(o);
 		return new YamlList(list);
 	}
-	
+
 	public YamlList optList(String name) {
 		if(contains(name)) {
 			return getList(name);
 		}
 		return new YamlList(new ArrayList<Object>(0));
 	}
-	
+
 	public String optString(String name) {
 		return optString(name, null);
 	}
@@ -98,7 +99,7 @@ public class YamlMap {
 		}
 		return def;
 	}
-	
+
 	public Number getNumber(String name) {
 		Object o = getObject(name);
 		if(o instanceof Number) {
@@ -106,7 +107,7 @@ public class YamlMap {
 		}
 		throw new RuntimeException("element is not a number "+name);
 	}
-	
+
 	public int getInt(String name) {
 		return getNumber(name).intValue();
 	}
@@ -117,7 +118,7 @@ public class YamlMap {
 		}
 		return def;
 	}
-	
+
 	public double getDouble(String name) {
 		return getNumber(name).doubleValue();
 	}
@@ -129,17 +130,65 @@ public class YamlMap {
 		return Double.NaN;
 	}
 
+	public double optDouble(String name, double def) {
+		if(contains(name)) {
+			return getDouble(name);
+		}
+		return def;
+	}
+
+	public void funDouble(String name, DoubleConsumer fun) {
+		if(contains(name)) {
+			fun.accept(getDouble(name));
+		}		
+	}
+
+	public void funDouble(String name, DoubleConsumer fun, Consumer<Exception> errFun) {
+		if(contains(name)) {
+			try {
+				fun.accept(getDouble(name));
+			} catch (Exception e) {
+				errFun.accept(e);
+			}
+		}		
+	}
+
+	public float getFloat(String name) {
+		return getNumber(name).floatValue();
+	}
+
+	public float optFloat(String name) {
+		if(contains(name)) {
+			return getFloat(name);
+		}
+		return Float.NaN;
+	}
+
+	public float optFloat(String name, float def) {
+		if(contains(name)) {
+			return getFloat(name);
+		}
+		return def;
+	}
+
+	public Float optFloat(String name, Float def) {
+		if(contains(name)) {
+			return getFloat(name);
+		}
+		return def;
+	}
+
 	public void funString(String name, Consumer<String> fun) {
 		if(contains(name)) {
 			fun.accept(getString(name));
 		}		
 	}
-	
+
 	@Override
 	public String toString() {
 		return map.toString();
 	}
-	
+
 	public Set<String> keys() {
 		return map.keySet();
 	}
