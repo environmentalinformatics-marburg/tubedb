@@ -6,7 +6,7 @@ import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.VirtualPlot;
 import tsdb.graph.node.Node;
-import tsdb.iterator.SunshineIterator;
+import tsdb.iterator.SunshineOlivieriIterator;
 import tsdb.util.iterator.TsIterator;
 
 /**
@@ -14,18 +14,18 @@ import tsdb.util.iterator.TsIterator;
  * @author woellauer
  *
  */
-public class Sunshine extends Node.Abstract{
+public class SunshineOlivieri extends Node.Abstract{
 	
 	private final Node source;
 	
-	protected Sunshine(TsDB tsdb,Node source) {
+	protected SunshineOlivieri(TsDB tsdb,Node source) {
 		super(tsdb);
 		throwNull(source);
 		this.source = source;
 	}
 	
-	public static Sunshine of(TsDB tsdb, Node source) {
-		return new Sunshine(tsdb, source);
+	public static SunshineOlivieri of(TsDB tsdb, Node source) {
+		return new SunshineOlivieri(tsdb, source);
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class Sunshine extends Node.Abstract{
 		if(input_iterator==null||!input_iterator.hasNext()) {
 			return null;
 		}			
-		return new SunshineIterator(input_iterator);
+		return new SunshineOlivieriIterator(input_iterator);
 	}
 
 	@Override

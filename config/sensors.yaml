@@ -939,6 +939,12 @@ SD:
   description: sunshine duration (time of radiation >= 120 W/m^2)
   unit: h (hour)
   aggregation: sum_sunshine
+  visibility: internal  # set virtual sensor temporarily to internal
+
+SD_Olivieri:
+  description: sunshine duration (time of radiation >= 120 W/m^2)
+  unit: h (hour)
+  aggregation: sum_sunshine
   visibility: internal  # set virtual sensor temporarily to internal  
 
 SDUR_SPN1:

@@ -25,7 +25,6 @@ public class SunshineIterator extends InputIterator {
 	public SunshineIterator(TsIterator input_iterator) {
 		super(input_iterator, input_iterator.getSchema());
 		String[] names = this.getNames();
-		System.out.println(Arrays.toString(names));
 		for(int i=0;i<names.length;i++) {
 			if(names[i].equals(RADIATION_SENSOR_NAME)) {
 				radiation_pos = i;

@@ -20,11 +20,13 @@ import tsdb.graph.processing.Mask;
 import tsdb.graph.processing.PeakSmoothed;
 import tsdb.graph.processing.RangeStepFiltered;
 import tsdb.graph.processing.Sunshine;
+import tsdb.graph.processing.SunshineOlivieri;
 import tsdb.graph.processing.Virtual_P_RT_NRT;
 import tsdb.graph.source.BaseFactory;
 import tsdb.graph.source.StationRawSource;
 import tsdb.iterator.ElementCopyIterator.Action;
 import tsdb.iterator.SunshineIterator;
+import tsdb.iterator.SunshineOlivieriIterator;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataQuality;
 import tsdb.util.Util;
@@ -90,6 +92,9 @@ public final class QueryPlanGenerators {
 		if(Util.containsString(schema, SunshineIterator.SUNSHINE_SENSOR_NAME)) {
 			rawSource = Sunshine.of(tsdb, rawSource);
 		}
+		if(Util.containsString(schema, SunshineOlivieriIterator.SUNSHINE_SENSOR_NAME)) {
+			rawSource = SunshineOlivieri.of(tsdb, rawSource);
+		}
 		if(Util.containsString(schema, "P_RT_NRT") && Util.containsString(schema, "P_container_RT")) {
 			rawSource = Virtual_P_RT_NRT.of(tsdb, rawSource);
 		}
@@ -132,6 +137,8 @@ public final class QueryPlanGenerators {
 			VirtualCopyList.of(new String[] {"SWUR_300", "SWUR_3700", "SWUR_4400"}, "SWUR"),
 			VirtualCopyList.of(new String[] {"LWDR_300", "LWDR_3700", "LWDR_4400"}, "LWDR"),
 			VirtualCopyList.of(new String[] {"LWUR_300", "LWUR_3700", "LWUR_4400"}, "LWUR"),
+			
+			VirtualCopyList.of(new String[] {"SWDR_300", "SWDR_3700", "SWDR_4400"}, SunshineOlivieriIterator.SUNSHINE_SENSOR_NAME),
 	};
 
 	private static final String[] VIRTUAL_COPY_SENSORS;
