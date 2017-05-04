@@ -78,7 +78,7 @@ public class SunshineOlivieriIterator extends InputIterator {
 
 	public float calc(long timestamp, float value) {		
 		LocalDateTime dateTime = TimeUtil.oleMinutesToLocalDateTime(timestamp);
-		int day = dateTime.getDayOfYear(); // 1-366 for leap year   TODO check 366
+		int day = dateTime.getDayOfYear(); // 1-366 for leap year
 		double hour = dateTime.getHour() + dateTime.getMinute() / 60d; // 0.0 - 23.9833
 		
 		double equation_of_time = 0d - 1d;

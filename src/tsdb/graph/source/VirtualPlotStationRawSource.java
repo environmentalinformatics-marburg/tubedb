@@ -41,7 +41,7 @@ public class VirtualPlotStationRawSource extends RawSource.Abstract {
 		if(this.sensorNames.length==0) {
 			throw new RuntimeException("no schema");
 		}
-		if(!station.isValidSchema(sensorNames)) { // no virtual sensors in raw !
+		if(!station.isValidSchemaWithVirtualSensors(sensorNames)) {
 			throw new RuntimeException("not valid schema: "+Util.arrayToString(sensorNames)+" in "+Util.arrayToString(station.getSensorNames())); 
 		}
 	}
@@ -91,7 +91,7 @@ public class VirtualPlotStationRawSource extends RawSource.Abstract {
 		if(processing_iteratorList.isEmpty()) {
 			return null;
 		}
-		if(processing_iteratorList.size()==1) {
+		if(processing_iteratorList.size()==1  && sensorNames.length==1) {
 			return new StreamTsIterator(processing_iteratorList.get(0));
 		}
 		return new RelationalIterator(processing_iteratorList, sensorNames);

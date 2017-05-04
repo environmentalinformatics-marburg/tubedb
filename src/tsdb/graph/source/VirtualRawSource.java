@@ -39,7 +39,7 @@ public class VirtualRawSource extends RawSource.Abstract {
 		if(this.schema.length==0) {
 			throw new RuntimeException("no schema");
 		}
-		if(!virtualPlot.isValidSchema(schema)) { // no virtual sensors in raw !
+		if(!virtualPlot.isValidSchemaWithVirtualSensors(schema)) {
 			throw new RuntimeException("not valid schema: "+Util.arrayToString(schema)+" in "+Util.arrayToString(virtualPlot.getSensorNames())); 
 		}
 	}
@@ -52,7 +52,7 @@ public class VirtualRawSource extends RawSource.Abstract {
 	}
 
 	@Override
-	public TsIterator get(Long start, Long end) {		
+	public TsIterator get(Long start, Long end) {
 		List<TimestampInterval<StationProperties>> intervalList = virtualPlot.getStationList(start, end, schema);
 		List<StreamIterator> processing_iteratorList = new ArrayList<StreamIterator>();				
 		for(TimestampInterval<StationProperties> interval:intervalList) {
@@ -71,7 +71,7 @@ public class VirtualRawSource extends RawSource.Abstract {
 		if(processing_iteratorList.isEmpty()) {
 			return null;
 		}
-		if(processing_iteratorList.size()==1) {
+		if(processing_iteratorList.size()==1 && schema.length==1) {
 			return new StreamTsIterator(processing_iteratorList.get(0));
 		}
 		return new RelationalIterator(processing_iteratorList, schema);

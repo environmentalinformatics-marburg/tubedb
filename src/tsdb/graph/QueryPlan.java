@@ -109,6 +109,7 @@ public final class QueryPlan {
 			continuous = InterpolatedAverageLinear.of(tsdb, plotID, schema, continuousGen, AggregationInterval.HOUR);
 		} else {
 			continuous = continuousGen.get(plotID, schema);
+			//log.info("continuous "+continuous);
 		}
 		return Aggregated.of(tsdb, continuous, aggregationInterval);
 	}

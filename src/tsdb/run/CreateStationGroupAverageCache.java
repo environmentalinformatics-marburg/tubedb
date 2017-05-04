@@ -65,14 +65,15 @@ public class CreateStationGroupAverageCache {
 
 		for(String group:tsdb.getGeneralStationGroups()) {
 			log.info("create average of group "+group);
-			List<String> list = tsdb.getStationAndVirtualPlotNames(group).collect(Collectors.toList());
+			List<String> plotList = tsdb.getStationAndVirtualPlotNames(group).collect(Collectors.toList());
 
 			TreeSet<String> sensorNameSet = new TreeSet<String>(); 
-			for(String plotID:list) {
+			for(String plotID:plotList) {
 				String[] sensorNames = tsdb.getSensorNamesOfPlot(plotID);
+				sensorNames = tsdb.includeVirtualSensorNames(sensorNames);
 				if(sensorNames==null||sensorNames.length==0) {
 					continue;
-				}				
+				}
 				sensorNames = tsdb.getBaseSchema(sensorNames);
 				if(sensorNames==null||sensorNames.length==0) {
 					continue;
@@ -85,9 +86,10 @@ public class CreateStationGroupAverageCache {
 
 				long groupMinTimestamp = Long.MAX_VALUE;
 				long groupMaxTimestamp = Long.MIN_VALUE;
-				for(String plotID:list) {
+				for(String plotID:plotList) {
 
 					String[] sensorNames = tsdb.getSensorNamesOfPlot(plotID);
+					sensorNames = tsdb.includeVirtualSensorNames(sensorNames);
 					if(sensorNames==null) {
 						continue;
 					}
@@ -123,9 +125,10 @@ public class CreateStationGroupAverageCache {
 				//cbPrint.println(group+"  "+sensorName+" ********************************* "+TimeUtil.oleMinutesToLocalDateTime(groupMinTimestamp)+"\t - \t"+TimeUtil.oleMinutesToLocalDateTime(groupMaxTimestamp)+" **************************************************************** "+groupMinTimestamp+"\t-\t"+groupMaxTimestamp);
 				List<Continuous> sources = new ArrayList<Continuous>();
 				List<Continuous> additions = new ArrayList<Continuous>();
-				for(String plotID:list) {
+				for(String plotID:plotList) {
 					try {
 						String[] sensorNames = tsdb.getSensorNamesOfPlot(plotID);
+						sensorNames = tsdb.includeVirtualSensorNames(sensorNames);
 						if(sensorNames==null) {
 							continue;
 						}
@@ -143,7 +146,9 @@ public class CreateStationGroupAverageCache {
 
 						Plot plot = tsdb.getPlot(plotID);
 						if(plot!=null && plot.existData(sensorName)) {
-							Continuous continuous = continuousGen.get(plotID,new String[]{sensorName});
+							String[] schema = new String[]{sensorName};
+							schema = tsdb.supplementSchema(schema);
+							Continuous continuous = continuousGen.get(plotID, schema);
 							if(continuous!=null) {
 								Addition addition = Addition.createWithElevationTemperature(tsdb,continuous,plotID);
 								if(addition!=null) {

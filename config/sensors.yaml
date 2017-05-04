@@ -936,13 +936,13 @@ tf_d_excess:
 #************* virtual sensors for exploratories *********
 
 SD:
-  description: sunshine duration (time of radiation >= 120 W/m^2)
+  description: sunshine duration (estimated) (time of SWDR >= 120 W/m^2)
   unit: h (hour)
   aggregation: sum_sunshine
   visibility: internal  # set virtual sensor temporarily to internal
 
 SD_Olivieri:
-  description: sunshine duration (time of radiation >= 120 W/m^2)
+  description: sunshine duration (based on SWDR with Oliviéri algorithm and solar elevation angle)
   unit: h (hour)
   aggregation: sum_sunshine
   visibility: internal  # set virtual sensor temporarily to internal  

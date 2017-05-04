@@ -89,7 +89,7 @@ public class TsDB implements AutoCloseable {
 	public StreamStorageStreamDB streamCache;
 
 	public SourceCatalog sourceCatalog; 
-	
+
 	public final String configDirectory;
 
 
@@ -122,7 +122,7 @@ public class TsDB implements AutoCloseable {
 		this.virtualplotMap = new TreeMap<String, VirtualPlot>();
 
 		this.sourceCatalog = new SourceCatalog(databasePath);
-		
+
 		this.configDirectory = configDirectory;
 	}	
 
@@ -180,8 +180,8 @@ public class TsDB implements AutoCloseable {
 	public Sensor[] getSensors(String[] names) {
 		return getSensors(names, true);
 	}
-	
-	
+
+
 	/**
 	 * Transform array of sensor names to array of sensor objects.
 	 * @param names
@@ -265,7 +265,7 @@ public class TsDB implements AutoCloseable {
 		}
 		stationMap.put(station.stationID, station);
 	}
-	
+
 	public void replaceStation(Station station) {
 		if(stationMap.containsKey(station.stationID)) {
 			stationMap.put(station.stationID, station);
@@ -373,6 +373,9 @@ public class TsDB implements AutoCloseable {
 			log.warn("override sensor (already exists): "+sensor.name);
 		}
 		sensorMap.put(sensor.name, sensor);
+		if(sensor.isAggregable()) {
+			baseAggregationSensorNameSet.add(sensor.name);
+		}
 	}
 
 	public Sensor getSensor(String sensorName) {
@@ -515,21 +518,6 @@ public class TsDB implements AutoCloseable {
 
 	public boolean baseAggregationExists(String sensorName) {
 		return baseAggregationSensorNameSet.contains(sensorName);
-	}
-
-	public void insertBaseAggregation(String sensorName, AggregationType aggregateType) {
-		Sensor sensor = getSensor(sensorName);
-		if(sensor==null) {
-			log.trace("created new sensor "+sensorName);
-			sensor = new Sensor(sensorName);
-			insertSensor(sensor);
-		}			
-		if(baseAggregationExists(sensorName)) {
-			log.warn("base aggregation already exists: "+sensorName);
-		} else {
-			baseAggregationSensorNameSet.add(sensorName);
-		}
-		sensor.baseAggregationType = aggregateType;
 	}
 
 	public void insertRawSensor(String sensorName) {
@@ -683,8 +671,8 @@ public class TsDB implements AutoCloseable {
 		}
 		LinkedHashSet<String> additionalSensorNames = new LinkedHashSet<>(); // no duplicates
 		LinkedHashSet<String> allSensorNames = new LinkedHashSet<>(Arrays.asList(schema)); // no duplicates
-		
-		
+
+
 		for(VirtualCopyPair pair:QueryPlanGenerators.VIRTUAL_COPY_PAIRS) {
 			if(allSensorNames.contains(pair.source)) {
 				additionalSensorNames.add(pair.target);
@@ -700,12 +688,12 @@ public class TsDB implements AutoCloseable {
 				}
 			}
 		}		
-		
+
 		if(additionalSensorNames.contains(SunshineIterator.RADIATION_SENSOR_NAME)&&!additionalSensorNames.contains(SunshineIterator.SUNSHINE_SENSOR_NAME)) {
 			additionalSensorNames.add(SunshineIterator.SUNSHINE_SENSOR_NAME);
 			allSensorNames.add(SunshineIterator.SUNSHINE_SENSOR_NAME);
 		}
-		
+
 		if(additionalSensorNames.contains("P_container_RT")&&!additionalSensorNames.contains("P_RT_NRT")) {
 			additionalSensorNames.add("P_RT_NRT");
 			allSensorNames.add("P_RT_NRT");
@@ -729,13 +717,13 @@ public class TsDB implements AutoCloseable {
 
 		Map<String, Integer> schemaMap = Util.stringArrayToMap(schema);
 		LinkedHashSet<String> additionalSensorNames = new LinkedHashSet<>(); // no duplicates
-		
+
 		for(VirtualCopyPair pair:QueryPlanGenerators.VIRTUAL_COPY_PAIRS) {
 			if(schemaMap.containsKey(pair.target)&&!schemaMap.containsKey(pair.source)) {
 				additionalSensorNames.add(pair.source);
 			}
 		}		
-		
+
 		if(schemaMap.containsKey("WD")&&!schemaMap.containsKey("WV")) {
 			additionalSensorNames.add("WV");
 		}

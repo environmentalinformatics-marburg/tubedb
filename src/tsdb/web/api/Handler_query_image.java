@@ -66,6 +66,7 @@ public class Handler_query_image extends MethodHandler {
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		baseRequest.setHandled(true);
 		response.setContentType("image/png");
+		//response.setHeader("Cache-Control", "max-age=300");
 
 		String plot = request.getParameter("plot");
 		if(plot==null) {
@@ -143,7 +144,7 @@ public class Handler_query_image extends MethodHandler {
 				isInterpolated = false;
 				break;
 			default:
-				log.warn("unknown input");
+				log.warn("unknown value for parameter interpolated: "+interpolated);
 				isInterpolated = false;				
 			}
 		}
