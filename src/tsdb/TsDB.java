@@ -689,12 +689,12 @@ public class TsDB implements AutoCloseable {
 			}
 		}		
 
-		if(additionalSensorNames.contains(SunshineIterator.RADIATION_SENSOR_NAME)&&!additionalSensorNames.contains(SunshineIterator.SUNSHINE_SENSOR_NAME)) {
+		if(allSensorNames.contains(SunshineIterator.RADIATION_SENSOR_NAME)&&!allSensorNames.contains(SunshineIterator.SUNSHINE_SENSOR_NAME)) {
 			additionalSensorNames.add(SunshineIterator.SUNSHINE_SENSOR_NAME);
 			allSensorNames.add(SunshineIterator.SUNSHINE_SENSOR_NAME);
 		}
 
-		if(additionalSensorNames.contains("P_container_RT")&&!additionalSensorNames.contains("P_RT_NRT")) {
+		if(allSensorNames.contains("P_container_RT")&&!allSensorNames.contains("P_RT_NRT")) {
 			additionalSensorNames.add("P_RT_NRT");
 			allSensorNames.add("P_RT_NRT");
 		}
@@ -736,6 +736,75 @@ public class TsDB implements AutoCloseable {
 		} else {
 			return Stream.concat(Arrays.stream(schema), additionalSensorNames.stream()).toArray(String[]::new);			
 		}		
+	}
+
+	/**
+	 * Add sensors that are needed for virtual sensor processing in schema
+	 * @param schema with virtual sensors
+	 * @param availableSchema available sensors
+	 * @return schema + additional sensors 
+	 */
+	public String[] supplementSchema(String[] schema, String[] availableSchema) {
+		LinkedHashSet<String> schemaSet = new LinkedHashSet<>(Util.stringArrayToMap(schema).keySet());
+		LinkedHashSet<String> availableSchemaSet = new LinkedHashSet<>(Util.stringArrayToMap(availableSchema).keySet());
+		LinkedHashSet<String> additionalSensorNames = new LinkedHashSet<>(); // no duplicates
+		
+		for(VirtualCopyPair pair:QueryPlanGenerators.VIRTUAL_COPY_PAIRS) {
+			if(schemaSet.contains(pair.target)&&!schemaSet.contains(pair.source)) {
+				if(availableSchemaSet.contains(pair.source)) {
+					additionalSensorNames.add(pair.source);
+					schemaSet.add(pair.source);
+				} else {
+					log.warn("no source for target "+pair.target);
+				}
+			}
+		}
+		
+		for(VirtualCopyList list:QueryPlanGenerators.VIRTUAL_COPY_LISTS) {
+			if(schemaSet.contains(list.target)) {
+				boolean found = false;
+				sources: for(String sensorName:list.sources) {
+					if(schemaSet.contains(sensorName)) {
+						found = true;
+						break sources;
+					} else if(availableSchemaSet.contains(sensorName)){
+						additionalSensorNames.add(sensorName);
+						schemaSet.add(sensorName);
+						found = true;
+						break sources;
+					}
+				}
+				if(!found) {
+					log.warn("no source for target "+list.target);
+				}
+			}
+		}
+		
+		for(VirtualCopyList list:QueryPlanGenerators.SENSOR_DEPENDENCY_LISTS) {
+			if(schemaSet.contains(list.target)) {
+				boolean found = false;
+				sources: for(String sensorName:list.sources) {
+					if(schemaSet.contains(sensorName)) {
+						found = true;
+						break sources;
+					} else if(availableSchemaSet.contains(sensorName)){
+						additionalSensorNames.add(sensorName);
+						schemaSet.add(sensorName);
+						found = true;
+						break sources;
+					}
+				}
+				if(!found) {
+					log.warn("no source for target "+list.target);
+				}
+			}
+		}
+		
+		if(additionalSensorNames.isEmpty()) {
+			return schema;
+		} else {
+			return Stream.concat(Arrays.stream(schema), additionalSensorNames.stream()).toArray(String[]::new);			
+		}
 	}
 
 	public Plot getPlot(String plotID) {

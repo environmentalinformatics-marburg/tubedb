@@ -1,6 +1,7 @@
 package tsdb.graph;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +17,7 @@ import tsdb.graph.node.NodeGen;
 import tsdb.graph.processing.Aggregated;
 import tsdb.graph.processing.ElementRawCopy;
 import tsdb.graph.processing.EmpiricalFiltered_NEW;
+import tsdb.graph.processing.Evaporation;
 import tsdb.graph.processing.Mask;
 import tsdb.graph.processing.PeakSmoothed;
 import tsdb.graph.processing.RangeStepFiltered;
@@ -43,11 +45,12 @@ public final class QueryPlanGenerators {
 	 */
 	public static NodeGen getStationGen(TsDB tsdb, DataQuality dataQuality) {
 		return (String stationID, String[] schema)->{
+			log.info("gen "+stationID+"  "+Arrays.toString(schema));
 			Station station = tsdb.getStation(stationID);
 			if(station==null) {
 				throw new RuntimeException("station not found: "+stationID);
 			}
-			schema = stationSchemaSupplement(tsdb, station, schema);
+			schema = station.stationSchemaSupplement(schema);
 			Node rawSource = StationRawSource.of(tsdb, stationID, schema);									
 			rawSource = rawProcessing(tsdb, rawSource, schema, dataQuality);			
 			if(station.loggerType.typeName.equals("tfi")) {
@@ -55,30 +58,6 @@ public final class QueryPlanGenerators {
 			}
 			return rawSource;
 		};
-	}
-
-	public static String[] stationSchemaSupplement(TsDB tsdb, Station station, String[] schema) {
-		String[] stationSensorNames = station.getSensorNames();
-		for(VirtualCopyList p:QueryPlanGenerators.VIRTUAL_COPY_LISTS) {
-			if(Util.containsString(schema, p.target)) {				
-				innerLoop: for(String source:p.sources) {
-					if(Util.containsString(schema, source)) {
-						break innerLoop;
-					}
-					if(Util.containsString(stationSensorNames, source)) {
-						schema = Util.concat(schema, source);
-						break innerLoop;
-					}
-				}
-			}
-		}	
-
-		if(station.generalStation!=null && station.generalStation.region.name.equals("BE") && Util.containsString(schema, "P_RT_NRT")) { // add virtual P_RT_NRT of P_container_RT for stations in BE
-			if(!Util.containsString(schema, "P_container_RT")) {
-				return Util.concat(schema,"P_container_RT");
-			}
-		}
-		return schema;		
 	}
 
 	public static Node rawProcessing(TsDB tsdb, Node rawSource, String[] schema, DataQuality dataQuality) {
@@ -94,6 +73,9 @@ public final class QueryPlanGenerators {
 		}
 		if(Util.containsString(schema, SunshineOlivieriIterator.SUNSHINE_SENSOR_NAME)) {
 			rawSource = SunshineOlivieri.of(tsdb, rawSource);
+		}
+		if(Util.containsString(schema, Evaporation.SENSOR_NAME)) {
+			rawSource = Evaporation.of(tsdb, rawSource);
 		}
 		if(Util.containsString(schema, "P_RT_NRT") && Util.containsString(schema, "P_container_RT")) {
 			rawSource = Virtual_P_RT_NRT.of(tsdb, rawSource);
@@ -138,7 +120,13 @@ public final class QueryPlanGenerators {
 			VirtualCopyList.of(new String[] {"LWDR_300", "LWDR_3700", "LWDR_4400"}, "LWDR"),
 			VirtualCopyList.of(new String[] {"LWUR_300", "LWUR_3700", "LWUR_4400"}, "LWUR"),
 			
-			VirtualCopyList.of(new String[] {"SWDR_300", "SWDR_3700", "SWDR_4400"}, SunshineOlivieriIterator.SUNSHINE_SENSOR_NAME),
+			VirtualCopyList.of(new String[] {SunshineOlivieriIterator.SUNSHINE_SENSOR_NAME}, SunshineOlivieriIterator.SUNSHINE_SENSOR_NAME),
+			VirtualCopyList.of(new String[] {"P_container_NRT"}, Evaporation.SENSOR_NAME),
+	};
+	
+	public static final VirtualCopyList[] SENSOR_DEPENDENCY_LISTS = new VirtualCopyList[]{
+			VirtualCopyList.of(new String[] {"WV"}, "WD"),
+			VirtualCopyList.of(new String[] {SunshineIterator.RADIATION_SENSOR_NAME}, SunshineIterator.SUNSHINE_SENSOR_NAME),
 	};
 
 	private static final String[] VIRTUAL_COPY_SENSORS;
@@ -163,6 +151,7 @@ public final class QueryPlanGenerators {
 	 */
 	public static Node elementRawCopy(Node source) {
 		String[] schema = source.getSchema();
+		log.info("schema "+Arrays.toString(schema));
 		if(Util.containsOneString(schema, VIRTUAL_COPY_SENSORS)) {
 			List<Action> actions = new ArrayList<>();
 			for(VirtualCopyPair pair:VIRTUAL_COPY_PAIRS) {

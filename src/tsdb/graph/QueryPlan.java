@@ -51,7 +51,7 @@ public final class QueryPlan {
 				}
 				Station station = tsdb.getStation(plotID);
 				if(station!=null) {
-					schema = QueryPlanGenerators.stationSchemaSupplement(tsdb, station, schema);
+					schema = station.stationSchemaSupplement(schema);
 				}
 				Node rawSource = RawSource.of(tsdb, plotID, schema);
 				rawSource = QueryPlanGenerators.rawProcessing(tsdb, rawSource, schema, dataQuality);

@@ -169,7 +169,7 @@ public class VirtualPlot {
 		if(schema==null) {
 			schema = getSensorNames();
 		}
-
+		
 		ArrayList<TimestampInterval<StationProperties>> tempList = new ArrayList<TimestampInterval<StationProperties>>(intervalList); // because ConcurrentModificationException
 
 		tempList.sort( (a,b) -> {
@@ -204,6 +204,7 @@ public class VirtualPlot {
 				Station station = tsdb.getStation(stationID);
 				if(station!=null) {
 					String[] stationSchema = station.getSensorNames();
+					
 					if(schemaOverlaps(stationSchema,schema)) {
 						if(overlaps(queryStart, queryEnd, interval.start, interval.end)) {
 							resultIntervalList.add(interval);

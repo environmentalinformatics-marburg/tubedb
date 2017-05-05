@@ -135,7 +135,7 @@ methods: {
 			var innerMap = self.sensorNamePlotMap[sensor.id];
 			plots.forEach(function(plot){
 				if(innerMap[plot.id]) {
-					var view = {status: "init", url: "no", type: "diagram", plot: plot.id, sensor: sensor.id};
+					var view = {status: "init", url: "no", type: "diagram", plot: plot.id, sensor: sensor.id, width: 1000, height: 100};
 					views.push(view);
 				}
 			});
@@ -172,7 +172,7 @@ methods: {
 		view.status = "running";
 		//console.log(view);
 		
-		var params = {plot: view.plot, sensor: view.sensor, aggregation: "hour", interpolated: "true"};
+		var params = {plot: view.plot, sensor: view.sensor, aggregation: "hour", interpolated: "true", width: view.width, height: view.height};
 		axios.get(url_query_image, {responseType: 'blob', params: params})
 		.then(function(response) {
 			//console.log(response.data);

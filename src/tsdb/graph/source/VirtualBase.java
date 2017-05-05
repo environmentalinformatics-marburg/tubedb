@@ -72,17 +72,20 @@ public class VirtualBase extends Base.Abstract  {
 				return null;
 			}
 		}
+		log.info("virtualPlot.getSensorNames() "+virtualPlot.getSensorNames());
+		querySchema = tsdb.supplementSchema(querySchema, virtualPlot.getSensorNames());
 		return new VirtualBase(tsdb, virtualPlot, querySchema, stationGen);		
 	}
 
 	@Override
 	public TsIterator get(Long start, Long end) {
+		log.info("get "+Arrays.toString(schema));
 		List<TimestampInterval<StationProperties>> intervalList = virtualPlot.getStationList(start, end, schema);			 
 		List<TsIterator> processing_iteratorList = new ArrayList<TsIterator>();				
 		for(TimestampInterval<StationProperties> interval:intervalList) {
 			String stationID = interval.value.get_serial();
 			String[] stationSchema = tsdb.getValidSchemaWithVirtualSensors(stationID, schema);
-			//log.info("valid "+Arrays.toString(stationSchema));
+			log.info("valid "+Arrays.toString(stationSchema)+"   of "+stationSchema);
 			if(stationSchema.length>0) {				
 				TimestampInterval<StationProperties> filteredInterval = interval.filterByInterval(start, end);
 				if(filteredInterval!=null) {

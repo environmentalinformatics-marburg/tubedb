@@ -40,17 +40,25 @@ public class SunshineOlivieriIterator extends InputIterator {
 
 	public static final String SUNSHINE_SENSOR_NAME = "SD_Olivieri";
 	private int sensor_pos = -1;
-	private double latitude_DEG = 51.079;
-	private double longitude_DEG = 10.460;
-	private double latitude_RAD = Math.toRadians(latitude_DEG);
-	//private double longitude_RAD = Math.toRadians(longitude_DEG);
-	private double sin_latitude = Math.sin(latitude_RAD);
-	private double cos_latitude = Math.cos(latitude_RAD);
+	private final double latitude_DEG;
+	private final double longitude_DEG;
+	private final double latitude_RAD;
+	//private final double longitude_RAD;
+	private final double sin_latitude;
+	private final double cos_latitude;
 	
 	
 
-	public SunshineOlivieriIterator(TsIterator input_iterator) {
+	public SunshineOlivieriIterator(TsIterator input_iterator, double latitude_DEG, double longitude_DEG) {
 		super(input_iterator, input_iterator.getSchema());
+		
+		this.latitude_DEG = 51.079;
+		this.longitude_DEG = 10.460;
+		this.latitude_RAD = Math.toRadians(this.latitude_DEG);
+		//this.longitude_RAD = Math.toRadians(this.longitude_DEG);
+		this.sin_latitude = Math.sin(this.latitude_RAD);
+		this.cos_latitude = Math.cos(this.latitude_RAD);
+		
 		String[] names = this.getNames();
 		for(int i=0;i<names.length;i++) {
 			if(names[i].equals(SUNSHINE_SENSOR_NAME)) {
@@ -58,7 +66,7 @@ public class SunshineOlivieriIterator extends InputIterator {
 				break;
 			}
 		}
-		AssumptionCheck.throwTrue(sensor_pos<0,"senosr not found for SunshineOlivieriIterator");		
+		AssumptionCheck.throwTrue(sensor_pos<0,"sensor not found for SunshineOlivieriIterator");		
 	}
 
 	@Override

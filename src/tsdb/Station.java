@@ -14,6 +14,8 @@ import org.apache.logging.log4j.Logger;
 
 import tsdb.component.LoggerType;
 import tsdb.component.labeledproperty.LabeledProperties;
+import tsdb.graph.QueryPlanGenerators;
+import tsdb.graph.QueryPlanGenerators.VirtualCopyList;
 import tsdb.util.AggregationType;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.Interval;
@@ -294,5 +296,29 @@ public class Station {
 			}
 		}
 		return false;
+	}
+	
+	public String[] stationSchemaSupplement(String[] schema) {
+		String[] stationSensorNames = getSensorNames();
+		for(VirtualCopyList p:QueryPlanGenerators.VIRTUAL_COPY_LISTS) {
+			if(Util.containsString(schema, p.target)) {				
+				innerLoop: for(String source:p.sources) {
+					if(Util.containsString(schema, source)) {
+						break innerLoop;
+					}
+					if(Util.containsString(stationSensorNames, source)) {
+						schema = Util.concat(schema, source);
+						break innerLoop;
+					}
+				}
+			}
+		}	
+
+		if(generalStation!=null && generalStation.region.name.equals("BE") && Util.containsString(schema, "P_RT_NRT")) { // add virtual P_RT_NRT of P_container_RT for stations in BE
+			if(!Util.containsString(schema, "P_container_RT")) {
+				return Util.concat(schema,"P_container_RT");
+			}
+		}
+		return schema;		
 	}
 }

@@ -67,6 +67,9 @@ public class Handler_query_image extends MethodHandler {
 		baseRequest.setHandled(true);
 		response.setContentType("image/png");
 		//response.setHeader("Cache-Control", "max-age=300");
+		response.setHeader("Cache-Control", "max-age=0, no-cache, no-store, must-revalidate");
+		response.setHeader("Expires", "Thu, 01 Jan 1970 00:00:00 GMT");
+		response.setHeader("Pragma", "no-cache");
 
 		String plot = request.getParameter("plot");
 		if(plot==null) {

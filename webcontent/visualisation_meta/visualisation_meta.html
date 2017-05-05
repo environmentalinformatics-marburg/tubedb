@@ -75,9 +75,13 @@
 				<div v-for="view in views">
 					<div v-if="view.status == 'init'">
 						{{view.plot}} / {{view.sensor}} queued
+						<div style="width: 1000px; height: 100px">
+						</div>
 					</div>
 					<div v-if="view.status == 'running'">
 						{{view.plot}} / {{view.sensor}} processing
+						<div style="width: 1000px; height: 100px">
+						</div>						
 					</div>
 					<div v-if="view.status == 'done'">
 						{{view.plot}} / {{view.sensor}}<br>
