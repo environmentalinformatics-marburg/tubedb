@@ -102,7 +102,7 @@ class EvaporationIterator extends InputIterator {
 				break;
 			}
 		}
-		AssumptionCheck.throwTrue(sensor_pos<0,"senosr not found for SunshineOlivieriIterator");		
+		AssumptionCheck.throwTrue(sensor_pos<0,"sensor not found for EvaporationIterator");		
 	}
 
 	@Override

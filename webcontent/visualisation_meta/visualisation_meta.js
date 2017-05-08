@@ -147,7 +147,7 @@ methods: {
 		this.viewPrecessingStart = performance.now();
 		var currentCycle = this.viewCycle +1;
 		this.viewCycle = currentCycle;
-		var parallel = 6;
+		var parallel = 1;
 		for(var i=0; i<parallel; i++) {
 			self.taskRunner(currentCycle);
 		}
