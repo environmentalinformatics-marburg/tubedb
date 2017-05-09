@@ -629,7 +629,7 @@ public class TimeSeriesViewScene extends TsdbScene {
 					sensorMap.put(sensor.name, sensor);
 				}
 
-				String[] sensorNames = tsdb.getSensorNamesOfPlot(plot.name);
+				String[] sensorNames = tsdb.getSensorNamesOfPlotWithVirtual(plot.name);
 				log.info(plot.name+" : "+Arrays.toString(sensorNames));
 				for(String sensorName:sensorNames) {
 					Sensor sensor = sensorMap.get(sensorName);

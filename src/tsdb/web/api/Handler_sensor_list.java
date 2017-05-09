@@ -59,21 +59,21 @@ public class Handler_sensor_list extends MethodHandler {
 		try {
 			String[] sensorNames = null;
 			if(plot!=null) {			
-				sensorNames = tsdb.getSensorNamesOfPlot(plot);			
+				sensorNames = tsdb.getSensorNamesOfPlotWithVirtual(plot);			
 			} else if(general_station!=null) {
-				sensorNames = tsdb.getSensorNamesOfGeneralStation(general_station);	
+				sensorNames = tsdb.getSensorNamesOfGeneralStationWithVirtual(general_station);	
 			} else if(region!=null){
 				Set<String> sensorNameSet = new TreeSet<String>();
 				for(GeneralStationInfo generalStationInfo:tsdb.getGeneralStations()) {
 					if(generalStationInfo.region.name.equals(region)) {
-						for(String sensorName:tsdb.getSensorNamesOfGeneralStation(generalStationInfo.name)) {
+						for(String sensorName:tsdb.getSensorNamesOfGeneralStationWithVirtual(generalStationInfo.name)) {
 							sensorNameSet.add(sensorName);
 						}
 					}
 				}
 				sensorNames = sensorNameSet.toArray(new String[0]);
 			} else if(station!=null) {
-				sensorNames = tsdb.getSensorNamesOfPlot(station); //TODO change to just query stations
+				sensorNames = tsdb.getSensorNamesOfPlotWithVirtual(station); //TODO change to just query stations
 			}
 			if(sensorNames==null) {
 				log.error("sensorNames null: "+plot);

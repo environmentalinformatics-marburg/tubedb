@@ -152,15 +152,7 @@ public class Handler_query_heatmap extends MethodHandler {
 		boolean byYear = request.getParameter("by_year") == null ? false : request.getParameter("by_year").equals("true");
 		
 		try {
-			String[] sensorNames = tsdb.supplementSchema(sensorName);
-			/*String[] sensorNames;
-			if(sensorName.equals("WD")) {
-				sensorNames = new String[]{sensorName,"WV"};
-			} else if(sensorName.equals("sunshine")) {
-				sensorNames = new String[]{sensorName,"Rn_300"};
-			} else {
-				sensorNames = new String[]{sensorName};
-			}*/
+			String[] sensorNames = tsdb.supplementSchema(new String[]{sensorName}, tsdb.getSensorNamesOfPlotWithVirtual(plot));
 			String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, sensorNames);
 			if(sensorNames.length!=validSchema.length) {
 				log.info("sensorName not in plot: "+plot+"  "+sensorName);

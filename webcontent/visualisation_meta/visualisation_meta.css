@@ -12,6 +12,10 @@ body {
    overflow: hidden;
 }
 
+.just_hide {
+   visibility: hidden;
+}
+
 .caption { 
 	/*margin-top: 0px;*/
 	display: table;
@@ -38,6 +42,10 @@ body {
 	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
 	padding: 5px;
 	margin: 2px;
+}
+
+.title {
+	text-decoration: underline;
 }
 
 .state {
@@ -83,8 +91,14 @@ option {
 	background-color: rgba(140, 135, 130, 0.4);
 	border-radius: 5px;
 	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
-	padding: 5px;
-	margin: 2px;
+	padding: 2px;
+	margin: 5px;
+	font-size:small;
+}
+
+progress {
+  width: 100px;
+  height: 10px;
 }
 
 .runtime {
@@ -94,8 +108,9 @@ option {
 	background-color: rgba(140, 135, 130, 0.1);
 	/*border-radius: 5px;*/
 	/*box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);*/
-	padding: 5px;
-	margin: 2px;
+	padding: 2px;
+	margin: 5px;
+	font-size:small;
 }
 
 .main_page_link {

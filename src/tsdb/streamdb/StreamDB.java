@@ -196,7 +196,7 @@ public class StreamDB {
 		}
 		if(sensorMeta==null) {
 			//new Throwable().printStackTrace();
-			log.warn("no sensor: "+sensorName+"  in station: "+stationMeta.stationName);
+			log.trace("no sensor: "+sensorName+"  in station: "+stationMeta.stationName);
 		}
 		return sensorMeta;
 	}

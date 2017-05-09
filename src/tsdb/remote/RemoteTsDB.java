@@ -23,15 +23,15 @@ import tsdb.util.iterator.TimestampSeries;
 public interface RemoteTsDB extends Remote {
 	
 	//sensor
-	String[] getSensorNamesOfPlot(String plotID) throws RemoteException;
-	String[] getSensorNamesOfGeneralStation(String generalStationName) throws RemoteException;	
+	String[] getSensorNamesOfPlotWithVirtual(String plotID) throws RemoteException;
+	String[] getSensorNamesOfGeneralStationWithVirtual(String generalStationName) throws RemoteException;	
 	Sensor[] getSensors() throws RemoteException;
 	Sensor getSensor(String sensorName) throws RemoteException;
 	String[] getBaseSchema(String[] rawSchema) throws RemoteException;
 	String[] getCacheSchemaNames(String streamName) throws RemoteException;
 	String[] getValidSchema(String plotID, String[] sensorNames) throws RemoteException;
 	String[] getValidSchemaWithVirtualSensors(String plotID, String[] sensorNames) throws RemoteException;
-	String[] supplementSchema(String... schema) throws RemoteException;
+	String[] supplementSchema(String[] schema, String[] availableSchema) throws RemoteException;
 	
 	//region
 	Region[] getRegions() throws RemoteException;

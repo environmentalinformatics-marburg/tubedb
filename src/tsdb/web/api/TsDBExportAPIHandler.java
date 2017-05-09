@@ -11,6 +11,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -419,20 +420,20 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 		try {
 			OutputStream outputstream = response.getOutputStream();
 			Region region = model.region;
-			String[] sensorNames = tsdb.supplementSchema(model.sensors);
-			
-			/*
-			
-			if(Arrays.stream(sensorNames).anyMatch(name->name.equals("WD")) && Arrays.stream(sensorNames).noneMatch(name->name.equals("WV"))) {
-				sensorNames = Stream.concat(Arrays.stream(sensorNames), Stream.of("WV")).toArray(String[]::new);
-			}
-			if(Arrays.stream(sensorNames).anyMatch(name->name.equals("sunshine")) && Arrays.stream(sensorNames).noneMatch(name->name.equals("Rn_300"))) {
-				sensorNames = Stream.concat(Arrays.stream(sensorNames), Stream.of("Rn_300")).toArray(String[]::new);
-			}
-			
-			*/
-			
 			String[] plotIDs = model.plots;
+			
+			LinkedHashSet<String> availableSensorNames = new LinkedHashSet<String>();
+			for(String plotID:plotIDs) {
+				String[] sn = tsdb.getSensorNamesOfPlotWithVirtual(plotID);
+				if(sn != null) {
+					for(String s:sn) {
+						availableSensorNames.add(s);
+					}
+				}
+			}
+
+			String[] sensorNames = tsdb.supplementSchema(model.sensors, availableSensorNames.toArray(new String[0]));
+			
 			AggregationInterval aggregationInterval = model.aggregationInterval;
 			DataQuality dataQuality = model.quality;
 			boolean interpolated = model.interpolate;

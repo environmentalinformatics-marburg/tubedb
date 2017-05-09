@@ -307,7 +307,7 @@ public class TsDBAPIHandler extends AbstractHandler {
 			for(GeneralStationInfo generalStationInfo:tsdb.getGeneralStations()) {
 				System.out.println(generalStationInfo.name);
 				if(generalStationInfo.region.name.equals(region)) {
-					for(String sensorName:tsdb.getSensorNamesOfGeneralStation(generalStationInfo.name)) {
+					for(String sensorName:tsdb.getSensorNamesOfGeneralStationWithVirtual(generalStationInfo.name)) {
 						sensorNameSet.add(sensorName);
 					}
 				}

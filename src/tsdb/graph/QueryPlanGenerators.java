@@ -45,7 +45,7 @@ public final class QueryPlanGenerators {
 	 */
 	public static NodeGen getStationGen(TsDB tsdb, DataQuality dataQuality) {
 		return (String stationID, String[] schema)->{
-			log.info("gen "+stationID+"  "+Arrays.toString(schema));
+			//log.info("gen "+stationID+"  "+Arrays.toString(schema));
 			Station station = tsdb.getStation(stationID);
 			if(station==null) {
 				throw new RuntimeException("station not found: "+stationID);
@@ -107,6 +107,9 @@ public final class QueryPlanGenerators {
 		}
 	}
 
+	/**
+	 * source copy to target
+	 */
 	public static final VirtualCopyPair[] VIRTUAL_COPY_PAIRS = new VirtualCopyPair[]{
 			VirtualCopyPair.of("Ta_200", "Ta_200_min"),			
 			VirtualCopyPair.of("Ta_200", "Ta_200_max"),
@@ -114,16 +117,22 @@ public final class QueryPlanGenerators {
 			VirtualCopyPair.of("rH_200", "rH_200_max"),			
 	};
 
+	/**
+	 * copy first found of sources to target 
+	 */
 	public static final VirtualCopyList[] VIRTUAL_COPY_LISTS = new VirtualCopyList[]{
 			VirtualCopyList.of(new String[] {"SWDR_300", "SWDR_3700", "SWDR_4400"}, "SWDR"),
 			VirtualCopyList.of(new String[] {"SWUR_300", "SWUR_3700", "SWUR_4400"}, "SWUR"),
 			VirtualCopyList.of(new String[] {"LWDR_300", "LWDR_3700", "LWDR_4400"}, "LWDR"),
 			VirtualCopyList.of(new String[] {"LWUR_300", "LWUR_3700", "LWUR_4400"}, "LWUR"),
 			
-			VirtualCopyList.of(new String[] {SunshineOlivieriIterator.SUNSHINE_SENSOR_NAME}, SunshineOlivieriIterator.SUNSHINE_SENSOR_NAME),
+			VirtualCopyList.of(new String[] {SunshineOlivieriIterator.RADIATION_SENSOR_NAME}, SunshineOlivieriIterator.SUNSHINE_SENSOR_NAME),
 			VirtualCopyList.of(new String[] {"P_container_NRT"}, Evaporation.SENSOR_NAME),
 	};
 	
+	/**
+	 * sources are needed for target
+	 */
 	public static final VirtualCopyList[] SENSOR_DEPENDENCY_LISTS = new VirtualCopyList[]{
 			VirtualCopyList.of(new String[] {"WV"}, "WD"),
 			VirtualCopyList.of(new String[] {SunshineIterator.RADIATION_SENSOR_NAME}, SunshineIterator.SUNSHINE_SENSOR_NAME),
@@ -151,7 +160,7 @@ public final class QueryPlanGenerators {
 	 */
 	public static Node elementRawCopy(Node source) {
 		String[] schema = source.getSchema();
-		log.info("schema "+Arrays.toString(schema));
+		//log.info("schema "+Arrays.toString(schema));
 		if(Util.containsOneString(schema, VIRTUAL_COPY_SENSORS)) {
 			List<Action> actions = new ArrayList<>();
 			for(VirtualCopyPair pair:VIRTUAL_COPY_PAIRS) {

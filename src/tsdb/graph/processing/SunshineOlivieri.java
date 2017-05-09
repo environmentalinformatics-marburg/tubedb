@@ -27,7 +27,7 @@ public class SunshineOlivieri extends Node.Abstract{
 		throwNull(source);
 		this.source = source;
 		double[] latlon = source.getSourcePlot().getLatLon();
-		System.out.println(Arrays.toString(latlon));
+		//System.out.println(Arrays.toString(latlon));
 		this.latitude_DEG = latlon[0];
 		this.longitude_DEG = latlon[1]; 
 	}

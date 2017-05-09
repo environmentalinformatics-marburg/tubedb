@@ -69,7 +69,7 @@ example file-content:
 
 {plot:"HEG03", raw:"SM_20", correct:"SM_20_U", start:"2010-09-08T10:10", end:"2011-07-06T11:00"}, /*checked*/
 
-{plot:"HEG18", raw:"LT_10", correct:"Ts_5", start:"2012-07-17T15:00", end:"2017-02-23T12:00"}, /* start and end at file boundary (cable exchange at 2017-02-20) */ /*checked*/
+{plot:"HEG18", raw:"LT_10", correct:"Ts_05", start:"2012-07-17T15:00", end:"2017-02-23T12:00"}, /* start and end at file boundary (cable exchange at 2017-02-20) */ /*checked*/
 {plot:"HEG18", raw:"BT_1", correct:"Ta_10", start:"2012-07-17T15:00", end:"2017-02-23T12:00"}, /* start and end at file boundary (cable exchange at 2017-02-20) */ /*checked*/
 
 {plot:"HEG18", raw:"BT_2", correct:"Ts_50", start:"2012-07-17T15:00", end:"2017-03-23T12:00"}, /* start and end at file boundary (cable exchange at 2017-03-20) */ /*checked*/

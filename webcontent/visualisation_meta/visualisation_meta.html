@@ -20,77 +20,135 @@
 		<div v-else>
 		
 			<div v-show="viewsDone < views.length" class="processing">
-				<img src="busy.gif" />
-				processing {{viewsDone}} of {{views.length}}
+				<!--<img src="busy.gif" />-->
+				<progress :value="viewsDone" :max="views.length"></progress>
+				{{viewsDone}} / {{views.length}}				
 			</div>
 			
 			<div v-show="viewPrecessingStart < viewPrecessingEnd" class="runtime">
-				run time {{((viewPrecessingEnd - viewPrecessingStart) / 1000).toFixed(3)}} s
+				{{((viewPrecessingEnd - viewPrecessingStart) / 1000).toFixed(3)}} s
 			</div>
 			
 			<div v-show="metadata.general_stations.length>1" class="interactive" style="display: inline-block;" @mouseover="groupHover = true" @mouseleave="groupHover = false">
-				<div class="centered">Group</div>
-				<div :class="['centered', {hide: !(groupHover||groupHoverStay)}]">
-					<select @focus="groupHoverStay = true" @blur="groupHoverStay = false" v-model="groupID">
-						<option value="*">*</option>
-						<option v-for="group in metadata.general_stations" v-bind:value="group.id">
-						{{group.name}}
-						</option>
-					</select>
+				
+				<div class="centered title">Group</div>
+				
+				<div class="centered state" style="position: relative;">
+
+					<div class="state hide">
+						<div v-for="group in metadata.general_stations">
+							{{group.name}} w
+						</div>
+					</div>
+					
+    				<div class="centered state" v-show="!(groupHover||groupHoverStay)">
+						{{groupMap[groupID].name}}
+					</div>
+					
+					<div v-show="(groupHover||groupHoverStay)">
+						select
+					</div>
+					
+					<div style="position: absolute; top: 0px; left: 0px;" v-show="(groupHover||groupHoverStay)">
+						<select @focus="groupHoverStay = true" @blur="groupHoverStay = false" v-model="groupID">
+							<option value="*">*</option>
+							<option v-for="group in metadata.general_stations" v-bind:value="group.id">
+							{{group.name}}
+							</option>
+						</select>
+					</div>		
+				
 				</div>
-				<div v-show="!(groupHover||groupHoverStay)" class="centered  state">{{groupMap[groupID].name}}</div>
+
 			</div>
 
 			<div v-show="plots.length!=1" class="interactive" style="display: inline-block;" @mouseover="plotHover = true" @mouseleave="plotHover = false">
-				<div class="centered">Plot</div>
-				<div class="hide"> <!--dummy-->
-				<select>
-					<option value="*">*</option>
-					<option v-for="plot in plots">
-					{{plot.id}}
-					</option>
-				</select>
+				<div class="centered title">Plot</div>
+				
+				<div class="state" style="position: relative;">
+				
+					<div class="state hide">
+						<div v-for="plot in plots">
+						{{plot.id}} ...
+						</div>
+					</div>
+					
+					<div style="position: absolute; top: 0px; left: 0px;" v-show="plotHover">
+					<select multiple :size="plots.length + 1 > 20 ? 20 : plots.length + 1" v-model="plotIDs" style="position: absolute;">
+						<option value="*">*</option>
+						<option v-for="plot in plots" v-bind:value="plot.id">
+						{{plot.id}}
+						</option>
+					</select>
+					</div>					
+					
+					<div class="centered state" v-show="!plotHover">{{plotIDs[0]}}{{plotIDs.length>1 && plotIDs[0] != "*" ? " ...":""}}</div>
+					
+					<div v-show="plotHover">select</div>
+				
 				</div>
-				<div style="position: relative;" v-show="plotHover">
-				<select multiple :size="plots.length + 1 > 10 ? 10 : plots.length + 1" v-model="plotIDs" style="position: absolute;">
-					<option value="*">*</option>
-					<option v-for="plot in plots" v-bind:value="plot.id">
-					{{plot.id}}
-					</option>
-				</select>
-				</div>
-				<div class="centered state">{{plotIDs[0]}}{{plotIDs.length>1 && plotIDs[0] != "*" ? " ...":""}}</div>
+				
 			</div>
 			<div v-show="plots.length==1" style="display: inline-block;">
 				<div class="centered">Plot</div>
 				<div class="centered">{{plotIDs[0]}}{{plotIDs.length>1 && plotIDs[0] != "*" ? " ...":""}}</div>
 			</div>
 			
-			<div v-show="sensors.length>1" class="interactive" style="display: inline-block;" @mouseover="sensorHover = true" @mouseleave="sensorHover = false">
-				<div class="centered">Parameter</div>
-				<div class="hide"> <!--dummy-->
-					<select>
-						<option value="*">*</option>
-						<option v-for="sensor in sensors">
+			<div v-show="sensors.length>1" class="interactive" style="display: inline-block;" @mouseover="sensorHover = true" @mouseleave="sensorHover = false">				
+				<div class="centered title">Parameter</div>
+				
+				<div class="state" style="position: relative;">
+				
+					<div class="hide">
+						<div v-for="sensor in sensors">
+							{{sensor.id}} ...
+						</div>						
+					</div>
+					
+					<div style="position: absolute; top: 0px; left: 0px;" v-show="sensorHover">
+						<select multiple :size="sensors.length + 1 > 20 ? 20 : sensors.length + 1" v-model="sensorIDs">
+							<option value="*">*</option>
+							<option v-for="sensor in sensors" v-bind:value="sensor.id">
 							{{sensor.id}}
-						</option>
-					</select>
+							</option>
+						</select>
+					</div>
+					
+					<div class="centered state" v-show="!sensorHover">{{sensorIDs.length>0 ? sensorIDs[0] : '?'}}{{sensorIDs.length>1 && sensorIDs[0] != "*" ? " ...":""}}</div>
+					
+					<div v-show="sensorHover">select</div>
+				
 				</div>
-				<div style="position: relative;" v-show="sensorHover">
-				<select multiple :size="sensors.length + 1 > 10 ? 10 : sensors.length + 1" v-model="sensorIDs" style="position: absolute;">
-					<option value="*">*</option>
-					<option v-for="sensor in sensors" v-bind:value="sensor.id">
-					{{sensor.id}}
-					</option>
-				</select>
-				</div>
-				<div class="centered state">{{sensorIDs[0]}}{{sensorIDs.length>1 && sensorIDs[0] != "*" ? " ...":""}}</div>
+				
 			</div>
 			<div v-show="sensors.length == 1" style="display: inline-block;">
 				no sensors
 			</div>
 			
-			<div class="results">
+			
+			<div class="interactive" style="display: inline-block;" @mouseover="aggregationHover = true" @mouseleave="aggregationHover = false">
+				
+				<div class="centered title">Resolution</div>
+				
+				<div class="centered state" style="position: relative;">
+				
+					<div :class="[ { just_hide: (aggregationHover || aggregationHoverStay)}]" class="state">{{aggregationsText[aggregation]}}</div>
+					
+					<div v-show="(aggregationHover || aggregationHoverStay)" style="position: absolute; top: 0px; left: 0px;">
+						<select @focus="aggregationHoverStay = true" @blur="aggregationHoverStay = false" v-model="aggregation">
+							<option v-for="a in aggregations" v-bind:value="a">
+								{{a}}
+							</option>
+						</select>
+					</div>
+				
+				</div>
+				
+			</div>
+			
+			
+			
+			<div id="results" class="results">
 				{{views.length}} views
 				<div v-for="view in views">
 					<div v-if="view.status == 'init'">
@@ -132,15 +190,13 @@
 		Project: 
 		<div style="position: relative; display: inline-block;">
 		
-			<div style="display: inline-block; visibility: hidden;">
-				<select>
-					<option v-for="project in projects">
+			<div class="state hide" style="display: inline-block;">
+				<div v-for="project in projects">
 					{{project.name}}
-					</option>
-				</select>
+				</div>
 			</div>
 			
-			<div style="position: absolute; top: 0px; left: 0px;">
+			<div style="position: absolute; top: 0px; left: 0px;" class="state" v-show="!(projectHover||projectHoverStay)">
 				{{projectMap[projectID].name}}
 			</div>
 			

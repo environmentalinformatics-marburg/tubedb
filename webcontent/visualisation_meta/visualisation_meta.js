@@ -40,13 +40,19 @@ data: function () {
 		sensorHover: false,
 		sensorIDs: ["*"],
 		sensorMap: {},
+
+		aggregationHover: false,
+		aggregationHoverStay: false,
+		
+		aggregations: ["raw","hour","day","week","month","year"],
+		aggregationsText: {raw:"raw", hour:"hours", day:"days", week:"weeks", month:"months", year:"years"},
+		aggregation: "hour",
 		
 		views: [],
 		viewsDone: 0,
 		viewCycle: 0,
 		viewPrecessingStart: 0,
-		viewPrecessingEnd: 0,
-		
+		viewPrecessingEnd: 0,	
 	}
 }, //end data
 
@@ -98,6 +104,7 @@ mounted: function () {
 methods: {
 	updateMetadata: function() {
 		var self = this;
+		this.viewCycle++;
 		this.appMessage = "query metadata of "+ this.project.id +" ...";
 		var params = {region:this.project.id};
 		axios.get(url_metadata_json, {params: params})
@@ -130,27 +137,55 @@ methods: {
 		}
 		//console.log(plots);
 		//console.log(sensors);
+		
+		var container = document.getElementById("container");
+		var width = container == null ? 100 : (container.clientWidth - 30 < 100 ? 100 : container.clientWidth - 30);
+		
 		var views = [];
 		sensors.forEach(function(sensor){
 			var innerMap = self.sensorNamePlotMap[sensor.id];
 			plots.forEach(function(plot){
 				if(innerMap[plot.id]) {
-					var view = {status: "init", url: "no", type: "diagram", plot: plot.id, sensor: sensor.id, width: 1000, height: 100};
+					var view = {status: "init", url: "no", type: "diagram", plot: plot.id, sensor: sensor.id, aggregation: self.aggregation, width: width, height: 100};
 					views.push(view);
 				}
 			});
 		});
 		//this.views = views;
 		var maxViews = 500;
-		this.views = views.length <= maxViews ? views : views.slice(0, maxViews);
-		this.viewsDone = 0;
-		this.viewPrecessingStart = performance.now();
-		var currentCycle = this.viewCycle +1;
-		this.viewCycle = currentCycle;
-		var parallel = 1;
-		for(var i=0; i<parallel; i++) {
-			self.taskRunner(currentCycle);
+		var new_views = views.length <= maxViews ? views : views.slice(0, maxViews);
+		if( !this.compareViews(this.views, new_views) ) {
+			this.views = new_views;
+			this.viewsDone = 0;
+			this.viewPrecessingStart = performance.now();
+			var currentCycle = this.viewCycle +1;
+			this.viewCycle = currentCycle;
+			var parallel = 1;
+			for(var i=0; i<parallel; i++) {
+				self.taskRunner(currentCycle);
+			}
 		}
+	},
+	compareView: function(a, b) {
+		if(a.type != b.type) return false;
+		if(a.plot != b.plot) return false;
+		if(a.sensor != b.sensor) return false;
+		if(a.aggregation != b.aggregation) return false;
+		if(a.width != b.width) return false;
+		if(a.height != b.height) return false;
+		return true;
+	},
+	compareViews: function(va, vb) {
+		var len = va.length;
+		if(len != vb.length) {
+			return false;
+		}
+		for(var i=0; i<len; i++) {
+			if(!this.compareView(va[i], vb[i])) {
+				return false;
+			}
+		}
+		return true;
 	},
 	taskRunner: function(currentCycle) {
 		if(currentCycle != this.viewCycle) {
@@ -172,7 +207,7 @@ methods: {
 		view.status = "running";
 		//console.log(view);
 		
-		var params = {plot: view.plot, sensor: view.sensor, aggregation: "hour", interpolated: "true", width: view.width, height: view.height};
+		var params = {plot: view.plot, sensor: view.sensor, aggregation: view.aggregation, interpolated: "false", width: view.width, height: view.height};
 		axios.get(url_query_image, {responseType: 'blob', params: params})
 		.then(function(response) {
 			//console.log(response.data);
@@ -241,7 +276,7 @@ watch: {
 		this.updateViews();
 	},
 	plots: function() {
-		this.plotIDs = this.metadata.plots.length==0 ? ["*"] : [this.metadata.plots[0].id];
+		this.plotIDs = this.metadata.plots.length==0 ? ["*"] : [this.plots[0].id];
 		this.updateViews();
 	},
 	plotIDs: function() {
@@ -250,6 +285,9 @@ watch: {
 	sensorIDs: function() {
 		this.updateViews();
 	},
+	aggregation: function() {
+		this.updateViews();
+	}
 }, //end watch
 
 });	//end visualisation-interface

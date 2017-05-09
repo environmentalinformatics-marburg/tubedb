@@ -60,7 +60,7 @@ public class ServerTsDB implements RemoteTsDB {
 	//----------------------- sensor
 
 	@Override
-	public String[] getSensorNamesOfPlot(String plotID) {
+	public String[] getSensorNamesOfPlotWithVirtual(String plotID) {
 		if(plotID==null) {
 			log.warn("plotID null");
 			return null;
@@ -79,7 +79,7 @@ public class ServerTsDB implements RemoteTsDB {
 	}
 
 	@Override
-	public String[] getSensorNamesOfGeneralStation(String generalStationName) {
+	public String[] getSensorNamesOfGeneralStationWithVirtual(String generalStationName) {
 		if(generalStationName==null) {
 			log.warn("generalStationName null");
 			return null;
@@ -134,8 +134,8 @@ public class ServerTsDB implements RemoteTsDB {
 	}
 
 	@Override
-	public String[] supplementSchema(String... schema) {
-		return tsdb.supplementSchema(schema);
+	public String[] supplementSchema(String[] schema, String[] availableSchema) {
+		return tsdb.supplementSchema(schema, availableSchema);
 	}
 
 	// ----------------------------------- region

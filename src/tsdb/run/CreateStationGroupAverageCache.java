@@ -80,14 +80,15 @@ public class CreateStationGroupAverageCache {
 				}				
 				sensorNameSet.addAll(Arrays.asList(sensorNames));
 			}
-			log.trace(sensorNameSet);
+			//log.info(sensorNameSet);
 
-			for(String sensorName:sensorNameSet) {
+			for(String processingSensorName:sensorNameSet) {
+				
+				//log.info(processingSensorName);
 
 				long groupMinTimestamp = Long.MAX_VALUE;
 				long groupMaxTimestamp = Long.MIN_VALUE;
 				for(String plotID:plotList) {
-
 					String[] sensorNames = tsdb.getSensorNamesOfPlot(plotID);
 					sensorNames = tsdb.includeVirtualSensorNames(sensorNames);
 					if(sensorNames==null) {
@@ -95,7 +96,7 @@ public class CreateStationGroupAverageCache {
 					}
 					boolean sensorContained = false;
 					for(String s:sensorNames) {
-						if(s.equals(sensorName)) {
+						if(s.equals(processingSensorName)) {
 							sensorContained = true;
 							break;
 						}						
@@ -103,7 +104,7 @@ public class CreateStationGroupAverageCache {
 					if(!sensorContained)  {
 						continue;
 					}
-					if(sensorName.equals("WD")) {
+					if(processingSensorName.equals("WD")) {
 						continue;
 					}
 
@@ -122,7 +123,7 @@ public class CreateStationGroupAverageCache {
 					continue;
 				}
 
-				//cbPrint.println(group+"  "+sensorName+" ********************************* "+TimeUtil.oleMinutesToLocalDateTime(groupMinTimestamp)+"\t - \t"+TimeUtil.oleMinutesToLocalDateTime(groupMaxTimestamp)+" **************************************************************** "+groupMinTimestamp+"\t-\t"+groupMaxTimestamp);
+				//log.info(group+"  "+processingSensorName+" ********************************* "+TimeUtil.oleMinutesToLocalDateTime(groupMinTimestamp)+"\t - \t"+TimeUtil.oleMinutesToLocalDateTime(groupMaxTimestamp)+" **************************************************************** "+groupMinTimestamp+"\t-\t"+groupMaxTimestamp);
 				List<Continuous> sources = new ArrayList<Continuous>();
 				List<Continuous> additions = new ArrayList<Continuous>();
 				for(String plotID:plotList) {
@@ -134,7 +135,7 @@ public class CreateStationGroupAverageCache {
 						}
 						boolean sensorContained = false;
 						for(String s:sensorNames) {
-							if(s.equals(sensorName)) {
+							if(s.equals(processingSensorName)) {
 								sensorContained = true;
 								break;
 							}						
@@ -145,9 +146,10 @@ public class CreateStationGroupAverageCache {
 
 
 						Plot plot = tsdb.getPlot(plotID);
-						if(plot!=null && plot.existData(sensorName)) {
-							String[] schema = new String[]{sensorName};
-							schema = tsdb.supplementSchema(schema);
+						if(plot!=null && plot.existData()) {
+							String[] schema = new String[]{processingSensorName};
+							schema = tsdb.supplementSchema(schema, tsdb.includeVirtualSensorNames(plot.getSensorNames()));
+							//log.info(Arrays.toString(schema)+"of "+Arrays.toString(plot.getSensorNames()));
 							Continuous continuous = continuousGen.get(plotID, schema);
 							if(continuous!=null) {
 								Addition addition = Addition.createWithElevationTemperature(tsdb,continuous,plotID);
@@ -181,12 +183,12 @@ public class CreateStationGroupAverageCache {
 						//tsdb.cacheStorage.writeNew(group, averaged.get(groupMinTimestamp, groupMaxTimestamp));
 						TimestampSeries timestampSeries = it.toTimestampSeries(group);
 						tsdb.streamCache.insertTimestampSeries(timestampSeries);
-					    log.trace(group+"/"+sensorName+" <- "+averaged.getSourceText());
+					    log.info(group+"/"+processingSensorName+" <- "+averaged.getSourceText());
 					} else {
 						log.warn("averages: "+group);
 					}
 				} else {
-					log.trace(group+"/"+sensorName+" not enough sources for average");
+					log.trace(group+"/"+processingSensorName+" not enough sources for average");
 				}
 			}
 			//cbPrint.println(group+" -> "+list);

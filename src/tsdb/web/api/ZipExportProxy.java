@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,18 +58,23 @@ public class ZipExportProxy {
 	public void startExport() {
 		try {
 			//OutputStream outputstream = new ByteArrayOutputStream();
-
 			OutputStream outputstream = new BufferedOutputStream(new FileOutputStream(tempFile));
 
 			Region region = model.region;
-			String[] sensorNames = tsdb.supplementSchema(model.sensors);
-			/*if(Arrays.stream(sensorNames).anyMatch(name->name.equals("WD")) && Arrays.stream(sensorNames).noneMatch(name->name.equals("WV"))) {
-			sensorNames = Stream.concat(Arrays.stream(sensorNames), Stream.of("WV")).toArray(String[]::new);
-		}
-		if(Arrays.stream(sensorNames).anyMatch(name->name.equals("sunshine")) && Arrays.stream(sensorNames).noneMatch(name->name.equals("Rn_300"))) {
-			sensorNames = Stream.concat(Arrays.stream(sensorNames), Stream.of("Rn_300")).toArray(String[]::new);
-		}*/		
 			String[] plotIDs = model.plots;
+
+			LinkedHashSet<String> availableSensorNames = new LinkedHashSet<String>();
+			for(String plotID:plotIDs) {
+				String[] sn = tsdb.getSensorNamesOfPlotWithVirtual(plotID);
+				if(sn != null) {
+					for(String s:sn) {
+						availableSensorNames.add(s);
+					}
+				}
+			}
+
+			String[] sensorNames = tsdb.supplementSchema(model.sensors, availableSensorNames.toArray(new String[0]));
+
 			AggregationInterval aggregationInterval = model.aggregationInterval;
 			DataQuality dataQuality = model.quality;
 			boolean interpolated = model.interpolate;

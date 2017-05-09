@@ -65,7 +65,7 @@ Ta_10:
   interpolation_mse: 7
   category: temperature
   
-Ts_5:
+Ts_05:
   description: Soil temperature at 5 centimeters below surface
   unit: °C (degree Celcius, -40 to 60) 
   aggregation: average

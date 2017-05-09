@@ -102,7 +102,7 @@ public class Handler_metadata extends MethodHandler {
 		json_output.array();
 		for(PlotInfo plotInfo:plotInfos) {
 			if(region.name.equals(plotInfo.generalStationInfo.region.name)) {
-				String[] sensorNames = tsdb.getSensorNamesOfPlot(plotInfo.name);
+				String[] sensorNames = tsdb.getSensorNamesOfPlotWithVirtual(plotInfo.name);
 				json_output.object();
 				json_output.key("id");
 				json_output.value(plotInfo.name);

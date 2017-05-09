@@ -180,15 +180,7 @@ public class Handler_query_csv extends MethodHandler {
 	
 
 		try {
-			sensorNames = tsdb.supplementSchema(sensorNames);
-			/*if(Util.containsString(sensorNames, "WD") && !Util.containsString(sensorNames, "WV")) {
-				sensorNames = Util.concat(sensorNames, "WV");
-			}
-			
-			if(Util.containsString(sensorNames, "sunshine") && !Util.containsString(sensorNames, "Rn_300")) {
-				sensorNames = Util.concat(sensorNames, "Rn_300");
-			}*/
-			
+			sensorNames = tsdb.supplementSchema(sensorNames, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
 			String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, sensorNames);
 			if(sensorNames.length!=validSchema.length) {
 				String error = "some sensors not in plot: "+plot+"  "+Arrays.toString(sensorNames);

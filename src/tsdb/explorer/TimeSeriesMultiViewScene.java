@@ -520,7 +520,7 @@ public class TimeSeriesMultiViewScene extends TsdbScene {
 					TreeSet<String> sensorSet = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
 					for(PlotInfo item:comboPlot.getItems()) {
 						if(!item.name.equals(plotAll.name)) {
-							String[] plotSensorNames = tsdb.getSensorNamesOfPlot(item.name);
+							String[] plotSensorNames = tsdb.getSensorNamesOfPlotWithVirtual(item.name);
 							if(plotSensorNames!=null) {
 								sensorSet.addAll(Arrays.asList(plotSensorNames));
 							}
@@ -535,7 +535,7 @@ public class TimeSeriesMultiViewScene extends TsdbScene {
 					}	
 				}
 			} else {
-				String[] sensorNames = tsdb.getSensorNamesOfPlot(plot.name);
+				String[] sensorNames = tsdb.getSensorNamesOfPlotWithVirtual(plot.name);
 				sensorList.add(sensorAll);
 				for(String sensorName:sensorNames) {
 					Sensor sensor = sensorMap.get(sensorName);
@@ -690,7 +690,7 @@ public class TimeSeriesMultiViewScene extends TsdbScene {
 			for(PlotInfo plot:selectedPlotList) {
 				String[] plotSensorNames;
 
-				plotSensorNames = tsdb.getSensorNamesOfPlot(plot.name);
+				plotSensorNames = tsdb.getSensorNamesOfPlotWithVirtual(plot.name);
 
 				if(plotSensorNames!=null) {
 					for(String sensorName:plotSensorNames) {
