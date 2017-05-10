@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 
 import tsdb.TsDB;
+import tsdb.component.Sensor;
 import tsdb.util.AggregationType;
 import tsdb.util.TimeUtil;
 import tsdb.util.TsSchema.Aggregation;
@@ -31,5 +32,14 @@ public class YearAggregationIterator extends AbstractAggregationIterator  {
 	@Override
 	protected boolean isValidAggregate(int collectorCount, AggregationType aggregationType) {
 		return 12==collectorCount; 
+	}
+	
+	@Override
+	protected AggregationType[] getAggregationTypes(Sensor[] sensors) {
+		AggregationType[] aggregation = new AggregationType[sensors.length];
+		for (int i = 0; i < aggregation.length; i++) {
+			aggregation[i] = sensors[i].getAggregationYear();
+		}
+		return aggregation;
 	}
 }

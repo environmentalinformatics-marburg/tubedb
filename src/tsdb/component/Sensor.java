@@ -48,7 +48,7 @@ public class Sensor implements Serializable {
 	/**
 	 * Type of aggregation for base aggregation
 	 */
-	public AggregationType baseAggregationType;
+	private AggregationType baseAggregationType;
 
 	/**
 	 * fill gaps in time series of this sensor
@@ -134,7 +134,7 @@ public class Sensor implements Serializable {
 	}
 
 	public boolean isAggregable() {
-		return baseAggregationType!= AggregationType.NONE;
+		return getAggregationHour() != AggregationType.NONE;
 	}
 
 	public double getMaxInterpolationMSE() {
@@ -206,7 +206,7 @@ public class Sensor implements Serializable {
 		Sensor sensor = new Sensor(sensorName);
 		sensor.description = description;
 		sensor.unitDescription = unit;
-		sensor.baseAggregationType = aggregation;
+		sensor.setAggregation(aggregation);
 		sensor.physicalMin = physicalMin;
 		sensor.physicalMax = physicalMax;
 		sensor.stepMin = stepMin;
@@ -219,6 +219,28 @@ public class Sensor implements Serializable {
 
 		return sensor;
 	}
+	
+	public AggregationType getAggregationHour() {
+		return baseAggregationType;	
+	}
 
+	public AggregationType getAggregationDay() {
+		return baseAggregationType;		
+	}
 
+	public AggregationType getAggregationWeek() {
+		return baseAggregationType;	
+	}
+
+	public AggregationType getAggregationMonth() {
+		return baseAggregationType;	
+	}
+
+	public AggregationType getAggregationYear() {
+		return baseAggregationType;	
+	}
+	
+	public void setAggregation(AggregationType agg) {
+		baseAggregationType = agg;		
+	}
 }

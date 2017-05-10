@@ -23,6 +23,7 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 	private static final Logger log = LogManager.getLogger();
 
 	private final Sensor[] sensors;
+	private final AggregationType[] aggregation;
 
 	private int wind_direction_pos;
 	private int wind_velocity_pos;	
@@ -87,9 +88,12 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 	public AbstractAggregationIterator(TsDB tsdb, TsIterator input_iterator, TsSchema output_schema) {
 		super(input_iterator, output_schema);
 		this.sensors = tsdb.getSensors(schema.names);
+		this.aggregation = getAggregationTypes(this.sensors);
 		prepareWindDirectionAggregation();
 		initAggregates();
 	}
+	
+	protected abstract AggregationType[] getAggregationTypes(Sensor[] sensors);
 
 	/**
 	 * search for sensors of wind direction and wind velocity
@@ -99,14 +103,14 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 		wind_velocity_pos = -1;
 		aggregate_wind_direction = false;
 		for(int i=0;i<schema.length;i++) {
-			if(sensors[i].baseAggregationType==AggregationType.AVERAGE_WIND_DIRECTION) {
+			if(aggregation[i]==AggregationType.AVERAGE_WIND_DIRECTION) {
 				if(wind_direction_pos==-1) {
 					wind_direction_pos = i;
 				} else {
 					log.error("just one wind_direction sensor can be aggregated");
 				}				
 			}
-			if(sensors[i].baseAggregationType==AggregationType.AVERAGE_WIND_VELOCITY) {
+			if(aggregation[i]==AggregationType.AVERAGE_WIND_VELOCITY) {
 				if(wind_velocity_pos==-1) {
 					wind_velocity_pos = i;
 				} else {
@@ -172,7 +176,7 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 		collectedRowsInCurrentAggregate++;		
 		for(int i=0;i<schema.length;i++) {
 			float value = (float) inputData[i];
-			if(sensors[i].baseAggregationType==AggregationType.AVERAGE_ZERO&&Float.isNaN(value)) { // special conversion of NaN values for aggregate AVERAGE_ZERO
+			if(aggregation[i]==AggregationType.AVERAGE_ZERO&&Float.isNaN(value)) { // special conversion of NaN values for aggregate AVERAGE_ZERO
 				//System.out.println("NaN...");
 				value = 0;
 			}
@@ -234,8 +238,8 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 
 		for(int i=0;i<schema.length;i++) {
 			//if(aggCnt[i]>0) {// at least one entry has been collected
-			if(isValidAggregate(aggCnt[i], sensors[i].baseAggregationType)) { // a minimum of values need to be collected
-				switch(sensors[i].baseAggregationType) {
+			if(isValidAggregate(aggCnt[i], aggregation[i])) { // a minimum of values need to be collected
+				switch(aggregation[i]) {
 				case AVERAGE:
 				case AVERAGE_ZERO:	
 				case AVERAGE_WIND_VELOCITY:

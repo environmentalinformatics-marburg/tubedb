@@ -123,7 +123,7 @@ public class Handler_sensor_list extends MethodHandler {
 					}).map(s->{
 						String desc = s.description==null?"---":s.description;
 						String unit = s.unitDescription==null?"---":s.unitDescription;
-						return s.name+";"+desc+";"+unit+";"+s.baseAggregationType+";"+s.internal;
+						return s.name+";"+desc+";"+unit+";"+s.getAggregationHour()+";"+s.internal;
 					}).toArray(String[]::new);
 
 

@@ -16,6 +16,10 @@ body {
    visibility: hidden;
 }
 
+.disable {
+   visibility: hidden;
+}
+
 .caption { 
 	/*margin-top: 0px;*/
 	display: table;
@@ -43,6 +47,17 @@ body {
 	padding: 5px;
 	margin: 2px;
 }
+
+.overlay_settings {
+	z-index:1000;
+	border-style: solid;
+	border-color: #000;
+	border-width: 1px;
+	background-color: rgba(203, 210, 222, 0.93);
+	border-radius: 5px;
+	box-shadow:  0px 0px 20px 10px rgba(51, 51, 51, 0.31);
+	padding: 5px;
+}	
 
 .title {
 	text-decoration: underline;
@@ -120,26 +135,35 @@ progress {
 }
 
 
-.result th, .result td {
+th, td {
     padding: 8px;
 }
 
-.result td {
+td {
     text-align: right;
     padding: 8px;
 }
 
-.result thead tr {
+.sensors td {
+    text-align: left;
+}
+
+thead tr {
 	background-color: rgba(87, 75, 70, 0.3);
 }
 
-.result tbody tr {
+tbody tr {
 	background-color: rgba(132, 104, 76, 0.2);
 }
 
-.result tbody tr:hover {background-color: rgba(132, 104, 76, 0.4);}
+tbody tr {
+	background-color: rgba(132, 104, 76, 0.2);
+	text-align: left;
+}
 
-.result tr:nth-child(even){background-color: rgba(132, 104, 76, 0.1);}
+tbody tr:hover {background-color: rgba(132, 104, 76, 0.4);}
+
+tr:nth-child(even){background-color: rgba(132, 104, 76, 0.1);}
 
 
 

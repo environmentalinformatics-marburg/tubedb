@@ -17,19 +17,22 @@ import tsdb.util.processingchain.ProcessingChain;
 public class DayCollectingAggregator implements CollectingAggregator {
 
 	private final TsIterator input_iterator;
+
 	private final Sensor[] sensors;
-	
+	private final AggregationType[] aggregation;
+
 	private TsEntry nextInputEntry;
 	private long nextInputAggregationTimestamp;
 
 	private final ArrayList<Float>[] outputs; //No NaNs
 	private long outputTimestamp;
 
-	
+
 	@SuppressWarnings("unchecked")
 	public DayCollectingAggregator(TsDB tsdb, TsIterator input_iterator) {
 		this.input_iterator = input_iterator;
 		this.sensors = tsdb.getSensors(input_iterator.getSchema().names);
+		this.aggregation = getAggregationTypes(this.sensors);
 		this.outputs = new ArrayList[input_iterator.getSchema().length];
 		this.outputTimestamp = -1;
 		for(int i=0;i<outputs.length;i++) {
@@ -37,7 +40,15 @@ public class DayCollectingAggregator implements CollectingAggregator {
 		}
 		calcNextInput();
 	}
-	
+
+	private static AggregationType[] getAggregationTypes(Sensor[] sensors) {
+		AggregationType[] aggregation = new AggregationType[sensors.length];
+		for (int i = 0; i < aggregation.length; i++) {
+			aggregation[i] = sensors[i].getAggregationDay();
+		}
+		return aggregation;
+	}
+
 	@Override
 	public int getAttributeCount() {
 		return input_iterator.getSchema().length;
@@ -57,40 +68,40 @@ public class DayCollectingAggregator implements CollectingAggregator {
 	public long calcNextOutput() {
 		//int validAttributesCount = 0;
 		//while(validAttributesCount==0) {
-			for(ArrayList<Float> list:outputs) {
-				list.clear();
+		for(ArrayList<Float> list:outputs) {
+			list.clear();
+		}
+		long currentAggregationTimestamp = nextInputAggregationTimestamp;
+		if(currentAggregationTimestamp<0) {
+			outputTimestamp=-1;
+			return -1;
+		}
+		for(int i=0;i<nextInputEntry.data.length;i++) {
+			if(!Float.isNaN(nextInputEntry.data[i])) {
+				outputs[i].add(nextInputEntry.data[i]);
 			}
-			long currentAggregationTimestamp = nextInputAggregationTimestamp;
-			if(currentAggregationTimestamp<0) {
-				outputTimestamp=-1;
-				return -1;
-			}
+		}
+		calcNextInput();
+		while(currentAggregationTimestamp==nextInputAggregationTimestamp) {
 			for(int i=0;i<nextInputEntry.data.length;i++) {
 				if(!Float.isNaN(nextInputEntry.data[i])) {
 					outputs[i].add(nextInputEntry.data[i]);
 				}
 			}
 			calcNextInput();
-			while(currentAggregationTimestamp==nextInputAggregationTimestamp) {
-				for(int i=0;i<nextInputEntry.data.length;i++) {
-					if(!Float.isNaN(nextInputEntry.data[i])) {
-						outputs[i].add(nextInputEntry.data[i]);
-					}
-				}
-				calcNextInput();
+		}
+		for(int i=0;i<outputs.length;i++) {
+			if(/*outputs[i].size()>=22*/isValidAggregate(outputs[i].size(), aggregation[i])) { // change per attribute type
+				//validAttributesCount++;
+			} else {
+				outputs[i].clear();
 			}
-			for(int i=0;i<outputs.length;i++) {
-				if(/*outputs[i].size()>=22*/isValidAggregate(outputs[i].size(),sensors[i].baseAggregationType)) { // change per attribute type
-					//validAttributesCount++;
-				} else {
-					outputs[i].clear();
-				}
-			}
-			//if(validAttributesCount>0) {
-				outputTimestamp = currentAggregationTimestamp;
-			//} else {
-			//	outputTimestamp = -1;
-			//}
+		}
+		//if(validAttributesCount>0) {
+		outputTimestamp = currentAggregationTimestamp;
+		//} else {
+		//	outputTimestamp = -1;
+		//}
 		//}
 		return outputTimestamp;
 	}

@@ -131,7 +131,7 @@ public final class QueryPlanGenerators {
 	};
 	
 	/**
-	 * sources are needed for target
+	 * sources that are needed for target
 	 */
 	public static final VirtualCopyList[] SENSOR_DEPENDENCY_LISTS = new VirtualCopyList[]{
 			VirtualCopyList.of(new String[] {"WV"}, "WD"),

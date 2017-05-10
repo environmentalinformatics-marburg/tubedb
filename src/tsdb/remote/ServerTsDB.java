@@ -65,6 +65,16 @@ public class ServerTsDB implements RemoteTsDB {
 			log.warn("plotID null");
 			return null;
 		}
+		int sep = plotID.indexOf(':');
+		if(sep>0) {
+			String stationID = plotID.substring(sep+1);
+			log.info("stationID "+stationID);
+			Station station = tsdb.getStation(stationID);
+			if(station!=null) {
+				return tsdb.includeVirtualSensorNames(station.getSensorNames());
+
+			}
+		}
 		VirtualPlot virtualPlot = tsdb.getVirtualPlot(plotID);
 		if(virtualPlot!=null) {
 			return tsdb.includeVirtualSensorNames(virtualPlot.getSensorNames());

@@ -22,11 +22,11 @@
 			<div v-show="viewsDone < views.length" class="processing">
 				<!--<img src="busy.gif" />-->
 				<progress :value="viewsDone" :max="views.length"></progress>
-				{{viewsDone}} / {{views.length}}				
+				{{viewsDone}} / {{views.length}}  <button type="button" @click="viewCycle++; viewsDone = views.length" style="padding: 1px; margin: -2px;">X</button> 				
 			</div>
 			
 			<div v-show="viewPrecessingStart < viewPrecessingEnd" class="runtime">
-				{{((viewPrecessingEnd - viewPrecessingStart) / 1000).toFixed(3)}} s
+				{{views.length}} {{views.length == 1 ? 'view' : 'views'}} {{((viewPrecessingEnd - viewPrecessingStart) / 1000).toFixed(3)}} s
 			</div>
 			
 			<div v-show="metadata.general_stations.length>1" class="interactive" style="display: inline-block;" @mouseover="groupHover = true" @mouseleave="groupHover = false">
@@ -124,7 +124,48 @@
 			<div v-show="sensors.length == 1" style="display: inline-block;">
 				no sensors
 			</div>
-			
+
+			<div class="interactive" style="display: inline-block;" @mouseover="timeHover = true" @mouseleave="timeHover = false">
+				
+				<div class="centered title">Time</div>
+				
+				<div class="centered" style="position: relative;">
+				
+					<div class="hide">
+						9999-999-99					
+					</div>
+				
+					<div :class="[ { just_hide: (timeHover || timeHoverStay)}]" class="state">{{timeText}}</div>
+
+					
+					<div v-show="(timeHover || timeHoverStay)" style="position: absolute; top: 25px; left: 0px; white-space: nowrap;" class="overlay_settings">
+						<div style="display: inline-block;">
+						<div class="centered title">year</div>
+						<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeYear">
+							<option>*</option>
+							<option v-for="y in timeYears">{{y}}</option>
+						</select>
+						</div>
+						-
+						<div style="display: inline-block;">
+						<div class="centered title">month</div>
+						<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeMonth" :class="[ { just_hide: timeYear === '*'}]">
+							<option>*</option>
+							<option v-for="m in timeMonths">{{m}}</option>
+						</select>
+						</div>
+						-
+						<div style="display: inline-block;">
+						<div class="centered title">day</div>
+						<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeDay" :class="[ { just_hide: timeYear === '*' || timeMonth === '*'}]">
+							<option>*</option>
+							<option v-for="d in timeDays">{{d}}</option>
+						</select>
+						</div>
+					</div>
+				</div>
+				
+			</div>
 			
 			<div class="interactive" style="display: inline-block;" @mouseover="aggregationHover = true" @mouseleave="aggregationHover = false">
 				
@@ -136,7 +177,7 @@
 					
 					<div v-show="(aggregationHover || aggregationHoverStay)" style="position: absolute; top: 0px; left: 0px;">
 						<select @focus="aggregationHoverStay = true" @blur="aggregationHoverStay = false" v-model="aggregation">
-							<option v-for="a in aggregations" v-bind:value="a">
+							<option v-for="a in aggregations">
 								{{a}}
 							</option>
 						</select>
@@ -146,10 +187,91 @@
 				
 			</div>
 			
+			<div class="interactive" style="display: inline-block;" @mouseover="qualityHover = true" @mouseleave="qualityHover = false">
+				
+				<div class="centered title">Quality</div>
+				
+				<div class="centered state" style="position: relative;">
+				
+					<div class="hide">
+						{{qualitiesText.empirical}}				
+					</div>
+				
+					<div :class="[ { just_hide: (qualityHover || qualityHoverStay)}]" class="state">{{qualitiesText[quality]}}</div>
+					
+					<div v-show="(qualityHover || qualityHoverStay)" style="position: absolute; top: 0px; left: 0px;">
+						<select @focus="qualityHoverStay = true" @blur="qualityHoverStay = false" v-model="quality">
+							<option v-for="q in qualities">
+								{{q}}
+							</option>
+						</select>
+					</div>
+				
+				</div>
+				
+			</div>
 			
+			<div class="interactive" style="display: inline-block;" @click="interpolation = !interpolation" @mouseover="interpolationHover = true" @mouseleave="interpolationHover = false">
+				
+				<div class="centered title">Interpolation</div>
+				
+				<div class="centered state" style="position: relative;">
+				
+					<div class="state">{{this.interpolation ? 'yes' : 'no'}}</div>
+					
+					<div v-show="interpolationHover" style="position: absolute; top: 0px; left: 0px;">
+						<input type="checkbox" v-model="interpolation">
+					</div>
+				
+				</div>
+				
+			</div>
+			
+			<div class="interactive" style="display: inline-block;" @mouseover="viewTypeHover = true" @mouseleave="viewTypeHover = false">
+				
+				<div class="centered title">View</div>
+				
+				<div class="centered state" style="position: relative;">
+				
+					<div class="state hide">
+						<div v-for="v in viewTypes">
+							{{v}} w
+						</div>				
+					</div>
+				
+					<div class="state">{{viewType}}</div>
+					
+					<div v-show="(viewTypeHover || viewTypeHoverStay)" style="position: absolute; top: 0px; left: 0px;">
+						<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="viewType">
+							<option v-for="v in viewTypes">
+								{{v}}
+							</option>
+						</select>
+					</div>
+				
+				</div>
+				
+			</div>
+			
+			<div class="interactive" style="display: inline-block;" @click="interpolation = !interpolation" @mouseover="interpolationHover = true" @mouseleave="interpolationHover = false">
+				
+				<div class="centered title">Settings</div>
+				
+				<div class="centered state" style="position: relative;">
+				
+					<div class="state">...</div>
+					
+					<div v-show="interpolationHover" style="position: absolute; top: 0px; left: 0px;">
+						
+					</div>
+				
+				</div>
+				
+			</div>
+						
 			
 			<div id="results" class="results">
-				{{views.length}} views
+				
 				<div v-for="view in views">
 					<div v-if="view.status == 'init'">
 						{{view.plot}} / {{view.sensor}} queued
@@ -162,13 +284,34 @@
 						</div>						
 					</div>
 					<div v-if="view.status == 'done'">
-						{{view.plot}} / {{view.sensor}}<br>
+						{{view.plot}} / {{view.sensor}} : {{sensorMap[view.sensor].description}} -- {{sensorMap[view.sensor].unit_description}} <br>
 						<img :src="view.url"> </img>
 					</div>
 					<div v-if="view.status == 'error'">
 						{{view.plot}} / {{view.sensor}} error
 					</div>
 				</div>
+				
+				<div v-if="viewType === 'sensors'">
+					environmental parameters in selected plots:
+					<table class="sensors">
+						<thead>
+							<tr>
+								<th>name</th>
+								<th>description</th>
+								<th>unit</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="sensor in sensors">
+								<td>{{sensor.id}}</td>
+								<td>{{sensor.description == 'no description' ? '' : sensor.description}}</td>
+								<td>{{sensor.unit_description == 'no unit' ? '' : sensor.unit_description}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				
 			</div>
 			
 		</div>

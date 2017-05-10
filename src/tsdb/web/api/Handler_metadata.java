@@ -129,6 +129,10 @@ public class Handler_metadata extends MethodHandler {
 				json_output.object();
 				json_output.key("id");
 				json_output.value(sensor.name);
+				json_output.key("description");
+				json_output.value(sensor.description);
+				json_output.key("unit_description");
+				json_output.value(sensor.unitDescription);
 				json_output.endObject();
 			}
 		}

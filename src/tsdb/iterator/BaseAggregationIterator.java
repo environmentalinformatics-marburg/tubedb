@@ -25,26 +25,28 @@ import tsdb.util.iterator.TsIterator;
 public class BaseAggregationIterator extends InputProcessingIterator {	
 	private static final Logger log = LogManager.getLogger();
 
-	Sensor[] sensors;
-	boolean aggregate_wind_direction;	
-	int wind_direction_pos;
-	int wind_velocity_pos;
+	private final Sensor[] sensors;
+	private final AggregationType[] aggregation;
+	
+	private boolean aggregate_wind_direction;	
+	private int wind_direction_pos;
+	private int wind_velocity_pos;
 
 	//*** collector variables for aggregation
 	//timestamp of aggreates of currently collected data
-	long aggregation_timestamp;
+	private long aggregation_timestamp;
 
-	boolean useQualityFlags;
-	DataQuality[] aggQuality;
+	private boolean useQualityFlags;
+	private DataQuality[] aggQuality;
 
-	int[] aggCnt;
-	float[] aggSum;
-	float[] aggMin;
-	float[] aggMax;
-	float wind_u_sum;
-	float wind_v_sum;
-	int wind_cnt;
-	int[] columnEntryCounter;
+	private int[] aggCnt;
+	private float[] aggSum;
+	private float[] aggMin;
+	private float[] aggMax;
+	private float wind_u_sum;
+	private float wind_v_sum;
+	private int wind_cnt;
+	private int[] columnEntryCounter;
 	//***
 
 	public static TsSchema createSchema(TsSchema schema, int timeStep) {
@@ -54,9 +56,18 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 	public BaseAggregationIterator(TsDB timeSeriesDatabase, TsIterator input_iterator) {
 		super(input_iterator, createSchema(input_iterator.getSchema(), BaseAggregationTimeUtil.AGGREGATION_TIME_INTERVAL));
 		this.useQualityFlags = input_iterator.getSchema().hasQualityFlags; 
-		this.sensors = timeSeriesDatabase.getSensors(schema.names);		
+		this.sensors = timeSeriesDatabase.getSensors(schema.names);
+		this.aggregation = getAggregationTypes(this.sensors);
 		prepareWindDirectionAggregation();
 		initAggregates();
+	}
+	
+	private static AggregationType[] getAggregationTypes(Sensor[] sensors) {
+		AggregationType[] aggregation = new AggregationType[sensors.length];
+		for (int i = 0; i < aggregation.length; i++) {
+			aggregation[i] = sensors[i].getAggregationHour();
+		}
+		return aggregation;
 	}
 
 	private void prepareWindDirectionAggregation() {
@@ -64,14 +75,14 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 		wind_velocity_pos=-1;
 		aggregate_wind_direction = false;
 		for(int i=0;i<schema.length;i++) {
-			if(sensors[i].baseAggregationType==AggregationType.AVERAGE_WIND_DIRECTION) {
+			if(aggregation[i]==AggregationType.AVERAGE_WIND_DIRECTION) {
 				if(wind_direction_pos==-1) {
 					wind_direction_pos = i;
 				} else {
 					log.error("just one wind_direction sensor can be aggregated");
 				}				
 			}
-			if(sensors[i].baseAggregationType==AggregationType.AVERAGE_WIND_VELOCITY) {
+			if(aggregation[i]==AggregationType.AVERAGE_WIND_VELOCITY) {
 				if(wind_velocity_pos==-1) {
 					wind_velocity_pos = i;
 				} else {
@@ -165,7 +176,7 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 		for(int i=0;i<schema.length;i++) {
 			float value = (float) inputData[i];
 
-			switch(sensors[i].baseAggregationType) {
+			switch(aggregation[i]) {
 			case NONE:
 				throw new RuntimeException("sensor name not usable for base aggregation: "+sensors[i].name);
 			case AVERAGE_ALBEDO:
@@ -189,7 +200,7 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 				}
 				break;
 			default:
-				if(sensors[i].baseAggregationType==AggregationType.AVERAGE_ZERO&&Float.isNaN(value)) { // special conversion of NaN values for aggregate AVERAGE_ZERO
+				if(aggregation[i]==AggregationType.AVERAGE_ZERO&&Float.isNaN(value)) { // special conversion of NaN values for aggregate AVERAGE_ZERO
 					System.out.println("NaN...");
 					value = 0;
 				}				
@@ -231,7 +242,7 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 
 		for(int i=0;i<schema.length;i++) {
 			if(aggCnt[i]>0) {// at least one entry has been collected
-				switch(sensors[i].baseAggregationType) {
+				switch(aggregation[i]) {
 				case AVERAGE:
 				case AVERAGE_ZERO:	
 				case AVERAGE_WIND_VELOCITY:

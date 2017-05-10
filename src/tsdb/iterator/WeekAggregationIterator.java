@@ -1,6 +1,7 @@
 package tsdb.iterator;
 
 import tsdb.TsDB;
+import tsdb.component.Sensor;
 import tsdb.util.AggregationType;
 import tsdb.util.iterator.TsIterator;
 
@@ -23,5 +24,14 @@ public class WeekAggregationIterator extends AbstractAggregationIterator {
 	@Override
 	protected boolean isValidAggregate(int collectorCount, AggregationType aggregationType) {
 		return 6<=collectorCount; 
+	}
+	
+	@Override
+	protected AggregationType[] getAggregationTypes(Sensor[] sensors) {
+		AggregationType[] aggregation = new AggregationType[sensors.length];
+		for (int i = 0; i < aggregation.length; i++) {
+			aggregation[i] = sensors[i].getAggregationWeek();
+		}
+		return aggregation;
 	}
 }

@@ -326,7 +326,7 @@ public class VirtualPlot {
 			return false;
 		}
 		for(String name:querySchema) {
-			if(tsdb.getSensor(name).baseAggregationType==AggregationType.NONE) {
+			if(!tsdb.getSensor(name).isAggregable()) {
 				return false;
 			}
 		}
