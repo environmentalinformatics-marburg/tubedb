@@ -14,9 +14,6 @@ import org.apache.logging.log4j.Logger;
 
 import tsdb.component.LoggerType;
 import tsdb.component.labeledproperty.LabeledProperties;
-import tsdb.graph.QueryPlanGenerators;
-import tsdb.graph.QueryPlanGenerators.VirtualCopyList;
-import tsdb.util.AggregationType;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.Interval;
 import tsdb.util.NamedInterval;
@@ -300,7 +297,7 @@ public class Station {
 	
 	public String[] stationSchemaSupplement(String[] schema) {
 		String[] stationSensorNames = getSensorNames();
-		for(VirtualCopyList p:QueryPlanGenerators.VIRTUAL_COPY_LISTS) {
+		for(VirtualCopyList p:tsdb.raw_copy_lists) {
 			if(Util.containsString(schema, p.target)) {				
 				innerLoop: for(String source:p.sources) {
 					if(Util.containsString(schema, source)) {

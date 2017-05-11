@@ -188,6 +188,7 @@ public final class TsDBFactory {
 			
 			//*** global config start
 			configLoader.readSensorMetaData(configDirectory+"sensors.yaml"); // read sensor meta data
+			tsdb.createSensorDependencies();
 			configLoader.readIgnoreSensorName(configDirectory+"sensor_ignore.ini"); // read and insert sensor names that should be not inserted in database
 			//*** global config end			
 

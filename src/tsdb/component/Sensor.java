@@ -69,6 +69,9 @@ public class Sensor implements Serializable {
 	public boolean internal;
 
 	public double maxInterpolationMSE;
+	
+	public String[] raw_source = null;
+	public String[] dependency = null;
 
 	public Sensor(String name) {
 		this.name = name;
@@ -202,6 +205,9 @@ public class Sensor implements Serializable {
 		
 		SensorCategory category = SensorCategory.parse(yamlMap.optString("category", "other"));
 		boolean internal = yamlMap.optString("visibility", "public").equals("internal");
+				
+		String[] raw_source = yamlMap.optList("raw_source").asStringArray();
+		String[] dependency = yamlMap.optList("dependency").asStringArray();
 
 		Sensor sensor = new Sensor(sensorName);
 		sensor.description = description;
@@ -216,6 +222,8 @@ public class Sensor implements Serializable {
 		sensor.maxInterpolationMSE = interpolation_mse[0];
 		sensor.category = category;
 		sensor.internal = internal;
+		sensor.raw_source = raw_source.length == 0 ? null : raw_source;
+		sensor.dependency = dependency.length == 0 ? null : dependency;
 
 		return sensor;
 	}

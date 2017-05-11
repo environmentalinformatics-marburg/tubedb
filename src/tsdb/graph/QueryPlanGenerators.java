@@ -2,6 +2,8 @@ package tsdb.graph;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -9,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
+import tsdb.VirtualCopyList;
 import tsdb.graph.node.Base;
 import tsdb.graph.node.Continuous;
 import tsdb.graph.node.ContinuousGen;
@@ -67,7 +70,7 @@ public final class QueryPlanGenerators {
 			}
 			rawSource = RangeStepFiltered.of(tsdb, rawSource, dataQuality);
 		}
-		rawSource = elementRawCopy(rawSource);
+		rawSource = elementRawCopy(tsdb, rawSource);
 		if(Util.containsString(schema, SunshineIterator.SUNSHINE_SENSOR_NAME)) {
 			rawSource = Sunshine.of(tsdb, rawSource);
 		}
@@ -83,97 +86,47 @@ public final class QueryPlanGenerators {
 		return rawSource;
 	}
 
-	public static class VirtualCopyPair {
-		public final String source;
-		public final String target;
-		public VirtualCopyPair(String source, String target) {
-			this.source = source;
-			this.target = target;
-		}
-		public static VirtualCopyPair of(String source, String target) {
-			return new VirtualCopyPair(source, target);
-		}
-	}
-
-	public static class VirtualCopyList {
-		public final String[] sources;
-		public final String target;
-		public VirtualCopyList(String[] sources, String target) {
-			this.sources = sources;
-			this.target = target;
-		}
-		public static VirtualCopyList of(String[] sources, String target) {
-			return new VirtualCopyList(sources, target);
-		}
-	}
-
-	/**
-	 * source copy to target
-	 */
-	public static final VirtualCopyPair[] VIRTUAL_COPY_PAIRS = new VirtualCopyPair[]{
-			VirtualCopyPair.of("Ta_200", "Ta_200_min"),			
-			VirtualCopyPair.of("Ta_200", "Ta_200_max"),
-			VirtualCopyPair.of("rH_200", "rH_200_min"),
-			VirtualCopyPair.of("rH_200", "rH_200_max"),			
-	};
-
-	/**
-	 * copy first found of sources to target 
-	 */
-	public static final VirtualCopyList[] VIRTUAL_COPY_LISTS = new VirtualCopyList[]{
-			VirtualCopyList.of(new String[] {"SWDR_300", "SWDR_3700", "SWDR_4400"}, "SWDR"),
-			VirtualCopyList.of(new String[] {"SWUR_300", "SWUR_3700", "SWUR_4400"}, "SWUR"),
-			VirtualCopyList.of(new String[] {"LWDR_300", "LWDR_3700", "LWDR_4400"}, "LWDR"),
-			VirtualCopyList.of(new String[] {"LWUR_300", "LWUR_3700", "LWUR_4400"}, "LWUR"),
-			
-			VirtualCopyList.of(new String[] {SunshineOlivieriIterator.RADIATION_SENSOR_NAME}, SunshineOlivieriIterator.SUNSHINE_SENSOR_NAME),
-			VirtualCopyList.of(new String[] {"P_container_NRT"}, Evaporation.SENSOR_NAME),
-	};
-	
-	/**
-	 * sources that are needed for target
-	 */
-	public static final VirtualCopyList[] SENSOR_DEPENDENCY_LISTS = new VirtualCopyList[]{
-			VirtualCopyList.of(new String[] {"WV"}, "WD"),
-			VirtualCopyList.of(new String[] {SunshineIterator.RADIATION_SENSOR_NAME}, SunshineIterator.SUNSHINE_SENSOR_NAME),
-	};
-
-	private static final String[] VIRTUAL_COPY_SENSORS;
-
-	static {		
-		ArrayList<String> list = new ArrayList<>();
-		for(VirtualCopyPair p:VIRTUAL_COPY_PAIRS) {
-			list.add(p.target);
-		}
-		for(VirtualCopyList p:VIRTUAL_COPY_LISTS) {
-			list.add(p.target);
-		}
-		VIRTUAL_COPY_SENSORS = list.toArray(new String[0]);
-	}
-
-
 	/**
 	 * Copy elements for virtual sensors.
+	 * @param tsdb 
 	 * @param schema 
 	 * @param source 
 	 * @return 
 	 */
-	public static Node elementRawCopy(Node source) {
+	public static Node elementRawCopy(TsDB tsdb, Node source) {
 		String[] schema = source.getSchema();
-		//log.info("schema "+Arrays.toString(schema));
-		if(Util.containsOneString(schema, VIRTUAL_COPY_SENSORS)) {
+		log.info("schema "+Arrays.toString(schema));
+		if(Util.containsOneString(schema, tsdb.raw_copy_sensor_names)) {
 			List<Action> actions = new ArrayList<>();
-			for(VirtualCopyPair pair:VIRTUAL_COPY_PAIRS) {
-				if(Util.containsString(schema, pair.target)) {
-					actions.add(Action.of(schema, pair.source, pair.target));
-				}
-			}
-			for(VirtualCopyList p:VIRTUAL_COPY_LISTS) { 
+			for(VirtualCopyList p:tsdb.raw_copy_lists) { 
 				if(Util.containsString(schema, p.target)) {
 					actions.add(Action.of(schema, p.sources, p.target));
 				}
 			}
-			source = ElementRawCopy.of(source, actions.toArray(new Action[0]));
+			if(!actions.isEmpty()) {
+				List<Action> finalActions = new ArrayList<>();
+				int counter = 0;
+				while(!actions.isEmpty()) {
+					HashSet<String> targetSet = new HashSet<String>();
+					for(Action action:actions) {
+						targetSet.add(schema[action.targetIndex]);
+					}
+					Iterator<Action> it = actions.iterator();
+					while(it.hasNext()) {
+						Action action = it.next();
+						if(!targetSet.contains(schema[action.sourceIndex])) {
+							finalActions.add(action);
+							it.remove();
+						}
+					}
+					counter++;
+					if(counter>100) {
+						log.error("elementRawCopy: could not reorder copy actions");
+						break;
+					}
+				}
+				source = ElementRawCopy.of(source, finalActions.toArray(new Action[0]));
+			}
 		}
 		return source;
 	}

@@ -38,7 +38,6 @@ public class SunshineOlivieriIterator extends InputIterator {
 		}
 	}
 
-	public static final String RADIATION_SENSOR_NAME = "SWDR";
 	public static final String SUNSHINE_SENSOR_NAME = "SD_Olivieri";
 	private int sensor_pos = -1;
 	private final double latitude_DEG;

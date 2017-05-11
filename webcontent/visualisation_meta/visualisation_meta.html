@@ -94,7 +94,7 @@
 				<div class="centered">{{plotIDs[0]}}{{plotIDs.length>1 && plotIDs[0] != "*" ? " ...":""}}</div>
 			</div>
 			
-			<div v-show="sensors.length>1" class="interactive" style="display: inline-block;" @mouseover="sensorHover = true" @mouseleave="sensorHover = false">				
+			<div v-show="sensors.length>0" class="interactive" style="display: inline-block;" @mouseover="sensorHover = true" @mouseleave="sensorHover = false">				
 				<div class="centered title">Parameter</div>
 				
 				<div class="state" style="position: relative;">
@@ -121,7 +121,7 @@
 				</div>
 				
 			</div>
-			<div v-show="sensors.length == 1" style="display: inline-block;">
+			<div v-show="sensors.length == 0" style="display: inline-block;">
 				no sensors
 			</div>
 

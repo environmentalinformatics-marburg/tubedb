@@ -18,10 +18,6 @@ import tsdb.component.Region;
 import tsdb.component.Sensor;
 import tsdb.component.SourceCatalog;
 import tsdb.component.labeledproperty.LabeledProperty;
-import tsdb.graph.QueryPlanGenerators;
-import tsdb.graph.QueryPlanGenerators.VirtualCopyList;
-import tsdb.graph.QueryPlanGenerators.VirtualCopyPair;
-import tsdb.iterator.SunshineIterator;
 import tsdb.streamdb.StreamStorageStreamDB;
 import tsdb.util.AggregationType;
 import tsdb.util.AssumptionCheck;
@@ -124,6 +120,7 @@ public class TsDB implements AutoCloseable {
 		this.sourceCatalog = new SourceCatalog(databasePath);
 
 		this.configDirectory = configDirectory;
+
 	}	
 
 	/**
@@ -677,13 +674,7 @@ public class TsDB implements AutoCloseable {
 		while(prevAddSize != additionalSensorNames.size()) {
 			prevAddSize = additionalSensorNames.size();
 
-			for(VirtualCopyPair pair:QueryPlanGenerators.VIRTUAL_COPY_PAIRS) {
-				if(allSensorNames.contains(pair.source)) {
-					additionalSensorNames.add(pair.target);
-					allSensorNames.add(pair.target);
-				}
-			}
-			for(VirtualCopyList p:QueryPlanGenerators.VIRTUAL_COPY_LISTS) {
+			for(VirtualCopyList p:raw_copy_lists) { // one source need to be contained
 				innerLoop: for(String source:p.sources) {
 					if(allSensorNames.contains(source)) {
 						additionalSensorNames.add(p.target);
@@ -691,18 +682,21 @@ public class TsDB implements AutoCloseable {
 						break innerLoop;
 					}
 				}
-			}		
-
-			if(allSensorNames.contains(SunshineIterator.RADIATION_SENSOR_NAME)&&!allSensorNames.contains(SunshineIterator.SUNSHINE_SENSOR_NAME)) {
-				additionalSensorNames.add(SunshineIterator.SUNSHINE_SENSOR_NAME);
-				allSensorNames.add(SunshineIterator.SUNSHINE_SENSOR_NAME);
 			}
 
-			if(allSensorNames.contains("P_container_RT")&&!allSensorNames.contains("P_RT_NRT")) {
-				additionalSensorNames.add("P_RT_NRT");
-				allSensorNames.add("P_RT_NRT");
+			for(VirtualCopyList p:sensor_dependency_lists) { // all sources need to be contained
+				boolean satisfied = true;
+				innerLoop: for(String source:p.sources) {
+					if(!allSensorNames.contains(source)) {
+						satisfied = false;
+						break innerLoop;
+					}
+				}
+				if(satisfied) {
+					additionalSensorNames.add(p.target);
+					allSensorNames.add(p.target);
+				}
 			}
-
 		}
 
 		if(additionalSensorNames.isEmpty()) {
@@ -728,18 +722,7 @@ public class TsDB implements AutoCloseable {
 		while(prevAddSize != additionalSensorNames.size()) {
 			prevAddSize = additionalSensorNames.size();
 
-			for(VirtualCopyPair pair:QueryPlanGenerators.VIRTUAL_COPY_PAIRS) {
-				if(schemaSet.contains(pair.target)&&!schemaSet.contains(pair.source)) {
-					if(availableSchemaSet.contains(pair.source)) {
-						additionalSensorNames.add(pair.source);
-						schemaSet.add(pair.source);
-					} else {
-						log.warn("no source for target "+pair.target);
-					}
-				}
-			}
-
-			for(VirtualCopyList list:QueryPlanGenerators.VIRTUAL_COPY_LISTS) {
+			for(VirtualCopyList list:raw_copy_lists) {
 				if(schemaSet.contains(list.target)) {
 					boolean found = false;
 					sources: for(String sensorName:list.sources) {
@@ -759,22 +742,17 @@ public class TsDB implements AutoCloseable {
 				}
 			}
 
-			for(VirtualCopyList list:QueryPlanGenerators.SENSOR_DEPENDENCY_LISTS) {
+			for(VirtualCopyList list:sensor_dependency_lists) {
 				if(schemaSet.contains(list.target)) {
-					boolean found = false;
-					sources: for(String sensorName:list.sources) {
+					for(String sensorName:list.sources) {
 						if(schemaSet.contains(sensorName)) {
-							found = true;
-							break sources;
+							// nothing
 						} else if(availableSchemaSet.contains(sensorName)){
 							additionalSensorNames.add(sensorName);
 							schemaSet.add(sensorName);
-							found = true;
-							break sources;
+						} else {
+							log.warn("dependency for "+list.target+" not found "+sensorName+"  in schema "+Arrays.toString(schema)+" of full   "+Arrays.toString(availableSchema));
 						}
-					}
-					if(!found) {
-						log.warn("no source for target "+list.target+"  of possible sources "+Arrays.toString(list.sources)+"  in schema "+Arrays.toString(schema)+" of full   "+Arrays.toString(availableSchema));
 					}
 				}
 			}
@@ -811,4 +789,55 @@ public class TsDB implements AutoCloseable {
 			station.labeledProperties.insert(property);
 		}
 	}
+
+	//**********  sensor dependency management    *********
+
+	public void createSensorDependencies() {
+
+		ArrayList<VirtualCopyList> raw_copy_list_list = new ArrayList<>();
+		ArrayList<VirtualCopyList> sensor_dependency_list_list = new ArrayList<>();
+
+		for(Sensor sensor:sensorMap.values()) {
+			String[] source = sensor.raw_source;
+			if(source != null) {
+				if(source.length == 0) {
+					log.warn("source empty");
+				} else {
+					log.info("raw_source "+Arrays.toString(sensor.raw_source)+" -> "+sensor.name);
+					raw_copy_list_list.add(VirtualCopyList.of(sensor.raw_source, sensor.name));
+				}
+			}
+			String[] dependency = sensor.dependency;
+			if(dependency != null) {
+				if(dependency.length == 0) {
+					log.warn("dependency empty");
+				} else {
+					log.info("dependency "+Arrays.toString(sensor.dependency)+" -> "+sensor.name);
+					sensor_dependency_list_list.add(VirtualCopyList.of(sensor.dependency, sensor.name));
+				}
+			}
+		}
+
+		raw_copy_lists = raw_copy_list_list.toArray(new VirtualCopyList[0]);
+		sensor_dependency_lists = sensor_dependency_list_list.toArray(new VirtualCopyList[0]);
+
+		ArrayList<String> list = new ArrayList<>();
+		for(VirtualCopyList p:raw_copy_lists) {
+			list.add(p.target);
+		}
+		raw_copy_sensor_names = list.toArray(new String[0]);
+
+	}
+
+	/**
+	 * copy first found of sources to target 
+	 */
+	public VirtualCopyList[] raw_copy_lists = {};
+
+	/**
+	 * sources that are needed for target
+	 */
+	public VirtualCopyList[] sensor_dependency_lists = {};
+
+	public String[] raw_copy_sensor_names;	
 }

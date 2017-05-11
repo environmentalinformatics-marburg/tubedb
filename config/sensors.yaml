@@ -11,6 +11,7 @@ Ta_200:
 Ta_200_min:
   description: Minimum value of Ta_200
   unit: °C (degree Celcius, -40 to 60)
+  raw_source: Ta_200
   aggregation: minimum
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
@@ -21,6 +22,7 @@ Ta_200_min:
 Ta_200_max:
   description: Maximum value of Ta_200
   unit: °C (degree Celcius, -40 to 60)
+  raw_source: Ta_200
   aggregation: maximum
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]  
@@ -40,6 +42,7 @@ rH_200:
 rH_200_min:
   description: Minimum value of rH_200
   unit: '% (percentage of relative humidity, 0-100)'
+  raw_source: rH_200
   aggregation: minimum
   physical_range: [0.0, 100.0] 
   step_range: [0.0, 100.0] #high fluctuation possible 
@@ -49,6 +52,7 @@ rH_200_min:
 rH_200_max:
   description: Maximum value of rH_200
   unit: '% (percentage of relative humidity, 0-100)'
+  raw_source: rH_200  
   aggregation: maximum
   physical_range: [0.0, 100.0] 
   step_range: [0.0, 100.0] #high fluctuation possible 
@@ -207,7 +211,7 @@ PAR_300:
    
 Albedo:
   description: Albedo (SWUR/SWDR)
-  unit: ratio (0 to 1) 
+  unit: ratio (0 to 1)
   aggregation: average_albedo
   physical_range: [0.0, 1.0]
   step_range: [0.0, 1000.0]
@@ -291,6 +295,7 @@ Trad:
 WD:
   description: Wind direction
   unit: ° (degree of arc 0-360)
+  dependency: [WD, WV]  # self dependency WD to prevent interpretation as virtual sensor
   aggregation: average_wind_direction
   physical_range: [0.0, 360.0]   
   step_range: [0.0, 1000.0]
@@ -331,6 +336,7 @@ p_local:
 P_RT_NRT:
   description: Precipitation
   unit: mm (millimeter)
+  dependency: P_container_NRT # TODO optional dependency P_container_NRT is not needed if P_RT_NRT is available as real sensor
   aggregation: sum
   physical_range: [0.0, 500.0]
   step_range: [0.0, 1000.0]
@@ -358,6 +364,7 @@ P_container_NRT:
 SWDR:
   description: Shortwave Downward Radiation
   unit: kWh/m^2 (kilo watt hour per square meter) 
+  raw_source: [SWDR_300, SWDR_3700, SWDR_4400]
   aggregation: sum_radiation
   physical_range: [-100.0, 1500.0]
   step_range: [0.0, 1000.0]
@@ -366,7 +373,8 @@ SWDR:
   
 SWUR:
   description: Shortwave Upward Radiation
-  unit: kWh/m^2 (kilo watt hour per square meter) 
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  raw_source: [SWUR_300, SWUR_3700, SWUR_4400]  
   aggregation: sum_radiation
   physical_range: [-100.0, 1000.0]
   step_range: [0.0, 1000.0]
@@ -376,6 +384,7 @@ SWUR:
 LWDR:
   description: Longwave Downward Radiation
   unit: kWh/m^2 (kilo watt hour per square meter) 
+  raw_source: [LWDR_300, LWDR_3700, LWDR_4400]
   aggregation: sum_radiation
   physical_range: [-100.0, 1000.0]
   step_range: [0.0, 220.0]
@@ -385,6 +394,7 @@ LWDR:
 LWUR:
   description: Longwave Upward Radiation
   unit: kWh/m^2 (kilo watt hour per square meter) 
+  raw_source: [LWUR_300, LWUR_3700, LWUR_4400]
   aggregation: sum_radiation
   physical_range: [-100.0, 1000.0]
   step_range: [0.0, 1000.0]
@@ -938,12 +948,14 @@ tf_d_excess:
 SD:
   description: sunshine duration (estimated) (time of SWDR >= 120 W/m^2)
   unit: h (hour)
+  dependency: SWDR
   aggregation: sum_sunshine
   visibility: internal  # set virtual sensor temporarily to internal
 
 SD_Olivieri:
   description: sunshine duration (based on SWDR with Oliviéri algorithm and solar elevation angle)
   unit: h (hour)
+  raw_source: SWDR
   aggregation: sum_sunshine
   visibility: internal  # set virtual sensor temporarily to internal  
 
@@ -1139,9 +1151,12 @@ CycleCounter:
 
 rain_container:
   visibility: internal
+  
+# virtual sensors  
 
 evaporation:
   description: evaporation
   unit: mm/h (mm per hour)
+  raw_source: P_container_NRT
   aggregation: average
   

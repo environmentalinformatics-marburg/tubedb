@@ -42,6 +42,10 @@ public class YamlList {
 		}
 		return result;
 	}
+	
+	public String[] asStringArray() {
+		return asStrings().toArray(new String[0]);
+	}
 
 	public float[] asFloatArray() {
 		float[] result = new float[list.size()];
