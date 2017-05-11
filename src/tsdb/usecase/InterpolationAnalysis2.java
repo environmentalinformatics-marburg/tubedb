@@ -74,13 +74,13 @@ public class InterpolationAnalysis2 {
 		meanNode.writeCSV(gapStart, gapEnd, path+targetPlot+"_mean.csv");
 		nearNode.writeCSV(gapStart, gapEnd, path+nearPlot+"_real.csv");*/
 		
-		Aggregated.of(tsdb, realNode, aggregationInterval).writeCSV(gapStart, gapEnd, path+"real.csv");
-		Aggregated.of(tsdb, interpolatedNode, aggregationInterval).writeCSV(gapStart, gapEnd, path+"interpolated.csv");
-		Aggregated.of(tsdb, meanNode, aggregationInterval).writeCSV(gapStart, gapEnd, path+"mean.csv");
-		Aggregated.of(tsdb, nearNode, aggregationInterval).writeCSV(gapStart, gapEnd, path+"near.csv");
+		Aggregated.of(tsdb, realNode, aggregationInterval, null).writeCSV(gapStart, gapEnd, path+"real.csv");
+		Aggregated.of(tsdb, interpolatedNode, aggregationInterval, null).writeCSV(gapStart, gapEnd, path+"interpolated.csv");
+		Aggregated.of(tsdb, meanNode, aggregationInterval, null).writeCSV(gapStart, gapEnd, path+"mean.csv");
+		Aggregated.of(tsdb, nearNode, aggregationInterval, null).writeCSV(gapStart, gapEnd, path+"near.csv");
 		
-		Aggregated.of(tsdb, realNode, aggregationInterval).writeCSV(null, null, path+"real_full.csv");
-		Aggregated.of(tsdb, nearNode, aggregationInterval).writeCSV(null, null, path+"near_full.csv");
+		Aggregated.of(tsdb, realNode, aggregationInterval, null).writeCSV(null, null, path+"real_full.csv");
+		Aggregated.of(tsdb, nearNode, aggregationInterval, null).writeCSV(null, null, path+"near_full.csv");
 		
 
 	}

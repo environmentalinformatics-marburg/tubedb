@@ -72,6 +72,7 @@ public class Sensor implements Serializable {
 	
 	public String[] raw_source = null;
 	public String[] dependency = null;
+	public String post_day_func = null;
 
 	public Sensor(String name) {
 		this.name = name;
@@ -208,6 +209,8 @@ public class Sensor implements Serializable {
 				
 		String[] raw_source = yamlMap.optList("raw_source").asStringArray();
 		String[] dependency = yamlMap.optList("dependency").asStringArray();
+		
+		String post_day_func = yamlMap.optString("post_day_func", null);
 
 		Sensor sensor = new Sensor(sensorName);
 		sensor.description = description;
@@ -224,6 +227,7 @@ public class Sensor implements Serializable {
 		sensor.internal = internal;
 		sensor.raw_source = raw_source.length == 0 ? null : raw_source;
 		sensor.dependency = dependency.length == 0 ? null : dependency;
+		sensor.post_day_func = post_day_func;
 
 		return sensor;
 	}

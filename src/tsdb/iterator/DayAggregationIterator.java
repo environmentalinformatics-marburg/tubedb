@@ -3,6 +3,8 @@ package tsdb.iterator;
 import tsdb.TsDB;
 import tsdb.component.Sensor;
 import tsdb.util.AggregationType;
+import tsdb.util.TsEntry;
+import tsdb.util.TsEntryMutator;
 import tsdb.util.iterator.TsIterator;
 
 /**
@@ -10,10 +12,13 @@ import tsdb.util.iterator.TsIterator;
  * @author woellauer
  *
  */
-public class DayAggregationIterator extends AbstractAggregationIterator {	
+public class DayAggregationIterator extends AbstractAggregationIterator {
+	
+	private final TsEntryMutator[] dayMutators;
 
-	public DayAggregationIterator(TsDB tsdb, TsIterator input_iterator) {
+	public DayAggregationIterator(TsDB tsdb, TsIterator input_iterator, TsEntryMutator[] dayMutators) {
 		super(tsdb, input_iterator, createSchemaConstantStep(input_iterator.getSchema(),60,24*60));
+		this.dayMutators = dayMutators;
 	}
 
 	@Override
@@ -36,5 +41,16 @@ public class DayAggregationIterator extends AbstractAggregationIterator {
 			aggregation[i] = sensors[i].getAggregationDay();
 		}
 		return aggregation;
+	}
+
+	@Override
+	protected TsEntry getNext() {
+		TsEntry entry = super.getNext();
+		if(dayMutators != null && entry != null) {
+			for(TsEntryMutator mutator:dayMutators) {
+				mutator.apply(entry);
+			}
+		}
+		return entry;
 	}
 }

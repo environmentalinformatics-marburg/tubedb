@@ -17,7 +17,7 @@ public class TestingNewAggregation {
 		TsDB tsdb = TsDBFactory.createDefault();
 		
 		TsIterator it = QueryPlanGenerators.getContinuousGen(tsdb, DataQuality.NO).get("HEG01", new String[]{"Ta_200"}).get(null, null);
-		it = new DayAggregationIterator(tsdb, it);
+		it = new DayAggregationIterator(tsdb, it, null);
 		//it = new WeekAggregationIterator(tsdb, it);
 		it = new MonthAggregationIterator(tsdb, it);
 		it = new YearAggregationIterator(tsdb, it);

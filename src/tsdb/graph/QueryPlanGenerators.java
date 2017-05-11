@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.VirtualCopyList;
+import tsdb.component.Sensor;
 import tsdb.graph.node.Base;
 import tsdb.graph.node.Continuous;
 import tsdb.graph.node.ContinuousGen;
@@ -34,6 +35,8 @@ import tsdb.iterator.SunshineIterator;
 import tsdb.iterator.SunshineOlivieriIterator;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataQuality;
+import tsdb.util.TsEntry;
+import tsdb.util.TsEntryMutator;
 import tsdb.util.Util;
 
 public final class QueryPlanGenerators {
@@ -168,7 +171,105 @@ public final class QueryPlanGenerators {
 	public static ContinuousGen getDayAggregationGen(TsDB tsdb, DataQuality dataQuality) {
 		return (String plotID, String[] schema)->{
 			Continuous continuous = getContinuousGen(tsdb, dataQuality).get(plotID, schema);
-			return Aggregated.of(tsdb, continuous, AggregationInterval.DAY);
+			TsEntryMutator[] dayMutators = getDayMutators(tsdb, schema);
+			return Aggregated.of(tsdb, continuous, AggregationInterval.DAY, dayMutators);
 		};
+	}
+
+
+	public static TsEntryMutator[] getDayMutators(TsDB tsdb, String[] schema) {
+		ArrayList<TsEntryMutator> mutators = null;
+		for(String sensorName:schema) {
+			Sensor sensor = tsdb.getSensor(sensorName);
+			if(sensor != null && sensor.post_day_func != null) {
+				TsEntryMutator mutator = null;
+				try {
+					switch(sensor.post_day_func) {
+					case "dependency2_minus_dependency1": {
+						String dependency1 = sensor.dependency[0];
+						String dependency2 = sensor.dependency[1];
+						int iDependency1 = Util.getIndexInArray(dependency1, schema);
+						int iDependency2 = Util.getIndexInArray(dependency2, schema);
+						int iTarget = Util.getIndexInArray(sensorName, schema);
+						mutator = new TsEntryMutator() {						
+							@Override
+							public void apply(TsEntry entry) {
+								float[] data = entry.data;
+								data[iTarget] = data[iDependency2] - data[iDependency1];							
+							}
+						};
+						break;
+					}
+					case "dependency1_less_0": {
+						String dependency1 = sensor.dependency[0];
+						int iDependency1 = Util.getIndexInArray(dependency1, schema);
+						int iTarget = Util.getIndexInArray(sensorName, schema);
+						mutator = new TsEntryMutator() {						
+							@Override
+							public void apply(TsEntry entry) {
+								float[] data = entry.data;
+								float v = data[iDependency1];
+								data[iTarget] = Float.isNaN(v) ? Float.NaN : v < 0f ? 1 : 0;							
+							}
+						};
+						break;
+					}
+					case "dependency1_less_10": {
+						String dependency1 = sensor.dependency[0];
+						int iDependency1 = Util.getIndexInArray(dependency1, schema);
+						int iTarget = Util.getIndexInArray(sensorName, schema);
+						mutator = new TsEntryMutator() {						
+							@Override
+							public void apply(TsEntry entry) {
+								float[] data = entry.data;
+								float v = data[iDependency1];
+								data[iTarget] = Float.isNaN(v) ? Float.NaN : v < 10f ? 1 : 0;							
+							}
+						};
+						break;
+					}
+					case "dependency1_greater_equal_20": {
+						String dependency1 = sensor.dependency[0];
+						int iDependency1 = Util.getIndexInArray(dependency1, schema);
+						int iTarget = Util.getIndexInArray(sensorName, schema);
+						mutator = new TsEntryMutator() {						
+							@Override
+							public void apply(TsEntry entry) {
+								float[] data = entry.data;
+								float v = data[iDependency1];
+								data[iTarget] = Float.isNaN(v) ? Float.NaN : v >= 20f ? 1 : 0;							
+							}
+						};
+						break;
+					}
+					case "dependency1_greater_equal_30": {
+						String dependency1 = sensor.dependency[0];
+						int iDependency1 = Util.getIndexInArray(dependency1, schema);
+						int iTarget = Util.getIndexInArray(sensorName, schema);
+						mutator = new TsEntryMutator() {						
+							@Override
+							public void apply(TsEntry entry) {
+								float[] data = entry.data;
+								float v = data[iDependency1];
+								data[iTarget] = Float.isNaN(v) ? Float.NaN : v >= 30f ? 1 : 0;							
+							}
+						};
+						break;
+					}
+					default:
+						log.warn("unknown day mutator: "+sensor.post_day_func);
+					}
+				} catch(Exception e) {
+					log.error(e);
+				}
+				if(mutator != null) {
+					if(mutators == null) {
+						mutators = new ArrayList<TsEntryMutator>();
+					}
+					mutators.add(mutator);
+				}
+			}
+		}
+		return mutators == null ? null : mutators.toArray(new TsEntryMutator[0]);
 	}
 }

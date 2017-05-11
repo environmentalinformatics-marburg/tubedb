@@ -50,7 +50,7 @@ public class UsecaseDocu {
 			Node rawNode = StationRawSource.of(tsdb, station, sensorNames); // create raw source node
 			StationBase baseNode = StationBase.of(tsdb, rawNode); // create base aggregated (hourly value) node 
 			Continuous continuousNode = Continuous.of(baseNode); // fill gaps in time with NA entries
-			Aggregated aggregatedNode = Aggregated.of(tsdb, continuousNode, aggregationInterval); // aggregate data to months
+			Aggregated aggregatedNode = Aggregated.of(tsdb, continuousNode, aggregationInterval, null); // aggregate data to months
 			TsIterator it = aggregatedNode.get(start, end); // create iterator of processing graph
 			System.out.println(it.getProcessingChain().getText()); // print processing graph
 			while(it.hasNext()) { // on demand process and print time series

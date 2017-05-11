@@ -14,6 +14,7 @@ import tsdb.iterator.MonthAggregationIterator;
 import tsdb.iterator.WeekAggregationIterator;
 import tsdb.iterator.YearAggregationIterator;
 import tsdb.util.AggregationInterval;
+import tsdb.util.TsEntryMutator;
 import tsdb.util.iterator.TsIterator;
 
 /**
@@ -27,19 +28,21 @@ public class Aggregated extends Continuous.Abstract {
 
 	private final Continuous source; //not null
 	private final AggregationInterval aggregationInterval; //not null
+	private final TsEntryMutator[] dayMutators;
 
-	protected Aggregated(TsDB tsdb, Continuous source, AggregationInterval aggregationInterval) {
+	protected Aggregated(TsDB tsdb, Continuous source, AggregationInterval aggregationInterval, TsEntryMutator[] dayMutators) {
 		super(tsdb);
 		throwNulls(source,aggregationInterval);
 		this.source = source;
-		this.aggregationInterval = aggregationInterval;		
+		this.aggregationInterval = aggregationInterval;
+		this.dayMutators = dayMutators;
 		if(!source.isContinuous()) {
 			throw new RuntimeException("source needs to be continuous");
 		}
 	}
 
-	public static Aggregated of(TsDB tsdb, Continuous source, AggregationInterval aggregationInterval) {
-		return new Aggregated(tsdb, source, aggregationInterval);
+	public static Aggregated of(TsDB tsdb, Continuous source, AggregationInterval aggregationInterval, TsEntryMutator[] dayMutators) {
+		return new Aggregated(tsdb, source, aggregationInterval, dayMutators);
 	}
 
 	@Override
@@ -52,7 +55,7 @@ public class Aggregated extends Continuous.Abstract {
 			return continuous_iterator;
 		}
 		
-		DayAggregationIterator day_iterator = new DayAggregationIterator(tsdb,continuous_iterator);
+		DayAggregationIterator day_iterator = new DayAggregationIterator(tsdb,continuous_iterator, dayMutators);
 		if(day_iterator==null||!day_iterator.hasNext()) {
 			return null;
 		}
