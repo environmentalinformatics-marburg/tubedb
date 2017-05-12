@@ -29,14 +29,58 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 grammar Formula;
-
+  
 expression
    : term (expression_op term)*
+   | conditional
    ;
    
 expression_op
 	: (ADD | SUB)
 	;
+	
+conditional
+	: LPAREN p=predicate '?' a=expression ':' b=expression RPAREN
+	;
+	
+predicate
+    : less
+    | greater
+    | less_equal
+    | greater_equal
+    | equal
+    | not_equal
+    | not
+    ;
+    
+less
+    : a=expression '<' b=expression
+    ;
+    
+greater
+    : a=expression '<' b=expression
+    ;    
+
+less_equal
+    : a=expression '<=' b=expression
+    ;
+    
+greater_equal
+    : a=expression '>=' b=expression
+    ;
+    
+equal
+    : a=expression '=''='? b=expression
+    ;
+    
+not_equal
+    : a=expression ('!=' | '<>') b=expression
+    ;
+    
+not
+    : '!' a=predicate
+    ;
+                                            	 
 
 term
    : factor (term_op factor)*
@@ -125,7 +169,6 @@ LETTER
 DIGIT
    : ('0' .. '9')
    ;
-
 
 WS
    : [ \r\n\t] + -> channel (HIDDEN)

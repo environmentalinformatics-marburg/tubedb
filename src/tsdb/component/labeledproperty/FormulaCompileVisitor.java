@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 import tsdb.dsl.FormulaBaseVisitor;
 import tsdb.dsl.FormulaParser.AtomContext;
+import tsdb.dsl.FormulaParser.ConditionalContext;
 import tsdb.dsl.FormulaParser.ExpressionContext;
 import tsdb.dsl.FormulaParser.Expression_opContext;
 import tsdb.dsl.FormulaParser.FactorContext;
@@ -138,5 +139,13 @@ public class FormulaCompileVisitor extends FormulaBaseVisitor<Formula> {
 		ParseTree op = parseTrees[pos-1];
 		Formula f0 = createExpression(pos-2, parseTrees);
 		return op.accept(new FormulaExpressionVisitor(f0, f1));
+	}
+
+	@Override
+	public Formula visitConditional(ConditionalContext ctx) {
+		BooleanFormula p = ctx.p.accept(BooleanFormulaCompileVisitor.DEFAULT);
+		Formula a = ctx.a.accept(DEFAULT);
+		Formula b = ctx.b.accept(DEFAULT);
+		return new FormulaConditional(p, a, b);
 	}
 }

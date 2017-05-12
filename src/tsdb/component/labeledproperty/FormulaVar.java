@@ -1,6 +1,7 @@
 package tsdb.component.labeledproperty;
 
 import java.util.Map;
+import java.util.Set;
 
 public class FormulaVar extends Formula {
 	//private static final Logger log = LogManager.getLogger();
@@ -36,5 +37,10 @@ public class FormulaVar extends Formula {
 		int pos = p.intValue();
 		//log.info("pos "+pos+"   "+name);
 		return "data["+pos+"]";
+	}
+
+	@Override
+	public void collectVariables(Set<String> collector) {
+		collector.add(name);		
 	}
 }

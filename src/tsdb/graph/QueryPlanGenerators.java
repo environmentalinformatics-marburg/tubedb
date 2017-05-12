@@ -183,109 +183,65 @@ public final class QueryPlanGenerators {
 		Mutator mutator = null;
 		try {
 			int iTarget = Util.getIndexInArray(sensor.name, schema);
-			switch(func) {
-			case "dependency1_less_0": {
-				String dependency1 = sensor.dependency[0];
-				int iDependency1 = Util.getIndexInArray(dependency1, schema);
+
+			log.info("parse formula: "+func);
+			Formula formula = PropertyComputation.parseFormula(func);
+			HashMap<String, Integer> sensorMap = new HashMap<String, Integer>();
+			String[] dependencies = sensor.dependency;
+			if(dependencies != null) {
+				for (int i = 0; i < dependencies.length; i++) {
+					String dep = dependencies[i];
+					int pos = Util.getIndexInArray(dep, schema);
+					if(pos<0) {
+						log.warn("dependency not found: "+dep);
+					} else {
+						sensorMap.put(dep, pos);
+						String dependencyName = "dependency"+(i+1);
+						sensorMap.put(dependencyName, pos);
+					}
+				}
+			}
+			log.info(sensorMap);
+			Computation computation = formula.compile(sensorMap);
+			int[] varIndices = formula.getVariableIndices(sensorMap);
+			switch(varIndices.length) {
+			case 1: {
+				int var1 = varIndices[0];
 				mutator = new Mutator() {						
 					@Override
 					public void apply(long timestamp, float[] data) {
-						float v = data[iDependency1];
-						data[iTarget] = Float.isNaN(v) ? Float.NaN : v < 0f ? 1 : 0;							
+						data[iTarget] = Float.isNaN(data[var1]) ? Float.NaN : computation.eval(data);						
 					}
 				};
 				break;
 			}
-			case "dependency1_less_10": {
-				String dependency1 = sensor.dependency[0];
-				int iDependency1 = Util.getIndexInArray(dependency1, schema);
+			case 2: {
+				int var1 = varIndices[0];
+				int var2 = varIndices[1];
 				mutator = new Mutator() {						
 					@Override
 					public void apply(long timestamp, float[] data) {
-						float v = data[iDependency1];
-						data[iTarget] = Float.isNaN(v) ? Float.NaN : v < 10f ? 1 : 0;							
-					}
-				};
-				break;
-			}
-			case "dependency1_greater_equal_20": {
-				String dependency1 = sensor.dependency[0];
-				int iDependency1 = Util.getIndexInArray(dependency1, schema);
-				mutator = new Mutator() {						
-					@Override
-					public void apply(long timestamp, float[] data) {
-						float v = data[iDependency1];
-						data[iTarget] = Float.isNaN(v) ? Float.NaN : v >= 20f ? 1 : 0;							
-					}
-				};
-				break;
-			}
-			case "dependency1_greater_equal_25": {
-				String dependency1 = sensor.dependency[0];
-				int iDependency1 = Util.getIndexInArray(dependency1, schema);
-				mutator = new Mutator() {						
-					@Override
-					public void apply(long timestamp, float[] data) {
-						float v = data[iDependency1];
-						data[iTarget] = Float.isNaN(v) ? Float.NaN : v >= 20f ? 1 : 0;							
-					}
-				};
-				break;
-			}
-			case "dependency1_greater_equal_30": {
-				String dependency1 = sensor.dependency[0];
-				int iDependency1 = Util.getIndexInArray(dependency1, schema);
-				mutator = new Mutator() {						
-					@Override
-					public void apply(long timestamp, float[] data) {
-						float v = data[iDependency1];
-						data[iTarget] = Float.isNaN(v) ? Float.NaN : v >= 30f ? 1 : 0;							
-					}
-				};
-				break;
-			}
-			case "dependency1_greater_equal_0_1": {
-				String dependency1 = sensor.dependency[0];
-				int iDependency1 = Util.getIndexInArray(dependency1, schema);
-				mutator = new Mutator() {						
-					@Override
-					public void apply(long timestamp, float[] data) {
-						float v = data[iDependency1];
-						data[iTarget] = Float.isNaN(v) ? Float.NaN : v >= 0.1f ? 1 : 0;							
+						data[iTarget] = Float.isNaN(data[var1]) && Float.isNaN(data[var2]) ? Float.NaN : computation.eval(data);						
 					}
 				};
 				break;
 			}
 			default: {
-				log.info("parse formula: "+func);
-				Formula formula = PropertyComputation.parseFormula(func);
-				HashMap<String, Integer> sensorMap = new HashMap<String, Integer>();
-				String[] dependencies = sensor.dependency;
-				if(dependencies != null) {
-					for (int i = 0; i < dependencies.length; i++) {
-						String dep = dependencies[i];
-						int pos = Util.getIndexInArray(dep, schema);
-						if(pos<0) {
-							log.warn("dependency not found: "+dep);
-						} else {
-							sensorMap.put(dep, pos);
-							String dependencyName = "dependency"+(i+1);
-							sensorMap.put(dependencyName, pos);
-						}
-					}
-				}
-				log.info(sensorMap);
-				Computation computation = formula.compile(sensorMap);				
 				mutator = new Mutator() {						
 					@Override
 					public void apply(long timestamp, float[] data) {
+						for(int varIndex:varIndices) {
+							if(Float.isNaN(data[varIndex])) {
+								data[iTarget] = Float.NaN;
+								return;
+							}
+						}
 						data[iTarget] = computation.eval(data);						
 					}
 				};
+			}
+			};
 
-				//log.warn("unknown day mutator: "+sensor.post_day_func);
-			}
-			}
 		} catch(Exception e) {
 			e.printStackTrace();
 			log.error("could not create mutator: "+func+"    "+e);

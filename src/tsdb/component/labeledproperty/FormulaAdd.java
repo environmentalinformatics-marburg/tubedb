@@ -1,13 +1,11 @@
 package tsdb.component.labeledproperty;
 
 import java.util.Map;
+import java.util.Set;
 
-public class FormulaAdd extends Formula {
-	public final Formula a;
-	public final Formula b;
+public class FormulaAdd extends FormulaBinary {
 	public FormulaAdd(Formula a, Formula b) {
-		this.a = a;
-		this.b = b;
+		super(a, b);
 	}
 	@Override
 	public Computation compile(Map<String, Integer> sensorMap) {
@@ -25,5 +23,5 @@ public class FormulaAdd extends Formula {
 		String ja = a.compileToString(sensorMap);
 		String jb = b.compileToString(sensorMap);
 		return "("+ja+"+"+jb+")";
-	}
+	}	
 }

@@ -1,6 +1,7 @@
 package tsdb.component.labeledproperty;
 
 import java.util.Map;
+import java.util.Set;
 
 public class FormulaNum extends Formula {
 	public final float value;
@@ -28,5 +29,10 @@ public class FormulaNum extends Formula {
 	@Override
 	public String compileToString(Map<String, Integer> sensorMap) {
 		return Float.toString(value)+"f";
+	}
+
+	@Override
+	public void collectVariables(Set<String> collector) {
+		// nothing		
 	}
 }

@@ -23,6 +23,60 @@ public interface FormulaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpression_op(FormulaParser.Expression_opContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link FormulaParser#conditional}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConditional(FormulaParser.ConditionalContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link FormulaParser#predicate}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPredicate(FormulaParser.PredicateContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link FormulaParser#less}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLess(FormulaParser.LessContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link FormulaParser#greater}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGreater(FormulaParser.GreaterContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link FormulaParser#less_equal}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLess_equal(FormulaParser.Less_equalContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link FormulaParser#greater_equal}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGreater_equal(FormulaParser.Greater_equalContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link FormulaParser#equal}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEqual(FormulaParser.EqualContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link FormulaParser#not_equal}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNot_equal(FormulaParser.Not_equalContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link FormulaParser#not}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNot(FormulaParser.NotContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link FormulaParser#term}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

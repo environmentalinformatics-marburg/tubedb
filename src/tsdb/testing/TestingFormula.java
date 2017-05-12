@@ -37,7 +37,8 @@ public class TestingFormula {
 		//String formulaText = "a + b + c";
 		//String formulaText = "a * b * c";
 		//String formulaText = "((PAR_300_U*a/b+c*p_QNH/PAR_300 * Ta_200)^1.7-27)*c";
-		String formulaText = "(((a + b + c + Ta_200) * (PAR_300_U^2.7 + p_QNH^1.2 + b/a)) / PAR_300^17) ^ (b/(27+a)) + (a-1)*(b-(2*PAR_300^(c/123)))*(c-3)";
+		//String formulaText = "(((a + b + c + Ta_200) * (PAR_300_U^2.7 + p_QNH^1.2 + b/a)) / PAR_300^17) ^ (b/(27+a)) + (a-1)*(b-(2*PAR_300^(c/123)))*(c-3)";
+		String formulaText = "(7<2?3:4)";
 		Formula formula = PropertyComputation.parseFormula(formulaText);
 		Computation computation = formula.compile(sensorNames);
 

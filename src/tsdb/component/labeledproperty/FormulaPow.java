@@ -2,12 +2,9 @@ package tsdb.component.labeledproperty;
 
 import java.util.Map;
 
-public class FormulaPow extends Formula {
-	public final Formula a;
-	public final Formula b;
+public class FormulaPow extends FormulaBinary {
 	public FormulaPow(Formula a, Formula b) {
-		this.a = a;
-		this.b = b;
+		super(a, b);
 	}
 	@Override
 	public Computation compile(Map<String, Integer> sensorMap) {
