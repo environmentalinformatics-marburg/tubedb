@@ -17,8 +17,8 @@ public class FormulaParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		LPAREN=1, RPAREN=2, ADD=3, SUB=4, MUL=5, DIV=6, POINT=7, E=8, POW=9, UNDERSCORE=10, 
-		LETTER=11, DIGIT=12, WS=13;
+		LPAREN=1, RPAREN=2, ADD=3, SUB=4, MUL=5, DIV=6, POINT=7, POW=8, UNDERSCORE=9, 
+		LETTER=10, DIGIT=11, WS=12;
 	public static final int
 		RULE_expression = 0, RULE_expression_op = 1, RULE_term = 2, RULE_term_op = 3, 
 		RULE_factor = 4, RULE_atom = 5, RULE_scientific = 6, RULE_number = 7, 
@@ -29,10 +29,10 @@ public class FormulaParser extends Parser {
 	};
 
 	private static final String[] _LITERAL_NAMES = {
-		null, "'('", "')'", "'+'", "'-'", "'*'", "'/'", "'.'", null, "'^'", "'_'"
+		null, "'('", "')'", "'+'", "'-'", "'*'", "'/'", "'.'", "'^'", "'_'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
-		null, "LPAREN", "RPAREN", "ADD", "SUB", "MUL", "DIV", "POINT", "E", "POW", 
+		null, "LPAREN", "RPAREN", "ADD", "SUB", "MUL", "DIV", "POINT", "POW", 
 		"UNDERSCORE", "LETTER", "DIGIT", "WS"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
@@ -422,13 +422,9 @@ public class FormulaParser extends Parser {
 	}
 
 	public static class ScientificContext extends ParserRuleContext {
-		public List<NumberContext> number() {
-			return getRuleContexts(NumberContext.class);
+		public NumberContext number() {
+			return getRuleContext(NumberContext.class,0);
 		}
-		public NumberContext number(int i) {
-			return getRuleContext(NumberContext.class,i);
-		}
-		public TerminalNode E() { return getToken(FormulaParser.E, 0); }
 		public ScientificContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -443,24 +439,11 @@ public class FormulaParser extends Parser {
 	public final ScientificContext scientific() throws RecognitionException {
 		ScientificContext _localctx = new ScientificContext(_ctx, getState());
 		enterRule(_localctx, 12, RULE_scientific);
-		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(53);
 			number();
-			setState(56);
-			_errHandler.sync(this);
-			_la = _input.LA(1);
-			if (_la==E) {
-				{
-				setState(54);
-				match(E);
-				setState(55);
-				number();
-				}
-			}
-
 			}
 		}
 		catch (RecognitionException re) {
@@ -499,48 +482,48 @@ public class FormulaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(59);
+			setState(56);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==SUB) {
 				{
-				setState(58);
+				setState(55);
 				match(SUB);
 				}
 			}
 
-			setState(62); 
+			setState(59); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(61);
+				setState(58);
 				match(DIGIT);
 				}
 				}
-				setState(64); 
+				setState(61); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==DIGIT );
-			setState(72);
+			setState(69);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==POINT) {
 				{
-				setState(66);
+				setState(63);
 				match(POINT);
-				setState(68); 
+				setState(65); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				do {
 					{
 					{
-					setState(67);
+					setState(64);
 					match(DIGIT);
 					}
 					}
-					setState(70); 
+					setState(67); 
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				} while ( _la==DIGIT );
@@ -591,7 +574,7 @@ public class FormulaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(74);
+			setState(71);
 			_la = _input.LA(1);
 			if ( !(_la==UNDERSCORE || _la==LETTER) ) {
 			_errHandler.recoverInline(this);
@@ -601,13 +584,13 @@ public class FormulaParser extends Parser {
 				_errHandler.reportMatch(this);
 				consume();
 			}
-			setState(78);
+			setState(75);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << UNDERSCORE) | (1L << LETTER) | (1L << DIGIT))) != 0)) {
 				{
 				{
-				setState(75);
+				setState(72);
 				_la = _input.LA(1);
 				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << UNDERSCORE) | (1L << LETTER) | (1L << DIGIT))) != 0)) ) {
 				_errHandler.recoverInline(this);
@@ -619,7 +602,7 @@ public class FormulaParser extends Parser {
 				}
 				}
 				}
-				setState(80);
+				setState(77);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -637,27 +620,27 @@ public class FormulaParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\17T\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\16Q\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\3\2\3\2\3\2"+
 		"\3\2\7\2\31\n\2\f\2\16\2\34\13\2\3\3\3\3\3\4\3\4\3\4\3\4\7\4$\n\4\f\4"+
 		"\16\4\'\13\4\3\5\3\5\3\6\3\6\3\6\5\6.\n\6\3\7\3\7\3\7\3\7\3\7\3\7\5\7"+
-		"\66\n\7\3\b\3\b\3\b\5\b;\n\b\3\t\5\t>\n\t\3\t\6\tA\n\t\r\t\16\tB\3\t\3"+
-		"\t\6\tG\n\t\r\t\16\tH\5\tK\n\t\3\n\3\n\7\nO\n\n\f\n\16\nR\13\n\3\n\2\2"+
-		"\13\2\4\6\b\n\f\16\20\22\2\6\3\2\5\6\3\2\7\b\3\2\f\r\3\2\f\16\2U\2\24"+
-		"\3\2\2\2\4\35\3\2\2\2\6\37\3\2\2\2\b(\3\2\2\2\n*\3\2\2\2\f\65\3\2\2\2"+
-		"\16\67\3\2\2\2\20=\3\2\2\2\22L\3\2\2\2\24\32\5\6\4\2\25\26\5\4\3\2\26"+
-		"\27\5\6\4\2\27\31\3\2\2\2\30\25\3\2\2\2\31\34\3\2\2\2\32\30\3\2\2\2\32"+
-		"\33\3\2\2\2\33\3\3\2\2\2\34\32\3\2\2\2\35\36\t\2\2\2\36\5\3\2\2\2\37%"+
-		"\5\n\6\2 !\5\b\5\2!\"\5\n\6\2\"$\3\2\2\2# \3\2\2\2$\'\3\2\2\2%#\3\2\2"+
-		"\2%&\3\2\2\2&\7\3\2\2\2\'%\3\2\2\2()\t\3\2\2)\t\3\2\2\2*-\5\f\7\2+,\7"+
-		"\13\2\2,.\5\f\7\2-+\3\2\2\2-.\3\2\2\2.\13\3\2\2\2/\66\5\16\b\2\60\66\5"+
-		"\22\n\2\61\62\7\3\2\2\62\63\5\2\2\2\63\64\7\4\2\2\64\66\3\2\2\2\65/\3"+
-		"\2\2\2\65\60\3\2\2\2\65\61\3\2\2\2\66\r\3\2\2\2\67:\5\20\t\289\7\n\2\2"+
-		"9;\5\20\t\2:8\3\2\2\2:;\3\2\2\2;\17\3\2\2\2<>\7\6\2\2=<\3\2\2\2=>\3\2"+
-		"\2\2>@\3\2\2\2?A\7\16\2\2@?\3\2\2\2AB\3\2\2\2B@\3\2\2\2BC\3\2\2\2CJ\3"+
-		"\2\2\2DF\7\t\2\2EG\7\16\2\2FE\3\2\2\2GH\3\2\2\2HF\3\2\2\2HI\3\2\2\2IK"+
-		"\3\2\2\2JD\3\2\2\2JK\3\2\2\2K\21\3\2\2\2LP\t\4\2\2MO\t\5\2\2NM\3\2\2\2"+
-		"OR\3\2\2\2PN\3\2\2\2PQ\3\2\2\2Q\23\3\2\2\2RP\3\2\2\2\f\32%-\65:=BHJP";
+		"\66\n\7\3\b\3\b\3\t\5\t;\n\t\3\t\6\t>\n\t\r\t\16\t?\3\t\3\t\6\tD\n\t\r"+
+		"\t\16\tE\5\tH\n\t\3\n\3\n\7\nL\n\n\f\n\16\nO\13\n\3\n\2\2\13\2\4\6\b\n"+
+		"\f\16\20\22\2\6\3\2\5\6\3\2\7\b\3\2\13\f\3\2\13\r\2Q\2\24\3\2\2\2\4\35"+
+		"\3\2\2\2\6\37\3\2\2\2\b(\3\2\2\2\n*\3\2\2\2\f\65\3\2\2\2\16\67\3\2\2\2"+
+		"\20:\3\2\2\2\22I\3\2\2\2\24\32\5\6\4\2\25\26\5\4\3\2\26\27\5\6\4\2\27"+
+		"\31\3\2\2\2\30\25\3\2\2\2\31\34\3\2\2\2\32\30\3\2\2\2\32\33\3\2\2\2\33"+
+		"\3\3\2\2\2\34\32\3\2\2\2\35\36\t\2\2\2\36\5\3\2\2\2\37%\5\n\6\2 !\5\b"+
+		"\5\2!\"\5\n\6\2\"$\3\2\2\2# \3\2\2\2$\'\3\2\2\2%#\3\2\2\2%&\3\2\2\2&\7"+
+		"\3\2\2\2\'%\3\2\2\2()\t\3\2\2)\t\3\2\2\2*-\5\f\7\2+,\7\n\2\2,.\5\f\7\2"+
+		"-+\3\2\2\2-.\3\2\2\2.\13\3\2\2\2/\66\5\16\b\2\60\66\5\22\n\2\61\62\7\3"+
+		"\2\2\62\63\5\2\2\2\63\64\7\4\2\2\64\66\3\2\2\2\65/\3\2\2\2\65\60\3\2\2"+
+		"\2\65\61\3\2\2\2\66\r\3\2\2\2\678\5\20\t\28\17\3\2\2\29;\7\6\2\2:9\3\2"+
+		"\2\2:;\3\2\2\2;=\3\2\2\2<>\7\r\2\2=<\3\2\2\2>?\3\2\2\2?=\3\2\2\2?@\3\2"+
+		"\2\2@G\3\2\2\2AC\7\t\2\2BD\7\r\2\2CB\3\2\2\2DE\3\2\2\2EC\3\2\2\2EF\3\2"+
+		"\2\2FH\3\2\2\2GA\3\2\2\2GH\3\2\2\2H\21\3\2\2\2IM\t\4\2\2JL\t\5\2\2KJ\3"+
+		"\2\2\2LO\3\2\2\2MK\3\2\2\2MN\3\2\2\2N\23\3\2\2\2OM\3\2\2\2\13\32%-\65"+
+		":?EGM";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

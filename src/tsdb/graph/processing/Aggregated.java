@@ -14,7 +14,7 @@ import tsdb.iterator.MonthAggregationIterator;
 import tsdb.iterator.WeekAggregationIterator;
 import tsdb.iterator.YearAggregationIterator;
 import tsdb.util.AggregationInterval;
-import tsdb.util.TsEntryMutator;
+import tsdb.util.Mutator;
 import tsdb.util.iterator.TsIterator;
 
 /**
@@ -28,9 +28,9 @@ public class Aggregated extends Continuous.Abstract {
 
 	private final Continuous source; //not null
 	private final AggregationInterval aggregationInterval; //not null
-	private final TsEntryMutator[] dayMutators;
+	private final Mutator[] dayMutators;
 
-	protected Aggregated(TsDB tsdb, Continuous source, AggregationInterval aggregationInterval, TsEntryMutator[] dayMutators) {
+	protected Aggregated(TsDB tsdb, Continuous source, AggregationInterval aggregationInterval, Mutator[] dayMutators) {
 		super(tsdb);
 		throwNulls(source,aggregationInterval);
 		this.source = source;
@@ -41,7 +41,7 @@ public class Aggregated extends Continuous.Abstract {
 		}
 	}
 
-	public static Aggregated of(TsDB tsdb, Continuous source, AggregationInterval aggregationInterval, TsEntryMutator[] dayMutators) {
+	public static Aggregated of(TsDB tsdb, Continuous source, AggregationInterval aggregationInterval, Mutator[] dayMutators) {
 		return new Aggregated(tsdb, source, aggregationInterval, dayMutators);
 	}
 

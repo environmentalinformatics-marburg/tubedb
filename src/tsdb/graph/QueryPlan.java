@@ -17,7 +17,7 @@ import tsdb.graph.source.VirtualPlotStationBase;
 import tsdb.graph.source.VirtualPlotStationRawSource;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataQuality;
-import tsdb.util.TsEntryMutator;
+import tsdb.util.Mutator;
 
 /**
  * With QueryPlan query graphs for specific queries a are build
@@ -112,7 +112,7 @@ public final class QueryPlan {
 			continuous = continuousGen.get(plotID, schema);
 			//log.info("continuous "+continuous);
 		}
-		TsEntryMutator[] dayMutators = QueryPlanGenerators.getDayMutators(tsdb, schema);
+		Mutator[] dayMutators = QueryPlanGenerators.getDayMutators(tsdb, schema);
 		return Aggregated.of(tsdb, continuous, aggregationInterval, dayMutators);
 	}
 
@@ -133,7 +133,7 @@ public final class QueryPlan {
 			return null;
 		}
 		Continuous continuous = Continuous.of(base);
-		TsEntryMutator[] dayMutators = QueryPlanGenerators.getDayMutators(tsdb, schema);
+		Mutator[] dayMutators = QueryPlanGenerators.getDayMutators(tsdb, schema);
 		return Aggregated.of(tsdb, continuous, aggregationInterval, dayMutators);
 	}
 

@@ -1164,7 +1164,7 @@ Ta_200_DTR:
   description: DTR (Diurnal Temperature Range) of Ta_200
   unit: °K (degree Kelvin)
   dependency: [Ta_200_min, Ta_200_max]
-  post_day_func: dependency2_minus_dependency1 # TODO placeholder for formula 
+  post_day_func: Ta_200_max - Ta_200_min
   aggregation: average
   category: temperature
 
@@ -1172,40 +1172,69 @@ rH_200_DMR:
   description: DMR (Diurnal Moisture Range) of rH_200
   unit: pp (percentage point)
   dependency: [rH_200_min, rH_200_max]
-  post_day_func: dependency2_minus_dependency1 # TODO placeholder for formula 
+  post_day_func: rH_200_max - rH_200_min
   aggregation: average
 
 Ta_200_ice_days:  
   description: ice days Tmax < 0°C of Ta_200
   unit: d (day)
-  dependency: [Ta_200_max]
+  dependency: Ta_200_max
   post_day_func: dependency1_less_0 # TODO placeholder for formula 
   aggregation: sum
   
 Ta_200_cold_days:  
   description: cold days Tmin < 0°C of Ta_200
   unit: d (day)
-  dependency: [Ta_200_min]
+  dependency: Ta_200_min
   post_day_func: dependency1_less_0 # TODO placeholder for formula 
   aggregation: sum
   
 Ta_200_cool_days:  
   description: cool days Tmax < 10°C of Ta_200
   unit: d (day)
-  dependency: [Ta_200_max]
+  dependency: Ta_200_max
   post_day_func: dependency1_less_10 # TODO placeholder for formula 
   aggregation: sum
 
 Ta_200_warm_days:  
   description: warm days Tmax >= 20°C of Ta_200
   unit: d (day)
-  dependency: [Ta_200_max]
+  dependency: Ta_200_max
   post_day_func: dependency1_greater_equal_20 # TODO placeholder for formula 
   aggregation: sum
-
-Ta_200_hot_days:  
-  description: hot days Tmax >= 30°C of Ta_200
+  
+Ta_200_tropical_nights:  
+  description: tropical nights Tmin >= 20°C of Ta_200
   unit: d (day)
-  dependency: [Ta_200_max]
+  dependency: Ta_200_min
+  post_day_func: dependency1_greater_equal_20 # TODO placeholder for formula 
+  aggregation: sum  
+  
+Ta_200_summer_days:  
+  description: summer days Tmax >= 25°C of Ta_200
+  unit: d (day)
+  dependency: Ta_200_max
+  post_day_func: dependency1_greater_equal_25 # TODO placeholder for formula 
+  aggregation: sum  
+
+Ta_200_tropical_days:  
+  description: tropical days Tmax >= 30°C of Ta_200
+  unit: d (day)
+  dependency: Ta_200_max
   post_day_func: dependency1_greater_equal_30 # TODO placeholder for formula 
-  aggregation: sum    
+  aggregation: sum
+  
+Ta_200_TESTING:  
+  description: TESTING
+  unit: d (day)
+  dependency: Ta_200_max
+  post_day_func: 10 * Ta_200_max
+  aggregation: sum  
+
+P_RT_NRT_rain_days:  
+  description: rain days as P_RT_NRT >= 0.1 mm per day
+  unit: d (day)
+  dependency: P_RT_NRT
+  post_day_func: dependency1_greater_equal_0_1 # TODO placeholder for formula 
+  aggregation: sum
+  category: water
