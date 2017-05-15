@@ -18,12 +18,16 @@ import tsdb.dsl.FormulaParser.VariableContext;
 
 public class FormulaCompileVisitor extends FormulaBaseVisitor<Formula> {
 	private static final Logger log = LogManager.getLogger();
-	
+
 	public static final FormulaCompileVisitor DEFAULT = new FormulaCompileVisitor();
 
 	@Override
 	public Formula visitVariable(VariableContext ctx) {
-		return new FormulaVar(ctx.getText());
+		if( ctx.SUB() == null) {
+			return new FormulaVar(ctx.identifier().getText());
+		} else {
+			return new FormulaVarNegative(ctx.identifier().getText());
+		}
 	}
 
 	@Override
@@ -35,7 +39,7 @@ public class FormulaCompileVisitor extends FormulaBaseVisitor<Formula> {
 	public Formula visitScientific(ScientificContext ctx) {
 		return new FormulaNum(ctx.getText());
 	}
-	
+
 	@Override
 	public Formula visitAtom(AtomContext ctx) {
 		if(ctx.getChildCount() == 1) {
@@ -73,7 +77,7 @@ public class FormulaCompileVisitor extends FormulaBaseVisitor<Formula> {
 		ParseTree[] parseTrees = ctx.children.toArray(new ParseTree[0]);
 		return createTerm(parseTrees.length-1, parseTrees);
 	}
-	
+
 	private class FormulaTermVisitor extends FormulaBaseVisitor<Formula> {
 		public final Formula a;
 		public final Formula b;
@@ -92,7 +96,7 @@ public class FormulaCompileVisitor extends FormulaBaseVisitor<Formula> {
 			throw new RuntimeException("unknown input: "+ctx.getText());
 		}
 	}
-	
+
 	public Formula createTerm(int pos, ParseTree[] parseTrees) {
 		Formula f1 = parseTrees[pos].accept(DEFAULT);
 		if(pos == 0) {
@@ -111,7 +115,7 @@ public class FormulaCompileVisitor extends FormulaBaseVisitor<Formula> {
 		ParseTree[] parseTrees = ctx.children.toArray(new ParseTree[0]);
 		return createExpression(parseTrees.length-1, parseTrees);
 	}
-	
+
 	private class FormulaExpressionVisitor extends FormulaBaseVisitor<Formula> {
 		public final Formula a;
 		public final Formula b;
@@ -130,7 +134,7 @@ public class FormulaCompileVisitor extends FormulaBaseVisitor<Formula> {
 			throw new RuntimeException("unknown input: "+ctx.getText());
 		}
 	}
-	
+
 	public Formula createExpression(int pos, ParseTree[] parseTrees) {
 		Formula f1 = parseTrees[pos].accept(DEFAULT);
 		if(pos == 0) {

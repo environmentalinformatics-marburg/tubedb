@@ -29,8 +29,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 grammar Formula;
-  
-expression
+
+expression 
    : term (expression_op term)*
    | conditional
    ;
@@ -40,17 +40,35 @@ expression_op
 	;
 	
 conditional
-	: LPAREN p=predicate '?' a=expression ':' b=expression RPAREN
+	: 'IF' p=predicate_expression 'THEN' a=expression 'ELSE' b=expression
+	| LPAREN p=predicate_expression '?' a=expression ':' b=expression RPAREN
 	;
 	
-predicate
+predicate_expression
+   : predicate_term ('OR' predicate_term)*
+   | predicate_term ('||' predicate_term)*
+   | predicate_term ('|' predicate_term)*
+   ;
+   
+predicate_term
+   : predicate_factor ('AND' predicate_factor)*
+   | predicate_factor ('&&' predicate_factor)*
+   | predicate_factor ('&' predicate_factor)*
+   ;
+   
+predicate_factor
+   : not='NOT'? predicate_atom
+   | not='!'? predicate_atom   
+   ;            
+    
+predicate_atom
     : less
     | greater
     | less_equal
     | greater_equal
     | equal
     | not_equal
-    | not
+    | LPAREN predicate_expression RPAREN
     ;
     
 less
@@ -58,7 +76,7 @@ less
     ;
     
 greater
-    : a=expression '<' b=expression
+    : a=expression '>' b=expression
     ;    
 
 less_equal
@@ -70,15 +88,13 @@ greater_equal
     ;
     
 equal
-    : a=expression '=''='? b=expression
+    : a=expression '==' b=expression
+    | a=expression '=' b=expression    
     ;
     
 not_equal
-    : a=expression ('!=' | '<>') b=expression
-    ;
-    
-not
-    : '!' a=predicate
+    : a=expression '!=' b=expression
+    | a=expression '<>' b=expression    
     ;
                                             	 
 
@@ -101,7 +117,7 @@ atom
    ;
 
 scientific
-   : number /*(E number)?*/
+   : number (('e' | 'E') number)?
    ;
 
 number
@@ -109,9 +125,12 @@ number
    ;
 
 variable
-   : /*SUB?*/ (LETTER | UNDERSCORE) (LETTER | DIGIT | UNDERSCORE)*
+   : SUB? identifier
    ;
 
+identifier
+   : ((LETTER | UNDERSCORE) (LETTER | DIGIT | UNDERSCORE)*)
+   ;
 
 LPAREN
    : '('
@@ -146,11 +165,6 @@ DIV
 POINT
    : '.'
    ;
-
-
-/*E
-   : 'e' | 'E'
-   ;*/
 
 
 POW

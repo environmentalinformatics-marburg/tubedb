@@ -2,7 +2,7 @@ package tsdb.component.labeledproperty;
 
 import java.util.Map;
 
-public class BooleanFormulaNotEqual extends BooleanFormulaBinary {
+public class BooleanFormulaNotEqual extends BooleanFormulaAtomicBinary {
 	public BooleanFormulaNotEqual(Formula a, Formula b) {
 		super(a, b);
 	}

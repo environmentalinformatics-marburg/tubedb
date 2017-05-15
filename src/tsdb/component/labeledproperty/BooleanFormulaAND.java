@@ -2,18 +2,18 @@ package tsdb.component.labeledproperty;
 
 import java.util.Map;
 
-public class BooleanFormulaEqual extends BooleanFormulaAtomicBinary {
-	public BooleanFormulaEqual(Formula a, Formula b) {
+public class BooleanFormulaAND extends BooleanFormulaBinary {
+	public BooleanFormulaAND(BooleanFormula a, BooleanFormula b) {
 		super(a, b);
 	}
 	@Override
 	public BooleanComputation compile(Map<String, Integer> sensorMap) {
 		return new BooleanComputation() {
-			Computation x = a.compile(sensorMap);
-			Computation y = b.compile(sensorMap);
+			BooleanComputation x = a.compile(sensorMap);
+			BooleanComputation y = b.compile(sensorMap);
 			@Override
 			public boolean eval(float[] data) {
-				return x.eval(data) == y.eval(data);
+				return x.eval(data) && y.eval(data);
 			}
 		};
 	}
@@ -21,10 +21,10 @@ public class BooleanFormulaEqual extends BooleanFormulaAtomicBinary {
 	public String compileToString(Map<String, Integer> sensorMap) {
 		String ja = a.compileToString(sensorMap);
 		String jb = b.compileToString(sensorMap);
-		return "("+ja+"=="+jb+")";
+		return "("+ja+"&&"+jb+")";
 	}
 	@Override
 	public BooleanFormula not() {
-		return new BooleanFormulaNotEqual(a, b);
+		return new BooleanFormulaOR(a.not(), b.not());
 	}
 }

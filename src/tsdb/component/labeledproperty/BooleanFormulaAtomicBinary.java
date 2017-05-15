@@ -2,10 +2,10 @@ package tsdb.component.labeledproperty;
 
 import java.util.Set;
 
-public abstract class BooleanFormulaBinary extends BooleanFormula {	
-	public final BooleanFormula a;
-	public final BooleanFormula b;
-	public BooleanFormulaBinary(BooleanFormula a, BooleanFormula b) {
+public abstract class BooleanFormulaAtomicBinary extends BooleanFormula {	
+	public final Formula a;
+	public final Formula b;
+	public BooleanFormulaAtomicBinary(Formula a, Formula b) {
 		this.a = a;
 		this.b = b;
 	}

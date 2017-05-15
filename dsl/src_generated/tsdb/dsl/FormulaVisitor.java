@@ -29,11 +29,29 @@ public interface FormulaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitConditional(FormulaParser.ConditionalContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link FormulaParser#predicate}.
+	 * Visit a parse tree produced by {@link FormulaParser#predicate_expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPredicate(FormulaParser.PredicateContext ctx);
+	T visitPredicate_expression(FormulaParser.Predicate_expressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link FormulaParser#predicate_term}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPredicate_term(FormulaParser.Predicate_termContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link FormulaParser#predicate_factor}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPredicate_factor(FormulaParser.Predicate_factorContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link FormulaParser#predicate_atom}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPredicate_atom(FormulaParser.Predicate_atomContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link FormulaParser#less}.
 	 * @param ctx the parse tree
@@ -70,12 +88,6 @@ public interface FormulaVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitNot_equal(FormulaParser.Not_equalContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link FormulaParser#not}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNot(FormulaParser.NotContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link FormulaParser#term}.
 	 * @param ctx the parse tree
@@ -118,4 +130,10 @@ public interface FormulaVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitVariable(FormulaParser.VariableContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link FormulaParser#identifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdentifier(FormulaParser.IdentifierContext ctx);
 }
