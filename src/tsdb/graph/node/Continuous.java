@@ -22,12 +22,12 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public interface Continuous extends Node {
-	
+
 	@Override
 	public default boolean isContinuous() {
 		return true;
 	}
-	
+
 	/**
 	 * create an iterator with values filling the interval (start, end),
 	 * missing timestamps are created with nan values
@@ -36,7 +36,7 @@ public interface Continuous extends Node {
 	 * @return
 	 */
 	public TsIterator getExactly(long start, long end);
-	
+
 	@Override
 	public default TsIterator get(Long start, Long end) {
 		if(start==null||end==null) {
@@ -53,21 +53,21 @@ public interface Continuous extends Node {
 		}
 		return getExactly(start,end);
 	}
-	
+
 	public static Continuous of(Base base) {
 		return new Concrete(base);
 	}
-	
+
 	public abstract class Abstract implements Continuous {
-		
+
 		protected final TsDB tsdb; //not null
-		
+
 		protected Abstract(TsDB tsdb) {
 			throwNull(tsdb);
 			this.tsdb = tsdb;
 		}	
 	}
-	
+
 	public class Concrete implements Continuous {
 		private final Base source;
 		protected Concrete(Base source) {
@@ -115,7 +115,7 @@ public interface Continuous extends Node {
 			}
 			return continuous;
 		}
-		
+
 		@Override
 		public TsIterator getExactly(long start, long end) {		
 			return get(start,end);
@@ -144,6 +144,6 @@ public interface Continuous extends Node {
 		@Override
 		public long[] getTimestampInterval() {
 			return source.getTimestampInterval();
-	}	
+		}	
 	}
 }

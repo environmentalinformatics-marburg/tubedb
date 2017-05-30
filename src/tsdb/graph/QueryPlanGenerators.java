@@ -174,7 +174,7 @@ public final class QueryPlanGenerators {
 	public static ContinuousGen getDayAggregationGen(TsDB tsdb, DataQuality dataQuality) {
 		return (String plotID, String[] schema)->{
 			Continuous continuous = getContinuousGen(tsdb, dataQuality).get(plotID, schema);
-			Mutator[] dayMutators = getDayMutators(tsdb, schema);
+			Mutator[] dayMutators = getPostDayMutators(tsdb, schema);
 			return Aggregated.of(tsdb, continuous, AggregationInterval.DAY, dayMutators);
 		};
 	}
@@ -249,8 +249,24 @@ public final class QueryPlanGenerators {
 		return mutator;
 	}
 
-
-	public static Mutator[] getDayMutators(TsDB tsdb, String[] schema) {
+	public static Mutator[] getPostHourMutators(TsDB tsdb, String[] schema) {
+		ArrayList<Mutator> mutators = null;
+		for(String sensorName:schema) {
+			Sensor sensor = tsdb.getSensor(sensorName);
+			if(sensor != null && sensor.post_hour_func != null) {
+				Mutator mutator = getMutator(sensor, sensor.post_hour_func, schema);
+				if(mutator != null) {
+					if(mutators == null) {
+						mutators = new ArrayList<Mutator>();
+					}
+					mutators.add(mutator);
+				}
+			}
+		}
+		return mutators == null ? null : mutators.toArray(new Mutator[0]);
+	}
+	
+	public static Mutator[] getPostDayMutators(TsDB tsdb, String[] schema) {
 		ArrayList<Mutator> mutators = null;
 		for(String sensorName:schema) {
 			Sensor sensor = tsdb.getSensor(sensorName);
@@ -265,5 +281,5 @@ public final class QueryPlanGenerators {
 			}
 		}
 		return mutators == null ? null : mutators.toArray(new Mutator[0]);
-	}
+	}	
 }

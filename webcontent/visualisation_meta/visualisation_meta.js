@@ -206,7 +206,7 @@ methods: {
 		
 		var plots = [];
 		if(this.plotIDs[0] == '*') {
-			plots = this.metadata.plots;
+			plots = this.plots;
 		} else {
 			this.plotIDs.forEach(function(o){
 				plots.push(self.plotMap[o]);

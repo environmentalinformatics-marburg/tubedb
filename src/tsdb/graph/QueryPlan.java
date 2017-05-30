@@ -12,6 +12,7 @@ import tsdb.graph.node.Node;
 import tsdb.graph.node.NodeGen;
 import tsdb.graph.processing.Aggregated;
 import tsdb.graph.processing.InterpolatedAverageLinear;
+import tsdb.graph.processing.PostHourMutation;
 import tsdb.graph.source.RawSource;
 import tsdb.graph.source.VirtualPlotStationBase;
 import tsdb.graph.source.VirtualPlotStationRawSource;
@@ -112,8 +113,10 @@ public final class QueryPlan {
 			continuous = continuousGen.get(plotID, schema);
 			//log.info("continuous "+continuous);
 		}
-		Mutator[] dayMutators = QueryPlanGenerators.getDayMutators(tsdb, schema);
-		return Aggregated.of(tsdb, continuous, aggregationInterval, dayMutators);
+		Mutator[] postHourMutators = QueryPlanGenerators.getPostHourMutators(tsdb, schema);
+		continuous = new PostHourMutation(continuous, postHourMutators);
+		Mutator[] postDayMutators = QueryPlanGenerators.getPostDayMutators(tsdb, schema);
+		return Aggregated.of(tsdb, continuous, aggregationInterval, postDayMutators);
 	}
 
 	/**
@@ -133,7 +136,7 @@ public final class QueryPlan {
 			return null;
 		}
 		Continuous continuous = Continuous.of(base);
-		Mutator[] dayMutators = QueryPlanGenerators.getDayMutators(tsdb, schema);
+		Mutator[] dayMutators = QueryPlanGenerators.getPostDayMutators(tsdb, schema);
 		return Aggregated.of(tsdb, continuous, aggregationInterval, dayMutators);
 	}
 

@@ -1274,8 +1274,46 @@ Ta_200_growing_degree_days:
   aggregation: sum
 
 Ta_200_heat_index:  
-  description: (experimental) heat index based on Ta_200 and rH_200
+  description: heat index based on Ta_200 and rH_200
   unit: °C (degree Celcius)
   dependency: [Ta_200, rH_200]
-  post_day_func: "-8.784695 +1.61139411*Ta_200 +2.338549*rH_200 -0.14611605*Ta_200*rH_200 -1.2308094e-2*Ta_200^2 -1.6424828e-2*rH_200^2 +2.211732e-3*Ta_200^2*rH_200 +7.2546e-4*Ta_200*rH_200^2 -3.582e-6*Ta_200^2*rH_200^2"
+  # reference https://de.wikipedia.org/wiki/Hitzeindex
+  post_hour_func: "(26.7 <= Ta_200 && 40 <= rH_200 ? -8.784695 +1.61139411*Ta_200 +2.338549*rH_200 -0.14611605*Ta_200*rH_200 -1.2308094e-2*Ta_200^2 -1.6424828e-2*rH_200^2 +2.211732e-3*Ta_200^2*rH_200 +7.2546e-4*Ta_200*rH_200^2 -3.582e-6*Ta_200^2*rH_200^2 : Ta_200)"
+  # reference http://myscope.net/hitzeindex-gefuehle-temperatur/
+  #post_hour_func: "(26.7 <= Ta_200 && 40 <= rH_200 ? -8.784695 + 1.61139411*Ta_200 + 2.338549*rH_200 - 0.14611605*Ta_200*rH_200 - 0.012308094*Ta_200*Ta_200 - 0.016424828*rH_200*rH_200 + 0.002211732*Ta_200*Ta_200*rH_200 + 0.00072546*Ta_200*rH_200*rH_200 - 0.000003582*Ta_200*Ta_200*rH_200*rH_200 : Ta_200)"
   aggregation: average
+  category: temperature  
+  
+Ta_200_humidex:  
+  description: humidex based on Ta_200 and rH_200
+  unit: °C (degree Celcius)
+  dependency: [Ta_200, rH_200]
+  # reference http://myscope.net/hitzeindex-gefuehle-temperatur/
+  post_hour_func: "Ta_200 + 5/9 * (6.112 * 10 ^ (7.5 * Ta_200 / (237.7+Ta_200)) * rH_200 / 100 - 10)"
+  aggregation: average 
+  category: temperature
+  
+Ta_200_SSI:  
+  description: Summer-Simmer-Index based on Ta_200 and rH_200
+  unit: °C (degree Celcius)
+  dependency: [Ta_200, rH_200]
+  # reference http://myscope.net/hitzeindex-gefuehle-temperatur/
+  post_hour_func: "(1.98 * (Ta_200 * 1.8 + 32 - (0.55 - 0.0055 * rH_200) * (Ta_200 * 1.8 + 32 - 58)) - 56.83 - 32) * 5/9"
+  aggregation: average 
+  category: temperature
+
+Ta_200_vapour_pressure:  
+  description: vapour_pressure (Arden Buck equation)
+  unit: hPa (hectopascal)
+  dependency: Ta_200
+  # reference https://en.wikipedia.org/wiki/Arden_Buck_equation
+  post_hour_func: "(  0 < Ta_200 ? 6.1121 * 2.71828182845904523536 ^ ( (18.678 - Ta_200/234.5) * (Ta_200/(257.14+Ta_200)) ) : 6.1115 * 2.71828182845904523536 ^ ( (23.036 - Ta_200/333.7) * (Ta_200/(279.82+Ta_200)) )  )"
+  aggregation: average
+
+Ta_200_dew_point:  
+  description: preliminary approximate dew point based on Ta_200 and rH_200
+  unit: °C (degree Celcius)
+  dependency: [Ta_200, rH_200]
+  # reference https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
+  post_hour_func: "Ta_200 - ((100 - rH_200) / 5)"
+  aggregation: average    
