@@ -131,6 +131,12 @@ public interface FormulaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVariable(FormulaParser.VariableContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link FormulaParser#parameter}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParameter(FormulaParser.ParameterContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link FormulaParser#identifier}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

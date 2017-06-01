@@ -1307,13 +1307,33 @@ Ta_200_vapour_pressure:
   unit: hPa (hectopascal)
   dependency: Ta_200
   # reference https://en.wikipedia.org/wiki/Arden_Buck_equation
-  post_hour_func: "(  0 < Ta_200 ? 6.1121 * 2.71828182845904523536 ^ ( (18.678 - Ta_200/234.5) * (Ta_200/(257.14+Ta_200)) ) : 6.1115 * 2.71828182845904523536 ^ ( (23.036 - Ta_200/333.7) * (Ta_200/(279.82+Ta_200)) )  )"
+  post_hour_func: "(  0 < Ta_200 ? 6.1121 * exp( (18.678 - Ta_200/234.5) * (Ta_200/(257.14+Ta_200)) ) : 6.1115 * exp( (23.036 - Ta_200/333.7) * (Ta_200/(279.82+Ta_200)) )  )"
   aggregation: average
 
-Ta_200_dew_point:  
+Ta_200_dew_point_approx:  
   description: preliminary approximate dew point based on Ta_200 and rH_200
   unit: °C (degree Celcius)
   dependency: [Ta_200, rH_200]
   # reference https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
   post_hour_func: "Ta_200 - ((100 - rH_200) / 5)"
-  aggregation: average    
+  aggregation: average
+  category: temperature
+
+Ta_200_dew_point:  
+  description: dew point based on Ta_200 and rH_200
+  unit: °C (degree Celcius)
+  dependency: [Ta_200, rH_200]
+  # reference https://de.wikipedia.org/wiki/Taupunkt
+  # formula K3 * ( ((K2*t)/(K3+t) + ln(r)) / ((K2*K3)/(K3+t) - ln(r)) )
+  post_hour_func: "272.62 * ( ((22.46*Ta_200)/(272.62+Ta_200) + ln(rH_200/100)) / ((22.46*272.62)/(272.62+Ta_200) - ln(rH_200/100)) )"
+  aggregation: average
+  category: temperature
+
+Ta_200_windchill:  
+  description: windchill based on Ta_200 and WV
+  unit: °C (degree Celcius)
+  dependency: [Ta_200, WV]
+  # reference https://de.wikipedia.org/wiki/Windchill
+  post_hour_func: "(5/3.6 < WV ? 13.12 + 0.6215 * Ta_200 + (0.3965 * Ta_200 - 11.37) * (WV * 3.6) ^ 0.16 : Ta_200)"
+  aggregation: average
+  category: temperature 

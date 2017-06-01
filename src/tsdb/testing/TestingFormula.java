@@ -38,7 +38,8 @@ public class TestingFormula {
 		//String formulaText = "a * b * c";
 		//String formulaText = "((PAR_300_U*a/b+c*p_QNH/PAR_300 * Ta_200)^1.7-27)*c";
 		//String formulaText = "(((a + b + c + Ta_200) * (PAR_300_U^2.7 + p_QNH^1.2 + b/a)) / PAR_300^17) ^ (b/(27+a)) + (a-1)*(b-(2*PAR_300^(c/123)))*(c-3)";
-		String formulaText = "(7<2?3:4)";
+		//String formulaText = "(7<2?3:4)";
+		String formulaText = "exp(7)";
 		Formula formula = PropertyComputation.parseFormula(formulaText);
 		Computation computation = formula.compile(sensorNames);
 
@@ -69,7 +70,7 @@ public class TestingFormula {
 		log.info(objI.eval(params));
 
 		Map<String, Function<float[], Float>> map = new HashMap<>();
-		map.put("direct", data -> (((float) Math.pow((double)(((((data[0]+data[1])+data[4])+data[6])*((((float) Math.pow((double)data[2],(double)2.7f))+((float) Math.pow((double)data[5],(double)1.2f)))+(data[1]/data[0])))/((float) Math.pow((double)data[3],(double)17.0f))),(double)(data[1]/(27.0f+data[0]))))+(((data[0]-1.0f)*(data[1]-(2.0f*((float) Math.pow((double)data[3],(double)(data[4]/123.0f))))))*(data[4]-3.0f))) );
+		//map.put("direct", data -> (((float) Math.pow((double)(((((data[0]+data[1])+data[4])+data[6])*((((float) Math.pow((double)data[2],(double)2.7f))+((float) Math.pow((double)data[5],(double)1.2f)))+(data[1]/data[0])))/((float) Math.pow((double)data[3],(double)17.0f))),(double)(data[1]/(27.0f+data[0]))))+(((data[0]-1.0f)*(data[1]-(2.0f*((float) Math.pow((double)data[3],(double)(data[4]/123.0f))))))*(data[4]-3.0f))) );
 		map.put("tree", computation::eval);
 		map.put("genI", objI::eval);
 		map.put("genA", objA::eval);

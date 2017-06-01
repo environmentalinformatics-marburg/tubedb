@@ -22,6 +22,8 @@ Run Gradle with task `_build_package`. Then in the folder "package" is the compi
 
 * **check_server_background.sh** checks if a TubeDB server is running in background.
 
+(optional) For improved text in visualisation diagrams install ms core fonts: `sudo apt-get install ttf-mscorefonts-installer` 
+
 
 Windows
 ---

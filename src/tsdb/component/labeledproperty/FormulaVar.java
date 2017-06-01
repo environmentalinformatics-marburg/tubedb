@@ -5,27 +5,39 @@ import java.util.Set;
 
 public class FormulaVar extends Formula {
 	//private static final Logger log = LogManager.getLogger();
-	
-	public final String name;
 
-	public FormulaVar(String name) {
+	public final String name;
+	public final boolean positive;
+
+
+	public FormulaVar(String name, boolean positive) {
 		this.name = name;
+		this.positive = positive;
 	}
-	
+
 	@Override
 	public Computation compile(Map<String,Integer> sensorMap) {
 		Integer p = sensorMap.get(name);
 		if(p == null) {
 			throw new RuntimeException("sensor not found: "+name+"  in  "+sensorMap);
 		}
-		return new Computation(){
-			int pos = sensorMap.get(name);
-			@Override
-			public float eval(float[] data) {
-				return data[pos];				
-			}
-		};
-		
+		if(positive) {
+			return new Computation(){
+				int pos = sensorMap.get(name);
+				@Override
+				public float eval(float[] data) {
+					return data[pos];				
+				}
+			};
+		} else {
+			return new Computation(){
+				int pos = sensorMap.get(name);
+				@Override
+				public float eval(float[] data) {
+					return - data[pos];				
+				}
+			};
+		}
 	}
 
 	@Override
@@ -35,8 +47,11 @@ public class FormulaVar extends Formula {
 			throw new RuntimeException("sensor not found: "+name+"  in  "+sensorMap);
 		}
 		int pos = p.intValue();
-		//log.info("pos "+pos+"   "+name);
-		return "data["+pos+"]";
+		if(positive) {
+			return "data["+pos+"]";
+		} else {
+			return " - data["+pos+"]";
+		}
 	}
 
 	@Override

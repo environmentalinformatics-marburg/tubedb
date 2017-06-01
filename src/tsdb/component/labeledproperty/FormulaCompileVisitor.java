@@ -23,10 +23,11 @@ public class FormulaCompileVisitor extends FormulaBaseVisitor<Formula> {
 
 	@Override
 	public Formula visitVariable(VariableContext ctx) {
-		if( ctx.SUB() == null) {
-			return new FormulaVar(ctx.identifier().getText());
+		if( ctx.parameter() == null) {
+			return new FormulaVar(ctx.identifier().getText(), ctx.SUB() == null);
 		} else {
-			return new FormulaVarNegative(ctx.identifier().getText());
+			Formula parameter = ctx.parameter().expression().accept(DEFAULT);
+			return new FormulaFunc(ctx.identifier().getText(), parameter, ctx.SUB() == null);
 		}
 	}
 

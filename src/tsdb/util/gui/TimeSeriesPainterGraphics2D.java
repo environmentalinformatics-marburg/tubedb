@@ -12,7 +12,11 @@ import java.awt.image.BufferedImage;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
+	private static final Logger log = LogManager.getLogger("tsdb");
 
 	Graphics2D gc;
 
@@ -27,6 +31,15 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 	
 	Font fontDefault;
 	Font fontSmall;
+	
+	/*static {
+		GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	    Font[] fonts = e.getAllFonts();
+	    for (Font f : fonts) {
+	    	log.info(f.getFontName());
+	    }
+	}*/	
+
 
 	public TimeSeriesPainterGraphics2D(BufferedImage bufferedImage) {
 		this(bufferedImage.createGraphics(),0,0,bufferedImage.getWidth(),bufferedImage.getHeight());
@@ -46,9 +59,13 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 		this.maxX = maxX;
 		this.maxY = maxY;
 		
-		fontDefault = gc.getFont();
+		//GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		//fontDefault = gc.getFont();
+		//install font "Arial" for Ubuntu: "sudo apt-get install ttf-mscorefonts-installer" 
+		fontDefault = new Font("Arial", Font.PLAIN, 12); // get font "Arial" if available else use default logical font "Dialog" 
+		//log.info("font "+fontDefault.getName()+"  "+fontDefault.getFamily());
 		fontSmall = fontDefault.deriveFont(9f);
-		
+		setFontDefault();
 		this.indexedColors = firstIndexedColors;
 	}
 	

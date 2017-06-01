@@ -117,7 +117,8 @@ atom
    ;
 
 scientific
-   : number (('e' | 'E') number)?
+// : number (('e' | 'E') number)? // conflict with LETTER
+   : number (LETTER number)?
    ;
 
 number
@@ -125,7 +126,11 @@ number
    ;
 
 variable
-   : SUB? identifier
+   : SUB? identifier parameter?
+   ;
+
+parameter
+   : LPAREN expression RPAREN
    ;
 
 identifier
