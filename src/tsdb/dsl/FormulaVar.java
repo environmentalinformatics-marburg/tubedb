@@ -1,4 +1,4 @@
-package tsdb.component.labeledproperty;
+package tsdb.dsl;
 
 import java.util.Map;
 import java.util.Set;

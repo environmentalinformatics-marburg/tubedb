@@ -1,4 +1,4 @@
-package tsdb.component.labeledproperty;
+package tsdb.dsl;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.logging.log4j.LogManager;

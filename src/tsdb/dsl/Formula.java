@@ -1,4 +1,4 @@
-package tsdb.component.labeledproperty;
+package tsdb.dsl;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;

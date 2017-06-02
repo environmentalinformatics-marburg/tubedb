@@ -11,6 +11,9 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import tsdb.dsl.Computation;
+import tsdb.dsl.Formula;
+import tsdb.dsl.FormulaCompileVisitor;
 import tsdb.dsl.FormulaLexer;
 import tsdb.dsl.FormulaParser;
 import tsdb.util.DataRow;

@@ -14,9 +14,9 @@ import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.VirtualCopyList;
 import tsdb.component.Sensor;
-import tsdb.component.labeledproperty.Computation;
-import tsdb.component.labeledproperty.Formula;
 import tsdb.component.labeledproperty.PropertyComputation;
+import tsdb.dsl.Computation;
+import tsdb.dsl.Formula;
 import tsdb.graph.node.Base;
 import tsdb.graph.node.Continuous;
 import tsdb.graph.node.ContinuousGen;
@@ -27,6 +27,7 @@ import tsdb.graph.processing.ElementRawCopy;
 import tsdb.graph.processing.EmpiricalFiltered_NEW;
 import tsdb.graph.processing.Evaporation;
 import tsdb.graph.processing.Mask;
+import tsdb.graph.processing.NocCheck;
 import tsdb.graph.processing.PeakSmoothed;
 import tsdb.graph.processing.RangeStepFiltered;
 import tsdb.graph.processing.Sunshine;
@@ -157,6 +158,9 @@ public final class QueryPlanGenerators {
 				return null;
 			}
 			Continuous continuous = Continuous.of(base);
+			/*if(dataQuality.isStep()) {
+				continuous = NocCheck.of(tsdb, continuous);
+			}*/
 			if(DataQuality.EMPIRICAL==dataQuality) {
 				continuous = EmpiricalFiltered_NEW.of(tsdb, continuous, plotID);
 			}

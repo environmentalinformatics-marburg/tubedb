@@ -1,9 +1,9 @@
-package tsdb.component.labeledproperty;
+package tsdb.dsl;
 
 import java.util.Map;
 
-public class FormulaPow extends FormulaBinary {
-	public FormulaPow(Formula a, Formula b) {
+public class FormulaMul extends FormulaBinary {
+	public FormulaMul(Formula a, Formula b) {
 		super(a, b);
 	}
 	@Override
@@ -13,7 +13,7 @@ public class FormulaPow extends FormulaBinary {
 			Computation y = b.compile(sensorMap);
 			@Override
 			public float eval(float[] data) {
-				return (float) Math.pow(x.eval(data), y.eval(data));
+				return x.eval(data) * y.eval(data);
 			}
 		};
 	}
@@ -21,6 +21,6 @@ public class FormulaPow extends FormulaBinary {
 	public String compileToString(Map<String, Integer> sensorMap) {
 		String ja = a.compileToString(sensorMap);
 		String jb = b.compileToString(sensorMap);
-		return "((float) Math.pow((double)"+ja+",(double)"+jb+"))";
+		return "("+ja+"*"+jb+")";
 	}
 }

@@ -11,9 +11,9 @@ import org.apache.logging.log4j.Logger;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtNewMethod;
-import tsdb.component.labeledproperty.Computation;
-import tsdb.component.labeledproperty.Formula;
 import tsdb.component.labeledproperty.PropertyComputation;
+import tsdb.dsl.Computation;
+import tsdb.dsl.Formula;
 import tsdb.util.Timer;
 
 public class TestingFormula {

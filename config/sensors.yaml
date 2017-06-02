@@ -34,7 +34,7 @@ rH_200:
   description: Relative air humidity at 2 meters above ground
   unit: '% (percentage of relative humidity, 0-100)'
   aggregation: average
-  physical_range: [0.0, 100.0]
+  physical_range: [15.0, 100.0]
   step_range: [0.0, 100.0] #high fluctuation possible
   empirical_diff: 50
   interpolation_mse: 100   

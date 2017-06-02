@@ -73,5 +73,9 @@ public enum DataQuality {
 			log.warn("data quality unknown");
 			return null;
 		}	
-	}	
+	}
+	
+	public boolean isStep() {
+		return this == STEP || this == EMPIRICAL;
+	}
 }

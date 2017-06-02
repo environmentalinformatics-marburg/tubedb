@@ -1,9 +1,9 @@
-package tsdb.component.labeledproperty;
+package tsdb.dsl;
 
 import java.util.Map;
 
-public class BooleanFormulaLessEqual extends BooleanFormulaAtomicBinary {
-	public BooleanFormulaLessEqual(Formula a, Formula b) {
+public class BooleanFormulaNotEqual extends BooleanFormulaAtomicBinary {
+	public BooleanFormulaNotEqual(Formula a, Formula b) {
 		super(a, b);
 	}
 	@Override
@@ -13,7 +13,7 @@ public class BooleanFormulaLessEqual extends BooleanFormulaAtomicBinary {
 			Computation y = b.compile(sensorMap);
 			@Override
 			public boolean eval(float[] data) {
-				return x.eval(data) <= y.eval(data);
+				return x.eval(data) == y.eval(data);
 			}
 		};
 	}
@@ -21,12 +21,10 @@ public class BooleanFormulaLessEqual extends BooleanFormulaAtomicBinary {
 	public String compileToString(Map<String, Integer> sensorMap) {
 		String ja = a.compileToString(sensorMap);
 		String jb = b.compileToString(sensorMap);
-		return "("+ja+"<="+jb+")";
+		return "("+ja+"=="+jb+")";
 	}
 	@Override
 	public BooleanFormula not() {
-		return new BooleanFormulaLess(b, a);
+		return new BooleanFormulaEqual(a, b);
 	}
-	
-
 }
