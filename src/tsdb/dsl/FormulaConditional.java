@@ -19,8 +19,8 @@ public class FormulaConditional extends Formula {
 			Computation x = a.compile(sensorMap);
 			Computation y = b.compile(sensorMap);
 			@Override
-			public float eval(float[] data) {
-				return c.eval(data) ? x.eval(data) : y.eval(data);
+			public float eval(long timestamp, float[] data) {
+				return c.eval(timestamp, data) ? x.eval(timestamp, data) : y.eval(timestamp, data);
 			}
 		};
 	}
@@ -32,9 +32,9 @@ public class FormulaConditional extends Formula {
 		return "("+jp+"?"+ja+":"+jb+")";
 	}
 	@Override
-	public void collectVariables(Set<String> collector) {
+	public void collectDataVariables(Set<String> collector) {
 		p.collectVariables(collector);
-		a.collectVariables(collector);
-		b.collectVariables(collector);
+		a.collectDataVariables(collector);
+		b.collectDataVariables(collector);
 	}
 }

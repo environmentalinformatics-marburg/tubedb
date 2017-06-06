@@ -12,8 +12,8 @@ public class FormulaMul extends FormulaBinary {
 			Computation x = a.compile(sensorMap);
 			Computation y = b.compile(sensorMap);
 			@Override
-			public float eval(float[] data) {
-				return x.eval(data) * y.eval(data);
+			public float eval(long timestamp, float[] data) {
+				return x.eval(timestamp, data) * y.eval(timestamp, data);
 			}
 		};
 	}

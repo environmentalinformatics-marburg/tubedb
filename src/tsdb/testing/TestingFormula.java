@@ -17,7 +17,7 @@ import tsdb.dsl.Formula;
 import tsdb.util.Timer;
 
 public class TestingFormula {
-	private static final Logger log = LogManager.getLogger("tsdb");
+	private static final Logger log = LogManager.getLogger();
 
 	static final int REPEATS = 10;
 	static final int LOOPS = 10_000_000;
@@ -44,7 +44,7 @@ public class TestingFormula {
 		Computation computation = formula.compile(sensorNames);
 
 		float[] params = new float[]{1f, 2f, 3f, 4f, 5f, 6f, 7f};
-		float v = computation.eval(params);
+		float v = computation.eval(999, params);
 		log.info(v);
 
 		String javaText = formula.compileToString(sensorNames);
@@ -58,7 +58,7 @@ public class TestingFormula {
 		@SuppressWarnings("unchecked")
 		Class<? extends Computation> clazzA = evalAClass.toClass();
 		Computation objA = clazzA.newInstance();
-		log.info(objA.eval(params));
+		log.info(objA.eval(999, params));
 
 
 		CtClass evalIClass = pool.makeClass("EvalI");
@@ -71,9 +71,9 @@ public class TestingFormula {
 
 		Map<String, Function<float[], Float>> map = new HashMap<>();
 		//map.put("direct", data -> (((float) Math.pow((double)(((((data[0]+data[1])+data[4])+data[6])*((((float) Math.pow((double)data[2],(double)2.7f))+((float) Math.pow((double)data[5],(double)1.2f)))+(data[1]/data[0])))/((float) Math.pow((double)data[3],(double)17.0f))),(double)(data[1]/(27.0f+data[0]))))+(((data[0]-1.0f)*(data[1]-(2.0f*((float) Math.pow((double)data[3],(double)(data[4]/123.0f))))))*(data[4]-3.0f))) );
-		map.put("tree", computation::eval);
-		map.put("genI", objI::eval);
-		map.put("genA", objA::eval);
+		map.put("tree", data->computation.eval(0,data));
+		map.put("genI", data->objI.eval(data));
+		map.put("genA", data->objA.eval(0,data));
 		map.put("ID", data -> Float.MIN_VALUE);
 
 

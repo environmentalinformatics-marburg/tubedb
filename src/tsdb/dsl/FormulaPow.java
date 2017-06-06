@@ -12,8 +12,8 @@ public class FormulaPow extends FormulaBinary {
 			Computation x = a.compile(sensorMap);
 			Computation y = b.compile(sensorMap);
 			@Override
-			public float eval(float[] data) {
-				return (float) Math.pow(x.eval(data), y.eval(data));
+			public float eval(long timestamp, float[] data) {
+				return (float) Math.pow(x.eval(timestamp, data), y.eval(timestamp, data));
 			}
 		};
 	}

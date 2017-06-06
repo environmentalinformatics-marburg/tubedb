@@ -19,7 +19,7 @@ public class FormulaNum extends Formula {
 		return new Computation(){
 			float v = value;
 			@Override
-			public float eval(float[] data) {
+			public float eval(long timestamp, float[] data) {
 				return v;				
 			}
 		};
@@ -32,7 +32,7 @@ public class FormulaNum extends Formula {
 	}
 
 	@Override
-	public void collectVariables(Set<String> collector) {
+	public void collectDataVariables(Set<String> collector) {
 		// nothing		
 	}
 }

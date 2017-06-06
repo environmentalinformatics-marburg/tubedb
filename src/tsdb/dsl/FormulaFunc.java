@@ -28,16 +28,16 @@ public class FormulaFunc extends Formula {
 			if(positive) {
 				return new Computation(){
 					@Override
-					public float eval(float[] data) {
-						float a = p.eval(data); 
+					public float eval(long timestamp, float[] data) {
+						float a = p.eval(timestamp, data); 
 						return (float) Math.exp(a);				
 					}
 				};
 			} else {
 				return new Computation(){
 					@Override
-					public float eval(float[] data) {
-						float a = p.eval(data); 
+					public float eval(long timestamp, float[] data) {
+						float a = p.eval(timestamp, data); 
 						return (float) ( - Math.exp(a));				
 					}
 				};				
@@ -46,16 +46,16 @@ public class FormulaFunc extends Formula {
 			if(positive) {
 				return new Computation(){
 					@Override
-					public float eval(float[] data) {
-						float a = p.eval(data); 
+					public float eval(long timestamp, float[] data) {
+						float a = p.eval(timestamp, data); 
 						return (float) Math.log(a);				
 					}
 				};
 			} else {
 				return new Computation(){
 					@Override
-					public float eval(float[] data) {
-						float a = p.eval(data); 
+					public float eval(long timestamp, float[] data) {
+						float a = p.eval(timestamp, data); 
 						return (float) ( - Math.log(a));				
 					}
 				};				
@@ -87,7 +87,7 @@ public class FormulaFunc extends Formula {
 	}
 
 	@Override
-	public void collectVariables(Set<String> collector) {
-		parameter.collectVariables(collector);		
+	public void collectDataVariables(Set<String> collector) {
+		parameter.collectDataVariables(collector);		
 	}
 }

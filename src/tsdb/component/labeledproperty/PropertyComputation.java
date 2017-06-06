@@ -68,7 +68,7 @@ public class PropertyComputation {
 		Computation computation = formula.compile(sensorMap);
 		for(DataRow row:rows) {
 			float[] data = row.data;
-			data[pos] = computation.eval(data);
+			data[pos] = computation.eval(row.timestamp, data);
 		}
 	}
 
@@ -93,7 +93,7 @@ public class PropertyComputation {
 		}
 		while(cur.timestamp<=lastTimestamp) {
 			float[] data = cur.data;
-			data[pos] = computation.eval(data);
+			data[pos] = computation.eval(cur.timestamp, data);
 			if(!it.hasNext()) {
 				return;
 			}

@@ -207,14 +207,14 @@ public final class QueryPlanGenerators {
 			}
 			log.info(sensorMap);
 			Computation computation = formula.compile(sensorMap);
-			int[] varIndices = formula.getVariableIndices(sensorMap);
+			int[] varIndices = formula.getDataVariableIndices(sensorMap);
 			switch(varIndices.length) {
 			case 1: {
 				int var1 = varIndices[0];
 				mutator = new Mutator() {						
 					@Override
 					public void apply(long timestamp, float[] data) {
-						data[iTarget] = Float.isNaN(data[var1]) ? Float.NaN : computation.eval(data);						
+						data[iTarget] = Float.isNaN(data[var1]) ? Float.NaN : computation.eval(timestamp, data);						
 					}
 				};
 				break;
@@ -225,7 +225,7 @@ public final class QueryPlanGenerators {
 				mutator = new Mutator() {						
 					@Override
 					public void apply(long timestamp, float[] data) {
-						data[iTarget] = Float.isNaN(data[var1]) && Float.isNaN(data[var2]) ? Float.NaN : computation.eval(data);						
+						data[iTarget] = Float.isNaN(data[var1]) && Float.isNaN(data[var2]) ? Float.NaN : computation.eval(timestamp, data);						
 					}
 				};
 				break;
@@ -240,7 +240,7 @@ public final class QueryPlanGenerators {
 								return;
 							}
 						}
-						data[iTarget] = computation.eval(data);						
+						data[iTarget] = computation.eval(timestamp, data);						
 					}
 				};
 			}

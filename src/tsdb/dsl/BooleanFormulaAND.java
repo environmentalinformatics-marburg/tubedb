@@ -12,8 +12,8 @@ public class BooleanFormulaAND extends BooleanFormulaBinary {
 			BooleanComputation x = a.compile(sensorMap);
 			BooleanComputation y = b.compile(sensorMap);
 			@Override
-			public boolean eval(float[] data) {
-				return x.eval(data) && y.eval(data);
+			public boolean eval(long timestamp, float[] data) {
+				return x.eval(timestamp, data) && y.eval(timestamp, data);
 			}
 		};
 	}

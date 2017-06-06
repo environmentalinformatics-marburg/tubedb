@@ -11,7 +11,7 @@ public abstract class BooleanFormulaAtomicBinary extends BooleanFormula {
 	}
 	@Override
 	public void collectVariables(Set<String> collector) {
-		a.collectVariables(collector);
-		b.collectVariables(collector);
+		a.collectDataVariables(collector);
+		b.collectDataVariables(collector);
 	}	
 }

@@ -16,13 +16,13 @@ public abstract class Formula {
 	public final String compileToString(String[] sensorNames) {
 		return compileToString(Util.stringArrayToMap(sensorNames, true));
 	}
-	public abstract void collectVariables(Set<String> collector);
-	public final Set<String> getVariables() {
+	public abstract void collectDataVariables(Set<String> collector);
+	public final Set<String> getDataVariables() {
 		LinkedHashSet<String> collector = new LinkedHashSet<String>();
-		collectVariables(collector);
+		collectDataVariables(collector);
 		return collector;
 	}
-	public final int[] getVariableIndices(HashMap<String, Integer> sensorMap) {
-		return getVariables().stream().mapToInt(name -> sensorMap.get(name)).toArray();
+	public final int[] getDataVariableIndices(HashMap<String, Integer> sensorMap) {
+		return getDataVariables().stream().mapToInt(name -> sensorMap.get(name)).toArray();
 	}
 }
