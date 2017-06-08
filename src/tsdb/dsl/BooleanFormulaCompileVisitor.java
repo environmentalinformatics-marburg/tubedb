@@ -76,43 +76,43 @@ public class BooleanFormulaCompileVisitor extends FormulaBaseVisitor<BooleanForm
 
 	@Override
 	public BooleanFormula visitLess(LessContext ctx) {
-		Formula a = ctx.a.accept(FormulaCompileVisitor.DEFAULT);
-		Formula b = ctx.b.accept(FormulaCompileVisitor.DEFAULT);
+		Formula a = ctx.a.accept(FormulaASTVisitor.DEFAULT);
+		Formula b = ctx.b.accept(FormulaASTVisitor.DEFAULT);
 		return new BooleanFormulaLess(a, b);
 	}
 
 	@Override
 	public BooleanFormula visitGreater(GreaterContext ctx) {
-		Formula a = ctx.a.accept(FormulaCompileVisitor.DEFAULT);
-		Formula b = ctx.b.accept(FormulaCompileVisitor.DEFAULT);
+		Formula a = ctx.a.accept(FormulaASTVisitor.DEFAULT);
+		Formula b = ctx.b.accept(FormulaASTVisitor.DEFAULT);
 		return new BooleanFormulaLess(b, a);
 	}
 
 	@Override
 	public BooleanFormula visitLess_equal(Less_equalContext ctx) {
-		Formula a = ctx.a.accept(FormulaCompileVisitor.DEFAULT);
-		Formula b = ctx.b.accept(FormulaCompileVisitor.DEFAULT);
+		Formula a = ctx.a.accept(FormulaASTVisitor.DEFAULT);
+		Formula b = ctx.b.accept(FormulaASTVisitor.DEFAULT);
 		return new BooleanFormulaLessEqual(a, b);
 	}
 
 	@Override
 	public BooleanFormula visitGreater_equal(Greater_equalContext ctx) {
-		Formula a = ctx.a.accept(FormulaCompileVisitor.DEFAULT);
-		Formula b = ctx.b.accept(FormulaCompileVisitor.DEFAULT);
+		Formula a = ctx.a.accept(FormulaASTVisitor.DEFAULT);
+		Formula b = ctx.b.accept(FormulaASTVisitor.DEFAULT);
 		return new BooleanFormulaLessEqual(b, a);
 	}
 
 	@Override
 	public BooleanFormula visitEqual(EqualContext ctx) {
-		Formula a = ctx.a.accept(FormulaCompileVisitor.DEFAULT);
-		Formula b = ctx.b.accept(FormulaCompileVisitor.DEFAULT);
+		Formula a = ctx.a.accept(FormulaASTVisitor.DEFAULT);
+		Formula b = ctx.b.accept(FormulaASTVisitor.DEFAULT);
 		return new BooleanFormulaEqual(a, b);
 	}
 
 	@Override
 	public BooleanFormula visitNot_equal(Not_equalContext ctx) {
-		Formula a = ctx.a.accept(FormulaCompileVisitor.DEFAULT);
-		Formula b = ctx.b.accept(FormulaCompileVisitor.DEFAULT);
+		Formula a = ctx.a.accept(FormulaASTVisitor.DEFAULT);
+		Formula b = ctx.b.accept(FormulaASTVisitor.DEFAULT);
 		return new BooleanFormulaNotEqual(a, b);
 	}
 }

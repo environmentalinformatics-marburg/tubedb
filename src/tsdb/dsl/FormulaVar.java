@@ -1,279 +1,70 @@
 package tsdb.dsl;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import tsdb.util.TimeUtil;
+import tsdb.dsl.computation.Computation;
 
 public class FormulaVar extends Formula {
 	private static final Logger log = LogManager.getLogger();
 
-	private static final String[] NON_DATA_VARIABLES = new String[]{
-			"year",
-			"year_float",
-			"year_fraction",
-			"month", 
-			"days_of_month", 
-			"day_of_month", 
-			"day_of_month_float", 
-			"days_of_year", 
-			"day_of_year", 
-			"day_of_year_float", 
-			"day_fraction",  
-			"hour"
-	};
-	private static final HashSet<String> NON_DATA_VARIABLES_SET = new HashSet<String>(Arrays.asList(NON_DATA_VARIABLES));
+	private static final HashSet<String> NON_DATA_VARIABLES_SET = new HashSet<String>(Arrays.asList(ComputationOfTime.NON_DATA_VARIABLES));
 
 	public final String name;
 	public final boolean positive;
-
 
 	public FormulaVar(String name, boolean positive) {
 		this.name = name;
 		this.positive = positive;
 	}
-
+	
 	@Override
-	public Computation compile(Map<String,Integer> sensorMap) {
-		switch(name) {
-		case "year":
-			if(positive) {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return TimeUtil.oleMinutesToLocalDateTime(timestamp).getYear();				
-					}
-				};	
-			} else {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return - TimeUtil.oleMinutesToLocalDateTime(timestamp).getYear();			
-					}
-				};				
+	public Computation compile(Environment env) {
+		Computation computationOfTime = ComputationOfTime.compileVar(name, positive);
+		if(computationOfTime != null) {
+			return computationOfTime;
+		}
+		
+		if(env.containsResolver(name)) {
+			Formula f = env.resolve(name);
+			if(!positive) {
+				f = f.negative();
 			}
-		case "year_float":
-			if(positive) {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {						
-						LocalDateTime d = TimeUtil.oleMinutesToLocalDateTime(timestamp);
-						return d.getYear() + (d.getDayOfYear()-1+d.getHour()/24f) / d.toLocalDate().lengthOfYear();			
-					}
-				};	
-			} else {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						LocalDateTime d = TimeUtil.oleMinutesToLocalDateTime(timestamp);
-						return - d.getYear() + (d.getDayOfYear()-1+d.getHour()/24f) / d.toLocalDate().lengthOfYear();			
-					}
-				};				
-			}
-		case "year_fraction":
-			if(positive) {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {						
-						LocalDateTime d = TimeUtil.oleMinutesToLocalDateTime(timestamp);
-						return (d.getDayOfYear()-1+d.getHour()/24f) / d.toLocalDate().lengthOfYear();			
-					}
-				};	
-			} else {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						LocalDateTime d = TimeUtil.oleMinutesToLocalDateTime(timestamp);
-						return - (d.getDayOfYear()-1+d.getHour()/24f) / d.toLocalDate().lengthOfYear();			
-					}
-				};				
-			}			
-		case "month":
-			if(positive) {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return TimeUtil.oleMinutesToLocalDateTime(timestamp).getMonthValue();				
-					}
-				};	
-			} else {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return - TimeUtil.oleMinutesToLocalDateTime(timestamp).getMonthValue();			
-					}
-				};				
-			}
-		case "day_of_month":
-			if(positive) {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return TimeUtil.oleMinutesToLocalDateTime(timestamp).getDayOfMonth();				
-					}
-				};	
-			} else {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return - TimeUtil.oleMinutesToLocalDateTime(timestamp).getDayOfMonth();		
-					}
-				};				
-			}
-		case "days_of_month":
-			if(positive) {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return TimeUtil.oleMinutesToLocalDateTime(timestamp).toLocalDate().lengthOfMonth();				
-					}
-				};	
-			} else {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return - TimeUtil.oleMinutesToLocalDateTime(timestamp).toLocalDate().lengthOfMonth();	
-					}
-				};				
-			}			
-		case "day_of_month_float":
-			if(positive) {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						LocalDateTime d = TimeUtil.oleMinutesToLocalDateTime(timestamp);
-						return d.getDayOfMonth()+d.getHour()/24f;				
-					}
-				};	
-			} else {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						LocalDateTime d = TimeUtil.oleMinutesToLocalDateTime(timestamp);
-						return - d.getDayOfMonth()+d.getHour()/24f;		
-					}
-				};				
-			}			
-		case "day_of_year":
-			if(positive) {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return TimeUtil.oleMinutesToLocalDateTime(timestamp).getDayOfYear();				
-					}
-				};	
-			} else {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return - TimeUtil.oleMinutesToLocalDateTime(timestamp).getDayOfYear();	
-					}
-				};				
-			}
-		case "days_of_year":
-			if(positive) {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return TimeUtil.oleMinutesToLocalDateTime(timestamp).toLocalDate().lengthOfYear();				
-					}
-				};	
-			} else {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return - TimeUtil.oleMinutesToLocalDateTime(timestamp).toLocalDate().lengthOfYear();	
-					}
-				};				
-			}			
-		case "day_of_year_float":
-			if(positive) {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						LocalDateTime d = TimeUtil.oleMinutesToLocalDateTime(timestamp);
-						return d.getDayOfYear()+d.getHour()/24f;				
-					}
-				};	
-			} else {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						LocalDateTime d = TimeUtil.oleMinutesToLocalDateTime(timestamp);
-						return - d.getDayOfYear()+d.getHour()/24f;	
-					}
-				};				
-			}
-		case "day_fraction":
-			if(positive) {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return TimeUtil.oleMinutesToLocalDateTime(timestamp).getHour()/24f;			
-					}
-				};	
-			} else {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return - TimeUtil.oleMinutesToLocalDateTime(timestamp).getHour()/24f;		
-					}
-				};				
-			}	
-		case "hour":
-			if(positive) {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return TimeUtil.oleMinutesToLocalDateTime(timestamp).getHour();				
-					}
-				};	
-			} else {
-				return new Computation(){
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return - TimeUtil.oleMinutesToLocalDateTime(timestamp).getHour();	
-					}
-				};				
-			}			
-		default:
-			Integer p = sensorMap.get(name);
-			if(p == null) {
-				throw new RuntimeException("sensor not found: "+name+"  in  "+sensorMap);
-			}
-			if(positive) {
-				return new Computation(){
-					int pos = sensorMap.get(name);
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return data[pos];				
-					}
-				};
-			} else {
-				return new Computation(){
-					int pos = sensorMap.get(name);
-					@Override
-					public float eval(long timestamp, float[] data) {
-						return - data[pos];				
-					}
-				};
-			}
+			return f.compile(env);			
+		}		
+		
+		if(!env.containsSensor(name)) {
+			throw new RuntimeException("sensor not found: "+name+"  in  "+env.sensorMap);
+		}
+		if(positive) {
+			return new Computation(){
+				int pos = env.getSensorIndex(name);
+				@Override
+				public float eval(long timestamp, float[] data) {
+					return data[pos];				
+				}
+			};
+		} else {
+			return new Computation(){
+				int pos = env.getSensorIndex(name);
+				@Override
+				public float eval(long timestamp, float[] data) {
+					return - data[pos];				
+				}
+			};
 		}
 	}
 
 	@Override
-	public String compileToString(Map<String, Integer> sensorMap) {
-		Integer p = sensorMap.get(name);
-		if(p == null) {
-			throw new RuntimeException("sensor not found: "+name+"  in  "+sensorMap);
+	public String compileToString(Environment env) {
+		if(!env.containsSensor(name)) {
+			throw new RuntimeException("sensor not found: "+name+"  in  "+env.sensorMap);
 		}
-		int pos = p.intValue();
+		int pos = env.getSensorIndex(name);
 		if(positive) {
 			return "data["+pos+"]";
 		} else {
@@ -282,9 +73,19 @@ public class FormulaVar extends Formula {
 	}
 
 	@Override
-	public void collectDataVariables(Set<String> collector) {
-		if(!NON_DATA_VARIABLES_SET.contains(name)) {
+	public void collectDataVariables(Set<String> collector, Environment env) {
+		if(!NON_DATA_VARIABLES_SET.contains(name) && !env.containsResolver(name)) {
 			collector.add(name);		
 		}
+	}
+
+	@Override
+	public Formula negative() {
+		return new FormulaVar(name, !positive);
+	}
+	
+	@Override
+	public <T> T accept(FormulaVisitor1<T> visitor) {
+		return visitor.visitVar(this);
 	}
 }

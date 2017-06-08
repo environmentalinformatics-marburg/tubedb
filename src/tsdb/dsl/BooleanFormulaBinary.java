@@ -10,8 +10,8 @@ public abstract class BooleanFormulaBinary extends BooleanFormula {
 		this.b = b;
 	}
 	@Override
-	public void collectVariables(Set<String> collector) {
-		a.collectVariables(collector);
-		b.collectVariables(collector);
+	public void collectVariables(Set<String> collector, Environment env) {
+		a.collectVariables(collector, env);
+		b.collectVariables(collector, env);
 	}	
 }

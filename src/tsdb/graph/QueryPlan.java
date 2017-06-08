@@ -3,6 +3,7 @@ package tsdb.graph;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import tsdb.Plot;
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.graph.node.Base;
@@ -113,9 +114,10 @@ public final class QueryPlan {
 			continuous = continuousGen.get(plotID, schema);
 			//log.info("continuous "+continuous);
 		}
-		Mutator[] postHourMutators = QueryPlanGenerators.getPostHourMutators(tsdb, schema);
+		Plot plot = tsdb.getPlot(plotID);
+		Mutator[] postHourMutators = QueryPlanGenerators.getPostHourMutators(tsdb, plot, schema);
 		continuous = new PostHourMutation(continuous, postHourMutators);
-		Mutator[] postDayMutators = QueryPlanGenerators.getPostDayMutators(tsdb, schema);
+		Mutator[] postDayMutators = QueryPlanGenerators.getPostDayMutators(tsdb, plot, schema);
 		return Aggregated.of(tsdb, continuous, aggregationInterval, postDayMutators);
 	}
 
@@ -136,7 +138,8 @@ public final class QueryPlan {
 			return null;
 		}
 		Continuous continuous = Continuous.of(base);
-		Mutator[] dayMutators = QueryPlanGenerators.getPostDayMutators(tsdb, schema);
+		Plot plot = tsdb.getPlot(plotID);
+		Mutator[] dayMutators = QueryPlanGenerators.getPostDayMutators(tsdb, plot, schema);
 		return Aggregated.of(tsdb, continuous, aggregationInterval, dayMutators);
 	}
 

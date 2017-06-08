@@ -1337,10 +1337,25 @@ Ta_200_windchill:
   post_hour_func: "(5/3.6 < WV ? 13.12 + 0.6215 * Ta_200 + (0.3965 * Ta_200 - 11.37) * (WV * 3.6) ^ 0.16 : Ta_200)"
   aggregation: average
   
-Ta_200_grünlandtemperatur_value:  
+Ta_200_gruenlandtemperatur:  
   description: Grünlandtemperatur day value
   unit: (amount)
   dependency: Ta_200
   # reference https://de.wikipedia.org/wiki/Gr%C3%BCnlandtemperatursumme
   post_day_func: "((month > 2 ? 1 : (month == 2 ? 0.75 : 0.5))) * ((Ta_200 > 0 ? Ta_200 : 0))"
-  aggregation: sum  
+  aggregation: sum
+
+Ta_200_gruenlandtemperatursumme:  
+  description: Grünlandtemperatursumme (GTS) (Cumulative Sum by year of Ta_200_gruenlandtemperatur)
+  unit: (amount)
+  dependency: Ta_200_gruenlandtemperatur
+  # reference https://de.wikipedia.org/wiki/Gr%C3%BCnlandtemperatursumme
+  post_day_func: "cumsum_by_year(Ta_200_gruenlandtemperatur)"
+  aggregation: maximum
+
+Ta_200_zzz:  
+  description: testing
+  unit: (amount)
+  dependency: Ta_200
+  post_day_func: "latitude"
+  aggregation: maximum 

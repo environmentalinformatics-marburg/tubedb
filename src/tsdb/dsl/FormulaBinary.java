@@ -10,8 +10,8 @@ public abstract class FormulaBinary extends Formula {
 		this.b = b;
 	}
 	@Override
-	public void collectDataVariables(Set<String> collector) {
-		a.collectDataVariables(collector);
-		b.collectDataVariables(collector);
+	public void collectDataVariables(Set<String> collector, Environment env) {
+		a.collectDataVariables(collector, env);
+		b.collectDataVariables(collector, env);
 	}	
 }

@@ -1,28 +1,27 @@
 package tsdb.dsl;
 
-import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
-import tsdb.util.Util;
+import tsdb.dsl.computation.Computation;
 
 public abstract class Formula {
-	public abstract Computation compile(Map<String, Integer> sensorMap);
-	public abstract String compileToString(Map<String, Integer> sensorMap);
-	public final Computation compile(String[] sensorNames) {
-		return compile(Util.stringArrayToMap(sensorNames, true));
-	}
-	public final String compileToString(String[] sensorNames) {
-		return compileToString(Util.stringArrayToMap(sensorNames, true));
-	}
-	public abstract void collectDataVariables(Set<String> collector);
-	public final Set<String> getDataVariables() {
+	public abstract Computation compile(Environment env);
+	public abstract String compileToString(Environment env);
+	public abstract void collectDataVariables(Set<String> collector, Environment env);
+	public final Set<String> getDataVariables(Environment env) {
 		LinkedHashSet<String> collector = new LinkedHashSet<String>();
-		collectDataVariables(collector);
+		collectDataVariables(collector, env);
 		return collector;
 	}
-	public final int[] getDataVariableIndices(HashMap<String, Integer> sensorMap) {
-		return getDataVariables().stream().mapToInt(name -> sensorMap.get(name)).toArray();
+	public final int[] getDataVariableIndices(Environment env) {
+		return getDataVariables(env).stream().mapToInt(name -> env.getSensorIndex(name)).toArray();
 	}
+	public Formula negative() {
+		throw new RuntimeException("negative not implemented in "+this.getClass());
+	}
+	public Formula withSign(boolean positive) {
+		return positive ? this : this.negative();
+	}
+	public abstract <T> T accept(FormulaVisitor1<T> visitor);
 }

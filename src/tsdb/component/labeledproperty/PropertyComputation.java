@@ -11,11 +11,12 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import tsdb.dsl.Computation;
+import tsdb.dsl.Environment;
 import tsdb.dsl.Formula;
-import tsdb.dsl.FormulaCompileVisitor;
+import tsdb.dsl.FormulaASTVisitor;
 import tsdb.dsl.FormulaLexer;
 import tsdb.dsl.FormulaParser;
+import tsdb.dsl.computation.Computation;
 import tsdb.util.DataRow;
 import tsdb.util.Util;
 import tsdb.util.yaml.YamlMap;
@@ -49,7 +50,7 @@ public class PropertyComputation {
 		FormulaLexer lexer = new FormulaLexer(stream);	
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		FormulaParser parser = new FormulaParser(tokens);
-		Formula formula = parser.expression().accept(FormulaCompileVisitor.DEFAULT);
+		Formula formula = parser.expression().accept(FormulaASTVisitor.DEFAULT);
 		return formula;
 	}	
 
@@ -65,7 +66,7 @@ public class PropertyComputation {
 			throw new RuntimeException("target not found: "+target+"  in "+Arrays.toString(sensorNames));
 		}
 		int pos = p;
-		Computation computation = formula.compile(sensorMap);
+		Computation computation = formula.compile(new Environment(sensorMap));
 		for(DataRow row:rows) {
 			float[] data = row.data;
 			data[pos] = computation.eval(row.timestamp, data);
@@ -79,7 +80,7 @@ public class PropertyComputation {
 			throw new RuntimeException("target not found: "+target+"  in "+Arrays.toString(sensorNames));
 		}
 		int pos = p;
-		Computation computation = formula.compile(sensorMap);
+		Computation computation = formula.compile(new Environment(sensorMap));
 		Iterator<DataRow> it = rows.iterator();
 		if(!it.hasNext()) {
 			return;

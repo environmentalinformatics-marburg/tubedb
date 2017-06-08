@@ -3,6 +3,8 @@ package tsdb;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -839,5 +841,48 @@ public class TsDB implements AutoCloseable {
 	 */
 	public VirtualCopyList[] sensor_dependency_lists = {};
 
-	public String[] raw_copy_sensor_names;	
+	public String[] raw_copy_sensor_names;
+
+
+	/**
+	 * Order sensor names by transitive dependencies, sensors without dependencies first.
+	 * 
+	 * @param schema
+	 * @return
+	 */
+	public String[] order_by_dependency(String[] schema) {
+		Sensor[] sensors = this.getSensors(schema);
+		ArrayList<Sensor> waitingSensors = new ArrayList<Sensor>();
+		waitingSensors.addAll(Arrays.asList(sensors));
+		LinkedHashSet<String> includedSensors = new LinkedHashSet<String>();
+		boolean changed = true;
+		while(changed) {
+			changed = false;
+			Iterator<Sensor> it = waitingSensors.iterator();
+			while(it.hasNext()) {
+				Sensor sensor = it.next();
+				boolean valid = true;
+				if(sensor.dependency != null) {
+					for(String dep:sensor.dependency) {
+						if(!includedSensors.contains(dep)) {
+							valid = false;
+						}
+					}
+				}
+				if(valid) {
+					it.remove();
+					includedSensors.add(sensor.name);
+					changed = true;
+				}
+			}
+		}
+		if(!waitingSensors.isEmpty()) {
+			log.warn("dependencies not fulfilled for "+Arrays.toString(waitingSensors.stream().map(s->s.name).toArray())+"  in  "+Arrays.toString(schema));
+			for(Sensor s:waitingSensors) {
+				includedSensors.add(s.name);
+			}
+		}
+		log.info("sort "+Arrays.toString(schema)+"   ->   "+includedSensors.toString());
+		return includedSensors.toArray(new String[0]);
+	}	
 }

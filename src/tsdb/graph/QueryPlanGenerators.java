@@ -10,13 +10,16 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import tsdb.Plot;
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.VirtualCopyList;
 import tsdb.component.Sensor;
 import tsdb.component.labeledproperty.PropertyComputation;
-import tsdb.dsl.Computation;
+import tsdb.dsl.Environment;
 import tsdb.dsl.Formula;
+import tsdb.dsl.PlotEnvironment;
+import tsdb.dsl.computation.Computation;
 import tsdb.graph.node.Base;
 import tsdb.graph.node.Continuous;
 import tsdb.graph.node.ContinuousGen;
@@ -178,12 +181,12 @@ public final class QueryPlanGenerators {
 	public static ContinuousGen getDayAggregationGen(TsDB tsdb, DataQuality dataQuality) {
 		return (String plotID, String[] schema)->{
 			Continuous continuous = getContinuousGen(tsdb, dataQuality).get(plotID, schema);
-			Mutator[] dayMutators = getPostDayMutators(tsdb, schema);
+			Mutator[] dayMutators = getPostDayMutators(tsdb, tsdb.getPlot(plotID), schema);
 			return Aggregated.of(tsdb, continuous, AggregationInterval.DAY, dayMutators);
 		};
 	}
 
-	public static Mutator getMutator(Sensor sensor, String func, String[] schema) {
+	public static Mutator getMutator(Sensor sensor, String func, Plot plot, String[] schema) {
 		Mutator mutator = null;
 		try {
 			int iTarget = Util.getIndexInArray(sensor.name, schema);
@@ -206,8 +209,9 @@ public final class QueryPlanGenerators {
 				}
 			}
 			log.info(sensorMap);
-			Computation computation = formula.compile(sensorMap);
-			int[] varIndices = formula.getDataVariableIndices(sensorMap);
+			Environment env = new PlotEnvironment(plot, sensorMap);
+			Computation computation = formula.compile(env);
+			int[] varIndices = formula.getDataVariableIndices(env);
 			switch(varIndices.length) {
 			case 1: {
 				int var1 = varIndices[0];
@@ -253,12 +257,12 @@ public final class QueryPlanGenerators {
 		return mutator;
 	}
 
-	public static Mutator[] getPostHourMutators(TsDB tsdb, String[] schema) {
+	public static Mutator[] getPostHourMutators(TsDB tsdb, Plot plot, String[] schema) {
 		ArrayList<Mutator> mutators = null;
 		for(String sensorName:schema) {
 			Sensor sensor = tsdb.getSensor(sensorName);
 			if(sensor != null && sensor.post_hour_func != null) {
-				Mutator mutator = getMutator(sensor, sensor.post_hour_func, schema);
+				Mutator mutator = getMutator(sensor, sensor.post_hour_func, plot, schema);
 				if(mutator != null) {
 					if(mutators == null) {
 						mutators = new ArrayList<Mutator>();
@@ -270,12 +274,12 @@ public final class QueryPlanGenerators {
 		return mutators == null ? null : mutators.toArray(new Mutator[0]);
 	}
 	
-	public static Mutator[] getPostDayMutators(TsDB tsdb, String[] schema) {
+	public static Mutator[] getPostDayMutators(TsDB tsdb, Plot plot, String[] schema) {
 		ArrayList<Mutator> mutators = null;
-		for(String sensorName:schema) {
+		for(String sensorName:tsdb.order_by_dependency(schema)) {
 			Sensor sensor = tsdb.getSensor(sensorName);
 			if(sensor != null && sensor.post_day_func != null) {
-				Mutator mutator = getMutator(sensor, sensor.post_day_func, schema);
+				Mutator mutator = getMutator(sensor, sensor.post_day_func, plot, schema);
 				if(mutator != null) {
 					if(mutators == null) {
 						mutators = new ArrayList<Mutator>();

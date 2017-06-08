@@ -22,6 +22,7 @@ public interface Plot {
 	String[] getValidSchemaEntriesWithVirtualSensors(String[] querySchema);
 	
 	double[] getLatLon();
+	double getElevation();
 	
 	public static Real of(Station station) {
 		return new Real(station);
@@ -68,6 +69,10 @@ public interface Plot {
 		public double[] getLatLon() {
 			return new double[]{station.geoPosLatitude, station.geoPosLongitude};
 		}
+		@Override
+		public double getElevation() {
+			return Double.NaN;
+		}
 	}
 		
 	class Virtual implements Plot {		
@@ -106,6 +111,11 @@ public interface Plot {
 		@Override
 		public double[] getLatLon() {
 			return new double[]{virtualPlot.geoPosLatitude, virtualPlot.geoPosLongitude};
+		}
+		@Override
+		public double getElevation() {
+			// TODO Auto-generated method stub
+			return virtualPlot.elevation;
 		}
 	}
 }

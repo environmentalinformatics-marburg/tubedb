@@ -3,6 +3,9 @@ package tsdb.dsl;
 import java.util.Map;
 import java.util.Set;
 
+import tsdb.dsl.computation.BooleanComputation;
+import tsdb.dsl.computation.Computation;
+
 public class FormulaConditional extends Formula {
 	public final BooleanFormula p;
 	public final Formula a;
@@ -13,11 +16,11 @@ public class FormulaConditional extends Formula {
 		this.b = b;
 	}
 	@Override
-	public Computation compile(Map<String, Integer> sensorMap) {
+	public Computation compile(Environment env) {
 		return new Computation() {
-			BooleanComputation c = p.compile(sensorMap);
-			Computation x = a.compile(sensorMap);
-			Computation y = b.compile(sensorMap);
+			BooleanComputation c = p.compile(env);
+			Computation x = a.compile(env);
+			Computation y = b.compile(env);
 			@Override
 			public float eval(long timestamp, float[] data) {
 				return c.eval(timestamp, data) ? x.eval(timestamp, data) : y.eval(timestamp, data);
@@ -25,16 +28,20 @@ public class FormulaConditional extends Formula {
 		};
 	}
 	@Override
-	public String compileToString(Map<String, Integer> sensorMap) {
-		String jp = p.compileToString(sensorMap);
-		String ja = a.compileToString(sensorMap);
-		String jb = b.compileToString(sensorMap);
+	public String compileToString(Environment env) {
+		String jp = p.compileToString(env);
+		String ja = a.compileToString(env);
+		String jb = b.compileToString(env);
 		return "("+jp+"?"+ja+":"+jb+")";
 	}
 	@Override
-	public void collectDataVariables(Set<String> collector) {
-		p.collectVariables(collector);
-		a.collectDataVariables(collector);
-		b.collectDataVariables(collector);
+	public void collectDataVariables(Set<String> collector, Environment env) {
+		p.collectVariables(collector, env);
+		a.collectDataVariables(collector, env);
+		b.collectDataVariables(collector, env);
+	}
+	@Override
+	public <T> T accept(FormulaVisitor1<T> visitor) {
+		return visitor.visitConditional(this);
 	}
 }
