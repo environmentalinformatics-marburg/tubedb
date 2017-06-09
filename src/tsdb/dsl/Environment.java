@@ -2,6 +2,7 @@ package tsdb.dsl;
 
 import java.util.Map;
 
+import tsdb.dsl.formula.Formula;
 import tsdb.util.Util;
 
 public class Environment {

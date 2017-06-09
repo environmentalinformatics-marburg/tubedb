@@ -1,5 +1,24 @@
 package tsdb.dsl;
 
+import tsdb.dsl.formula.BooleanFormula;
+import tsdb.dsl.formula.BooleanFormulaAND;
+import tsdb.dsl.formula.BooleanFormulaEqual;
+import tsdb.dsl.formula.BooleanFormulaLess;
+import tsdb.dsl.formula.BooleanFormulaLessEqual;
+import tsdb.dsl.formula.BooleanFormulaNotEqual;
+import tsdb.dsl.formula.BooleanFormulaOR;
+import tsdb.dsl.formula.Formula;
+import tsdb.dsl.formula.FormulaAdd;
+import tsdb.dsl.formula.FormulaConditional;
+import tsdb.dsl.formula.FormulaDiv;
+import tsdb.dsl.formula.FormulaFunc;
+import tsdb.dsl.formula.FormulaMul;
+import tsdb.dsl.formula.FormulaNoDataVar;
+import tsdb.dsl.formula.FormulaNum;
+import tsdb.dsl.formula.FormulaPow;
+import tsdb.dsl.formula.FormulaSub;
+import tsdb.dsl.formula.FormulaVar;
+
 public class FormulaUnifyVisitor implements FormulaVisitor1<Formula>, BooleanFormulaVisitor1<BooleanFormula> {
 
 	@Override
@@ -263,6 +282,11 @@ public class FormulaUnifyVisitor implements FormulaVisitor1<Formula>, BooleanFor
 	@Override
 	public Formula visitVar(FormulaVar formulaVar) {
 		return formulaVar;
+	}
+	
+	@Override
+	public Formula visitNoDataVar(FormulaNoDataVar formulaNoDataVar) {
+		return formulaNoDataVar;
 	}
 
 	@Override

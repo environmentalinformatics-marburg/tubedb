@@ -12,11 +12,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import tsdb.dsl.Environment;
-import tsdb.dsl.Formula;
 import tsdb.dsl.FormulaASTVisitor;
 import tsdb.dsl.FormulaLexer;
 import tsdb.dsl.FormulaParser;
 import tsdb.dsl.computation.Computation;
+import tsdb.dsl.formula.Formula;
 import tsdb.util.DataRow;
 import tsdb.util.Util;
 import tsdb.util.yaml.YamlMap;

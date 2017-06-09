@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 
 import tsdb.Plot;
+import tsdb.dsl.formula.Formula;
+import tsdb.dsl.formula.FormulaNum;
 
 public class PlotEnvironment extends Environment {
 
