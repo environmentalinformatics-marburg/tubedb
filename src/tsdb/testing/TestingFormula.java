@@ -2,6 +2,7 @@ package tsdb.testing;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -11,9 +12,12 @@ import org.apache.logging.log4j.Logger;
 
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtField;
 import javassist.CtNewMethod;
-import tsdb.component.labeledproperty.PropertyComputation;
+import javassist.bytecode.MethodInfo;
 import tsdb.dsl.Environment;
+import tsdb.dsl.FormulaBuilder;
 import tsdb.dsl.FormulaCollectVarVisitor;
 import tsdb.dsl.FormulaCompileVisitor;
 import tsdb.dsl.FormulaJavaVisitor;
@@ -62,7 +66,7 @@ public class TestingFormula {
 		s += ")";
 		return s;
 	}
-	
+
 	public static String booleanComputationToString(BooleanComputation c) {
 		Class<? extends BooleanComputation> clazz = c.getClass();
 		String name = clazz.getSimpleName();
@@ -125,10 +129,10 @@ public class TestingFormula {
 		//String formulaText = "(26.7 <= Ta_200 && 40 <= rH_200 ? -8.784695 +1.61139411*Ta_200 +2.338549*rH_200 -0.14611605*Ta_200*rH_200 -1.2308094e-2*Ta_200^2 -1.6424828e-2*rH_200^2 +2.211732e-3*Ta_200^2*rH_200 +7.2546e-4*Ta_200*rH_200^2 -3.582e-6*Ta_200^2*rH_200^2 : Ta_200)";
 		//String formulaText = "Ta_200_max - Ta_200_min";
 		//String formulaText = "((Ta_200_min + Ta_200_max) / 2 > 10 && (Ta_200_min + Ta_200_max) / 2 < 30 ? 1 : 0)";
-		//String formulaText = "((month > 2 ? 1 : (month == 2 ? 0.75 : 0.5))) * ((Ta_200 > 0 ? Ta_200 : 0))";
-		String formulaText = "(5/3.6 < WV ? 13.12 + 0.6215 * Ta_200 + (0.3965 * Ta_200 - 11.37) * (WV * 3.6) ^ 0.16 : Ta_200)";
+		String formulaText = "((month > 2 ? 1 : (month == 2 ? 0.75 : 0.5))) * ((Ta_200 > 0 ? Ta_200 : 0))";
+		//String formulaText = "(5/3.6 < WV ? 13.12 + 0.6215 * Ta_200 + (0.3965 * Ta_200 - 11.37) * (WV * 3.6) ^ 0.16 : Ta_200)";
 
-		Formula formula = PropertyComputation.parseFormula(formulaText);
+		Formula formula = FormulaBuilder.parseFormula(formulaText);
 		log.info("formula "+formula);
 		Environment env = new Environment(sensorNames);
 
@@ -137,8 +141,9 @@ public class TestingFormula {
 		log.info("fv "+f1.accept(new FormulaCollectVarVisitor()));
 		Computation c = f1.accept(new FormulaCompileVisitor(env));
 		log.info("c "+computationToString(c));
-		
-		String java = f1.accept(new FormulaJavaVisitor(env));
+
+		FormulaJavaVisitor formulaJavaVisitor = new FormulaJavaVisitor(env);
+		String java = f1.accept(formulaJavaVisitor);
 		log.info("j "+java);
 
 		Computation computation = formula.compile(env);
@@ -147,11 +152,47 @@ public class TestingFormula {
 		float v = computation.eval(999, params);
 		log.info(v);
 
-		String javaText = formula.compileToString(new Environment(sensorNames));
-		log.info(javaText);
-
 
 		ClassPool pool = ClassPool.getDefault();
+		CtClass ctComputation = pool.get(Computation.class.getName());
+		CtClass evalAClass = pool.makeClass("EvalA", ctComputation);
+		for (int i = 0; i < formulaJavaVisitor.computations.size(); i++) {
+			evalAClass.addField(new CtField(ctComputation, "c"+i, evalAClass));	
+		}
+		evalAClass.addMethod(CtNewMethod.make("public float eval(long timestamp, float[] data) { return "+java+"; }",evalAClass));
+		CtClass[] parameters = new CtClass[formulaJavaVisitor.computations.size()];
+		/*for (int i = 0; i < parameters.length; i++) {
+			parameters[i] = ctComputation;
+		}*/
+		parameters = new CtClass[]{pool.get(List.class.getName())};
+		CtConstructor ctConstructor = new CtConstructor(parameters, evalAClass);
+		log.info(ctConstructor.getSignature());
+		MethodInfo mi = ctConstructor.getMethodInfo();
+		System.out.println(mi.getClass());
+
+		String body = "{";
+		for (int i = 0; i < parameters.length; i++) {
+			body += "System.out.println($1.getClass());";
+			//body += "this.c"+i+"=$1.get("+i+");";
+			body += "c"+i+" = (tsdb.dsl.computation.Computation)$1.get("+i+");";
+		}
+		body += "}";
+		log.info("body "+body);
+		ctConstructor.setBody(body);
+		evalAClass.addConstructor(ctConstructor);
+
+		@SuppressWarnings("unchecked")
+		Class<? extends Computation> clazzA = evalAClass.toClass();
+
+		Computation objA = (Computation) clazzA.getConstructors()[0].newInstance(formulaJavaVisitor.computations);
+		log.info(objA.toString());
+		log.info(objA.eval(999, params));
+
+		//String javaText = formula.compileToString(new Environment(sensorNames));
+		//log.info(javaText);
+
+
+		/*ClassPool pool = ClassPool.getDefault();
 
 		CtClass evalAClass = pool.makeClass("EvalA", pool.get(Computation.class.getName()));
 		evalAClass.addMethod(CtNewMethod.make("public float eval (float[] data) { return "+javaText+"; }",evalAClass));
@@ -167,7 +208,7 @@ public class TestingFormula {
 		@SuppressWarnings("unchecked")
 		Class<? extends EvaluatorA> clazzI = evalIClass.toClass();
 		EvaluatorA objI = clazzI.newInstance();
-		log.info(objI.eval(params));
+		log.info(objI.eval(params));*/
 
 		Map<String, Function<float[], Float>> map = new HashMap<>();
 		//map.put("direct", data -> (((float) Math.pow((double)(((((data[0]+data[1])+data[4])+data[6])*((((float) Math.pow((double)data[2],(double)2.7f))+((float) Math.pow((double)data[5],(double)1.2f)))+(data[1]/data[0])))/((float) Math.pow((double)data[3],(double)17.0f))),(double)(data[1]/(27.0f+data[0]))))+(((data[0]-1.0f)*(data[1]-(2.0f*((float) Math.pow((double)data[3],(double)(data[4]/123.0f))))))*(data[4]-3.0f))) );

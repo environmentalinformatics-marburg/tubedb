@@ -64,6 +64,8 @@ data: function () {
 		plotHover: false,
 		plotIDs: ["*"],
 		plotMap: {},
+		stationMap: {},
+		plotstations: [],
 		
 		sensorHover: false,
 		sensorIDs: ["*"],
@@ -104,7 +106,8 @@ data: function () {
 		viewsDone: 0,
 		viewCycle: 0,
 		viewPrecessingStart: 0,
-		viewPrecessingEnd: 0,	
+		viewPrecessingEnd: 0,
+		viewsLimited: false,	
 	}
 }, //end data
 
@@ -123,6 +126,7 @@ computed: {
 		return values;
 	},
 	sensors: function() {
+		console.log("update sensors");
 		var self = this;
 		if(this.plotIDs[0] == '*') {
 			return this.metadata.sensors;
@@ -170,6 +174,49 @@ computed: {
 		console.log("day "+this.timeDay);
 		return {year: this.timeYear, month: this.timeMonthsNumber[this.timeMonth], day: this.timeDay};
 	},
+	isMessageRawWarning: function() {
+		var self = this;
+		if(self.aggregation === 'raw' || self.sensorIDs[0] === '*') {
+			return false;
+		}
+		var result = false;
+		this.sensorIDs.forEach(function(o){
+			console.log(o);
+			var s = self.sensorMap[o];
+			console.log(s);
+			if(s.raw) {
+				result = true;
+			}
+		});
+		return result;
+	},
+	plotstations_internal: function() {
+		var self = this;
+		var s = [];
+		var ids = this.plotIDs;
+		if(this.plots == undefined) {
+			ids = [];
+		} else if(ids[0] === '*') {
+			ids = this.plots.map(function(plot){return plot.id});
+		}		
+		ids.forEach(function(plotID){
+			var plot = self.plotMap[plotID];
+			if(plot.plot_stations == undefined) {
+				s.push({plot: plot.id, type: "plot", important: true, selected: true, logger_type: plot.logger_type, full_plot: true});
+			} else  {
+				if(plot.plot_stations.length == 1) {
+					var station = plot.plot_stations[0];
+					s.push({plot: plot.id, type: "station", important: true, station: station, selected: true, logger_type: self.stationMap[station].logger_type, full_plot: true});
+				} else {
+					s.push({plot: plot.id, type: "merged", important: true, selected: true, full_plot: true});
+					plot.plot_stations.forEach(function(station){
+						s.push({plot: plot.id, type: "station", station: station, selected: false, logger_type: self.stationMap[station].logger_type, full_plot: false});
+					});
+				}
+			}
+		});
+		return s;
+	},
 }, //end computed
 
 mounted: function () {
@@ -204,20 +251,35 @@ methods: {
 			return;
 		}
 		
-		var plots = [];
+		/*var plots = [];
 		if(this.plotIDs[0] == '*') {
 			plots = this.plots;
 		} else {
 			this.plotIDs.forEach(function(o){
 				plots.push(self.plotMap[o]);
 			});
-		}
+		}*/
+		
+		var plotstations = self.plotstations.filter(function(o){return o.selected;});
+		
 		var sensors = [];
 		if(this.sensorIDs[0] == '*') {
-			sensors = this.metadata.sensors;
+			//sensors = this.metadata.sensors;
+			this.metadata.sensors.forEach(function(s){
+				if( !s.raw || s.raw && self.aggregation === 'raw') {
+					if( !(s.raw && self.viewType == 'heatmap')) {
+						sensors.push(s);
+					}
+				}
+			});
 		} else {
 			this.sensorIDs.forEach(function(o){
-				sensors.push(self.sensorMap[o]);
+				var s = self.sensorMap[o];
+				if( !s.raw || s.raw && self.aggregation === 'raw') {
+					if( !(s.raw && self.viewType == 'heatmap')) {
+						sensors.push(s);
+					}
+				}
 			});
 		}
 		//console.log(plots);
@@ -229,9 +291,18 @@ methods: {
 		var views = [];
 		sensors.forEach(function(sensor){
 			var innerMap = self.sensorNamePlotMap[sensor.id];
-			plots.forEach(function(plot){
+			/*plots.forEach(function(plot){
 				if(innerMap[plot.id]) {
 					var view = {status: "init", url: "no", type: self.viewType, plot: plot.id, sensor: sensor.id, aggregation: self.aggregation, quality: self.quality, interpolated: self.interpolation, width: width, height: 100};
+					view.by_year = true;
+					Object.assign(view, self.timeParameters);
+					views.push(view);
+				}
+			});*/
+			plotstations.forEach(function(plotstation){
+				if(innerMap[plotstation.plot]) {
+					var plotStationName = plotstation.full_plot ? plotstation.plot : plotstation.plot + ':' + plotstation.station;
+					var view = {status: "init", url: "no", type: self.viewType, plot: plotStationName, sensor: sensor.id, aggregation: self.aggregation, quality: self.quality, interpolated: self.interpolation, width: width, height: 100};
 					view.by_year = true;
 					Object.assign(view, self.timeParameters);
 					views.push(view);
@@ -240,7 +311,13 @@ methods: {
 		});
 		//this.views = views;
 		var maxViews = 500;
-		var new_views = views.length <= maxViews ? views : views.slice(0, maxViews);
+		if(views.length <= maxViews) {
+			this.viewsLimited = false;
+			var new_views = views;
+		} else {
+			this.viewsLimited = true;
+			var new_views = views.slice(0, maxViews);
+		}		
 		if( !this.compareViews(this.views, new_views) ) {
 			this.views = new_views;
 			this.viewsDone = 0;
@@ -353,7 +430,13 @@ methods: {
 		if(this.viewsDone == this.views.length) {
 			this.viewPrecessingEnd = performance.now();
 		}
-	}
+	},
+	onClickPlotstation: function(plotstation) {
+		plotstation.selected = !plotstation.selected;
+		//this.plotstations[0].selected = ! this.plotstations[0].selected;
+		console.log(plotstation);
+		this.updateViews();
+	},
 }, //end methods
 
 watch: {
@@ -361,6 +444,7 @@ watch: {
 		this.updateMetadata();
 	},
 	metadata: function() {
+		console.log("metadata update");
 		this.groupID = "*";
 		var values = {"*":{id:"*", name:"*"}};
 		this.metadata.general_stations.forEach(function(o){
@@ -375,12 +459,27 @@ watch: {
 		});
 		this.plotMap = values;
 		
-		this.sensorIDs = ["*"];
+		values = {};
+		this.metadata.stations.forEach(function(o){
+			values[o.id] = o;
+		});
+		this.stationMap = values;
+		
+		
+		var default_sensor_name = "Ta_200";
+		//this.sensorIDs = ["*"];
+		var ids = ["*"];
 		values = {"*":{id:"*", name:"*"}};
 		this.metadata.sensors.forEach(function(o){
 			values[o.id] = o;
+			if(ids[0] === "*" || o.id === default_sensor_name) {
+				ids[0] = o.id;
+			}
 		});
+		this.sensorIDs = ids;
 		this.sensorMap = values;
+		console.log("this.sensorIDs");
+		console.log(this.sensorIDs);
 		
 		var sensorNamePlotMap = {};	
 		this.metadata.plots.forEach(function(plot){
@@ -417,7 +516,10 @@ watch: {
 	plotIDs: function() {
 		this.updateViews();		
 	},
-	sensorIDs: function() {
+	sensorIDs: function(e) {
+		console.log("sensorIDs changed: ");
+		console.log(e);
+		console.log(this.sensorIDs);
 		this.updateViews();
 	},
 	aggregation: function() {
@@ -433,6 +535,12 @@ watch: {
 		this.updateViews();
 	},
 	viewType: function() {
+		this.updateViews();
+	},
+	plotstations_internal: function() {
+		this.plotstations = this.plotstations_internal;
+	},
+	plotstations: function() {
 		this.updateViews();
 	},
 }, //end watch

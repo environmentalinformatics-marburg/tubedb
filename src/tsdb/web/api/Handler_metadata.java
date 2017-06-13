@@ -1,7 +1,9 @@
 package tsdb.web.api;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,7 @@ import tsdb.component.Sensor;
 import tsdb.remote.GeneralStationInfo;
 import tsdb.remote.PlotInfo;
 import tsdb.remote.RemoteTsDB;
+import tsdb.remote.StationInfo;
 import tsdb.util.TimeUtil;
 import tsdb.web.util.Web;
 
@@ -95,7 +98,8 @@ public class Handler_metadata extends MethodHandler {
 		}
 		json_output.endArray();
 
-		HashSet<String> sensorNameSet = new HashSet<String>();
+		Set<String> sensorNameSet = new HashSet<String>();
+		Set<String> stationNameSet = new HashSet<String>();
 
 		PlotInfo[] plotInfos = tsdb.getPlots();
 		json_output.key("plots");
@@ -103,6 +107,7 @@ public class Handler_metadata extends MethodHandler {
 		for(PlotInfo plotInfo:plotInfos) {
 			if(region.name.equals(plotInfo.generalStationInfo.region.name)) {
 				String[] sensorNames = tsdb.getSensorNamesOfPlotWithVirtual(plotInfo.name);
+				Arrays.sort(sensorNames, String.CASE_INSENSITIVE_ORDER);
 				json_output.object();
 				json_output.key("id");
 				json_output.value(plotInfo.name);
@@ -115,12 +120,29 @@ public class Handler_metadata extends MethodHandler {
 					json_output.value(sensorName);
 				}
 				json_output.endArray();
+				String[] stations = tsdb.getPlotStations(plotInfo.name);
+				if(stations != null) {
+					json_output.key("plot_stations");
+					json_output.array();
+					for(String station:stations) {
+						stationNameSet.add(station);
+						json_output.value(station);
+					}
+					json_output.endArray();
+				}
+				if(plotInfo.isStation) {
+					json_output.key("logger_type");
+					json_output.value(plotInfo.loggerTypeName);
+				}
+				json_output.key("vip");
+				json_output.value(plotInfo.isVIP);
 				json_output.endObject();
 			}
 		}
 		json_output.endArray();
 
 		Sensor[] sensors = tsdb.getSensors();
+		Arrays.sort(sensors,(a,b)->String.CASE_INSENSITIVE_ORDER.compare(a.name, b.name));
 
 		json_output.key("sensors");
 		json_output.array();
@@ -133,6 +155,25 @@ public class Handler_metadata extends MethodHandler {
 				json_output.value(sensor.description);
 				json_output.key("unit_description");
 				json_output.value(sensor.unitDescription);
+				json_output.key("raw");
+				json_output.value(!sensor.isAggregable());
+				json_output.endObject();
+			}
+		}
+		json_output.endArray();
+
+		StationInfo[] stations = tsdb.getStations();
+		Arrays.sort(stations,(a,b)->String.CASE_INSENSITIVE_ORDER.compare(a.stationID, b.stationID));
+
+		json_output.key("stations");
+		json_output.array();
+		for(StationInfo station:stations) {
+			if(stationNameSet.contains(station.stationID)) {
+				json_output.object();
+				json_output.key("id");
+				json_output.value(station.stationID);
+				json_output.key("logger_type");
+				json_output.value(station.loggerType.typeName);
 				json_output.endObject();
 			}
 		}

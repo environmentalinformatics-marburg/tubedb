@@ -17,6 +17,7 @@ import tsdb.VirtualCopyList;
 import tsdb.component.Sensor;
 import tsdb.component.labeledproperty.PropertyComputation;
 import tsdb.dsl.Environment;
+import tsdb.dsl.FormulaBuilder;
 import tsdb.dsl.PlotEnvironment;
 import tsdb.dsl.computation.Computation;
 import tsdb.dsl.formula.Formula;
@@ -192,7 +193,7 @@ public final class QueryPlanGenerators {
 			int iTarget = Util.getIndexInArray(sensor.name, schema);
 
 			log.info("parse formula: "+func);
-			Formula formula = PropertyComputation.parseFormula(func);
+			Formula formula = FormulaBuilder.parseFormula(func);
 			HashMap<String, Integer> sensorMap = new HashMap<String, Integer>();
 			String[] dependencies = sensor.dependency;
 			if(dependencies != null) {

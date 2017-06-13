@@ -5,16 +5,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CodePointCharStream;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import tsdb.dsl.Environment;
-import tsdb.dsl.FormulaASTVisitor;
-import tsdb.dsl.FormulaLexer;
-import tsdb.dsl.FormulaParser;
+import tsdb.dsl.FormulaBuilder;
 import tsdb.dsl.computation.Computation;
 import tsdb.dsl.formula.Formula;
 import tsdb.util.DataRow;
@@ -36,22 +31,8 @@ public class PropertyComputation {
 			log.error("missing target");
 			return null;
 		}
-		Formula formula = parseFormula(formulaText);
-
+		Formula formula = FormulaBuilder.parseFormula(formulaText);
 		return new PropertyComputation(target, formula);	
-	}
-
-	public static Formula parseFormula(String formulaText) {
-		if(formulaText==null || formulaText.trim().isEmpty()) {
-			log.error("missing formula");
-			return null;
-		}		
-		CodePointCharStream stream = CharStreams.fromString(formulaText, "formula");
-		FormulaLexer lexer = new FormulaLexer(stream);	
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		FormulaParser parser = new FormulaParser(tokens);
-		Formula formula = parser.expression().accept(FormulaASTVisitor.DEFAULT);
-		return formula;
 	}	
 
 	public PropertyComputation(String target, Formula formula) {

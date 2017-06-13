@@ -67,6 +67,14 @@ body {
 	font-weight: bold;
 }
 
+.selected {
+	background-color: rgba(96, 146, 233, 0.44);
+}
+
+.important {
+	font-weight: bold;
+}
+
 .projects {
 	position: absolute;
 	top: 0;
@@ -126,6 +134,22 @@ progress {
 	padding: 2px;
 	margin: 5px;
 	font-size:small;
+}
+
+.message_box {
+	position: absolute;
+	top: 30px;
+	right: 100px;
+	background-color: rgba(140, 135, 130, 0.1);
+	/*border-radius: 5px;*/
+	/*box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);*/
+	padding: 2px;
+	margin: 5px;
+	font-size:small;
+}
+
+.message_error {
+	color: rgb(220, 20, 20);
 }
 
 .main_page_link {

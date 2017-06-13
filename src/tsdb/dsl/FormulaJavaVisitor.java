@@ -1,5 +1,9 @@
 package tsdb.dsl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import tsdb.dsl.computation.Computation;
 import tsdb.dsl.formula.BooleanFormula;
 import tsdb.dsl.formula.BooleanFormulaAND;
 import tsdb.dsl.formula.BooleanFormulaEqual;
@@ -21,9 +25,13 @@ import tsdb.dsl.formula.FormulaVar;
 public class FormulaJavaVisitor implements FormulaVisitor1<String>, BooleanFormulaVisitor1<String>  {
 	
 	private final Environment env;
+	private final FormulaCompileVisitor formulaCompileVisitor;
+	public List<Computation> computations;
 
 	public FormulaJavaVisitor(Environment env) {
 		this.env = env;
+		this.formulaCompileVisitor = new FormulaCompileVisitor(env);
+		this.computations = new ArrayList<Computation>();
 	}
 
 	@Override
@@ -110,7 +118,7 @@ public class FormulaJavaVisitor implements FormulaVisitor1<String>, BooleanFormu
 	public String visitPow(FormulaPow formulaPow) {
 		String ja = formulaPow.a.accept(this);
 		String jb = formulaPow.b.accept(this);
-		return "((float) Math.pow((double)"+ja+",(double)"+jb+"))";
+		return "((float)Math.pow((double)"+ja+",(double)"+jb+"))";
 	}
 
 	@Override
@@ -119,15 +127,15 @@ public class FormulaJavaVisitor implements FormulaVisitor1<String>, BooleanFormu
 		switch(formulaFunc.name) {
 		case "exp":
 			if(formulaFunc.positive) {
-				return "(float) Math.exp((double)"+ p +")";
+				return "(float)Math.exp((double)"+ p +")";
 			} else {
-				return "(float) ( - Math.exp((double)"+ p +") )";
+				return "(float)(-Math.exp((double)"+ p +"))";
 			}
 		case "ln":
 			if(formulaFunc.positive) {
-				return "(float) Math.log((double)"+ p +")";
+				return "(float)Math.log((double)"+ p +")";
 			} else {
-				return "(float) ( - Math.log((double)"+ p +") )";
+				return "(float)(-Math.log((double)"+ p +"))";
 			}
 		default:
 			throw new RuntimeException("function not found: "+formulaFunc.name);
@@ -162,7 +170,10 @@ public class FormulaJavaVisitor implements FormulaVisitor1<String>, BooleanFormu
 
 	@Override
 	public String visitNoDataVar(FormulaNoDataVar formulaNoDataVar) {
-		return "(UNKNOWN)";
+		int pos = computations.size();
+		Computation computation = formulaNoDataVar.accept(formulaCompileVisitor);
+		computations.add(computation);
+		return "this.c"+pos+".eval(timestamp,data)";
 	}
 
 }
