@@ -70,6 +70,8 @@ data: function () {
 		sensorHover: false,
 		sensorIDs: ["*"],
 		sensorMap: {},
+		sensorNamePlotMap: {},
+		sensorNameStationMap: {},
 
 		aggregationHover: false,
 		aggregationHoverStay: false,
@@ -101,6 +103,14 @@ data: function () {
 		viewTypeHoverStay: false,
 		viewTypes: ["diagram", "heatmap", "boxplot", "sensors"],
 		viewType: "diagram",
+		widthTexts: ["auto", "large", "maximum", "custom"],
+		widthTextMap: {"large": 4096, "maximum": 65535},
+		widthText: "auto",
+		widthCustom: 1000,
+		heightTexts: ["small", "medium", "large", "custom"],
+		heightTextMap: {"small": 100, "medium": 400, "large": 800},
+		heightText: "small",
+		heightCustom: 100,
 		
 		views: [],
 		viewsDone: 0,
@@ -108,6 +118,7 @@ data: function () {
 		viewPrecessingStart: 0,
 		viewPrecessingEnd: 0,
 		viewsLimited: false,	
+		divContainer: undefined,
 	}
 }, //end data
 
@@ -217,10 +228,37 @@ computed: {
 		});
 		return s;
 	},
+	validWidthCustom: function() {
+		return this.widthCustom >= 200 && this.widthCustom <= 65535;
+	},
+	validHeightCustom: function() {
+		return this.heightCustom > 0 && this.heightCustom < 2059;
+	},
+	widthValue: function() {
+		if(this.widthText === "custom" && this.validWidthCustom) {
+			return this.widthCustom; 
+		} else if(this.widthText === "auto"){
+			if(this.divContainer == undefined) {
+				return 1000;
+			} else {
+				return this.divContainer.clientWidth - 30 < 100 ? 100 : this.divContainer.clientWidth - 30;
+			}
+		} else {
+			return this.widthTextMap[this.widthText];
+		}
+	},
+	heightValue: function() {
+		if(this.heightText === "custom" && this.validHeightCustom) {
+			return this.heightCustom; 
+		} else {
+			return this.heightTextMap[this.heightText];
+		}
+	},
 }, //end computed
 
 mounted: function () {
-	this.updateMetadata();
+	this.divContainer = document.getElementById("container");
+	this.updateMetadata();	
 }, //end mounted
 
 methods: {
@@ -285,12 +323,18 @@ methods: {
 		//console.log(plots);
 		//console.log(sensors);
 		
-		var container = document.getElementById("container");
-		var width = container == null ? 100 : (container.clientWidth - 30 < 100 ? 100 : container.clientWidth - 30);
+		/*var container = document.getElementById("container");
+		var width = container == null ? 100 : (container.clientWidth - 30 < 100 ? 100 : container.clientWidth - 30);*/
+		var width = this.widthValue;
+		var height = this.heightValue;
 		
 		var views = [];
 		sensors.forEach(function(sensor){
-			var innerMap = self.sensorNamePlotMap[sensor.id];
+			var innerPlotMap = self.sensorNamePlotMap[sensor.id];
+			var innerStationMap = self.sensorNameStationMap[sensor.id];
+			if(innerStationMap == undefined) {
+				innerStationMap = {};
+			}
 			/*plots.forEach(function(plot){
 				if(innerMap[plot.id]) {
 					var view = {status: "init", url: "no", type: self.viewType, plot: plot.id, sensor: sensor.id, aggregation: self.aggregation, quality: self.quality, interpolated: self.interpolation, width: width, height: 100};
@@ -300,9 +344,9 @@ methods: {
 				}
 			});*/
 			plotstations.forEach(function(plotstation){
-				if(innerMap[plotstation.plot]) {
+				if(plotstation.full_plot ? innerPlotMap[plotstation.plot] : innerStationMap[plotstation.station] ) {
 					var plotStationName = plotstation.full_plot ? plotstation.plot : plotstation.plot + ':' + plotstation.station;
-					var view = {status: "init", url: "no", type: self.viewType, plot: plotStationName, sensor: sensor.id, aggregation: self.aggregation, quality: self.quality, interpolated: self.interpolation, width: width, height: 100};
+					var view = {status: "init", url: "no", type: self.viewType, plot: plotStationName, sensor: sensor.id, aggregation: self.aggregation, quality: self.quality, interpolated: self.interpolation, width: width, height: height};
 					view.by_year = true;
 					Object.assign(view, self.timeParameters);
 					views.push(view);
@@ -433,7 +477,6 @@ methods: {
 	},
 	onClickPlotstation: function(plotstation) {
 		plotstation.selected = !plotstation.selected;
-		//this.plotstations[0].selected = ! this.plotstations[0].selected;
 		console.log(plotstation);
 		this.updateViews();
 	},
@@ -492,8 +535,20 @@ watch: {
 				innerMap[plot.id] = true;
 			});
 		});
-		//console.log(sensorNamePlotMap);		
 		this.sensorNamePlotMap = sensorNamePlotMap;
+		
+		var sensorNameStationMap = {};	
+		this.metadata.stations.forEach(function(station){
+			station.sensor_names.forEach(function(sensor_name){
+				var innerMap = sensorNameStationMap[sensor_name];
+				if(innerMap == undefined) {
+					innerMap = {};
+					sensorNameStationMap[sensor_name] = innerMap;
+				}
+				innerMap[station.id] = true;
+			});
+		});
+		this.sensorNameStationMap = sensorNameStationMap;
 		
 		var startYear = this.metadata.region.view_year_range.start;
 		var endYear = this.metadata.region.view_year_range.end;
@@ -542,6 +597,16 @@ watch: {
 	},
 	plotstations: function() {
 		this.updateViews();
+	},
+	widthValue: function() {
+		if(this.metadata !== undefined && this.metadata.sensors !== undefined) {
+			this.updateViews();
+		}
+	},
+	heightValue: function() {
+		if(this.metadata !== undefined && this.metadata.sensors !== undefined) {
+			this.updateViews();
+		}
 	},
 }, //end watch
 

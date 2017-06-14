@@ -22,7 +22,7 @@
 			<div v-show="viewsDone < views.length" class="processing">
 				<!--<img src="busy.gif" />-->
 				<progress :value="viewsDone" :max="views.length"></progress>
-				{{viewsDone}} / {{views.length}}  <button type="button" @click="viewCycle++; viewsDone = views.length" style="padding: 1px; margin: -2px;">X</button> 				
+				{{viewsDone}} / {{views.length}}  <button type="button" @click="viewCycle++; viewsDone = views.length" style="padding: 1px; margin: -2px;" title="cancel processing">X</button> 				
 			</div>
 			
 			<div v-show="viewPrecessingStart < viewPrecessingEnd" class="runtime">
@@ -34,7 +34,9 @@
 				<div v-show="viewType=='heatmap' && aggregation!='hour'" class="message_error">Heatmaps are based on data of hour resolution.</div>
 				<div v-show="viewType=='heatmap' && timeYear!='*' && timeMonth!='*' && timeDay!='*'" class="message_error">Heatmaps smallest view is one month of data.</div>
 				<div v-show="viewType=='boxplot' && (aggregation=='raw' || aggregation=='hour')" class="message_error">Boxplots need data of resolution day or higher.</div>
-				<div v-show="aggregation=='raw' && quality=='empirical' && viewType!='heatmap'" class="message_error">Empirical qualitiy check is not applicable for data of resolution raw.</div>
+				<div v-show="quality=='empirical' && plotstations.filter(function(o){return o.selected;}).some(function(o){return !o.full_plot;})" class="message_error">Empirical qualitiy check is not applicable for sub stations of plot.</div>
+				<div v-show="aggregation=='raw' && quality=='empirical' && viewType!='heatmap'" class="message_error">Empirical qualitiy check is not applicable for data of resolution raw.</div>				
+				<div v-show="interpolation && plotstations.filter(function(o){return o.selected;}).some(function(o){return !o.full_plot;})" class="message_error">Interpolation is not applicable for sub stations of plot.</div>
 				<div v-show="aggregation=='raw' && interpolation && viewType!='heatmap'" class="message_error">Interpolation is not applicable for data of resolution raw.</div>
 				<div v-show="viewsLimited" class="message_error">Limited to first 500 views to prevent browser overload.</div>
 			</div>
@@ -72,7 +74,7 @@
 
 			</div>
 
-			<div v-show="plots.length!=1" class="interactive" style="display: inline-block;" @mouseover="plotHover = true" @mouseleave="plotHover = false">
+			<div v-show="plots.length!=1" class="interactive" style="display: inline-block;" @mouseover="plotHover = true" @mouseleave="plotHover = false" title="select multiple plots: press and hold key CTRL + left mouse click">
 				<div class="centered title">Plot</div>
 				
 				<div style="position: relative;">
@@ -119,7 +121,7 @@
 				<div class="centered">{{plotIDs[0]}}{{plotIDs.length>1 && plotIDs[0] != "*" ? " ...":""}}</div>
 			</div>
 			
-			<div v-show="sensors.length>0" class="interactive" style="display: inline-block;" @mouseover="sensorHover = true" @mouseleave="sensorHover = false">				
+			<div v-show="sensors.length>0" class="interactive" style="display: inline-block;" @mouseover="sensorHover = true" @mouseleave="sensorHover = false" title="select multiple parameters: press and hold key CTRL + left mouse click">				
 				<div class="centered title">Parameter</div>
 				
 				<div class="state" style="position: relative;">
@@ -273,12 +275,32 @@
 							</option>
 						</select>
 					</div>
+					
+					<div v-show="(viewTypeHover || viewTypeHoverStay)" style="position: absolute; top: 25px; left: 0px; white-space: nowrap; text-align: left;" class="overlay_settings">
+						<div>
+							width
+							<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="widthText">
+								<option v-for="text in widthTexts">{{text}}</option>
+							</select>
+							<input v-show="widthText=='custom'" v-model="widthCustom" @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" placeholder="width" maxlength="5" size="5" v-bind:class="{ invalid: !validWidthCustom }">
+						</div>
+						<div>
+							height
+							<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="heightText">
+								<option v-for="text in heightTexts">{{text}}</option>
+							</select>
+							<input v-show="heightText=='custom'" v-model="heightCustom" @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" placeholder="height" maxlength="4" size="4" v-bind:class="{ invalid: !validHeightCustom }">
+							
+						</div>
+					</div>
 				
 				</div>
 				
+				
+				
 			</div>
 			
-			<div class="interactive" style="display: inline-block;" @click="interpolation = !interpolation" @mouseover="interpolationHover = true" @mouseleave="interpolationHover = false">
+			<!--<div class="interactive" style="display: inline-block;" @click="interpolation = !interpolation" @mouseover="interpolationHover = true" @mouseleave="interpolationHover = false">
 				
 				<div class="centered title">Settings</div>
 				
@@ -292,7 +314,7 @@
 				
 				</div>
 				
-			</div>
+			</div>-->
 						
 			
 			<div id="results" class="results">

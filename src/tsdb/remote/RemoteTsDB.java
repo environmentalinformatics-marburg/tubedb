@@ -23,6 +23,16 @@ import tsdb.util.iterator.TimestampSeries;
 public interface RemoteTsDB extends Remote {
 	
 	//sensor
+	/**
+	 * plotID format:
+	 * <br>
+	 * for plot or virtual plot:  PLOT_ID
+	 * <br>
+	 * for virtual plot of one station: PLOT_ID:STATION_ID
+	 * <br>
+	 * for one station: STATION_ID
+	 * 
+	 */
 	String[] getSensorNamesOfPlotWithVirtual(String plotID) throws RemoteException;
 	String[] getSensorNamesOfGeneralStationWithVirtual(String generalStationName) throws RemoteException;	
 	Sensor[] getSensors() throws RemoteException;

@@ -138,14 +138,15 @@ progress {
 
 .message_box {
 	position: absolute;
-	top: 30px;
-	right: 100px;
-	background-color: rgba(140, 135, 130, 0.1);
+	top: 28px;
+	right: 0px;
+	background-color: rgba(225, 218, 212, 0.7);
 	/*border-radius: 5px;*/
 	/*box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);*/
-	padding: 2px;
-	margin: 5px;
+	padding: 0px;
+	margin: 0px;
 	font-size:small;
+	pointer-events: none;
 }
 
 .message_error {

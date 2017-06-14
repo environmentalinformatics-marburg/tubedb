@@ -174,6 +174,15 @@ public class Handler_metadata extends MethodHandler {
 				json_output.value(station.stationID);
 				json_output.key("logger_type");
 				json_output.value(station.loggerType.typeName);
+				String[] sensorNames = tsdb.getSensorNamesOfPlotWithVirtual(station.stationID);
+				Arrays.sort(sensorNames, String.CASE_INSENSITIVE_ORDER);
+				json_output.key("sensor_names");
+				json_output.array();
+				for(String sensorName:sensorNames) {
+					sensorNameSet.add(sensorName);
+					json_output.value(sensorName);
+				}
+				json_output.endArray();
 				json_output.endObject();
 			}
 		}

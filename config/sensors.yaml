@@ -1092,18 +1092,7 @@ SM_30_U:
   physical_range: [0.0, 1.5]
   step_range: [0.0, 1000.0]
   visibility: internal
-  
-PAR_200_U:
-  aggregation: none
-  physical_range: [0.0, 15.0]
-  visibility: internal
-  
-PAR_300_U:
-  aggregation: none
-  physical_range: [0.0, 15.0]
-  step_range: [0.0, 1000.0]
-  visibility: internal
-  
+ 
 SM_20_U:
   aggregation: none
   physical_range: [0.0, 1.5]
