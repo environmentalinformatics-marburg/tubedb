@@ -135,7 +135,7 @@
 					<div style="position: absolute; top: 0px; left: 0px;" v-show="sensorHover">
 						<select multiple :size="sensors.length + 1 > 20 ? 20 : sensors.length + 1" v-model="sensorIDs">
 							<option value="*">*</option>
-							<option v-for="sensor in sensors" v-bind:value="sensor.id">
+							<option v-for="sensor in visibleSensors" v-bind:value="sensor.id">
 							{{sensor.id}}{{sensor.raw?' (raw)':''}}
 							</option>
 						</select>

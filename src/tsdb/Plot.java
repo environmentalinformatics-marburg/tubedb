@@ -71,7 +71,7 @@ public interface Plot {
 		}
 		@Override
 		public double getElevation() {
-			return Double.NaN;
+			return station.elevation;
 		}
 	}
 		
@@ -114,7 +114,6 @@ public interface Plot {
 		}
 		@Override
 		public double getElevation() {
-			// TODO Auto-generated method stub
 			return virtualPlot.elevation;
 		}
 	}

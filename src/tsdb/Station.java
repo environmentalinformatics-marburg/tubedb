@@ -63,6 +63,7 @@ public class Station {
 	public final boolean isPlot;
 	public double geoPosLongitude;
 	public double geoPosLatitude;
+	public double elevation;
 	/**
 	 * The general name of this plotID for example HEG03 it is HEG
 	 * This name belongs to a GeneralStation Object
@@ -90,6 +91,7 @@ public class Station {
 		this.propertiesList = StationProperties.createIntervalList(propertyMapList);
 		this.geoPosLongitude = Float.NaN;
 		this.geoPosLatitude = Float.NaN;
+		this.elevation = Float.NaN;
 		this.loggerType = loggerType;
 		this.sensorNameTranlationMap = new HashMap<String, String>();
 		if(isPlot) {

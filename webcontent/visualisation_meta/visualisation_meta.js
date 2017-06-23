@@ -162,6 +162,13 @@ computed: {
 			return s;
 		}
 	},
+	visibleSensors: function() {
+		if(this.aggregation === "raw") {
+			return this.sensors;
+		} else {
+			return this.sensors.filter(function(s){return !s.raw});
+		}
+	},
 	timeText: function() {
 		var s = this.timeYear;
 		if(this.timeYear != '*' && this.timeMonth != '*') {
@@ -368,7 +375,7 @@ methods: {
 			this.viewPrecessingStart = performance.now();
 			var currentCycle = this.viewCycle +1;
 			this.viewCycle = currentCycle;
-			var parallel = 1;
+			var parallel = 4;
 			for(var i=0; i<parallel; i++) {
 				self.taskRunner(currentCycle);
 			}

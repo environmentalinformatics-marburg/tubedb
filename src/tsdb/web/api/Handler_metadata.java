@@ -1,9 +1,14 @@
 package tsdb.web.api;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -141,12 +146,22 @@ public class Handler_metadata extends MethodHandler {
 		}
 		json_output.endArray();
 
-		Sensor[] sensors = tsdb.getSensors();
-		Arrays.sort(sensors,(a,b)->String.CASE_INSENSITIVE_ORDER.compare(a.name, b.name));
+		Sensor[] sensors = tsdb.getSensors();		
+		Map<String, Sensor> sensorMap = Arrays.asList(sensors).stream().collect(Collectors.toMap(Sensor::getName, Function.identity()));
+		ArrayList<Sensor> sensorList = new ArrayList<Sensor>();
+		for(String sensorName:sensorNameSet) {
+			Sensor sensor = sensorMap.get(sensorName);
+			if(sensor == null) {
+				sensorList.add(new Sensor(sensorName));
+			} else {
+				sensorList.add(sensor);
+			}
+		}
+		sensorList.sort((a,b)->String.CASE_INSENSITIVE_ORDER.compare(a.name, b.name));
 
 		json_output.key("sensors");
 		json_output.array();
-		for(Sensor sensor:sensors) {
+		for(Sensor sensor:sensorList) {
 			if(sensorNameSet.contains(sensor.name)) {
 				json_output.object();
 				json_output.key("id");

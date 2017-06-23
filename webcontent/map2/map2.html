@@ -35,6 +35,7 @@
 			<tr><td>project: </td><td>{{plot.region}}</td></tr>
 			<tr><td>group: </td><td>{{plot.general}}</td></tr>			
 			<tr><td>position (WGS84): </td><td>{{plot.lat.toFixed(4)}}, {{plot.lon.toFixed(4)}}</td></tr>
+			<tr v-if="plot.elevation !== undefined"><td>elevation: </td><td>{{plot.elevation.toFixed(0)}}</td></tr>
 			</tbody>
 			</table>
           </div>

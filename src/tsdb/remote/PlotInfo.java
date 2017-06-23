@@ -46,7 +46,7 @@ public class PlotInfo implements Serializable {
 		this.isVIP = station.isVIP();
 		this.geoPosLatitude = station.geoPosLatitude;
 		this.geoPosLongitude = station.geoPosLongitude;
-		this.elevation = Float.NaN;
+		this.elevation = (float) station.elevation;
 		if(station.loggerType!=null) {
 			this.loggerTypeName = station.loggerType.typeName;
 		} else {

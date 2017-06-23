@@ -506,6 +506,9 @@ public class ConfigLoader {
 				Station station = new Station(tsdb, generalStation, plotID, loggerType, propertyList, true);
 				station.geoPosLatitude = lat;
 				station.geoPosLongitude = lon;
+				if(Float.isFinite(elevation)) {
+					station.elevation = elevation;
+				}
 				station.alternativeID = alternative_id;
 				tsdb.insertStation(station);
 			} else {
