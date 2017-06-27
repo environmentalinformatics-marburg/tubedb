@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 
 public class YamlMap {
+
+	public static final YamlMap EMPTY_MAP = new YamlMap(new HashMap<>());
 
 	private Map<String, Object> map;
 
@@ -22,8 +26,6 @@ public class YamlMap {
 	public static YamlMap ofObject(Object map) {
 		return new YamlMap((Map<String, Object>) map);
 	}
-
-	public static final YamlMap EMPTY_MAP = new YamlMap(new HashMap<>());
 
 	public Object getObject(String name) {
 		Object o = map.get(name);
@@ -45,13 +47,27 @@ public class YamlMap {
 	}	
 
 
+	/**
+	 * contains entry, that is not empty
+	 * @param name
+	 * @return
+	 */
 	public boolean contains(String name) {
-		return map.containsKey(name);
+		return map.containsKey(name) && map.get(name)!=null;
 	}
 
 	public String getString(String name) {
 		Object o = getObject(name);
 		return o.toString();
+	}
+
+	public boolean getBoolean(String name) {
+		Object o = getObject(name);
+		if(o instanceof Boolean) {
+			return ((Boolean)o).booleanValue();
+		} else {
+			throw new RuntimeException("element type is not boolean "+name+"   "+o.toString()+"    "+o.getClass());
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -63,7 +79,7 @@ public class YamlMap {
 		throw new RuntimeException("element is not a map "+name);
 	}
 
-	<T> T funMap(String name, Function<YamlMap, T> fun, Supplier<T> optFun) {
+	public <T> T funMap(String name, Function<YamlMap, T> fun, Supplier<T> optFun) {
 		if(contains(name)) {
 			return fun.apply(getMap(name));
 		}
@@ -76,7 +92,7 @@ public class YamlMap {
 		if(o instanceof List) {
 			return new YamlList((List<Object>) o);
 		}
-		//throw new RuntimeException("element is not a map "+name);
+		//throw new RuntimeException("element is not a list "+name);
 		ArrayList<Object> list = new ArrayList<Object>(1);
 		list.add(o);
 		return new YamlList(list);
@@ -178,20 +194,67 @@ public class YamlMap {
 		return def;
 	}
 
+	public void optFunString(String name, Consumer<String> fun) {
+		if(contains(name)) {
+			fun.accept(getString(name));
+		}		
+	}
+
+	/**
+	 * If entry name is present as string, convert it to T by conv and apply to fun if conversion != null
+	 * @param name
+	 * @param conv
+	 * @param fun
+	 */
+	public <T> void optFunStringConv(String name, Function<String, T> conv, Consumer<T> fun) {
+		if(contains(name)) {
+			T c = conv.apply(getString(name));
+			if(c != null) {
+				fun.accept(c);
+			}
+		}		
+	}
+
+	public void optFunInt(String name, IntConsumer fun) {
+		if(contains(name)) {
+			fun.accept(getInt(name));
+		}	
+	}
+
+	public boolean optBoolean(String name, boolean def) {
+		if(contains(name)) {
+			return getBoolean(name);
+		}
+		return def;
+	}
+
+	@FunctionalInterface
+	public interface BooleanConsumer {
+		void accept(boolean value);
+		default BooleanConsumer andThen(BooleanConsumer after) {
+			Objects.requireNonNull(after);
+			return (boolean t) -> { accept(t); after.accept(t); };
+		}
+	}
+
+	public void optFunBoolean(String name, BooleanConsumer fun) {
+		if(contains(name)) {
+			fun.accept(getBoolean(name));
+		}	
+	}
+
 	public void funString(String name, Consumer<String> fun) {
 		if(contains(name)) {
 			fun.accept(getString(name));
 		}		
 	}
 
-	@Override
-	public String toString() {
-		return map.toString();
-	}
-
 	public Set<String> keys() {
 		return map.keySet();
 	}
 
-
+	@Override
+	public String toString() {
+		return map.toString();
+	}
 }

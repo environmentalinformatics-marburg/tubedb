@@ -26,7 +26,7 @@ public enum AggregationType {
 	
 	private static final Logger log = LogManager.getLogger();
 
-	public static AggregationType getAggregationType(String aggregateTypeText) {
+	public static AggregationType parse(String aggregateTypeText) {
 		switch(aggregateTypeText.toLowerCase()) {
 		case "average":
 			return AVERAGE;

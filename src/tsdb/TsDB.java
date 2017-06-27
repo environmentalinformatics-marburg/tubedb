@@ -528,7 +528,7 @@ public class TsDB implements AutoCloseable {
 		if(baseAggregationExists(sensorName)) {
 			log.error("base aggregation for raw exists: "+sensorName);
 		}
-		sensor.setAggregation(AggregationType.NONE);		
+		sensor.setAllAggregations(AggregationType.NONE);		
 	}
 
 	public String[] getBaseSchema(String[] rawSchema) {

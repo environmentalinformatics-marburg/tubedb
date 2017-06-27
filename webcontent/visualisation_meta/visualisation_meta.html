@@ -258,7 +258,7 @@
 				
 				<div class="centered title">View</div>
 				
-				<div class="centered state" style="position: relative;">
+				<div style="position: relative;">
 				
 					<div class="state hide">
 						<div v-for="v in viewTypes">
@@ -266,31 +266,38 @@
 						</div>				
 					</div>
 				
-					<div class="state">{{viewType}}</div>
+					<div v-show="!(viewTypeHover || viewTypeHoverStay)" class="centered state">{{viewType}}</div>
+					<div v-show="(viewTypeHover || viewTypeHoverStay)">+</div>
 					
-					<div v-show="(viewTypeHover || viewTypeHoverStay)" style="position: absolute; top: 0px; left: 0px;">
-						<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="viewType">
-							<option v-for="v in viewTypes">
-								{{v}}
-							</option>
-						</select>
-					</div>
+					
 					
 					<div v-show="(viewTypeHover || viewTypeHoverStay)" style="position: absolute; top: 25px; left: 0px; white-space: nowrap; text-align: left;" class="overlay_settings">
 						<div>
-							width
-							<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="widthText">
-								<option v-for="text in widthTexts">{{text}}</option>
+							type
+							<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="viewType">
+								<option v-for="v in viewTypes">
+									{{v}}
+								</option>
 							</select>
-							<input v-show="widthText=='custom'" v-model="widthCustom" @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" placeholder="width" maxlength="5" size="5" v-bind:class="{ invalid: !validWidthCustom }">
-						</div>
-						<div>
-							height
-							<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="heightText">
-								<option v-for="text in heightTexts">{{text}}</option>
-							</select>
-							<input v-show="heightText=='custom'" v-model="heightCustom" @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" placeholder="height" maxlength="4" size="4" v-bind:class="{ invalid: !validHeightCustom }">
-							
+							<br>
+							<br>
+						</div>						
+						<div v-show="viewType === 'diagram' || viewType === 'boxplot'">
+							<div>
+								width
+								<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="widthText">
+									<option v-for="text in widthTexts">{{text}}</option>
+								</select>
+								<input v-show="widthText=='custom'" v-model="widthCustom" @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" placeholder="width" maxlength="5" size="5" v-bind:class="{ invalid: !validWidthCustom }">
+							</div>
+							<div>
+								height
+								<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="heightText">
+									<option v-for="text in heightTexts">{{text}}</option>
+								</select>
+								<input v-show="heightText=='custom'" v-model="heightCustom" @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" placeholder="height" maxlength="4" size="4" v-bind:class="{ invalid: !validHeightCustom }">
+								
+							</div>
 						</div>
 					</div>
 				

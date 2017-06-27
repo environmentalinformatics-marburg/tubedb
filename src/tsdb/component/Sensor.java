@@ -46,9 +46,13 @@ public class Sensor implements Serializable {
 	public float stepMax;
 
 	/**
-	 * Type of aggregation for base aggregation
+	 * Type of aggregation
 	 */
-	private AggregationType baseAggregationType;
+	private AggregationType aggregationHour;
+	private AggregationType aggregationDay;
+	private AggregationType aggregationWeek;
+	private AggregationType aggregationMonth;
+	private AggregationType aggregationYear;
 
 	/**
 	 * fill gaps in time series of this sensor
@@ -81,12 +85,12 @@ public class Sensor implements Serializable {
 		physicalMax = Float.MAX_VALUE;
 		stepMin = 0.0f;
 		stepMax = Float.MAX_VALUE;
-		baseAggregationType = AggregationType.NONE;
 		useInterpolation = false;
 		empiricalDiff = null;
 		category = SensorCategory.OTHER;
 		internal = false;
 		maxInterpolationMSE = 1f;
+		setAllAggregations(AggregationType.NONE);
 	}
 
 	/**
@@ -161,8 +165,8 @@ public class Sensor implements Serializable {
 	public static Sensor ofYaml(String sensorName, YamlMap yamlMap) {
 		String description = yamlMap.optString("description", "no description");
 		String unit = yamlMap.optString("unit", "no unit");
-		AggregationType agg = AggregationType.getAggregationType(yamlMap.optString("aggregation", "none"));
-		AggregationType aggregation = agg == null ? AggregationType.NONE : agg;
+		AggregationType optAgg = AggregationType.parse(yamlMap.optString("aggregation", "none"));
+		AggregationType aggregation = optAgg == null ? AggregationType.NONE : optAgg;
 
 		float physicalMin = -Float.MAX_VALUE;
 		float physicalMax = Float.MAX_VALUE;
@@ -217,7 +221,15 @@ public class Sensor implements Serializable {
 		Sensor sensor = new Sensor(sensorName);
 		sensor.description = description;
 		sensor.unitDescription = unit;
-		sensor.setAggregation(aggregation);
+		sensor.setAllAggregations(aggregation);
+		yamlMap.optFunStringConv("aggregation_hour", AggregationType::parse, sensor::setAggregationHour);
+		yamlMap.optFunStringConv("aggregation_day", AggregationType::parse, sensor::setAggregationDay);
+		yamlMap.optFunStringConv("aggregation_week", AggregationType::parse, sensor::setAggregationWeek);
+		yamlMap.optFunStringConv("aggregation_month", AggregationType::parse, sensor::setAggregationMonth);
+		yamlMap.optFunStringConv("aggregation_year", AggregationType::parse, sensor::setAggregationYear);
+		
+		log.info(sensor.name+"  "+sensor.aggregationHour+"  "+sensor.aggregationYear);
+
 		sensor.physicalMin = physicalMin;
 		sensor.physicalMax = physicalMax;
 		sensor.stepMin = stepMin;
@@ -236,27 +248,51 @@ public class Sensor implements Serializable {
 	}
 	
 	public AggregationType getAggregationHour() {
-		return baseAggregationType;	
+		return aggregationHour;	
 	}
 
 	public AggregationType getAggregationDay() {
-		return baseAggregationType;		
+		return aggregationDay;		
 	}
 
 	public AggregationType getAggregationWeek() {
-		return baseAggregationType;	
+		return aggregationWeek;	
 	}
 
 	public AggregationType getAggregationMonth() {
-		return baseAggregationType;	
+		return aggregationMonth;	
 	}
 
 	public AggregationType getAggregationYear() {
-		return baseAggregationType;	
+		return aggregationYear;	
 	}
 	
-	public void setAggregation(AggregationType agg) {
-		baseAggregationType = agg;		
+	public void setAllAggregations(AggregationType agg) {		
+		aggregationHour = agg;
+		aggregationDay = agg;
+		aggregationWeek = agg;
+		aggregationMonth = agg;
+		aggregationYear = agg;
+	}
+	
+	public void setAggregationHour(AggregationType agg) {		
+		aggregationHour = agg;
+	}
+	
+	public void setAggregationDay(AggregationType agg) {		
+		aggregationDay = agg;
+	}
+	
+	public void setAggregationWeek(AggregationType agg) {		
+		aggregationWeek = agg;
+	}
+	
+	public void setAggregationMonth(AggregationType agg) {
+		aggregationMonth = agg;
+	}
+	
+	public void setAggregationYear(AggregationType agg) {
+		aggregationYear = agg;
 	}
 
 	@Override

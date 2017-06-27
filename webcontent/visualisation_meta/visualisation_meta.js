@@ -68,10 +68,11 @@ data: function () {
 		plotstations: [],
 		
 		sensorHover: false,
-		sensorIDs: ["*"],
+		sensorIDs: [],
 		sensorMap: {},
 		sensorNamePlotMap: {},
 		sensorNameStationMap: {},
+		default_sensor_name: "Ta_200",
 
 		aggregationHover: false,
 		aggregationHoverStay: false,
@@ -139,11 +140,21 @@ computed: {
 	sensors: function() {
 		console.log("update sensors");
 		var self = this;
-		if(this.plotIDs[0] == '*') {
+		if(this.plotIDs[0] == '*' && this.groupID == '*') {
 			return this.metadata.sensors;
 		} else {
+			var plotIDs = [];
+			if(this.plotIDs[0] == '*') {
+				this.metadata.plots.forEach(function(o){
+					if(o.general_station == self.groupID) {
+						plotIDs.push(o.id);
+					}
+				});
+			} else {
+				plotIDs = this.plotIDs;
+			}			
 			var map = {};
-			this.plotIDs.forEach(function(plotID){
+			plotIDs.forEach(function(plotID){
 				var plot = self.plotMap[plotID];
 				plot.sensor_names.forEach(function(sensorName){
 					map[sensorName] = true;
@@ -163,11 +174,39 @@ computed: {
 		}
 	},
 	visibleSensors: function() {
+		var self = this;
+		var sensors;
 		if(this.aggregation === "raw") {
-			return this.sensors;
+			sensors = this.sensors;
 		} else {
-			return this.sensors.filter(function(s){return !s.raw});
+			sensors = this.sensors.filter(function(s){return !s.raw});
 		}
+		var sensorIDs;
+		if(this.sensorIDs[0] === '*') {
+			sensorIDs = ['*'];
+		} else {
+			if(sensors.length === 0) {
+				sensorIDs = [];
+			} else {
+				sensorIDs = [];
+				this.sensorIDs.forEach(function(id){
+					for(var i in sensors) {
+						if(sensors[i].id == id) {
+							sensorIDs.push(id);
+						}
+					}
+				});
+				if(sensorIDs.length === 0) {
+					if(sensors.some(function(s){return s.id===self.default_sensor_name;})) {
+						sensorIDs = [self.default_sensor_name];
+					} else {
+						sensorIDs = [sensors[0].id];
+					}
+				}
+			}
+		}
+		this.sensorIDs = sensorIDs;
+		return sensors;
 	},
 	timeText: function() {
 		var s = this.timeYear;
@@ -514,19 +553,11 @@ watch: {
 			values[o.id] = o;
 		});
 		this.stationMap = values;
-		
-		
-		var default_sensor_name = "Ta_200";
-		//this.sensorIDs = ["*"];
-		var ids = ["*"];
+
 		values = {"*":{id:"*", name:"*"}};
 		this.metadata.sensors.forEach(function(o){
 			values[o.id] = o;
-			if(ids[0] === "*" || o.id === default_sensor_name) {
-				ids[0] = o.id;
-			}
 		});
-		this.sensorIDs = ids;
 		this.sensorMap = values;
 		console.log("this.sensorIDs");
 		console.log(this.sensorIDs);

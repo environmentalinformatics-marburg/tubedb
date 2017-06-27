@@ -1343,6 +1343,22 @@ Ta_200_gruenlandtemperatursumme:
   aggregation: maximum
 
 Ta_200_min_m:
-  description: Ta_200_min_m
-  unit:  ratio
-  aggregation: last  
+  description: monthly minimum air temperature at 2 meters above ground
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: last # pass-through monthly values from raw to month aggregation
+  aggregation_year: minimum # aggregation from month to year
+  category: temperature
+  
+Ta_200_max_m:
+  description: monthly maximum air temperature at 2 meters above ground
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: last # pass-through monthly values from raw to month aggregation
+  aggregation_year: maximum # aggregation from month to year
+  category: temperature
+  
+P_RT_NRT_m:
+  description: monthly precipitation
+  unit: mm (millimeter)
+  aggregation: last # pass-through monthly values from raw to month aggregation
+  aggregation_year: sum # aggregation from month to year
+  category: water 
