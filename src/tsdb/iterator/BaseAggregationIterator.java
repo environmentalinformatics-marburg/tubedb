@@ -43,6 +43,7 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 	private float[] aggSum;
 	private float[] aggMin;
 	private float[] aggMax;
+	private float[] aggLast;
 	private float wind_u_sum;
 	private float wind_v_sum;
 	private int wind_cnt;
@@ -106,7 +107,8 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 		aggCnt = new int[schema.length];
 		aggSum = new float[schema.length];
 		aggMin = new float[schema.length];
-		aggMax = new float[schema.length];		
+		aggMax = new float[schema.length];
+		aggLast = new float[schema.length];
 		columnEntryCounter = new int[schema.length];
 		for(int i=0;i<schema.length;i++) {
 			columnEntryCounter[i] = 0;
@@ -123,6 +125,7 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 			aggSum[i] = 0;
 			aggMin[i] = Float.POSITIVE_INFINITY;
 			aggMax[i] = Float.NEGATIVE_INFINITY;
+			aggLast[i] = Float.NaN;
 		}
 		wind_u_sum=0;
 		wind_v_sum=0;
@@ -194,6 +197,7 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 							aggMax[i] = value;
 
 						}
+						aggLast[i] = value;
 					}					
 				} else {
 					//aggCnt[i] ++; // !! compensate missing values at night
@@ -215,6 +219,7 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 						aggMax[i] = value;
 
 					}
+					aggLast[i] = value;
 				}				
 			}
 		}			
@@ -299,9 +304,14 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 					validValueCounter++;
 					columnEntryCounter[i]++;
 					break;
+				case LAST:
+					resultData[i] = aggLast[i];
+					validValueCounter++;
+					columnEntryCounter[i]++;
+					break;
 				default:
 					resultData[i] = Float.NaN;
-					log.warn("aggration type unknown");
+					log.warn("aggration type unknown: "+aggregation[i]);
 				}							
 			} else {// no entry in this aggregation time period
 				resultData[i] = Float.NaN;

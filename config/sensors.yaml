@@ -1342,9 +1342,7 @@ Ta_200_gruenlandtemperatursumme:
   post_day_func: "cumsum_by_year(Ta_200_gruenlandtemperatur)"
   aggregation: maximum
 
-#Ta_200_zzz:  
-#  description: testing
-#  unit: (amount)
-#  dependency: Ta_200
-#  post_hour_func: "sun"
-#  aggregation: maximum 
+Ta_200_min_m:
+  description: Ta_200_min_m
+  unit:  ratio
+  aggregation: last  

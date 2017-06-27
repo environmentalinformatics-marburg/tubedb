@@ -1,7 +1,6 @@
 package tsdb.graph;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,7 +14,6 @@ import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.VirtualCopyList;
 import tsdb.component.Sensor;
-import tsdb.component.labeledproperty.PropertyComputation;
 import tsdb.dsl.Environment;
 import tsdb.dsl.FormulaBuilder;
 import tsdb.dsl.PlotEnvironment;
@@ -31,7 +29,6 @@ import tsdb.graph.processing.ElementRawCopy;
 import tsdb.graph.processing.EmpiricalFiltered_NEW;
 import tsdb.graph.processing.Evaporation;
 import tsdb.graph.processing.Mask;
-import tsdb.graph.processing.NocCheck;
 import tsdb.graph.processing.PeakSmoothed;
 import tsdb.graph.processing.RangeStepFiltered;
 import tsdb.graph.processing.Sunshine;
@@ -106,7 +103,7 @@ public final class QueryPlanGenerators {
 	 */
 	public static Node elementRawCopy(TsDB tsdb, Node source) {
 		String[] schema = source.getSchema();
-		log.info("schema "+Arrays.toString(schema));
+		//log.info("schema "+Arrays.toString(schema));
 		if(Util.containsOneString(schema, tsdb.raw_copy_sensor_names)) {
 			List<Action> actions = new ArrayList<>();
 			for(VirtualCopyList p:tsdb.raw_copy_lists) { 

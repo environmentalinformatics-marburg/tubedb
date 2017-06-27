@@ -31,8 +31,13 @@ public class MonthAggregationIterator extends AbstractAggregationIterator  {
 	}
 
 	@Override
-	protected boolean isValidAggregate(int collectorCount, AggregationType aggregationType) {
-		return 27<=collectorCount;
+	protected boolean isValidAggregate(int collectorCount, AggregationType aggregationType) {		
+		switch(aggregationType) {
+		case LAST:
+			return 1<=collectorCount;
+		default:
+			return 27<=collectorCount;
+		}		
 	}
 	
 	@Override

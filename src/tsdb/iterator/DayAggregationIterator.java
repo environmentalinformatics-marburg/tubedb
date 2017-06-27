@@ -28,10 +28,14 @@ public class DayAggregationIterator extends AbstractAggregationIterator {
 
 	@Override
 	protected boolean isValidAggregate(int collectorCount, AggregationType aggregationType) {
-		if(aggregationType == AggregationType.AVERAGE_ALBEDO) {
+		switch(aggregationType) {
+		case AVERAGE_ALBEDO:
 			return 5<=collectorCount;
-		}
-		return 22<=collectorCount;				
+		case LAST:
+			return 1<=collectorCount;
+		default:
+			return 22<=collectorCount;
+		}						
 	}
 	
 	@Override

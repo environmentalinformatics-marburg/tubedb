@@ -37,6 +37,7 @@ public class ImportGenericCSV {
 	private final TsDB tsdb;
 
 	public ImportGenericCSV(TsDB tsdb) {
+		log.info("ImportGenericCSV");
 		AssumptionCheck.throwNull(tsdb);
 		this.tsdb = tsdb;
 	}
@@ -76,7 +77,7 @@ public class ImportGenericCSV {
 
 	public void loadFile(Path filePath) {
 		try {
-			log.trace("load file "+filePath);			
+			log.info("load file "+filePath);			
 			Table table = Table.readCSV(filePath,',');		
 			int datetimeIndex = table.getColumnIndex("datetime");
 			if(datetimeIndex!=0) {

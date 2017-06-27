@@ -3,7 +3,6 @@ package tsdb;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -805,7 +804,7 @@ public class TsDB implements AutoCloseable {
 				if(source.length == 0) {
 					log.warn("source empty");
 				} else {
-					log.info("raw_source "+Arrays.toString(sensor.raw_source)+" -> "+sensor.name);
+					//log.info("raw_source "+Arrays.toString(sensor.raw_source)+" -> "+sensor.name);
 					raw_copy_list_list.add(VirtualCopyList.of(sensor.raw_source, sensor.name));
 				}
 			}
@@ -814,7 +813,7 @@ public class TsDB implements AutoCloseable {
 				if(dependency.length == 0) {
 					log.warn("dependency empty");
 				} else {
-					log.info("dependency "+Arrays.toString(sensor.dependency)+" -> "+sensor.name);
+					//log.info("dependency "+Arrays.toString(sensor.dependency)+" -> "+sensor.name);
 					sensor_dependency_list_list.add(VirtualCopyList.of(sensor.dependency, sensor.name));
 				}
 			}

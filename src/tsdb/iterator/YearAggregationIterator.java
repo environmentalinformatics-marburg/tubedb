@@ -20,7 +20,7 @@ public class YearAggregationIterator extends AbstractAggregationIterator  {
 	public YearAggregationIterator(TsDB tsdb, TsIterator input_iterator) {
 		super(tsdb, input_iterator, createSchemaVariableStep(input_iterator.getSchema(), Aggregation.MONTH, Aggregation.YEAR));
 	}
-	
+
 	@Override
 	protected long calcAggregationTimestamp(long timestamp) {		
 		LocalDateTime datetime = TimeUtil.oleMinutesToLocalDateTime(timestamp);
@@ -30,10 +30,15 @@ public class YearAggregationIterator extends AbstractAggregationIterator  {
 	}
 
 	@Override
-	protected boolean isValidAggregate(int collectorCount, AggregationType aggregationType) {
-		return 12==collectorCount; 
+	protected boolean isValidAggregate(int collectorCount, AggregationType aggregationType) {		
+		switch(aggregationType) {
+		case LAST:
+			return 1<=collectorCount;
+		default:
+			return 12==collectorCount; 
+		}		
 	}
-	
+
 	@Override
 	protected AggregationType[] getAggregationTypes(Sensor[] sensors) {
 		AggregationType[] aggregation = new AggregationType[sensors.length];

@@ -34,6 +34,7 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 	private float[] aggSum;
 	private float[] aggMax;
 	private float[] aggMin;
+	private float[] aggLast;
 	private float wind_u_sum;
 	private float wind_v_sum;
 	private int wind_cnt;
@@ -138,6 +139,7 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 		aggSum = new float[schema.length];
 		aggMin = new float[schema.length];
 		aggMax = new float[schema.length];
+		aggLast = new float[schema.length];
 		columnEntryCounter = new int[schema.length];
 		for(int i=0;i<schema.length;i++) {
 			columnEntryCounter[i] = 0;
@@ -160,6 +162,7 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 			aggSum[i] = 0;
 			aggMin[i] = Float.POSITIVE_INFINITY;
 			aggMax[i] = Float.NEGATIVE_INFINITY;
+			aggLast[i] = Float.NaN;
 		}
 		wind_u_sum=0f;
 		wind_v_sum=0f;
@@ -189,6 +192,7 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 				if(value>aggMax[i]) {
 					aggMax[i] = value;
 				}
+				aggLast[i] = value;
 			}		
 
 			if(inputQualityCounter!=null && aggQualityCounter!=null) {
@@ -284,7 +288,12 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 					} else {
 						resultData[i] = Float.NaN;
 					}
-					break;							
+					break;
+				case LAST:
+					resultData[i] = aggLast[i];
+					validValueCounter++;
+					columnEntryCounter[i]++;
+					break;
 				default:
 					resultData[i] = Float.NaN;
 					log.warn("aggration type unknown");
