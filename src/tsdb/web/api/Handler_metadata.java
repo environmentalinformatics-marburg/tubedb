@@ -141,6 +141,18 @@ public class Handler_metadata extends MethodHandler {
 				}
 				json_output.key("vip");
 				json_output.value(plotInfo.isVIP);
+				if(Double.isFinite(plotInfo.geoPosLatitude)) {
+					json_output.key("latitude");
+					json_output.value(plotInfo.geoPosLatitude);
+				}
+				if(Double.isFinite(plotInfo.geoPosLongitude)) {
+					json_output.key("longitude");
+					json_output.value(plotInfo.geoPosLongitude);
+				}
+				if(Double.isFinite(plotInfo.elevation)) {
+					json_output.key("elevation");
+					json_output.value(plotInfo.elevation);
+				}
 				json_output.endObject();
 			}
 		}

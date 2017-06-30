@@ -31,8 +31,7 @@
 			
 			<div class="message_box">
 				<div v-show="isMessageRawWarning" class="message_error">Raw parameters can be shown at raw resolution only.</div>
-				<div v-show="viewType=='heatmap' && aggregation!='hour'" class="message_error">Heatmaps are based on data of hour resolution.</div>
-				<div v-show="viewType=='heatmap' && timeYear!='*' && timeMonth!='*' && timeDay!='*'" class="message_error">Heatmaps smallest view is one month of data.</div>
+				<div v-show="viewType=='heatmap' && aggregation!='hour'" class="message_error">Heatmaps are best viewed in hour resolution.</div>
 				<div v-show="viewType=='boxplot' && (aggregation=='raw' || aggregation=='hour')" class="message_error">Boxplots need data of resolution day or higher.</div>
 				<div v-show="quality=='empirical' && plotstations.filter(function(o){return o.selected;}).some(function(o){return !o.full_plot;})" class="message_error">Empirical qualitiy check is not applicable for sub stations of plot.</div>
 				<div v-show="aggregation=='raw' && quality=='empirical' && viewType!='heatmap'" class="message_error">Empirical qualitiy check is not applicable for data of resolution raw.</div>				
@@ -299,6 +298,10 @@
 								
 							</div>
 						</div>
+						<div v-show="viewType === 'heatmap'">
+							<input type="checkbox" id="byYear" v-model="byYear">
+							<label for="byYear">by year</label>
+						</div>
 					</div>
 				
 				</div>
@@ -361,6 +364,37 @@
 								<td>{{sensor.id}}</td>
 								<td>{{sensor.description == 'no description' ? '' : sensor.description}}</td>
 								<td>{{sensor.unit_description == 'no unit' ? '' : sensor.unit_description}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				
+				<div v-if="viewType === 'plots'">
+					plots in selected group:
+					<table class="sensors">
+						<thead>
+							<tr>
+								<th>name</th>
+								<th>vip</th>
+								<th>logger</th>
+								<th>group</th>
+								<th>latitude</th>
+								<th>longitude</th>
+								<th>elevation</th>
+								<th>parameters</th>
+								
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="plot in plots">
+								<td>{{plot.id}}</td>
+								<td>{{plot.vip?'x':''}}</td>
+								<td>{{plot.logger_type}}</td>
+								<td>{{plot.general_station}}</td>
+								<td>{{plot.latitude}}</td>
+								<td>{{plot.longitude}}</td>
+								<td>{{plot.elevation}}</td>			
+								<td>{{plot.sensor_names.length}}</td>
 							</tr>
 						</tbody>
 					</table>

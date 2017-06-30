@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import tsdb.Plot;
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
+import tsdb.component.Sensor;
 import tsdb.graph.QueryPlanGenerators;
 import tsdb.graph.node.Continuous;
 import tsdb.graph.node.ContinuousGen;
@@ -71,18 +72,22 @@ public class CreateStationGroupAverageCache {
 			for(String plotID:plotList) {
 				String[] sensorNames = tsdb.getSensorNamesOfPlot(plotID);
 				sensorNames = tsdb.includeVirtualSensorNames(sensorNames);
-				if(sensorNames==null||sensorNames.length==0) {
+				if(sensorNames == null || sensorNames.length == 0) {
 					continue;
 				}
 				sensorNames = tsdb.getBaseSchema(sensorNames);
-				if(sensorNames==null||sensorNames.length==0) {
+				if(sensorNames == null || sensorNames.length == 0) {
 					continue;
-				}				
+				}
 				sensorNameSet.addAll(Arrays.asList(sensorNames));
-			}
+			}			
 			//log.info(sensorNameSet);
 
 			for(String processingSensorName:sensorNameSet) {
+				Sensor sensor = tsdb.getSensor(processingSensorName);
+				if(sensor == null || sensor.getEmpiricalDiff() == null || !Float.isFinite(sensor.getEmpiricalDiff())) {
+					continue;
+				}
 				
 				//log.info(processingSensorName);
 

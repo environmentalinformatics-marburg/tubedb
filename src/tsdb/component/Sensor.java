@@ -228,8 +228,6 @@ public class Sensor implements Serializable {
 		yamlMap.optFunStringConv("aggregation_month", AggregationType::parse, sensor::setAggregationMonth);
 		yamlMap.optFunStringConv("aggregation_year", AggregationType::parse, sensor::setAggregationYear);
 		
-		log.info(sensor.name+"  "+sensor.aggregationHour+"  "+sensor.aggregationYear);
-
 		sensor.physicalMin = physicalMin;
 		sensor.physicalMax = physicalMax;
 		sensor.stepMin = stepMin;

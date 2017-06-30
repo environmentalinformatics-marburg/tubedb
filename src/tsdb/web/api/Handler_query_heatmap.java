@@ -70,6 +70,19 @@ public class Handler_query_heatmap extends MethodHandler {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
+		
+		String aggregation = request.getParameter("aggregation");
+		AggregationInterval agg = AggregationInterval.HOUR;
+		if(aggregation!=null) {
+			try {
+				agg = AggregationInterval.parse(aggregation);
+				if(agg==null) {
+					agg = AggregationInterval.HOUR;
+				}
+			} catch (Exception e) {
+				log.warn(e);
+			}
+		}
 
 		String quality = request.getParameter("quality");
 		DataQuality dataQuality = DataQuality.STEP;
@@ -123,9 +136,28 @@ public class Handler_query_heatmap extends MethodHandler {
 							response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 							return;
 						}
-						LocalDateTime dateMonth = LocalDateTime.of(year, month, 1, 0, 0);
-						startTime = TimeUtil.dateTimeToOleMinutes(dateMonth);
-						endTime = TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, dateMonth.toLocalDate().lengthOfMonth(), 23, 0));
+						String timeDay = request.getParameter("day");
+						if(timeDay == null) {
+							LocalDateTime dateMonth = LocalDateTime.of(year, month, 1, 0, 0);
+							startTime = TimeUtil.dateTimeToOleMinutes(dateMonth);
+							endTime = TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, dateMonth.toLocalDate().lengthOfMonth(), 23, 0));
+						} else {
+							try {
+								int day = Integer.parseInt(timeDay);
+								if(day < 1 || day > 31) {
+									log.error("day out of range "+day);
+									response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+									return;
+								}
+								LocalDateTime dateDay = LocalDateTime.of(year, month, day, 0, 0);
+								startTime = TimeUtil.dateTimeToOleMinutes(dateDay);
+								endTime = TimeUtil.dateTimeToOleMinutes(dateDay.plusHours(23));
+							} catch (Exception e) {
+								log.error(e);
+								response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+								return;
+							}	
+						}
 					} catch (Exception e) {
 						log.error(e);
 						response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -159,7 +191,8 @@ public class Handler_query_heatmap extends MethodHandler {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);				
 				return;
 			}
-			TimestampSeries ts = tsdb.plot(null, plot, sensorNames, AggregationInterval.HOUR, dataQuality, isInterpolated, startTime, endTime);
+
+			TimestampSeries ts = tsdb.plot(null, plot, sensorNames, agg, dataQuality, isInterpolated, startTime, endTime);
 			if(ts==null) {
 				log.error("TimestampSeries null: "+plot);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);				
@@ -169,7 +202,8 @@ public class Handler_query_heatmap extends MethodHandler {
 			
 
 			float xDiagramMin = 24;
-
+			
+			
 
 			if(byYear) {
 				
@@ -187,7 +221,7 @@ public class Handler_query_heatmap extends MethodHandler {
 				TimeSeriesHeatMap tshm = new TimeSeriesHeatMap(ts);
 
 
-				tshm.drawByYear(tsp,sensorName, xDiagramMin, yDiagramMin);
+				tshm.drawByYear(tsp,sensorName, xDiagramMin, yDiagramMin, agg);
 				
 				tshm.leftFieldByYear(tsp,0,yDiagramMin,xDiagramMin-1,imageHeight-1);
 				tshm.rightFieldByYear(tsp,imageWidth-(int)xDiagramMin,yDiagramMin,imageWidth-1,imageHeight-1);
@@ -224,7 +258,7 @@ public class Handler_query_heatmap extends MethodHandler {
 
 				TimeSeriesHeatMap tshm = new TimeSeriesHeatMap(ts);
 
-				tshm.draw(tsp,sensorName, xDiagramMin);
+				tshm.draw(tsp,sensorName, xDiagramMin, agg);
 				if(timeScale) {
 					tshm.drawTimescale(tsp, xDiagramMin, 24, imageWidth+1, imageHeight-1, true);
 				}

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import tsdb.util.AggregationInterval;
 import tsdb.util.Pair;
 import tsdb.util.TimeUtil;
 import tsdb.util.TsEntry;
@@ -25,8 +26,54 @@ public class TimeSeriesHeatMap {
 			throw new RuntimeException("TimeSeriesHeatMap needs one hour time steps: "+ts.timeinterval);
 		}*/
 	}
+	
+	public void draw(TimeSeriesPainter tsp, String sensorName, float xMin, AggregationInterval agg) {
+		switch(agg) {
+		case RAW:
+		case HOUR:
+			drawHours(tsp, sensorName, xMin);
+			break;
+		case DAY:
+			drawDays(tsp, sensorName, xMin);
+			break;
+		case WEEK:
+			drawWeeks(tsp, sensorName, xMin);
+			break;
+		case MONTH:
+			drawMonths(tsp, sensorName, xMin);
+			break;
+		case YEAR:
+			drawYears(tsp, sensorName, xMin);
+			break;
+		default:
+			throw new RuntimeException("aggregation not drawable for heatmap: "+agg);
+		}
+	}
+	
+	public void drawByYear(TimeSeriesPainter tsp, String sensorName, float xMin, float yMin, AggregationInterval agg) {
+		switch(agg) {
+		case RAW:
+		case HOUR:
+			drawHoursByYear(tsp, sensorName, xMin, yMin);
+			break;
+		case DAY:
+			drawDaysByYear(tsp, sensorName, xMin, yMin);
+			break;
+		case WEEK:
+			drawWeeksByYear(tsp, sensorName, xMin, yMin);
+			break;
+		case MONTH:
+			drawMonthsByYear(tsp, sensorName, xMin, yMin);
+			break;
+		case YEAR:
+			drawYearsByYear(tsp, sensorName, xMin, yMin);
+			break;
+		default:
+			throw new RuntimeException("aggregation not drawable for heatmap: "+agg);
+		}
+	}
 
-	public void draw(TimeSeriesPainter tsp, String sensorName, float xMin) {
+	public void drawHours(TimeSeriesPainter tsp, String sensorName, float xMin) {
 		setRange(tsp,sensorName);
 		tsp.setColorRectWater();
 		long start = ts.entryList.get(0).timestamp-ts.entryList.get(0).timestamp%(60*24);
@@ -37,12 +84,76 @@ public class TimeSeriesHeatMap {
 				float x = (((entry.timestamp-start)/60)/24)*1+xMin;
 				float y = (((entry.timestamp-start)/60)%24)*1;
 				tsp.drawLine(x, y, x, y);
-				//tsp.fillRect(x, y, x+4, y+4);
+			}
+		}
+	}
+	
+	public void drawDays(TimeSeriesPainter tsp, String sensorName, float xMin) {
+		setRange(tsp,sensorName);
+		tsp.setColorRectWater();
+		long start = ts.entryList.get(0).timestamp-ts.entryList.get(0).timestamp%(60*24);
+		for(TsEntry entry:ts.entryList) {
+			float value = entry.data[0];
+			if(!Float.isNaN(value)) {
+				tsp.setIndexedColor(value);
+				float x = (entry.timestamp - start)/1440 + xMin;
+				tsp.drawLine(x, 0, x, 23);
+			}
+		}
+	}
+	
+	public void drawWeeks(TimeSeriesPainter tsp, String sensorName, float xMin) {
+		setRange(tsp,sensorName);
+		tsp.setColorRectWater();
+		long start = ts.entryList.get(0).timestamp-ts.entryList.get(0).timestamp%(60*24);
+		for(TsEntry entry:ts.entryList) {
+			float value = entry.data[0];
+			if(!Float.isNaN(value)) {
+				tsp.setIndexedColor(value);
+				float x1 = (entry.timestamp - start)/1440 + xMin;
+				float x2 = (entry.timestamp - start)/1440 + 6 + xMin;
+				//tsp.drawLine(x1, 0, x1, 23);
+			    //tsp.drawLine(x2, 0, x2, 23);
+				tsp.fillRect(x1, 0, x2, 23);
+			}
+		}
+	}
+	
+	public void drawMonths(TimeSeriesPainter tsp, String sensorName, float xMin) {
+		setRange(tsp,sensorName);
+		tsp.setColorRectWater();
+		long start = ts.entryList.get(0).timestamp-ts.entryList.get(0).timestamp%(60*24);
+		for(TsEntry entry:ts.entryList) {
+			float value = entry.data[0];
+			if(!Float.isNaN(value)) {
+				tsp.setIndexedColor(value);
+				float x1 = (entry.timestamp - start)/1440 + xMin;
+				float x2 = (TimeUtil.roundNextMonth((int) entry.timestamp) - 1 - start)/1440 + xMin;
+				//tsp.drawLine(x1, 0, x1, 23);
+			    //tsp.drawLine(x2, 0, x2, 23);
+				tsp.fillRect(x1, 0, x2, 23);
+			}
+		}
+	}
+	
+	public void drawYears(TimeSeriesPainter tsp, String sensorName, float xMin) {
+		setRange(tsp,sensorName);
+		tsp.setColorRectWater();
+		long start = ts.entryList.get(0).timestamp-ts.entryList.get(0).timestamp%(60*24);
+		for(TsEntry entry:ts.entryList) {
+			float value = entry.data[0];
+			if(!Float.isNaN(value)) {
+				tsp.setIndexedColor(value);
+				float x1 = (entry.timestamp - start)/1440 + xMin;
+				float x2 = (TimeUtil.roundNextYear((int) entry.timestamp) - 1 - start)/1440 + xMin;
+				//tsp.drawLine(x1, 0, x1, 23);
+				//tsp.drawLine(x2, 0, x2, 23);
+				tsp.fillRect(x1, 0, x2, 23);
 			}
 		}
 	}
 
-	public void drawByYear(TimeSeriesPainter tsp, String sensorName, float xMin, float yMin) {
+	public void drawHoursByYear(TimeSeriesPainter tsp, String sensorName, float xMin, float yMin) {
 		setRange(tsp,sensorName);
 		tsp.setColorRectWater();		
 		int yearBaseTimestamp = TimeUtil.roundLowerYear((int)ts.entryList.get(0).timestamp);
@@ -61,7 +172,103 @@ public class TimeSeriesHeatMap {
 				float x = (((t-yearBaseTimestamp)/60)/24)*1+xMin;
 				float y = yBase + (((t-yearBaseTimestamp)/60)%24)*1;
 				tsp.drawLine(x, y, x, y);
-				//tsp.fillRect(x, y, x+4, y+4);
+			}
+		}
+	}
+	
+	public void drawDaysByYear(TimeSeriesPainter tsp, String sensorName, float xMin, float yMin) {
+		setRange(tsp,sensorName);
+		tsp.setColorRectWater();		
+		int yearBaseTimestamp = TimeUtil.roundLowerYear((int)ts.entryList.get(0).timestamp);
+		int yearNextTimestamp = TimeUtil.roundNextYear((int)ts.entryList.get(0).timestamp);
+		int yBase = (int) yMin;
+		for(TsEntry entry:ts.entryList) {
+			int t = (int) entry.timestamp;
+			if(t>=yearNextTimestamp) {
+				yearBaseTimestamp = TimeUtil.roundLowerYear(t);
+				yearNextTimestamp = TimeUtil.roundNextYear(t);
+				yBase += 24;
+			}
+			float value = entry.data[0];
+			if(!Float.isNaN(value)) {
+				tsp.setIndexedColor(value);
+				float x = (t - yearBaseTimestamp)/1440 + xMin;
+				tsp.drawLine(x, yBase, x, yBase + 23);
+			}
+		}
+	}
+	
+	public void drawWeeksByYear(TimeSeriesPainter tsp, String sensorName, float xMin, float yMin) {
+		setRange(tsp,sensorName);
+		tsp.setColorRectWater();		
+		int yearBaseTimestamp = TimeUtil.roundLowerYear((int)ts.entryList.get(0).timestamp);
+		int yearNextTimestamp = TimeUtil.roundNextYear((int)ts.entryList.get(0).timestamp);
+		int yBase = (int) yMin;
+		for(TsEntry entry:ts.entryList) {
+			int t = (int) entry.timestamp;
+			if(t>=yearNextTimestamp) {
+				yearBaseTimestamp = TimeUtil.roundLowerYear(t);
+				yearNextTimestamp = TimeUtil.roundNextYear(t);
+				yBase += 24;
+			}
+			float value = entry.data[0];
+			if(!Float.isNaN(value)) {
+				tsp.setIndexedColor(value);
+				float x1 = (t - yearBaseTimestamp)/1440 + xMin;
+				float x2 = (t - yearBaseTimestamp)/1440 + 6 + xMin;
+				//tsp.drawLine(x1, yBase, x1, yBase + 23);
+				//tsp.drawLine(x2, yBase, x2, yBase + 23);
+				tsp.fillRect(x1, yBase, x2, yBase + 23);
+			}
+		}
+	}
+	
+	public void drawMonthsByYear(TimeSeriesPainter tsp, String sensorName, float xMin, float yMin) {
+		setRange(tsp,sensorName);
+		tsp.setColorRectWater();		
+		int yearBaseTimestamp = TimeUtil.roundLowerYear((int)ts.entryList.get(0).timestamp);
+		int yearNextTimestamp = TimeUtil.roundNextYear((int)ts.entryList.get(0).timestamp);
+		int yBase = (int) yMin;
+		for(TsEntry entry:ts.entryList) {
+			int t = (int) entry.timestamp;
+			if(t>=yearNextTimestamp) {
+				yearBaseTimestamp = TimeUtil.roundLowerYear(t);
+				yearNextTimestamp = TimeUtil.roundNextYear(t);
+				yBase += 24;
+			}
+			float value = entry.data[0];
+			if(!Float.isNaN(value)) {
+				tsp.setIndexedColor(value);
+				float x1 = (t - yearBaseTimestamp)/1440 + xMin;
+				float x2 = (TimeUtil.roundNextMonth(t) - 1 - yearBaseTimestamp)/1440 + xMin;
+				//tsp.drawLine(x1, yBase, x1, yBase + 23);
+				//tsp.drawLine(x2, yBase, x2, yBase + 23);
+				tsp.fillRect(x1, yBase, x2, yBase + 23);
+			}
+		}
+	}
+	
+	public void drawYearsByYear(TimeSeriesPainter tsp, String sensorName, float xMin, float yMin) {
+		setRange(tsp,sensorName);
+		tsp.setColorRectWater();		
+		int yearBaseTimestamp = TimeUtil.roundLowerYear((int)ts.entryList.get(0).timestamp);
+		int yearNextTimestamp = TimeUtil.roundNextYear((int)ts.entryList.get(0).timestamp);
+		int yBase = (int) yMin;
+		for(TsEntry entry:ts.entryList) {
+			int t = (int) entry.timestamp;
+			if(t>=yearNextTimestamp) {
+				yearBaseTimestamp = TimeUtil.roundLowerYear(t);
+				yearNextTimestamp = TimeUtil.roundNextYear(t);
+				yBase += 24;
+			}
+			float value = entry.data[0];
+			if(!Float.isNaN(value)) {
+				tsp.setIndexedColor(value);
+				float x1 = (t - yearBaseTimestamp)/1440 + xMin;
+				float x2 = (yearNextTimestamp - 1 - yearBaseTimestamp)/1440 + xMin;
+				//tsp.drawLine(x1, yBase, x1, yBase + 23);
+				//tsp.drawLine(x2, yBase, x2, yBase + 23);
+				tsp.fillRect(x1, yBase, x2, yBase + 23);
 			}
 		}
 	}
@@ -80,9 +287,9 @@ public class TimeSeriesHeatMap {
 		tsp.fillRect(xMin, yMin, xMax, yMax);
 
 		long start = ts.entryList.get(0).timestamp-ts.entryList.get(0).timestamp%(60*24);
-		//log.info("start "+TimeConverter.oleMinutesToText(start));
 		long end = ts.entryList.get(ts.entryList.size()-1).timestamp-ts.entryList.get(ts.entryList.size()-1).timestamp%(60*24);
-		//log.info("end "+TimeConverter.oleMinutesToText(end));
+		//long start = TimeUtil.roundLowerYear((int) ts.entryList.get(0).timestamp);
+		//long end = TimeUtil.roundNextYear((int) ts.entryList.get(ts.entryList.size()-1).timestamp); //- 60*24;
 
 		tsp.setColor(150, 150, 150);
 		//tsp.setColor(0, 0, 0);

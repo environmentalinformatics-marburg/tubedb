@@ -231,6 +231,11 @@ public final class TimeUtil implements Serializable {
 		LocalDateTime datetime = oleMinutesToLocalDateTime(timestamp);
 		return (int) dateTimeToOleMinutes(LocalDateTime.of(datetime.getYear(),1,1,0,0));
 	}
+	
+	public static int roundLowerMonth(int timestamp) {
+		LocalDateTime datetime = oleMinutesToLocalDateTime(timestamp);
+		return (int) dateTimeToOleMinutes(LocalDateTime.of(datetime.getYear(),datetime.getMonthValue(),1,0,0));
+	}
 
 	/**
 	 * Get timestamp of start of next year following year of timestamp.
@@ -240,6 +245,16 @@ public final class TimeUtil implements Serializable {
 	public static int roundNextYear(int timestamp) {
 		LocalDateTime datetime = oleMinutesToLocalDateTime(timestamp);
 		return (int) dateTimeToOleMinutes(LocalDateTime.of(datetime.getYear()+1,1,1,0,0));
+	}
+	
+	public static int roundNextMonth(int timestamp) {
+		LocalDateTime datetime = oleMinutesToLocalDateTime(timestamp);
+		int m = datetime.getMonthValue();
+		if(m<12) {
+			return (int) dateTimeToOleMinutes(LocalDateTime.of(datetime.getYear(),m + 1,1,0,0));
+		} else {
+			return (int) dateTimeToOleMinutes(LocalDateTime.of(datetime.getYear()+1,1,1,0,0));	
+		}		
 	}
 
 	public static long ofDateStartHour(int year) { // at hour

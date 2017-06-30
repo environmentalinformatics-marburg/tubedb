@@ -24,6 +24,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.UserIdentity;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -58,7 +59,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 		this.tsdb = tsdb;
 	}
 	
-	private void resetModel(ExportModel model) {
+	private void resetModel(ExportModel model, UserIdentity userIdentity) {
 		model.reset();
 		//model.plots = new String[]{"HEG01"};
 		//model.sensors = new String[]{"Ta_200"};
@@ -72,15 +73,18 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 		model.timespanDatesTo = "2014-09";
 		try {
 			if(TsDBFactory.JUST_ONE_REGION==null) {
-				model.region = tsdb.getRegions()[0];
-			} else {
-				Region[] regions = tsdb.getRegions();
-				model.region = regions[0];
-				for(Region region:regions) {
-					if(region.name.equals(TsDBFactory.JUST_ONE_REGION)) {
+				for(Region region:tsdb.getRegions()) {					
+					if(Web.isAllowed(userIdentity, region.name)) {
 						model.region = region;
 						break;
-					}
+					} 
+				}
+			} else {
+				for(Region region:tsdb.getRegions()) {					
+					if(region.name.equals(TsDBFactory.JUST_ONE_REGION) && Web.isAllowed(userIdentity, region.name)) {
+						model.region = region;
+						break;
+					} 
 				}
 			}
 		} catch(Exception e) {
@@ -102,7 +106,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 		if(session.isNew()) {
 			ExportModel model = new ExportModel();
 			session.setAttribute("ExportModel", model);
-			resetModel(model);
+			resetModel(model, Web.getUserIdentity(baseRequest));
 		}
 		ExportModel model = (ExportModel) session.getAttribute("ExportModel");
 		boolean ret = false;
@@ -183,7 +187,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 			break;
 		}
 		case "/reset": {
-			ret = handle_reset(model);
+			ret = handle_reset(model, Web.getUserIdentity(baseRequest));
 			break;
 		}
 		default: {
@@ -198,8 +202,8 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 		}
 	}
 
-	private boolean handle_reset(ExportModel model) {
-		resetModel(model);
+	private boolean handle_reset(ExportModel model, UserIdentity userIdentity) {
+		resetModel(model, userIdentity);
 		return true;
 	}
 

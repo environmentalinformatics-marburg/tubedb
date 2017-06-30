@@ -102,7 +102,7 @@ data: function () {
 		
 		viewTypeHover: false,
 		viewTypeHoverStay: false,
-		viewTypes: ["diagram", "heatmap", "boxplot", "sensors"],
+		viewTypes: ["diagram", "heatmap", "boxplot", "sensors", "plots"],
 		viewType: "diagram",
 		widthTexts: ["auto", "large", "maximum", "custom"],
 		widthTextMap: {"large": 4096, "maximum": 65535},
@@ -112,6 +112,7 @@ data: function () {
 		heightTextMap: {"small": 100, "medium": 400, "large": 800},
 		heightText: "small",
 		heightCustom: 100,
+		byYear: true,
 		
 		views: [],
 		viewsDone: 0,
@@ -326,7 +327,7 @@ methods: {
 	updateViews: function() {
 		var self = this;
 		
-		if(self.viewType == 'sensors') {
+		if(self.viewType == 'sensors' || self.viewType == 'plots') {
 			this.views = [];
 			this.viewsDone = 0;
 			this.viewPrecessingStart = 0;
@@ -351,18 +352,14 @@ methods: {
 			//sensors = this.metadata.sensors;
 			this.metadata.sensors.forEach(function(s){
 				if( !s.raw || s.raw && self.aggregation === 'raw') {
-					if( !(s.raw && self.viewType == 'heatmap')) {
-						sensors.push(s);
-					}
+					sensors.push(s);
 				}
 			});
 		} else {
 			this.sensorIDs.forEach(function(o){
 				var s = self.sensorMap[o];
 				if( !s.raw || s.raw && self.aggregation === 'raw') {
-					if( !(s.raw && self.viewType == 'heatmap')) {
-						sensors.push(s);
-					}
+					sensors.push(s);
 				}
 			});
 		}
@@ -392,7 +389,7 @@ methods: {
 			plotstations.forEach(function(plotstation){
 				if(plotstation.full_plot ? innerPlotMap[plotstation.plot] : innerStationMap[plotstation.station] ) {
 					var plotStationName = plotstation.full_plot ? plotstation.plot : plotstation.plot + ':' + plotstation.station;
-					var view = {status: "init", url: "no", type: self.viewType, plot: plotStationName, sensor: sensor.id, aggregation: self.aggregation, quality: self.quality, interpolated: self.interpolation, width: width, height: height};
+					var view = {status: "init", url: "no", type: self.viewType, plot: plotStationName, sensor: sensor.id, aggregation: self.aggregation, quality: self.quality, interpolated: self.interpolation, width: width, height: height, byYear: self.byYear};
 					view.by_year = true;
 					Object.assign(view, self.timeParameters);
 					views.push(view);
@@ -432,6 +429,7 @@ methods: {
 		if(a.day !== b.day) return false;
 		if(a.quality !== b.quality) return false;
 		if(a.interpolated !== b.interpolated) return false;
+		if(a.byYear !== b.byYear) return false;
 		return true;
 	},
 	compareViews: function(va, vb) {
@@ -466,7 +464,7 @@ methods: {
 		view.status = "running";
 		//console.log(view);
 		
-		var params = {plot: view.plot, sensor: view.sensor, aggregation: view.aggregation, interpolated: "false", quality: view.quality, interpolated: view.interpolated, width: view.width, height: view.height};		
+		var params = {plot: view.plot, sensor: view.sensor, aggregation: view.aggregation, interpolated: "false", quality: view.quality, interpolated: view.interpolated, width: view.width, height: view.height, by_year: view.byYear};		
 		if(view.hasOwnProperty('year')) {
 			params.year = view.year;
 		}
@@ -488,9 +486,9 @@ methods: {
 				break;			
 			case 'heatmap':
 				url = url_query_heatmap;
-				if(true) {
+				/*if(true) {
 					params.by_year = view.by_year;
-				}
+				}*/
 				break;
 			default:
 				url = 'error';
@@ -645,6 +643,9 @@ watch: {
 		if(this.metadata !== undefined && this.metadata.sensors !== undefined) {
 			this.updateViews();
 		}
+	},
+	byYear: function() {
+		this.updateViews();
 	},
 }, //end watch
 
