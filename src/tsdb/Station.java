@@ -37,7 +37,7 @@ public class Station {
 	public final String stationID;
 
 	public final LoggerType loggerType;
-	
+
 	public LabeledProperties labeledProperties = new LabeledProperties();
 
 	/**
@@ -129,9 +129,11 @@ public class Station {
 			return resultName;
 		}
 		if(useGeneralstation) {
-			resultName = generalStation.sensorNameTranlationMap.get(sensorName);
-			if(resultName!=null) {
-				return resultName;
+			if(generalStation != null) {
+				resultName = generalStation.sensorNameTranlationMap.get(sensorName);
+				if(resultName!=null) {
+					return resultName;
+				}
 			}
 		}
 		resultName = loggerType.sensorNameTranlationMap.get(sensorName);
@@ -296,7 +298,7 @@ public class Station {
 		}
 		return false;
 	}
-	
+
 	public String[] stationSchemaSupplement(String[] schema) {
 		String[] stationSensorNames = getSensorNames();
 		for(VirtualCopyList p:tsdb.raw_copy_lists) {
