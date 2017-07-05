@@ -70,6 +70,8 @@ public class Handler_identity extends MethodHandler {
 		}
 
 		json.object();
+		json.key("tubedb_version");
+		json.value(tsdb.get_tubedb_version());
 		json.key("ip");
 		json.value(request.getRemoteAddr());
 		json.key("user");

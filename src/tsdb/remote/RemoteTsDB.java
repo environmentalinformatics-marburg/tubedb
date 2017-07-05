@@ -94,4 +94,7 @@ public interface RemoteTsDB extends Remote {
 	ArrayList<PlotStatus> getPlotStatuses() throws RemoteException;
 	ArrayList<PlotStatus> getPlotStatusesOfGeneralStation(String generalStationName) throws RemoteException;
 	ArrayList<PlotStatus> getPlotStatusesOfRegion(String regionName) throws RemoteException;
+	
+	//info
+	String get_tubedb_version() throws RemoteException;
 }

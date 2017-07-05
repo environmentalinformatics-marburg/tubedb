@@ -169,7 +169,8 @@ mounted: function () {
 		{{loadingMessage}}
 	</span>
 	<span v-if="loadingMessage == undefined">
-		user{{identity.auth_method == "IP" ? " (by "+"ip"+")": ""}}: {{identity.user}}
+		tubedb version: {{identity.tubedb_version}}
+		<br>user{{identity.auth_method == "IP" ? " (by "+"ip"+")": ""}}: {{identity.user}}
 		<br>ip: {{identity.ip}}
 		<br>access: {{identity.roles.join(", ")}}
 	</span>

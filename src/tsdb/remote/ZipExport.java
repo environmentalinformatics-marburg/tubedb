@@ -249,6 +249,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 		try {
 			Map<String,Object> map = new LinkedHashMap<String,Object>();
 			map.put("creation date", LocalDateTime.now().toString());
+			map.put("tubedb version", tsdb.get_tubedb_version());
 
 			Map<String, Object> regionMap = new LinkedHashMap<String,Object>();
 			regionMap.put("id", region.name);
@@ -301,10 +302,12 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 			map.put("data header", write_header);			
 			map.put("all plots in one file", allInOne);
 
+			map.put("data files", allInOne ? "plots.csv" : "[PLOT].csv");
+
 			List<String> filelist = new ArrayList<String>();
-			if(desc_sensor) filelist.add("sensor description");
-			if(desc_plot) filelist.add("plot description");
-			if(desc_settings) filelist.add("processing settings");
+			if(desc_sensor) filelist.add("sensor_description.csv");
+			if(desc_plot) filelist.add("plot_description.csv");
+			if(desc_settings) filelist.add("processing_settings.yaml");
 
 			map.put("additional files", filelist);
 

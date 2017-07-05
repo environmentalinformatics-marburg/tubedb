@@ -573,4 +573,12 @@ public class ServerTsDB implements RemoteTsDB {
 	public void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask) {
 		tsdb.streamStorage.setTimeSeriesMask(stationName, sensorName, timeSeriesMask);
 	}
+	
+	// ----- info -------
+
+	@Override
+	public String get_tubedb_version() throws RemoteException {
+		// TODO Auto-generated method stub
+		return tsdb.tubedb_version;
+	}
 }
