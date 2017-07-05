@@ -12,3 +12,5 @@
 - {station: HET38, content: {label: computation, target: p_QNH, formula: "p_local * ( 1 - (0.0065 * (439+44)) / (Ta_200 + 0.0065 * (439+44) + 273.15) )^(-5.257)", comment: "local pressure to sea level pressure"}}
 - {station: HET44, content: {label: computation, target: p_QNH, formula: "p_local * ( 1 - (0.0065 * (451+44)) / (Ta_200 + 0.0065 * (451+44) + 273.15) )^(-5.257)", comment: "local pressure to sea level pressure"}}
 
+- {station: HEG48, start: "2017-06-26T13:00", end: "2017-06-28T12:00", content: {label: CNR4, SWDR: 15.82, SWUR: 18.63, LWDR: 9.28, LWUR: 10.64, comment: "2017-07-05 recalculate with corrected factors"} }
+

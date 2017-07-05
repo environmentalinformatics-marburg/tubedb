@@ -1053,6 +1053,8 @@ SM_40_U:
   visibility: internal
   
 UB:
+  description: Datalogger Battery Voltage measurement
+  unit: V (volt)  
   aggregation: none
   physical_range: [0.0, 30.0]
   step_range: [0.0, 1000.0]
@@ -1361,4 +1363,36 @@ P_RT_NRT_m:
   unit: mm (millimeter)
   aggregation: last # pass-through monthly values from raw to month aggregation
   aggregation_year: sum # aggregation from month to year
-  category: water 
+  category: water
+
+PTemp_C:
+  description: (internal) Panel Temperature measurement
+  visibility: internal
+
+LithiumBattV:
+  description: (internal)
+  visibility: internal
+
+WindDir_SD1_WVT:  
+  description: (internal)
+  visibility: internal
+  
+Rain_mm:
+  description: TE525 Rain Gauge measurement 0.2mm
+  
+evaporation_calculated:
+  description: water lost due to evapotranspiration
+  unit: mm/h (mm per hour)
+  aggregation: average
+  
+SWDR_300_MJ:
+  description: (internal) Shortwave Downward Radiation at 3 meters height
+  unit: MJ/m^2 (megajoule per square meter)
+  aggregation: sum
+  visibility: internal
+
+SWDR_300_clear_sky_MJ:
+  description: (internal) calculated Shortwave Downward Radiation for clear sky
+  unit: MJ/m^2 (megajoule per square meter)
+  aggregation: sum
+  visibility: internal   
