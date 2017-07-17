@@ -113,7 +113,7 @@ public final class TimeUtil implements Serializable {
 	private static final DateTimeFormatter DATE_TIME_FORMATER_SLASH = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
 	//private static final DateTimeFormatter DATE_TIME_FORMATER_SPACE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	private static final DateTimeFormatter DATE_TIME_FORMATER_SPACE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
+	
 	/**
 	 * format: yyyy/MM/dd HH:mm
 	 * example: 2010/08/25 00:05
@@ -137,6 +137,31 @@ public final class TimeUtil implements Serializable {
 		LocalDateTime dt = LocalDateTime.parse(datetimeminutes, DATE_TIME_FORMATER_SPACE);
 		return TimeUtil.dateTimeToOleMinutes(dt);
 	}
+	
+	/**
+	 * example: 05.21.16 10:10:00 AM 
+	 * @param dateTimeText
+	 * @return
+	 */
+	public static long parseTimestampMonthFirstAmPmFormat(String dateTimeText) {
+		LocalDateTime dt = LocalDateTime.parse(dateTimeText, DATE_TIME_FORMATER_MONTH_FIRST_AM_PM);
+		return TimeUtil.dateTimeToOleMinutes(dt);
+	}
+	
+	/**
+	 * example: 07.12.2016 22:10
+	 * @param dateTimeText
+	 * @return
+	 */
+	public static long parseTimestampMonthFirstFormat(String dateTimeText) {
+		LocalDateTime dt = LocalDateTime.parse(dateTimeText, DATE_TIME_FORMATER_MONTH_FIRST);
+		return TimeUtil.dateTimeToOleMinutes(dt);
+	}
+	
+	private static final DateTimeFormatter DATE_TIME_FORMATER_MONTH_FIRST_AM_PM = DateTimeFormatter.ofPattern("MM.dd.yy hh:mm:ss a");
+	private static final DateTimeFormatter DATE_TIME_FORMATER_MONTH_FIRST = DateTimeFormatter.ofPattern("MM.dd.yyyy HH:mm");
+	
+	
 
 	private static final DateTimeFormatter DATE_TIME_FORMATER_MONTH_NAME_ONE_HOUR_DIGIT =  DateTimeFormatter.ofPattern("dd-MMM-yyyy   H:mm").withLocale(Locale.ENGLISH);
 	private static final DateTimeFormatter DATE_TIME_FORMATER_MONTH_NAME_TWO_HOUR_DIGITS = DateTimeFormatter.ofPattern("dd-MMM-yyyy  HH:mm").withLocale(Locale.ENGLISH);

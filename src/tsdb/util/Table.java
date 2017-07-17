@@ -61,7 +61,7 @@ public class Table {
 			};
 		}
 	}
-	
+
 	public static class ColumnReaderStringMissing extends ColumnReaderString {
 		private String missing;
 		public ColumnReaderStringMissing(String missing) {
@@ -166,15 +166,15 @@ public class Table {
 			int parse(String text);
 		}
 	}
-	
-	
+
+
 	public static abstract class ColumnReaderBoolean extends ColumnReader {
 		public ColumnReaderBoolean(int rowIndex) {
 			super(rowIndex);
 		}
 		public abstract boolean get(String[] row);
 	}
-	
+
 	public static class ColumnReaderBooleanMissing extends ColumnReaderBoolean {
 		private final boolean missing;
 		public ColumnReaderBooleanMissing(boolean missing) {
@@ -186,7 +186,7 @@ public class Table {
 			return missing;
 		}		
 	}
-	
+
 	public static class ColumnReaderBooleanYN extends ColumnReaderBoolean {
 		private final boolean missing;
 		public ColumnReaderBooleanYN(int rowIndex, boolean missing) {
@@ -252,7 +252,7 @@ public class Table {
 			}
 		}
 	}
-	
+
 	public static class ColumnReaderSpaceTimestamp implements ColumnReaderTimestamp {
 		private final int rowIndexDateTime;
 		public ColumnReaderSpaceTimestamp(int rowIndexDateTime) {
@@ -261,6 +261,26 @@ public class Table {
 		public long get(String[] row) {			
 			try {
 				return TimeUtil.parseTimestampSpaceFormat(row[rowIndexDateTime]);				
+			} catch(NumberFormatException e) {
+				log.warn(row[rowIndexDateTime]+"  not parsed");
+				return -1;
+			}
+		}
+	}
+
+	public static class ColumnReaderDayFirstAmPmTimestamp implements ColumnReaderTimestamp {
+		private final int rowIndexDateTime;
+		public ColumnReaderDayFirstAmPmTimestamp(int rowIndexDateTime) {
+			this.rowIndexDateTime = rowIndexDateTime;
+		}
+		public long get(String[] row) {			
+			try {
+				String text = row[rowIndexDateTime];
+				if(text.endsWith("M")) {
+					return TimeUtil.parseTimestampMonthFirstAmPmFormat(text);
+				} else {
+					return TimeUtil.parseTimestampMonthFirstFormat(text);	
+				}
 			} catch(NumberFormatException e) {
 				log.warn(row[rowIndexDateTime]+"  not parsed");
 				return -1;
@@ -359,7 +379,7 @@ public class Table {
 	public static Table readCSV(Path filename, char separator) {
 		return readCSV(filename.toFile(),separator);
 	}
-	
+
 	public static Table readCSV(String filename, char separator) {
 		return readCSV(new File(filename), separator);
 	}
@@ -378,9 +398,9 @@ public class Table {
 			CSVReader reader = new CSVReader(in,separator);
 
 			List<String[]> list = reader.readAll();
-			
+
 			reader.close();
-			
+
 			String[] columnsNames = list.get(0);
 			if(columnsNames.length>0) { // filter UTF8 BOM
 				if(columnsNames[0].startsWith(UTF8_BOM)) {
@@ -403,7 +423,7 @@ public class Table {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Comment line starts with '#'
 	 * @param row
@@ -411,9 +431,9 @@ public class Table {
 	 */
 	public static boolean isComment(String[] row) {
 		return row.length > 0 && row[0].length() > 0 && row[0].charAt(0) == '#';
-		
+
 	}
-	
+
 	/**
 	 * Comment line starts with '#'
 	 * @param row
@@ -421,9 +441,9 @@ public class Table {
 	 */
 	public static boolean isNoComment(String[] row) {
 		return row.length == 0 || row[0].length() == 0 || row[0].charAt(0) != '#';
-		
+
 	}
-	
+
 	public void updateNames(String[] columnNames) {
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
 
@@ -442,7 +462,7 @@ public class Table {
 				map.put(columnNames[i], i);
 			}
 		}
-		
+
 		this.names = columnNames;
 		this.nameMap = map;
 	}
@@ -457,7 +477,7 @@ public class Table {
 			String[] dataRow = reader.readNext();
 
 			reader.close();
-			
+
 			table.updateNames(headerRow);
 
 			table.rows = new String[1][];
@@ -506,11 +526,11 @@ public class Table {
 		}
 		return new ColumnReaderString(columnIndex);
 	}
-	
+
 	public static interface ReaderConstructor<T> {
 		T create(int a);
 	}
-	
+
 	public <T> T getColumnReader(String name, ReaderConstructor<T> readerConstructor) {
 		int columnIndex = getColumnIndex(name);
 		if(columnIndex<0) {
@@ -518,8 +538,8 @@ public class Table {
 		}
 		return readerConstructor.create(columnIndex);
 	}
-	
-	
+
+
 	public ColumnReaderString createColumnReader(String name, String missing) {
 		int columnIndex = getColumnIndex(name, false);
 		if(columnIndex<0) {
@@ -573,7 +593,7 @@ public class Table {
 		}
 		return new ColumnReaderIntFunc(columnIndex, parser);
 	}
-	
+
 	public ColumnReaderBoolean createColumnReaderBooleanYN(String name, boolean missing) {
 		int columnIndex = getColumnIndex(name, false);
 		if(columnIndex<0) {
@@ -657,7 +677,7 @@ public class Table {
 		}
 		return s.toString();
 	}
-	
+
 	public String getName(ColumnReader cr) {
 		return names[cr.rowIndex];
 	}

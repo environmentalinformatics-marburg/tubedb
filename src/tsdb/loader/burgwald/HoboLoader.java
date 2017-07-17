@@ -1,4 +1,4 @@
-package tsdb.loader.bale;
+package tsdb.loader.burgwald;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -6,6 +6,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,15 +14,15 @@ import org.apache.logging.log4j.Logger;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
 import tsdb.util.DataEntry;
+import tsdb.util.Table.ColumnReaderDayFirstAmPmTimestamp;
 import tsdb.util.Table.ColumnReaderFloat;
-import tsdb.util.Table.ColumnReaderSpaceTimestamp;
 
-public class TOA5Loader {
+public class HoboLoader {
 	private static final Logger log = LogManager.getLogger();
 
 	private final TsDB tsdb;
 
-	public TOA5Loader(TsDB tsdb) {
+	public HoboLoader(TsDB tsdb) {
 		this.tsdb = tsdb;
 	}
 
@@ -47,19 +48,20 @@ public class TOA5Loader {
 	}
 
 	public void loadFile(Path filename) throws FileNotFoundException, IOException {
-		TOA5Table table = new TOA5Table(filename.toString());
+		//log.info("load Hobo File: "+filename);
+		HoboTable table = new HoboTable(filename.toString());
 
 		if(table.rows.length==0) {
-			log.info("empty TOA5Table "+filename);
+			log.info("empty HoboTable "+filename);
 			return;
 		}
 
-		ColumnReaderSpaceTimestamp timestampReader = table.getColumnReader("TIMESTAMP", ColumnReaderSpaceTimestamp::new);
+		ColumnReaderDayFirstAmPmTimestamp timestampReader = table.getColumnReader("Datum Zeit", ColumnReaderDayFirstAmPmTimestamp::new);
 		//ColumnReaderInt recordReader = table.createColumnReaderInt("RECORD");
 		//ColumnReaderString stationNameReader = table.createColumnReader("StationName");
 
 		//String stationName = stationNameReader.get(table.rows[0]);
-		String stationName = table.recordingName;
+		String stationName = table.plotID;
 
 		if(!tsdb.stationExists(stationName)) {
 			log.error("station not in database "+stationName+"  at  "+filename);
@@ -72,12 +74,15 @@ public class TOA5Loader {
 		ArrayList<String> traceTranslatedList = new ArrayList<>();
 		for(String name:table.names) {
 			switch(name) {
-			case "TIMESTAMP":
-			case "RECORD":
-			case "StationName":
-			case "Latitude":
-			case "Longitude":
-			case "Altitude":
+			case "Datum Zeit":
+			case "Anz.":
+			case "Koppler verbunden":
+			case "Host verbunden":
+			case "Koppler abgetrennt":
+			case "Angehalten":
+			case "Dateiende":
+			case "Batterie defekt":
+			case "Batterie gut":
 				//just exclude
 				break;
 			default:
@@ -117,7 +122,7 @@ public class TOA5Loader {
 				for (int rowIndex = 0; rowIndex < rowLen; rowIndex++) {
 					if(timestamps[rowIndex]!=-1) {
 						String text = rows[rowIndex][colIndex];
-						if(!text.equals("NAN")) {
+						if(!text.isEmpty() && !text.equals("Protokolliert")) {
 							float v = Float.parseFloat(text);
 							if(Float.isFinite(v)) {
 								vList.add(new DataEntry(timestamps[rowIndex], v));
@@ -147,8 +152,31 @@ public class TOA5Loader {
 		int rowCount = rowLen;
 		String[] headerNames = traceHeaderList.toArray(new String[0]);
 		String[] sensorNames = traceTranslatedList.toArray(new String[0]);
-		int timeStep = table.metaHeaderContains("TableMetHour") ? 60 : -1;
+		int timeStep = -1;
+		//log.info("insert: "+Arrays.toString(sensorNames));
 		SourceEntry sourceEntry = new SourceEntry(filename, stationName, firstTimestamp, lastTimestamp, rowCount, headerNames, sensorNames, timeStep);
 		tsdb.sourceCatalog.insert(sourceEntry);
+	}
+	
+	public void collectPlotsRecursive(Path path, Set<String> plotIDs) {
+		//log.info("import "+path);
+				try(DirectoryStream<Path> rootStream = Files.newDirectoryStream(path)) {
+					for(Path sub:rootStream) {
+						if(!Files.isDirectory(sub)) {
+							try {
+								HoboTable table = new HoboTable(sub.toString());
+								plotIDs.add(table.plotID);
+							} catch (Exception e) {
+								e.printStackTrace();
+								log.error(e+"  in "+sub);
+							}
+						} else {
+							collectPlotsRecursive(sub, plotIDs);
+						}
+
+					}
+				} catch (Exception e) {
+					log.error(e);
+				}				
 	}
 }

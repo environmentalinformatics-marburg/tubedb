@@ -1,0 +1,73 @@
+package tsdb.loader.burgwald;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.opencsv.CSVReader;
+
+import tsdb.util.Table;
+
+public class HoboTable extends Table {
+	private static final Logger log = LogManager.getLogger();
+	
+	public final String plotID;
+	public final String[] columnsHeader;
+
+
+	public HoboTable(String filename) throws FileNotFoundException, IOException {
+		try(CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8))) {			
+			String[] firstLine = reader.readNext();			
+			if(firstLine.length != 1) {
+				throw new RuntimeException("invalid HOBO header: "+Arrays.toString(firstLine));
+			}			
+			String metaHeader = firstLine[0].startsWith("\uFEFF") ? firstLine[0].substring(1) : firstLine[0];
+			if(!metaHeader.startsWith("Plot-Titel: ")) {
+				throw new RuntimeException("invalid HOBO header: |"+metaHeader+"|");
+			}
+			this.plotID = metaHeader.substring(12).trim();
+			//log.info("|" + plotID + "|");			
+			
+			this.columnsHeader = reader.readNext();
+			
+			//log.info(Arrays.toString(columnsHeader));
+			String[] names = new String[columnsHeader.length];
+			for (int i = 0; i < names.length; i++) {
+				String name = columnsHeader[i];
+				int sep1 = name.indexOf(',');
+				int sep2 = name.indexOf('(');
+				if(sep1 < 0) {
+					if(sep2 < 0) {
+						names[i] = name.trim();
+					} else {
+						names[i] = name.substring(0, sep2).trim();
+					}
+				} else {
+					if(sep2 < 0) {
+						names[i] = name.substring(0, sep1).trim();
+					} else {
+						if(sep1 < sep2) {
+							names[i] = name.substring(0, sep1).trim();
+						} else {
+							names[i] = name.substring(0, sep2).trim();
+						}
+					}
+				}				
+			}
+			//log.info(Arrays.toString(names));			
+			this.updateNames(names);
+			List<String[]> rows = reader.readAll();			
+			this.rows = rows.toArray(new String[0][]);
+		}
+	}
+	
+
+
+}

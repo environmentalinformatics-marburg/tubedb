@@ -1001,6 +1001,8 @@ SM_50_U:
   visibility: internal
   
 Trad_R:
+  description: PT100 sensor radiometer temperature
+  unit: Ω (ohm)  
   aggregation: none
   physical_range: [80.0, 125.0]
   visibility: internal

@@ -18,6 +18,7 @@ import tsdb.TsDBFactory;
 import tsdb.component.Region;
 import tsdb.loader.bale.TOA5Loader;
 import tsdb.loader.be.TimeSeriesLoaderBE;
+import tsdb.loader.burgwald.HoboLoader;
 import tsdb.loader.ki.TimeSeriesLoaderKiLi;
 import tsdb.loader.ki.TimeSeriesLoaderKiLi_manual_tfi;
 import tsdb.loader.mm.ImportGenericASC;
@@ -89,6 +90,10 @@ public class DataImport {
 			case "csv_tfi": {
 				TimeSeriesLoaderKiLi_manual_tfi TimeSerieaLoaderKiLi_manual_tfi = new TimeSeriesLoaderKiLi_manual_tfi(tsdb);
 				TimeSerieaLoaderKiLi_manual_tfi.loadOneDirectory_structure_kili_tfi(rootDirectory);
+				break;
+			}
+			case "csv_hobo": {
+				new HoboLoader(tsdb).loadDirectoryRecursive(rootDirectory);
 				break;
 			}
 			case "asc": {
