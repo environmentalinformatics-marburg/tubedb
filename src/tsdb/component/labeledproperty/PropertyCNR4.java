@@ -9,8 +9,8 @@ import tsdb.util.yaml.YamlMap;
 public class PropertyCNR4 {
 
 	private static final String[] names = new String[]{"SWDR_300", "SWDR_300_U", "SWUR_300", "SWUR_300_U", "LWDR_300", "LWDR_300_U", "LWUR_300", "LWUR_300_U", "Trad"};
-	private static final double sigma =  5.670367E-8;  // Stefan–Boltzmann constant 5.670367*10^-8 W/(m^2*K^4)
-	private static final double zero_degree = 273.15; // 0°C in K
+	private static final double sigma =  5.670367E-8;  // Stefan Boltzmann constant 5.670367*10^-8 W/(m^2*K^4)
+	private static final double zero_degree = 273.15; // 0Â°C in K
 
 	public final double swdr;
 	public final double swur;
