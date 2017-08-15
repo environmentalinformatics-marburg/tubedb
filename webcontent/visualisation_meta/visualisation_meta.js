@@ -185,6 +185,10 @@ computed: {
 		var sensorIDs;
 		if(this.sensorIDs[0] === '*') {
 			sensorIDs = ['*'];
+		} else if(this.sensorIDs[0] === 'all_measurements') {
+			sensorIDs = ['all_measurements'];
+		} else if(this.sensorIDs[0] === 'all_derived') {
+			sensorIDs = ['all_derived'];
 		} else {
 			if(sensors.length === 0) {
 				sensorIDs = [];
@@ -206,8 +210,15 @@ computed: {
 				}
 			}
 		}
+		console.log("update sensorIDs");
 		this.sensorIDs = sensorIDs;
 		return sensors;
+	},
+	visibleNotDerivedSensors: function() {
+		return this.visibleSensors.filter(function(s){return !s.derived});
+	},
+	visibleDerivedSensors: function() {
+		return this.visibleSensors.filter(function(s){return s.derived});
 	},
 	timeText: function() {
 		var s = this.timeYear;
@@ -347,18 +358,31 @@ methods: {
 		
 		var plotstations = self.plotstations.filter(function(o){return o.selected;});
 		
+		console.log("this.sensorIDs[0] "+this.sensorIDs[0]);
+		
 		var sensors = [];
 		if(this.sensorIDs[0] == '*') {
-			//sensors = this.metadata.sensors;
 			this.metadata.sensors.forEach(function(s){
-				if( !s.raw || s.raw && self.aggregation === 'raw') {
+				if( !s.raw || (s.raw && self.aggregation === 'raw')) {
+					sensors.push(s);
+				}
+			});
+		} else if(this.sensorIDs[0] == 'all_measurements') {
+			this.metadata.sensors.forEach(function(s){
+				if( !s.derived && ( !s.raw || (s.raw && self.aggregation === 'raw') )) {
+					sensors.push(s);
+				}
+			});
+		} else if(this.sensorIDs[0] == 'all_derived') {
+			this.metadata.sensors.forEach(function(s){
+				if( s.derived && ( !s.raw || (s.raw && self.aggregation === 'raw') )) {
 					sensors.push(s);
 				}
 			});
 		} else {
 			this.sensorIDs.forEach(function(o){
 				var s = self.sensorMap[o];
-				if( !s.raw || s.raw && self.aggregation === 'raw') {
+				if( !s.raw || (s.raw && self.aggregation === 'raw')) {
 					sensors.push(s);
 				}
 			});
@@ -552,7 +576,7 @@ watch: {
 		});
 		this.stationMap = values;
 
-		values = {"*":{id:"*", name:"*"}};
+		values = {"*":{id:"*", name:"*"}, "all_measurements":{id:"all_measurements", name:"all_measurements"}, "all_derived":{id:"all_derived", name:"all_derived"}};
 		this.metadata.sensors.forEach(function(o){
 			values[o.id] = o;
 		});

@@ -184,6 +184,8 @@ public class Handler_metadata extends MethodHandler {
 				json_output.value(sensor.unitDescription);
 				json_output.key("raw");
 				json_output.value(!sensor.isAggregable());
+				json_output.key("derived");
+				json_output.value(sensor.raw_source != null || sensor.dependency != null);
 				json_output.endObject();
 			}
 		}
