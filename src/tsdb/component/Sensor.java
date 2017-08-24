@@ -73,11 +73,13 @@ public class Sensor implements Serializable {
 	public boolean internal;
 
 	public double maxInterpolationMSE;
-	
+
 	public String[] raw_source = null;
 	public String[] dependency = null;
 	public String post_hour_func = null;
 	public String post_day_func = null;
+
+	private Boolean derived = null; //nullable
 
 	public Sensor(String name) {
 		this.name = name;
@@ -208,15 +210,17 @@ public class Sensor implements Serializable {
 				mse -> {useInterpolation[0] = true; interpolation_mse[0] = mse;}, 
 				e -> log.warn("could not read interpolation_mse of "+sensorName+"   "+e)
 				);
-		
+
 		SensorCategory category = SensorCategory.parse(yamlMap.optString("category", "other"));
 		boolean internal = yamlMap.optString("visibility", "public").equals("internal");
-				
+
 		String[] raw_source = yamlMap.optList("raw_source").asStringArray();
 		String[] dependency = yamlMap.optList("dependency").asStringArray();
-		
+
 		String post_hour_func = yamlMap.optString("post_hour_func", null);
 		String post_day_func = yamlMap.optString("post_day_func", null);
+		
+		Boolean derived = yamlMap.optBoolean("derived", null);
 
 		Sensor sensor = new Sensor(sensorName);
 		sensor.description = description;
@@ -227,7 +231,7 @@ public class Sensor implements Serializable {
 		yamlMap.optFunStringConv("aggregation_week", AggregationType::parse, sensor::setAggregationWeek);
 		yamlMap.optFunStringConv("aggregation_month", AggregationType::parse, sensor::setAggregationMonth);
 		yamlMap.optFunStringConv("aggregation_year", AggregationType::parse, sensor::setAggregationYear);
-		
+
 		sensor.physicalMin = physicalMin;
 		sensor.physicalMax = physicalMax;
 		sensor.stepMin = stepMin;
@@ -241,10 +245,11 @@ public class Sensor implements Serializable {
 		sensor.dependency = dependency.length == 0 ? null : dependency;
 		sensor.post_hour_func = post_hour_func;
 		sensor.post_day_func = post_day_func;
+		sensor.derived = derived;
 
 		return sensor;
 	}
-	
+
 	public AggregationType getAggregationHour() {
 		return aggregationHour;	
 	}
@@ -264,7 +269,7 @@ public class Sensor implements Serializable {
 	public AggregationType getAggregationYear() {
 		return aggregationYear;	
 	}
-	
+
 	public void setAllAggregations(AggregationType agg) {		
 		aggregationHour = agg;
 		aggregationDay = agg;
@@ -272,23 +277,23 @@ public class Sensor implements Serializable {
 		aggregationMonth = agg;
 		aggregationYear = agg;
 	}
-	
+
 	public void setAggregationHour(AggregationType agg) {		
 		aggregationHour = agg;
 	}
-	
+
 	public void setAggregationDay(AggregationType agg) {		
 		aggregationDay = agg;
 	}
-	
+
 	public void setAggregationWeek(AggregationType agg) {		
 		aggregationWeek = agg;
 	}
-	
+
 	public void setAggregationMonth(AggregationType agg) {
 		aggregationMonth = agg;
 	}
-	
+
 	public void setAggregationYear(AggregationType agg) {
 		aggregationYear = agg;
 	}
@@ -316,5 +321,13 @@ public class Sensor implements Serializable {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	public boolean isDerived() {
+		if(derived == null) {
+			return raw_source != null || dependency != null;
+		} else {
+			return derived;
+		}
 	}
 }

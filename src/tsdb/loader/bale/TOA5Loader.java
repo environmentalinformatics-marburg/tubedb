@@ -26,7 +26,7 @@ public class TOA5Loader {
 	}
 
 	public void loadDirectoryRecursive(Path path) {
-		//log.info("import "+path);
+		log.info("TOA5 import "+path);
 		try(DirectoryStream<Path> rootStream = Files.newDirectoryStream(path)) {
 			for(Path sub:rootStream) {
 				if(!Files.isDirectory(sub)) {
@@ -47,6 +47,7 @@ public class TOA5Loader {
 	}
 
 	public void loadFile(Path filename) throws FileNotFoundException, IOException {
+		log.info("TOA5 load " + filename);
 		TOA5Table table = new TOA5Table(filename.toString());
 
 		if(table.rows.length==0) {

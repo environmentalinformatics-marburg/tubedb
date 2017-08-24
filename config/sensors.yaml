@@ -299,6 +299,7 @@ WD:
   aggregation: average_wind_direction
   physical_range: [0.0, 360.0]   
   step_range: [0.0, 1000.0]
+  derived: false # dependency set for aggregation only
   
 WV:
   description: Wind velocity
@@ -341,7 +342,8 @@ P_RT_NRT:
   physical_range: [0.0, 500.0]
   step_range: [0.0, 1000.0]
   interpolation_mse: 4
-  category: water 
+  category: water
+  derived: false # optional dependency
   
 P_container_RT:
   description: Precipitation, actual unfiltered amount in container
@@ -364,7 +366,7 @@ P_container_NRT:
 SWDR:
   description: Shortwave Downward Radiation
   unit: kWh/m^2 (kilo watt hour per square meter) 
-  raw_source: [SWDR_300, SWDR_3700, SWDR_4400]
+  raw_source: [SWDR_300, SWDR_3700, SWDR_4400, SWDR_200]
   aggregation: sum_radiation
   physical_range: [-100.0, 1500.0]
   step_range: [0.0, 1000.0]
@@ -950,7 +952,6 @@ SD:
   unit: h (hour)
   dependency: SWDR
   aggregation: sum_sunshine
-  visibility: internal  # set virtual sensor temporarily to internal
 
 SD_Olivieri:
   description: sunshine duration (based on SWDR with Oliviéri algorithm and solar elevation angle)
@@ -1386,15 +1387,65 @@ evaporation_calculated:
   description: water lost due to evapotranspiration
   unit: mm/h (mm per hour)
   aggregation: average
+  derived: true
   
-SWDR_300_MJ:
-  description: (internal) Shortwave Downward Radiation at 3 meters height
+SWDR_200:
+  description: Shortwave Downward Radiation at 2 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 157.2
+  interpolation_mse: 10000 
+  
+SWDR_200_MJ:
+  description: (internal) Shortwave Downward Radiation at 2 meters height
   unit: MJ/m^2 (megajoule per square meter)
   aggregation: sum
   visibility: internal
 
-SWDR_300_clear_sky_MJ:
+SWDR_200_clear_sky_MJ:
   description: (internal) calculated Shortwave Downward Radiation for clear sky
   unit: MJ/m^2 (megajoule per square meter)
   aggregation: sum
-  visibility: internal   
+  visibility: internal
+
+diag:
+  description: (internal)
+  visibility: internal
+
+ET24Cnt:
+  description: (internal)
+  visibility: internal 
+
+ETsz24:
+  description: (internal)
+  visibility: internal
+
+LowPower:
+  description: (internal)
+  visibility: internal  
+
+ModemReset:
+  description: (internal)
+  visibility: internal  
+
+nmbr_bytes_rtrnd:
+  description: (internal)
+  visibility: internal  
+
+Rain_mm:
+  description: (internal)
+  visibility: internal  
+
+ETsz24:
+  description: (internal)
+  visibility: internal  
+
+ETsz24:
+  description: (internal)
+  visibility: internal  
+
+ETsz24:
+  description: (internal)
+  visibility: internal    

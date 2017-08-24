@@ -227,6 +227,20 @@ public class YamlMap {
 		}
 		return def;
 	}
+	
+	/**
+	 * nullable default
+	 * @param name
+	 * @param def
+	 * @return
+	 */
+	public Boolean optBoolean(String name, Boolean def) {
+		if(contains(name)) {
+			return getBoolean(name);
+		}
+		return def;
+	}
+	
 
 	@FunctionalInterface
 	public interface BooleanConsumer {

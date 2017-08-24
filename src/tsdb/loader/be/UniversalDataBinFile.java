@@ -42,7 +42,7 @@ public class UniversalDataBinFile {
 	private double startTimeToDayFactor;
 
 	private double startTime;
-	
+
 	private boolean directTimestamps;
 
 	public static class DataRow {
@@ -136,8 +136,8 @@ public class UniversalDataBinFile {
 		//log.info(sampleRate+"\tsampleRate");
 		variableCount = byteBuffer.getShort();
 		//System.out.println(variableCount+" variableCount");
-		
-		
+
+
 		switch(dActTimeDataType) {
 		case 7: // UnSignedInt32 (default for loggers)
 		case 6: // SignedInt32
@@ -340,7 +340,7 @@ public class UniversalDataBinFile {
 
 		return datarows;
 	}
-	
+
 	public UDBFTimestampSeries getUDBFTimeSeries() {
 		if(directTimestamps) {
 			return getUDBFTimeSeriesDirect();
@@ -348,22 +348,37 @@ public class UniversalDataBinFile {
 			return getUDBFTimeSeriesTimeConverted();
 		}
 	}
-	
+
 	private UDBFTimestampSeries getUDBFTimeSeriesDirect() {
+		//log.info("getUDBFTimeSeriesDirect "+filename);
 		DataRow[] dataRows = readDataRows();
 		int len = dataRows.length;
 		long[] time = new long[len]; 
 		float[][] data = new float[len][];
-		
-		for (int i = 0; i < len; i++) {
+
+		int timestampLow = (int) timeConverter.getStartTimeOleMinutes();
+		int timestampHigh = timestampLow + TimeConverter.DURATION_TIMESTAMP_ONE_YEAR;
+
+		int pos = 0;
+		for (int i = 0; i < len; i++) {			
 			DataRow dataRow = dataRows[i];
-			time[i] = dataRow.id;
-			data[i] = dataRow.data;			
-		}		
+			int t = dataRow.id;
+			if(timestampLow <= t && t <= timestampHigh) {
+				time[pos] = t;
+				data[pos] = dataRow.data;
+				pos++;
+			}
+		}
+		if(pos < len) {
+			log.warn("filtered out "+(len - pos)+"  of "+len+"  rows in "+filename);
+			time = Arrays.copyOf(time, pos);
+			data = Arrays.copyOf(data, pos);
+		}
 		return new UDBFTimestampSeries(filename, sensorHeaders, timeConverter, time, data);		
 	}
 
 	private UDBFTimestampSeries getUDBFTimeSeriesTimeConverted() {
+		//log.info("getUDBFTimeSeriesTimeConverted "+filename);
 		DataRow[] dataRows = readDataRows();
 		if(dataRows.length==0) {
 			return null;
@@ -407,7 +422,7 @@ public class UniversalDataBinFile {
 			if(dataRows[i].id<0) {
 				continue;
 			}
-			if(dataRows[i].id>10000000) { //invalid id at AEW40: 134220377 and 134220378
+			if(dataRows[i].id > 1_000_000) { //invalid id at AEW40: 134220377 and 134220378
 				log.warn("invalid id "+dataRows[i].id);
 				continue;
 			}

@@ -15,6 +15,8 @@ public final class TimeConverter {
 	private final double startTime;
 	private final double startTimeToDayFactor;
 	//private final double sampleRate;
+	
+	public static final int DURATION_TIMESTAMP_ONE_YEAR = 60*24*365;
 
 	public TimeConverter(double startTimeToDayFactor, double dActTimeToSecondFactor, double startTime, double sampleRate) {
 		this.startTimeToDayFactor = startTimeToDayFactor;
