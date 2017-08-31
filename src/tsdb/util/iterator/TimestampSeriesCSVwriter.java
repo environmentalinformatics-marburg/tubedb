@@ -12,6 +12,7 @@ import tsdb.iterator.ProjectionFillIterator;
 import tsdb.util.AggregationInterval;
 import tsdb.util.TimeUtil;
 import tsdb.util.TsEntry;
+import tsdb.util.Util;
 
 public class TimestampSeriesCSVwriter {
 	
@@ -30,7 +31,8 @@ public class TimestampSeriesCSVwriter {
 	private final boolean short_datetime = true;
 	private final String missing_value_placeholder = "NA";
 	
-	private static final DecimalFormat decimalFormat = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.ENGLISH));
+	private static final DecimalFormat decimalFormat2 = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.ENGLISH));
+	private static final DecimalFormat decimalFormat5 = new DecimalFormat("0.00000", new DecimalFormatSymbols(Locale.ENGLISH));
 	
 	public TimestampSeriesCSVwriter(boolean col_plotid, boolean col_timestamp, boolean col_datetime, boolean col_qualitycounter) {
 		this.col_plotid = col_plotid;
@@ -118,8 +120,9 @@ public class TimestampSeriesCSVwriter {
 					bufferedWriter.write(missingValueChars);
 				} else {
 					//formatter.format(Locale.ENGLISH, "%.2f", v);
-					bufferedWriter.write(decimalFormat.format(v));
 					//bufferedWriter.write(Util.fastWriteFloat(v));
+					//bufferedWriter.write(decimalFormat2.format(v));
+					bufferedWriter.write(decimalFormat5.format(v));
 				}
 			}
 			if(col_qualitycounter) {

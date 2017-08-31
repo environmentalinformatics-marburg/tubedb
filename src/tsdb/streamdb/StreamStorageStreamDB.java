@@ -150,7 +150,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 		}
 		return set.toArray(new String[set.size()]);
 	}
-	
+
 	/**
 	 * Check if station exists in StreamDB. Station exists only if it contains time series data.
 	 * @param stationID
@@ -159,7 +159,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 	public boolean existStation(String stationID) {
 		return streamdb.existStation(stationID);
 	}
-	
+
 	/**
 	 * Check if data of sensor exits in station. If station does not exist return false. 
 	 * @param stationID
@@ -176,8 +176,15 @@ public class StreamStorageStreamDB implements StreamStorage {
 	}
 
 	@Override
-	public void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask) {
+	public void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask, boolean commit) {
 		streamdb.setSensorTimeSeriesMask(stationName, sensorName, timeSeriesMask);
+		if(commit) {
+			streamdb.commit();
+		}
+	}
+
+	@Override
+	public void commit() {
 		streamdb.commit();
 	}
 
@@ -194,7 +201,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 		}
 
 	}
-	
+
 	public void insertDataRows(String stationName, String[] sensorNames, Collection<DataRow> dataRows) {
 		int sensors = sensorNames.length;
 		ArrayList<DataEntry> dataEntryList = new ArrayList<DataEntry>(dataRows.size());

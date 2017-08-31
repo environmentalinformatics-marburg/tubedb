@@ -29,6 +29,7 @@ import tsdb.graph.processing.ElementRawCopy;
 import tsdb.graph.processing.EmpiricalFiltered_NEW;
 import tsdb.graph.processing.Evaporation;
 import tsdb.graph.processing.Mask;
+import tsdb.graph.processing.NocCheck;
 import tsdb.graph.processing.PeakSmoothed;
 import tsdb.graph.processing.RangeStepFiltered;
 import tsdb.graph.processing.Sunshine;
@@ -159,9 +160,9 @@ public final class QueryPlanGenerators {
 				return null;
 			}
 			Continuous continuous = Continuous.of(base);
-			/*if(dataQuality.isStep()) {
+			if(dataQuality.isStep()) {
 				continuous = NocCheck.of(tsdb, continuous);
-			}*/
+			}
 			if(DataQuality.EMPIRICAL==dataQuality) {
 				continuous = EmpiricalFiltered_NEW.of(tsdb, continuous, plotID);
 			}

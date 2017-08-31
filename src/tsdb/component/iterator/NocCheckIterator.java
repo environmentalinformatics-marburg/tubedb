@@ -6,7 +6,6 @@ import java.util.Arrays;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import tsdb.util.TimeUtil;
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.InputIterator;
 import tsdb.util.iterator.TsIterator;
@@ -25,6 +24,7 @@ public class NocCheckIterator extends InputIterator {
 	private float[] max;
 	private final int len;
 	private float[] min_range;
+	private float[] max_diff;
 
 
 	public NocCheckIterator(TsIterator input_iterator) {
@@ -33,15 +33,28 @@ public class NocCheckIterator extends InputIterator {
 		min = new float[len];
 		max = new float[len];
 		min_range = new float[len];
+		max_diff = new float[len];
 		String[] names = this.schema.names;
 		for (int i = 0; i < len; i++) {
 			float minRange = ABSENT;
+			float maxDiff = ABSENT;
 			switch(names[i]) {
+			case "Ta_200":
+				//minRange = 5f;
+				//maxDiff = 5f;
+				break;			
 			case "rH_200":
-				minRange = 5f;
+				minRange = 1f;
+				//maxDiff = 10f;
+				break;
+
+			case "SM_10":
+				//minRange = 0.1f;
+				//maxDiff = 5f;
 				break;
 			}
 			min_range[i] = minRange;
+			max_diff[i] = maxDiff;
 		}
 		while(future.size() < MAX_ELEMENTS && input_iterator.hasNext()) {
 			future.addLast(input_iterator.next());
@@ -111,19 +124,22 @@ public class NocCheckIterator extends InputIterator {
 					flag = true;
 				}
 			}
-			if(prevDayHour!=null && futureDayHour!=null) {
-				int maxDiff = 10;
+			if(max_diff[i] != ABSENT && prevDayHour!=null && futureDayHour!=null) {
+				float maxDiff = max_diff[i];
 				/*if( (v+maxDiff<prevDayHour[i] && v+maxDiff<futureDayHour[i]) || (prevDayHour[i]<v-maxDiff && futureDayHour[i]<v-maxDiff) ) {
 					flag = true;
 				}*/
-				if(v+maxDiff<prevDayHour[i] || prevDayHour[i]<v-maxDiff) {
+				/*if(v+maxDiff<prevDayHour[i] || prevDayHour[i]<v-maxDiff) {
 					flag = true;
 				}
 				if(v+maxDiff<futureDayHour[i] || futureDayHour[i]<v-maxDiff) {
 					flag = true;
+				}*/
+				if(Math.abs(v - prevDayHour[i]) > maxDiff && Math.abs(v - futureDayHour[i]) > maxDiff) {
+					flag = true;
 				}
 			}
-			
+
 			if(flag) {
 				result[i] = Float.NaN;
 			}

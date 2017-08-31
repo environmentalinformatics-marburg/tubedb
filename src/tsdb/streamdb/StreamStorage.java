@@ -52,9 +52,12 @@ public interface StreamStorage {
 
 	TimeSeriesMask getTimeSeriesMask(String stationName, String sensorName);
 
-	void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask);
+	void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask, boolean commit);
 
 	public void insertTimestampSeries(TimestampSeries timestampSeries);
 
 	void removeInterval(String stationName, int start, int end);
+
+	void commit();
+
 }

@@ -23,7 +23,7 @@ public class NocCheck extends Continuous.Abstract {
 
 	private final Continuous source; //not null
 
-	public NocCheck(TsDB tsdb, Continuous source) {
+	private NocCheck(TsDB tsdb, Continuous source) {
 		super(tsdb);
 		throwNulls(source);
 		if(!source.isContinuous()) {

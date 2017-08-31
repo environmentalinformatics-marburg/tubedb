@@ -571,7 +571,7 @@ public class ServerTsDB implements RemoteTsDB {
 
 	@Override
 	public void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask) {
-		tsdb.streamStorage.setTimeSeriesMask(stationName, sensorName, timeSeriesMask);
+		tsdb.streamStorage.setTimeSeriesMask(stationName, sensorName, timeSeriesMask, true);
 	}
 	
 	// ----- info -------
@@ -579,6 +579,6 @@ public class ServerTsDB implements RemoteTsDB {
 	@Override
 	public String get_tubedb_version() throws RemoteException {
 		// TODO Auto-generated method stub
-		return tsdb.tubedb_version;
+		return TsDB.tubedb_version;
 	}
 }

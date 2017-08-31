@@ -214,11 +214,14 @@ computed: {
 		this.sensorIDs = sensorIDs;
 		return sensors;
 	},
-	visibleNotDerivedSensors: function() {
-		return this.visibleSensors.filter(function(s){return !s.derived});
+	visibleNotDerivedSensors: function() { // not internal
+		return this.visibleSensors.filter(function(s){return !s.internal && !s.derived});
 	},
-	visibleDerivedSensors: function() {
-		return this.visibleSensors.filter(function(s){return s.derived});
+	visibleDerivedSensors: function() {  // not internal
+		return this.visibleSensors.filter(function(s){return !s.internal && s.derived});
+	},
+	visibleInternalSensors: function() {
+		return this.visibleSensors.filter(function(s){return s.internal});
 	},
 	timeText: function() {
 		var s = this.timeYear;
@@ -369,13 +372,13 @@ methods: {
 			});
 		} else if(this.sensorIDs[0] == 'all_measurements') {
 			this.metadata.sensors.forEach(function(s){
-				if( !s.derived && ( !s.raw || (s.raw && self.aggregation === 'raw') )) {
+				if( !s.internal && !s.derived && ( !s.raw || (s.raw && self.aggregation === 'raw') )) {
 					sensors.push(s);
 				}
 			});
 		} else if(this.sensorIDs[0] == 'all_derived') {
 			this.metadata.sensors.forEach(function(s){
-				if( s.derived && ( !s.raw || (s.raw && self.aggregation === 'raw') )) {
+				if( !s.internal && s.derived && ( !s.raw || (s.raw && self.aggregation === 'raw') )) {
 					sensors.push(s);
 				}
 			});

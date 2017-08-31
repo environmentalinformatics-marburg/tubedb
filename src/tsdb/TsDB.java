@@ -33,7 +33,7 @@ import tsdb.util.Util;
 public class TsDB implements AutoCloseable {
 	private static final Logger log = LogManager.getLogger();
 	
-	public static final String tubedb_version = "1.2.0";
+	public static final String tubedb_version = "1.4.0";
 
 	/**
 	 * map regionName -> Region
@@ -842,6 +842,9 @@ public class TsDB implements AutoCloseable {
 	 */
 	public VirtualCopyList[] sensor_dependency_lists = {};
 
+	/**
+	 * sensors that have raw source sensor
+	 */
 	public String[] raw_copy_sensor_names;
 
 

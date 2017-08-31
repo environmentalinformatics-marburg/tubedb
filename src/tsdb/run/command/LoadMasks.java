@@ -81,7 +81,7 @@ public class LoadMasks {
 			ColumnReaderIntFunc colEnd = maskTable.createColumnReaderInt("end",TimeUtil::parseEndTimestamp);
 
 			for(String[] row:maskTable.rows) {
-				if(Table.isNoComment(row)) {
+				if(Table.isNoComment(row) && row.length > 1) {
 					try {
 						String stationName = colStation.get(row);					
 						if(tsdb.getStation(stationName)==null) {
@@ -99,13 +99,13 @@ public class LoadMasks {
 							mask = new TimeSeriesMask();
 						}
 						mask.addInterval(Interval.of(start, end));				
-						tsdb.streamStorage.setTimeSeriesMask(stationName, sensorName, mask);
+						tsdb.streamStorage.setTimeSeriesMask(stationName, sensorName, mask, false);
 					} catch(Exception e) {
 						log.error(e+" in "+Arrays.toString(row));
 					}
 				}
 			}
-
+			tsdb.streamStorage.commit();
 			//log.info("\n"+maskTable);
 		} catch(Exception e) {
 			log.error(e);

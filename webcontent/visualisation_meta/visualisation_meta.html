@@ -137,13 +137,18 @@
 							<optgroup label="Measurement">
 								<option value="all_measurements">*</option>
 								<option v-for="sensor in visibleNotDerivedSensors" v-bind:value="sensor.id">
-								{{sensor.id}}{{sensor.raw?' (raw)':''}}{{sensor.internal?' (internal)':''}}
+								{{sensor.id}}{{sensor.raw?' (raw)':''}}
 								</option>
 							</optgroup>
 							<optgroup label="Derived" v-show="visibleDerivedSensors.length > 0">
 								<option value="all_derived">*</option>
 								<option v-for="sensor in visibleDerivedSensors" v-bind:value="sensor.id">
-								{{sensor.id}}{{sensor.raw?' (raw)':''}}{{sensor.internal?' (internal)':''}}
+								{{sensor.id}}{{sensor.raw?' (raw)':''}}
+								</option>
+							</optgroup>
+							<optgroup label="Internal" v-show="visibleDerivedSensors.length > 0">
+								<option v-for="sensor in visibleInternalSensors" v-bind:value="sensor.id">
+								{{sensor.id}}{{sensor.raw?' (raw)':''}}
 								</option>
 							</optgroup>
 						</select>
