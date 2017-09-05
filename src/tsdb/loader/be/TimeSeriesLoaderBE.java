@@ -24,6 +24,7 @@ import tsdb.TsDB;
 import tsdb.component.SourceEntry;
 import tsdb.component.labeledproperty.LabeledProperty;
 import tsdb.component.labeledproperty.PropertyCNR4;
+import tsdb.component.labeledproperty.PropertyCNR4_calc;
 import tsdb.component.labeledproperty.PropertyComputation;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataRow;
@@ -233,19 +234,77 @@ public class TimeSeriesLoaderBE {
 		}	
 
 		if(eventMap.size()>0) {
-			List<LabeledProperty> cnr4List = station.labeledProperties.query("CNR4", eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
-			if(cnr4List.size()>0) {
-				log.info("LabeledProperty CNR4");				
-				for(LabeledProperty prop:cnr4List) {					
+
+			Iterator<LabeledProperty> it = station.labeledProperties.query_iterator(eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
+
+			while(it.hasNext()) {
+				LabeledProperty prop = it.next();
+				switch (prop.label) {
+				case "computation": {
+					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
+					try {
+						((PropertyComputation)prop.content).calculate(rows, station.loggerType.sensorNames);
+					} catch(Exception e) {
+						log.warn(e);
+					}
+					break;
+				}
+				case "CNR4": {
 					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
 					try {
 						((PropertyCNR4)prop.content).calculate(rows, station.loggerType.sensorNames);
 					} catch(Exception e) {
 						log.warn(e);
 					}
+					break;
+				}
+				case "CNR4_calc": {
+					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
+					try {
+						((PropertyCNR4_calc)prop.content).calculate(rows, station.loggerType.sensorNames);
+					} catch(Exception e) {
+						log.warn(e);
+					}
+					break;
+				}
+				default:
+					log.warn("unknown property label: "+prop.label);
+					break;
 				}
 			}
-			
+
+
+/*
+			{
+				List<LabeledProperty> cnr4List = station.labeledProperties.query("CNR4", eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
+				if(cnr4List.size()>0) {
+					log.info("LabeledProperty CNR4");				
+					for(LabeledProperty prop:cnr4List) {					
+						Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
+						try {
+							((PropertyCNR4)prop.content).calculate(rows, station.loggerType.sensorNames);
+						} catch(Exception e) {
+							log.warn(e);
+						}
+					}
+				}
+			}
+
+			{
+				List<LabeledProperty> cnr4_calcList = station.labeledProperties.query("CNR4_calc", eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
+				if(cnr4_calcList.size()>0) {
+					log.info("LabeledProperty CNR4_calc");				
+					for(LabeledProperty prop:cnr4_calcList) {					
+						Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
+						try {
+							((PropertyCNR4_calc)prop.content).calculate(rows, station.loggerType.sensorNames);
+						} catch(Exception e) {
+							log.warn(e);
+						}
+					}
+				}
+			}
+
 			List<LabeledProperty> computationList = station.labeledProperties.query("computation", eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
 			if(computationList.size()>0) {
 				log.info("LabeledProperty computation");				
@@ -257,8 +316,8 @@ public class TimeSeriesLoaderBE {
 						log.warn(e);
 					}
 				}
-			}
-			
+			}*/
+
 			tsdb.streamStorage.insertData(station.stationID, eventMap, station.loggerType.sensorNames);			
 		} else {
 			log.warn("no data to insert: "+station);

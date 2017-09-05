@@ -1,3 +1,5 @@
+# entries are applied sequentially in listed order
+
 - {station: AEG01, start: 2015-05-12, end: 2016-06-17, content: {label: CNR4, SWDR: 13.67, SWUR: 16.82, LWDR: 9.74, LWUR: 10.93} }
 - {station: AEG11, start: 2014-06-05, end: 2016-06-20, content: {label: CNR4, SWDR: 17.38, SWUR: 16.88, LWDR: 10.89, LWUR: 10.01} }
 
@@ -14,3 +16,46 @@
 
 - {station: HEG48, start: "2017-06-26T13:00", end: "2017-06-28T12:00", content: {label: CNR4, SWDR: 15.82, SWUR: 18.63, LWDR: 9.28, LWUR: 10.64, comment: "2017-07-05 recalculate with corrected factors"} }
 
+
+- {station: AEG01, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.59", comment: "2017-09-05 recalculate"}}
+- {station: AEG02, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.38", comment: "2017-09-05 recalculate"}}
+- {station: AEG10, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.5", comment: "2017-09-05 recalculate"}}
+- {station: AEG11, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.32", comment: "2017-09-05 recalculate"}}
+- {station: AEG21, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.15", comment: "2017-09-05 recalculate"}}
+- {station: AEG26, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 4.83", comment: "2017-09-05 recalculate"}}
+- {station: AEG28, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.49", comment: "2017-09-05 recalculate"}}
+- {station: AEG35, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.35", comment: "2017-09-05 recalculate"}}
+- {station: HEG03, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.13", comment: "2017-09-05 recalculate"}}
+- {station: HEG19, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.22", comment: "2017-09-05 recalculate"}}
+- {station: HEG20, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.14", comment: "2017-09-05 recalculate"}}
+- {station: HEG29, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.36", comment: "2017-09-05 recalculate"}}
+- {station: HEG31, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.32", comment: "2017-09-05 recalculate"}}
+- {station: HEG48, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.13", comment: "2017-09-05 recalculate"}}
+- {station: SEG03, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.08", comment: "2017-09-05 recalculate"}}
+- {station: SEG09, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.4", comment: "2017-09-05 recalculate"}}
+- {station: SEG32, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.06", comment: "2017-09-05 recalculate"}}
+- {station: SEG35, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.01", comment: "2017-09-05 recalculate"}}
+- {station: SEG43, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.08", comment: "2017-09-05 recalculate"}}
+- {station: SEG50, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.13", comment: "2017-09-05 recalculate"}}
+
+- {station: AEG01, content: {label: CNR4_calc, SWDR: 15.82, SWUR: 18.63, LWDR: 9.28, LWUR: 10.64, comment: "2017-09-05 recalculate"} }
+- {station: AEG02, content: {label: CNR4_calc, SWDR: 18.01, SWUR: 18.50, LWDR: 10.19, LWUR: 9.22, comment: "2017-09-05 recalculate"} }
+- {station: AEG10, content: {label: CNR4_calc, SWDR: 19.18, SWUR: 16.43, LWDR: 7.69, LWUR: 10.90, comment: "2017-09-05 recalculate"} }
+- {station: AEG11, content: {label: CNR4_calc, SWDR: 17.38, SWUR: 16.88, LWDR: 10.89, LWUR: 10.01, comment: "2017-09-05 recalculate"} }
+- {station: AEG21, content: {label: CNR4_calc, SWDR: 14.35, SWUR: 17.69, LWDR: 9.72, LWUR: 9.32, comment: "2017-09-05 recalculate"} }
+- {station: AEG28, content: {label: CNR4_calc, SWDR: 18.24, SWUR: 18.21, LWDR: 11.60, LWUR: 9.44, comment: "2017-09-05 recalculate"} }
+- {station: AEG26, content: {label: CNR4_calc, SWDR: 13.74, SWUR: 19.13, LWDR: 10.15, LWUR: 10.98, comment: "2017-09-05 recalculate"} }
+- {station: AEG35, content: {label: CNR4_calc, SWDR: 15.05, SWUR: 18.05, LWDR: 9.05, LWUR: 11.68, comment: "2017-09-05 recalculate"} }
+- {station: HEG03, content: {label: CNR4_calc, SWDR: 19.87, SWUR: 17.05, LWDR: 8.74, LWUR: 9.99, comment: "2017-09-05 recalculate"} }
+- {station: HEG19, content: {label: CNR4_calc, SWDR: 17.72, SWUR: 14.38, LWDR: 9.10, LWUR: 9.66, comment: "2017-09-05 recalculate"} }
+- {station: HEG20, content: {label: CNR4_calc, SWDR: 18.34, SWUR: 18.63, LWDR: 9.25, LWUR: 10.71, comment: "2017-09-05 recalculate"} }
+- {station: HEG24, content: {label: CNR4_calc, SWDR: 17.52, SWUR: 16.12, LWDR: 9.47, LWUR: 10.43, comment: "2017-09-05 recalculate"} }
+- {station: HEG29, content: {label: CNR4_calc, SWDR: 19.47, SWUR: 19.86, LWDR: 7.47, LWUR: 11.94, comment: "2017-09-05 recalculate"} }
+- {station: HEG31, content: {label: CNR4_calc, SWDR: 16.96, SWUR: 17.15, LWDR: 9.61, LWUR: 10.79, comment: "2017-09-05 recalculate"} }
+- {station: HEG48, content: {label: CNR4_calc, SWDR: 15.82, SWUR: 18.63, LWDR: 9.28, LWUR: 10.64, comment: "2017-09-05 recalculate"} }
+- {station: SEG03, content: {label: CNR4_calc, SWDR: 17.63, SWUR: 16.69, LWDR: 8.98, LWUR: 8.59, comment: "2017-09-05 recalculate"} }
+- {station: SEG09, content: {label: CNR4_calc, SWDR: 17.90, SWUR: 16.56, LWDR: 9.95, LWUR: 10.07, comment: "2017-09-05 recalculate"} }
+- {station: SEG32, content: {label: CNR4_calc, SWDR: 16.70, SWUR: 19.12, LWDR: 9.80, LWUR: 10.03, comment: "2017-09-05 recalculate"} }
+- {station: SEG35, content: {label: CNR4_calc, SWDR: 14.62, SWUR: 17.95, LWDR: 10.64, LWUR: 8.65, comment: "2017-09-05 recalculate"} }
+- {station: SEG43, content: {label: CNR4_calc, SWDR: 17.66, SWUR: 18.19, LWDR: 9.06, LWUR: 10.80, comment: "2017-09-05 recalculate"} }
+- {station: SEG50, content: {label: CNR4_calc, SWDR: 14.29, SWUR: 17.69, LWDR: 9.67, LWUR: 9.75, comment: "2017-09-05 recalculate"} }

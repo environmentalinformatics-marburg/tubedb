@@ -12,7 +12,6 @@ import tsdb.iterator.ProjectionFillIterator;
 import tsdb.util.AggregationInterval;
 import tsdb.util.TimeUtil;
 import tsdb.util.TsEntry;
-import tsdb.util.Util;
 
 public class TimestampSeriesCSVwriter {
 	

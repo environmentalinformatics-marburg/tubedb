@@ -1460,4 +1460,51 @@ ETsz24:
 
 ETsz24:
   description: (internal)
-  visibility: internal    
+  visibility: internal
+
+#calc radiation 2017_09_05
+SWDR_300_calc:
+  description: Shortwave Downward Radiation at 3 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 157.2
+  interpolation_mse: 10000   
+  
+SWUR_300_calc:
+  description: Shortwave Upward Radiation at 3 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 43.03
+  interpolation_mse: 10000   
+  
+LWDR_300_calc:
+  description: Longwave Downward Radiation at 3 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 220.0]
+  empirical_diff: 34.29
+  interpolation_mse: 10000   
+  
+LWUR_300_calc:
+  description: Longwave Upward Radiation at 3 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 18.31
+  interpolation_mse: 10000
+
+PAR_300_calc:
+  description: Photosynthetically activ radiation at 3 meters height
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 610.46
+  interpolation_mse: 10000     
+  

@@ -35,6 +35,8 @@ public class LabeledProperty {
 				return PropertyComputation.parse(map);
 			case "CNR4":
 				return PropertyCNR4.parse(map);
+			case "CNR4_calc":
+				return PropertyCNR4_calc.parse(map);
 			default:
 				return map;
 			}
