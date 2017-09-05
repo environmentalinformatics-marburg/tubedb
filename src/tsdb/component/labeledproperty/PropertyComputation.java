@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import tsdb.dsl.Environment;
 import tsdb.dsl.FormulaBuilder;
+import tsdb.dsl.FormulaResolveUnifyVisitor;
 import tsdb.dsl.computation.Computation;
 import tsdb.dsl.formula.Formula;
 import tsdb.util.DataRow;
@@ -20,7 +21,7 @@ public class PropertyComputation {
 	private static final Logger log = LogManager.getLogger();
 
 	public final String target;
-	public final Formula formula;
+	public final Formula formula_org;
 
 	public static PropertyComputation parse(YamlMap map) {
 		return parse(map.optString("target"), map.optString("formula"));
@@ -37,7 +38,7 @@ public class PropertyComputation {
 
 	public PropertyComputation(String target, Formula formula) {
 		this.target = target;
-		this.formula = formula;
+		this.formula_org = formula;
 	}
 
 	public void calculate(Collection<DataRow> rows, String[] sensorNames) {
@@ -47,7 +48,9 @@ public class PropertyComputation {
 			throw new RuntimeException("target not found: "+target+"  in "+Arrays.toString(sensorNames));
 		}
 		int pos = p;
-		Computation computation = formula.compile(new Environment(sensorMap));
+		Environment env = new Environment(sensorMap);
+		Formula formula = formula_org.accept(new FormulaResolveUnifyVisitor(env));
+		Computation computation = formula.compile(env);
 		for(DataRow row:rows) {
 			float[] data = row.data;
 			data[pos] = computation.eval(row.timestamp, data);
@@ -61,7 +64,9 @@ public class PropertyComputation {
 			throw new RuntimeException("target not found: "+target+"  in "+Arrays.toString(sensorNames));
 		}
 		int pos = p;
-		Computation computation = formula.compile(new Environment(sensorMap));
+		Environment env = new Environment(sensorMap);
+		Formula formula = formula_org.accept(new FormulaResolveUnifyVisitor(env));
+		Computation computation = formula.compile(env);
 		Iterator<DataRow> it = rows.iterator();
 		if(!it.hasNext()) {
 			return;

@@ -9,6 +9,7 @@ import tsdb.dsl.computation.Computation;
 public class FormulaNum extends Formula {
 	public final float value;
 
+	public static final FormulaNum NAN = new FormulaNum(Float.NaN);
 	public static final FormulaNum ZERO = new FormulaNum(0f);
 	public static final FormulaNum ONE = new FormulaNum(1f);
 	public static final FormulaNum TWO = new FormulaNum(2f);
@@ -18,6 +19,9 @@ public class FormulaNum extends Formula {
 	}
 
 	public static FormulaNum of(float value) {
+		if(Float.isNaN(value)) {
+			return NAN;
+		}
 		if(value == 0f) {
 			return ZERO;
 		}

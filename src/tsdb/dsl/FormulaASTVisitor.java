@@ -35,11 +35,12 @@ public class FormulaASTVisitor extends FormulaBaseVisitor<Formula> {
 
 	@Override
 	public Formula visitVariable(VariableContext ctx) {
+		String name = ctx.identifier().getText();
 		if( ctx.parameter() == null) {
-			return new FormulaVar(ctx.identifier().getText(), ctx.SUB() == null);
+			return new FormulaVar(name, ctx.SUB() == null);
 		} else {
 			Formula parameter = ctx.parameter().expression().accept(DEFAULT);
-			return new FormulaFunc(ctx.identifier().getText(), parameter, ctx.SUB() == null);
+			return new FormulaFunc(name, parameter, ctx.SUB() == null);
 		}
 	}
 

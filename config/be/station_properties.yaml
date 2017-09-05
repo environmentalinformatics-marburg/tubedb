@@ -17,26 +17,26 @@
 - {station: HEG48, start: "2017-06-26T13:00", end: "2017-06-28T12:00", content: {label: CNR4, SWDR: 15.82, SWUR: 18.63, LWDR: 9.28, LWUR: 10.64, comment: "2017-07-05 recalculate with corrected factors"} }
 
 
-- {station: AEG01, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.59", comment: "2017-09-05 recalculate"}}
-- {station: AEG02, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.38", comment: "2017-09-05 recalculate"}}
-- {station: AEG10, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.5", comment: "2017-09-05 recalculate"}}
-- {station: AEG11, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.32", comment: "2017-09-05 recalculate"}}
-- {station: AEG21, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.15", comment: "2017-09-05 recalculate"}}
-- {station: AEG26, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 4.83", comment: "2017-09-05 recalculate"}}
-- {station: AEG28, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.49", comment: "2017-09-05 recalculate"}}
-- {station: AEG35, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.35", comment: "2017-09-05 recalculate"}}
-- {station: HEG03, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.13", comment: "2017-09-05 recalculate"}}
-- {station: HEG19, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.22", comment: "2017-09-05 recalculate"}}
-- {station: HEG20, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.14", comment: "2017-09-05 recalculate"}}
-- {station: HEG29, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.36", comment: "2017-09-05 recalculate"}}
-- {station: HEG31, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.32", comment: "2017-09-05 recalculate"}}
-- {station: HEG48, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.13", comment: "2017-09-05 recalculate"}}
-- {station: SEG03, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.08", comment: "2017-09-05 recalculate"}}
-- {station: SEG09, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.4", comment: "2017-09-05 recalculate"}}
-- {station: SEG32, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.06", comment: "2017-09-05 recalculate"}}
-- {station: SEG35, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.01", comment: "2017-09-05 recalculate"}}
-- {station: SEG43, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.08", comment: "2017-09-05 recalculate"}}
-- {station: SEG50, content: {label: computation, target: PAR_300_calc, formula: "PAR_300_U * 1000 / 5.13", comment: "2017-09-05 recalculate"}}
+- {station: AEG01, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.59)", comment: "2017-09-05 recalculate"}}
+- {station: AEG02, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.38)", comment: "2017-09-05 recalculate"}}
+- {station: AEG10, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.5)", comment: "2017-09-05 recalculate"}}
+- {station: AEG11, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.32)", comment: "2017-09-05 recalculate"}}
+- {station: AEG21, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.15)", comment: "2017-09-05 recalculate"}}
+- {station: AEG26, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 4.83)", comment: "2017-09-05 recalculate"}}
+- {station: AEG28, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.49)", comment: "2017-09-05 recalculate"}}
+- {station: AEG35, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.35)", comment: "2017-09-05 recalculate"}}
+- {station: HEG03, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.13)", comment: "2017-09-05 recalculate"}}
+- {station: HEG19, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.22)", comment: "2017-09-05 recalculate"}}
+- {station: HEG20, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.14)", comment: "2017-09-05 recalculate"}}
+- {station: HEG29, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.36)", comment: "2017-09-05 recalculate"}}
+- {station: HEG31, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.32)", comment: "2017-09-05 recalculate"}}
+- {station: HEG48, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.13)", comment: "2017-09-05 recalculate"}}
+- {station: SEG03, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.08)", comment: "2017-09-05 recalculate"}}
+- {station: SEG09, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.4)", comment: "2017-09-05 recalculate"}}
+- {station: SEG32, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.06)", comment: "2017-09-05 recalculate"}}
+- {station: SEG35, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.01)", comment: "2017-09-05 recalculate"}}
+- {station: SEG43, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.08)", comment: "2017-09-05 recalculate"}}
+- {station: SEG50, content: {label: computation, target: PAR_300_calc, formula: "(PAR_300_U < 0 ? 0 : PAR_300_U * 1000 / 5.13)", comment: "2017-09-05 recalculate"}}
 
 - {station: AEG01, content: {label: CNR4_calc, SWDR: 15.82, SWUR: 18.63, LWDR: 9.28, LWUR: 10.64, comment: "2017-09-05 recalculate"} }
 - {station: AEG02, content: {label: CNR4_calc, SWDR: 18.01, SWUR: 18.50, LWDR: 10.19, LWUR: 9.22, comment: "2017-09-05 recalculate"} }

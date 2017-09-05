@@ -1506,5 +1506,14 @@ PAR_300_calc:
   physical_range: [0.0, 3000.0]
   step_range: [0.0, 1000.0]
   empirical_diff: 610.46
-  interpolation_mse: 10000     
-  
+  interpolation_mse: 10000
+
+Albedo_calc:
+  description: Albedo (SWUR/SWDR)
+  unit: ratio (0 to 1)
+  aggregation: average_albedo
+  physical_range: [0.0, 1.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 0.31  
+  dependency: [SWUR_300_calc, SWDR_300_calc]
+  post_hour_func: "(SWDR_300_calc > 0.01 && SWUR_300_calc < SWDR_300_calc * 0.9 ? SWUR_300_calc / SWDR_300_calc : NA)"  
