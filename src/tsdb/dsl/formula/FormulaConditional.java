@@ -17,25 +17,7 @@ public class FormulaConditional extends Formula {
 		this.a = a;
 		this.b = b;
 	}
-	@Override
-	public Computation compile(Environment env) {
-		return new Computation() {
-			BooleanComputation c = p.compile(env);
-			Computation x = a.compile(env);
-			Computation y = b.compile(env);
-			@Override
-			public float eval(long timestamp, float[] data) {
-				return c.eval(timestamp, data) ? x.eval(timestamp, data) : y.eval(timestamp, data);
-			}
-		};
-	}
-	@Override
-	public String compileToString(Environment env) {
-		String jp = p.compileToString(env);
-		String ja = a.compileToString(env);
-		String jb = b.compileToString(env);
-		return "("+jp+"?"+ja+":"+jb+")";
-	}
+
 	@Override
 	public void collectDataVariables(Set<String> collector, Environment env) {
 		p.collectVariables(collector, env);

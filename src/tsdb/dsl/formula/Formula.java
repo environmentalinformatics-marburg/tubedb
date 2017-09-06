@@ -5,17 +5,10 @@ import java.util.Set;
 
 import tsdb.dsl.Environment;
 import tsdb.dsl.FormulaVisitor1;
-import tsdb.dsl.computation.Computation;
 
 public abstract class Formula {
 	
 	public abstract <T> T accept(FormulaVisitor1<T> visitor);
-	
-	@Deprecated
-	public abstract Computation compile(Environment env);
-	
-	@Deprecated
-	public abstract String compileToString(Environment env);
 	
 	@Deprecated
 	public abstract void collectDataVariables(Set<String> collector, Environment env);

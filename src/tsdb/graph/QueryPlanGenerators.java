@@ -16,7 +16,10 @@ import tsdb.VirtualCopyList;
 import tsdb.component.Sensor;
 import tsdb.dsl.Environment;
 import tsdb.dsl.FormulaBuilder;
+import tsdb.dsl.FormulaCompileVisitor;
+import tsdb.dsl.FormulaJavaVisitor;
 import tsdb.dsl.FormulaResolveUnifyVisitor;
+import tsdb.dsl.FormulaVisitor1;
 import tsdb.dsl.PlotEnvironment;
 import tsdb.dsl.computation.Computation;
 import tsdb.dsl.formula.Formula;
@@ -211,8 +214,10 @@ public final class QueryPlanGenerators {
 			log.info(sensorMap);
 			Environment env = new PlotEnvironment(plot, sensorMap);
 			Formula formula = formula_org.accept(new FormulaResolveUnifyVisitor(env));
-			Computation computation = formula.compile(env);
+			FormulaJavaVisitor v = new FormulaJavaVisitor(env);
+			log.info("formula: "+formula.accept(v));
 			int[] varIndices = formula.getDataVariableIndices(env);
+			Computation computation = formula.accept(new FormulaCompileVisitor(env));
 			switch(varIndices.length) {
 			case 1: {
 				int var1 = varIndices[0];

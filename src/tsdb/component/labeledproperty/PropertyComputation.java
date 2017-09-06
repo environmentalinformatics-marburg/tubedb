@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import tsdb.dsl.Environment;
 import tsdb.dsl.FormulaBuilder;
+import tsdb.dsl.FormulaCompileVisitor;
 import tsdb.dsl.FormulaResolveUnifyVisitor;
 import tsdb.dsl.computation.Computation;
 import tsdb.dsl.formula.Formula;
@@ -50,7 +51,7 @@ public class PropertyComputation {
 		int pos = p;
 		Environment env = new Environment(sensorMap);
 		Formula formula = formula_org.accept(new FormulaResolveUnifyVisitor(env));
-		Computation computation = formula.compile(env);
+		Computation computation = formula.accept(new FormulaCompileVisitor(env));
 		for(DataRow row:rows) {
 			float[] data = row.data;
 			data[pos] = computation.eval(row.timestamp, data);
@@ -66,7 +67,7 @@ public class PropertyComputation {
 		int pos = p;
 		Environment env = new Environment(sensorMap);
 		Formula formula = formula_org.accept(new FormulaResolveUnifyVisitor(env));
-		Computation computation = formula.compile(env);
+		Computation computation = formula.accept(new FormulaCompileVisitor(env));
 		Iterator<DataRow> it = rows.iterator();
 		if(!it.hasNext()) {
 			return;

@@ -146,11 +146,11 @@ public class TestingFormula {
 		String java = f1.accept(formulaJavaVisitor);
 		log.info("j "+java);
 
-		Computation computation = formula.compile(env);
+		//Computation computation = formula.compile(env);
 
-		float[] params = new float[]{11111f, 2222f, 33333f, 4444f, 5555f, 6666f, 7777f, 888f, 999f, 111f, 22f};
-		float v = computation.eval(999, params);
-		log.info(v);
+		//float[] params = new float[]{11111f, 2222f, 33333f, 4444f, 5555f, 6666f, 7777f, 888f, 999f, 111f, 22f};
+		//float v = computation.eval(999, params);
+		//log.info(v);
 
 
 		ClassPool pool = ClassPool.getDefault();
@@ -186,7 +186,7 @@ public class TestingFormula {
 
 		Computation objA = (Computation) clazzA.getConstructors()[0].newInstance(formulaJavaVisitor.computations);
 		log.info(objA.toString());
-		log.info(objA.eval(999, params));
+		//log.info(objA.eval(999, params));
 
 		//String javaText = formula.compileToString(new Environment(sensorNames));
 		//log.info(javaText);
@@ -214,20 +214,20 @@ public class TestingFormula {
 		//map.put("direct", data -> (((float) Math.pow((double)(((((data[0]+data[1])+data[4])+data[6])*((((float) Math.pow((double)data[2],(double)2.7f))+((float) Math.pow((double)data[5],(double)1.2f)))+(data[1]/data[0])))/((float) Math.pow((double)data[3],(double)17.0f))),(double)(data[1]/(27.0f+data[0]))))+(((data[0]-1.0f)*(data[1]-(2.0f*((float) Math.pow((double)data[3],(double)(data[4]/123.0f))))))*(data[4]-3.0f))) );
 		//map.put("direct", data -> ((0.0f<data[4])?(6.1121f*(float) Math.exp((double)((18.678f-(data[4]/234.5f))*(data[4]/(257.14f+data[4]))))):(6.1115f*(float) Math.exp((double)((23.036f-(data[4]/333.7f))*(data[4]/(279.82f+data[4])))))) );
 		map.put("direct", data -> (((26.7f<=data[4])&&(40.0f<=data[1]))?((((((((-8.784695f+(1.6113942f*data[4]))+(2.338549f*data[1]))-((0.14611605f*data[4])*data[1]))-(0.012308094f*((float) Math.pow((double)data[4],(double)2.0f))))-(0.016424827f*((float) Math.pow((double)data[1],(double)2.0f))))+((0.002211732f*((float) Math.pow((double)data[4],(double)2.0f)))*data[1]))+((7.2546E-4f*data[4])*((float) Math.pow((double)data[1],(double)2.0f))))-((3.582E-6f*((float) Math.pow((double)data[4],(double)2.0f)))*((float) Math.pow((double)data[1],(double)2.0f)))):data[4]) ); 
-		map.put("treeDirect", data->computation.eval(0,data));
+		//map.put("treeDirect", data->computation.eval(0,data));
 		map.put("treeVisitor", data->c.eval(0,data));
 		//map.put("genI", data->objI.eval(data));
 		//map.put("genA", data->objA.eval(0,data));
 		map.put("ID", data -> Float.MIN_VALUE);
 
 
-		for(int repeat=0; repeat<REPEATS; repeat++) {
+		/*for(int repeat=0; repeat<REPEATS; repeat++) {
 
 			for(Entry<String, Function<float[], Float>> e:map.entrySet()) {
 				bench(e.getKey(), e.getValue(), params);
 			}
 
-		}
+		}*/
 	}
 
 	public static void bench(String name, Function<float[], Float> func, float[] params) {

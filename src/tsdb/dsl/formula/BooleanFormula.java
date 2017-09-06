@@ -7,8 +7,7 @@ import tsdb.dsl.Environment;
 import tsdb.dsl.computation.BooleanComputation;
 
 public abstract class BooleanFormula {
-	public abstract BooleanComputation compile(Environment env);
-	public abstract String compileToString(Environment env);
+
 	public abstract BooleanFormula not();
 	public abstract void collectVariables(Set<String> collector, Environment env);
 	public abstract <T> T accept(BooleanFormulaVisitor1<T> visitor);
@@ -21,19 +20,6 @@ public abstract class BooleanFormula {
 		@Override
 		public BooleanFormula not() {
 			return FALSE;
-		}		
-		@Override
-		public String compileToString(Environment env) {
-			return "(true)";
-		}		
-		@Override
-		public BooleanComputation compile(Environment env) {
-			return new BooleanComputation() {				
-				@Override
-				public boolean eval(long timestamp, float[] data) {
-					return true;
-				}
-			};
 		}		
 		@Override
 		public void collectVariables(Set<String> collector, Environment env) {
@@ -49,19 +35,6 @@ public abstract class BooleanFormula {
 		public BooleanFormula not() {
 			return TRUE;
 		}
-		@Override
-		public String compileToString(Environment env) {
-			return "(false)";
-		}		
-		@Override
-		public BooleanComputation compile(Environment env) {
-			return new BooleanComputation() {				
-				@Override
-				public boolean eval(long timestamp, float[] data) {
-					return false;
-				}
-			};
-		}		
 		@Override
 		public void collectVariables(Set<String> collector, Environment env) {
 		}		

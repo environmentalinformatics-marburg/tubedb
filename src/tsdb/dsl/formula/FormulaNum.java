@@ -39,23 +39,6 @@ public class FormulaNum extends Formula {
 	}
 
 	@Override
-	public Computation compile(Environment env) {		
-		return new Computation(){
-			float v = value;
-			@Override
-			public float eval(long timestamp, float[] data) {
-				return v;				
-			}
-		};
-
-	}
-
-	@Override
-	public String compileToString(Environment env) {
-		return Float.toString(value)+"f";
-	}
-
-	@Override
 	public void collectDataVariables(Set<String> collector, Environment env) {
 		// nothing		
 	}	

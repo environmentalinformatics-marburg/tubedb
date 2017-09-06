@@ -1032,7 +1032,7 @@ SWUR_300_U:
   visibility: internal
   
 SM_30_U:
-  aggregation: none
+  aggregation: average
   physical_range: [0.0, 1.5]
   step_range: [0.0, 1000.0]
   visibility: internal
@@ -1050,13 +1050,13 @@ LWUR_300_U:
   visibility: internal
   
 SM_20_U:
-  aggregation: none
+  aggregation: average
   physical_range: [0.0, 1.5]
   step_range: [0.0, 1000.0]
   visibility: internal
   
 SM_10_U:
-  aggregation: none
+  aggregation: average
   physical_range: [0.0, 1.5]
   step_range: [0.0, 1000.0]
   visibility: internal
@@ -1104,18 +1104,6 @@ UOtt:
   step_range: [0.0, 1000.0]
   visibility: internal
   
-SM_30_U:
-  aggregation: none
-  physical_range: [0.0, 1.5]
-  step_range: [0.0, 1000.0]
-  visibility: internal
- 
-SM_20_U:
-  aggregation: none
-  physical_range: [0.0, 1.5]
-  step_range: [0.0, 1000.0]
-  visibility: internal
-  
 SM_40_U:
   aggregation: none
   physical_range: [0.0, 1.5]
@@ -1133,12 +1121,6 @@ Trad_R:
   visibility: internal
   
 SM_15_U:
-  aggregation: none
-  physical_range: [0.0, 1.5]
-  step_range: [0.0, 1000.0]
-  visibility: internal
-  
-SM_10_U:
   aggregation: none
   physical_range: [0.0, 1.5]
   step_range: [0.0, 1000.0]
@@ -1516,4 +1498,80 @@ Albedo_calc:
   step_range: [0.0, 1000.0]
   empirical_diff: 0.31  
   dependency: [SWUR_300_calc, SWDR_300_calc]
-  post_hour_func: "(SWDR_300_calc > 0.01 && SWUR_300_calc < SWDR_300_calc * 0.9 ? SWUR_300_calc / SWDR_300_calc : NA)"  
+  post_hour_func: "(SWDR_300_calc > 0.01 && SWUR_300_calc < SWDR_300_calc * 0.9 ? SWUR_300_calc / SWDR_300_calc : NA)"
+
+Rn_300_calc:
+  description: Net radiation at 3 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 112.19
+  interpolation_mse: 10000
+  dependency: [SWDR_300_calc, SWUR_300_calc, LWDR_300_calc, LWUR_300_calc]
+  post_hour_func: "SWDR_300_calc - SWUR_300_calc + LWDR_300_calc - LWUR_300_calc"
+
+Tsky_calc:
+  description: Sky temperature
+  unit: °C (degree Celcius) 
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]  
+  empirical_diff: 5.8
+  interpolation_mse: 7
+  category: temperature
+  dependency: LWDR_300_calc
+  post_hour_func: "(LWDR_300_calc / 5.67e-11)^0.25 - 273.15"
+
+Tgnd_calc:
+  description: Ground temperature
+  unit: °C (degree Celcius) 
+  aggregation: average
+  physical_range: [-40.0, 60.0] 
+  step_range: [0.0, 10.0]
+  empirical_diff: 2.65
+  interpolation_mse: 7
+  category: temperature
+  dependency: LWUR_300_calc
+  post_hour_func: "(LWUR_300_calc / 5.67e-11)^0.25 - 273.15"
+
+WV_gust_calc:
+  description: Max. wind velocity (gust of wind)
+  unit: m/s (meter per second)
+  raw_source: WV
+  aggregation: maximum
+  physical_range: [0.0, 100.0]  
+  step_range: [0.0, 1000.0]
+
+SM_10_calc:
+  description: Soil moisture at 10 centimeters below surface
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 29.04
+  interpolation_mse: 100
+  dependency: SM_10_U
+  post_hour_func: "((56.8366 * (SM_10_U - 0.81) - 7.58579) * (SM_10_U - 0.28) + 52.6316) * (SM_10_U - 0.09)"
+
+SM_20_calc:
+  description: Soil moisture at 10 centimeters below surface
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 29.04
+  interpolation_mse: 100
+  dependency: SM_20_U
+  post_hour_func: "((56.8366 * (SM_20_U - 0.81) - 7.58579) * (SM_20_U - 0.28) + 52.6316) * (SM_20_U - 0.09)"
+
+SM_30_calc:
+  description: Soil moisture at 10 centimeters below surface
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 29.04
+  interpolation_mse: 100
+  dependency: SM_30_U
+  post_hour_func: "((56.8366 * (SM_30_U - 0.81) - 7.58579) * (SM_30_U - 0.28) + 52.6316) * (SM_30_U - 0.09)"    

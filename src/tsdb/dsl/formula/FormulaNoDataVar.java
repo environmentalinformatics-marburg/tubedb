@@ -18,56 +18,6 @@ public class FormulaNoDataVar extends Formula {
 	}
 	
 	@Override
-	public Computation compile(Environment env) {
-		Computation computationOfTime = ComputationOfTime.compileVar(name, positive);
-		if(computationOfTime != null) {
-			return computationOfTime;
-		}
-		
-		if(env.containsResolver(name)) {
-			Formula f = env.resolve(name);
-			if(!positive) {
-				f = f.negative();
-			}
-			return f.compile(env);			
-		}		
-		
-		if(!env.containsSensor(name)) {
-			throw new RuntimeException("sensor not found: "+name+"  in  "+env.sensorMap);
-		}
-		if(positive) {
-			return new Computation(){
-				int pos = env.getSensorIndex(name);
-				@Override
-				public float eval(long timestamp, float[] data) {
-					return data[pos];				
-				}
-			};
-		} else {
-			return new Computation(){
-				int pos = env.getSensorIndex(name);
-				@Override
-				public float eval(long timestamp, float[] data) {
-					return - data[pos];				
-				}
-			};
-		}
-	}
-
-	@Override
-	public String compileToString(Environment env) {
-		if(!env.containsSensor(name)) {
-			throw new RuntimeException("sensor not found: "+name+"  in  "+env.sensorMap);
-		}
-		int pos = env.getSensorIndex(name);
-		if(positive) {
-			return "data["+pos+"]";
-		} else {
-			return " - data["+pos+"]";
-		}
-	}
-
-	@Override
 	public void collectDataVariables(Set<String> collector, Environment env) {
 		if(!ComputationOfTime.NON_DATA_VARIABLES_SET.contains(name) && !env.containsResolver(name)) {
 			collector.add(name);		
