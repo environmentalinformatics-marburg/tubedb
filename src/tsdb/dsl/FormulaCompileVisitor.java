@@ -71,7 +71,7 @@ import tsdb.dsl.formula.FormulaConditional;
 import tsdb.dsl.formula.FormulaDiv;
 import tsdb.dsl.formula.FormulaFunc;
 import tsdb.dsl.formula.FormulaMul;
-import tsdb.dsl.formula.FormulaNoDataVar;
+import tsdb.dsl.formula.FormulaNonDataVar;
 import tsdb.dsl.formula.FormulaNum;
 import tsdb.dsl.formula.FormulaPow;
 import tsdb.dsl.formula.FormulaSub;
@@ -480,7 +480,7 @@ public class FormulaCompileVisitor implements FormulaVisitor1<Computation>, Bool
 	}
 
 	@Override
-	public Computation visitNoDataVar(FormulaNoDataVar formulaNoDataVar) {
+	public Computation visitNonDataVar(FormulaNonDataVar formulaNoDataVar) {
 		Computation computationOfTime = ComputationOfTime.compileVar(formulaNoDataVar.name, formulaNoDataVar.positive);
 		if(computationOfTime != null) {
 			return computationOfTime;

@@ -11,12 +11,13 @@ import tsdb.dsl.formula.BooleanFormulaLess;
 import tsdb.dsl.formula.BooleanFormulaLessEqual;
 import tsdb.dsl.formula.BooleanFormulaNotEqual;
 import tsdb.dsl.formula.BooleanFormulaOR;
+import tsdb.dsl.formula.Formula;
 import tsdb.dsl.formula.FormulaAdd;
 import tsdb.dsl.formula.FormulaConditional;
 import tsdb.dsl.formula.FormulaDiv;
 import tsdb.dsl.formula.FormulaFunc;
 import tsdb.dsl.formula.FormulaMul;
-import tsdb.dsl.formula.FormulaNoDataVar;
+import tsdb.dsl.formula.FormulaNonDataVar;
 import tsdb.dsl.formula.FormulaNum;
 import tsdb.dsl.formula.FormulaPow;
 import tsdb.dsl.formula.FormulaSub;
@@ -138,7 +139,7 @@ public class FormulaJavaVisitor implements FormulaVisitor1<String>, BooleanFormu
 				return "(float)(-Math.log((double)"+ p +"))";
 			}
 		default:
-			throw new RuntimeException("function not found: "+formulaFunc.name);
+			return insertComputation(formulaFunc);
 		}
 	}
 
@@ -169,9 +170,13 @@ public class FormulaJavaVisitor implements FormulaVisitor1<String>, BooleanFormu
 	}
 
 	@Override
-	public String visitNoDataVar(FormulaNoDataVar formulaNoDataVar) {
+	public String visitNonDataVar(FormulaNonDataVar formulaNoDataVar) {
+		return insertComputation(formulaNoDataVar);
+	}
+	
+	private String insertComputation(Formula formula) {
 		int pos = computations.size();
-		Computation computation = formulaNoDataVar.accept(formulaCompileVisitor);
+		Computation computation = formula.accept(formulaCompileVisitor);
 		computations.add(computation);
 		return "this.c"+pos+".eval(timestamp,data)";
 	}

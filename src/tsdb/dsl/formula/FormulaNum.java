@@ -1,15 +1,11 @@
 package tsdb.dsl.formula;
 
-import java.util.Set;
-
-import tsdb.dsl.Environment;
 import tsdb.dsl.FormulaVisitor1;
-import tsdb.dsl.computation.Computation;
 
 public class FormulaNum extends Formula {
 	public final float value;
 
-	public static final FormulaNum NAN = new FormulaNum(Float.NaN);
+	public static final FormulaNum NA = new FormulaNum(Float.NaN);
 	public static final FormulaNum ZERO = new FormulaNum(0f);
 	public static final FormulaNum ONE = new FormulaNum(1f);
 	public static final FormulaNum TWO = new FormulaNum(2f);
@@ -20,7 +16,7 @@ public class FormulaNum extends Formula {
 
 	public static FormulaNum of(float value) {
 		if(Float.isNaN(value)) {
-			return NAN;
+			return NA;
 		}
 		if(value == 0f) {
 			return ZERO;
@@ -37,11 +33,6 @@ public class FormulaNum extends Formula {
 	public static FormulaNum parse(String s) {
 		return of(Float.parseFloat(s));
 	}
-
-	@Override
-	public void collectDataVariables(Set<String> collector, Environment env) {
-		// nothing		
-	}	
 
 	@Override
 	public FormulaNum negative() {

@@ -13,7 +13,7 @@ import tsdb.dsl.formula.FormulaConditional;
 import tsdb.dsl.formula.FormulaDiv;
 import tsdb.dsl.formula.FormulaFunc;
 import tsdb.dsl.formula.FormulaMul;
-import tsdb.dsl.formula.FormulaNoDataVar;
+import tsdb.dsl.formula.FormulaNonDataVar;
 import tsdb.dsl.formula.FormulaNum;
 import tsdb.dsl.formula.FormulaPow;
 import tsdb.dsl.formula.FormulaSub;
@@ -285,7 +285,7 @@ public class FormulaUnifyVisitor implements FormulaVisitor1<Formula>, BooleanFor
 	}
 	
 	@Override
-	public Formula visitNoDataVar(FormulaNoDataVar formulaNoDataVar) {
+	public Formula visitNonDataVar(FormulaNonDataVar formulaNoDataVar) {
 		return formulaNoDataVar;
 	}
 

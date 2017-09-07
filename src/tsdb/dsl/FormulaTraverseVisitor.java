@@ -15,7 +15,7 @@ import tsdb.dsl.formula.FormulaConditional;
 import tsdb.dsl.formula.FormulaDiv;
 import tsdb.dsl.formula.FormulaFunc;
 import tsdb.dsl.formula.FormulaMul;
-import tsdb.dsl.formula.FormulaNoDataVar;
+import tsdb.dsl.formula.FormulaNonDataVar;
 import tsdb.dsl.formula.FormulaNum;
 import tsdb.dsl.formula.FormulaPow;
 import tsdb.dsl.formula.FormulaSub;
@@ -78,7 +78,7 @@ public class FormulaTraverseVisitor<T> implements FormulaVisitor1<T>, BooleanFor
 	}
 	
 	@Override
-	public T visitNoDataVar(FormulaNoDataVar f) {
+	public T visitNonDataVar(FormulaNonDataVar f) {
 		return result();
 	}
 	

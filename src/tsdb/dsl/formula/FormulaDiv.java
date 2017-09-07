@@ -1,8 +1,6 @@
 package tsdb.dsl.formula;
 
-import tsdb.dsl.Environment;
 import tsdb.dsl.FormulaVisitor1;
-import tsdb.dsl.computation.Computation;
 
 public class FormulaDiv extends FormulaBinary {
 	public FormulaDiv(Formula a, Formula b) {

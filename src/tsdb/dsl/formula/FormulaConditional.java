@@ -19,12 +19,6 @@ public class FormulaConditional extends Formula {
 	}
 
 	@Override
-	public void collectDataVariables(Set<String> collector, Environment env) {
-		p.collectVariables(collector, env);
-		a.collectDataVariables(collector, env);
-		b.collectDataVariables(collector, env);
-	}
-	@Override
 	public <T> T accept(FormulaVisitor1<T> visitor) {
 		return visitor.visitConditional(this);
 	}

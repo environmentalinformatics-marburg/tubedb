@@ -1,6 +1,7 @@
 package tsdb.graph;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,10 +17,10 @@ import tsdb.VirtualCopyList;
 import tsdb.component.Sensor;
 import tsdb.dsl.Environment;
 import tsdb.dsl.FormulaBuilder;
+import tsdb.dsl.FormulaCollectVarVisitor;
 import tsdb.dsl.FormulaCompileVisitor;
 import tsdb.dsl.FormulaJavaVisitor;
 import tsdb.dsl.FormulaResolveUnifyVisitor;
-import tsdb.dsl.FormulaVisitor1;
 import tsdb.dsl.PlotEnvironment;
 import tsdb.dsl.computation.Computation;
 import tsdb.dsl.formula.Formula;
@@ -214,9 +215,15 @@ public final class QueryPlanGenerators {
 			log.info(sensorMap);
 			Environment env = new PlotEnvironment(plot, sensorMap);
 			Formula formula = formula_org.accept(new FormulaResolveUnifyVisitor(env));
-			FormulaJavaVisitor v = new FormulaJavaVisitor(env);
-			log.info("formula: "+formula.accept(v));
-			int[] varIndices = formula.getDataVariableIndices(env);
+			try {
+				FormulaJavaVisitor v = new FormulaJavaVisitor(env);
+				log.info("formula: "+formula.accept(v));
+			} catch(Exception e) {
+				log.warn(e);
+			}
+			int[] varIndices = formula.accept(new FormulaCollectVarVisitor()).getDataVarIndices(env);
+			log.info("----");
+			log.info(Arrays.toString(varIndices));
 			Computation computation = formula.accept(new FormulaCompileVisitor(env));
 			switch(varIndices.length) {
 			case 1: {
@@ -279,7 +286,7 @@ public final class QueryPlanGenerators {
 		}
 		return mutators == null ? null : mutators.toArray(new Mutator[0]);
 	}
-	
+
 	public static Mutator[] getPostDayMutators(TsDB tsdb, Plot plot, String[] schema) {
 		ArrayList<Mutator> mutators = null;
 		for(String sensorName:tsdb.order_by_dependency(schema)) {
