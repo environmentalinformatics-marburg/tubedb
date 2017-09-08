@@ -1,5 +1,7 @@
 package tsdb.dsl.computation;
 
+import tsdb.util.Computation;
+
 public class ComputationDivNumVar extends Computation {
 	public final float a;
 	public final int b;

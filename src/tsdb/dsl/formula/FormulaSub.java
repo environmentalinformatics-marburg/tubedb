@@ -1,10 +1,6 @@
 package tsdb.dsl.formula;
 
-import java.util.Map;
-
-import tsdb.dsl.Environment;
 import tsdb.dsl.FormulaVisitor1;
-import tsdb.dsl.computation.Computation;
 
 public class FormulaSub extends FormulaBinary {
 	public FormulaSub(Formula a, Formula b) {

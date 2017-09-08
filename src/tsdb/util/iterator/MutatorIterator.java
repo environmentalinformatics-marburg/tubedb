@@ -3,36 +3,37 @@ package tsdb.util.iterator;
 import tsdb.util.Mutator;
 import tsdb.util.TsEntry;
 
-public class MutatorIterator {
+/**
+ * Apply mutator to elements of iterator
+ * @author woellauer
+ *
+ */
+public class MutatorIterator extends InputIterator {
 	
-	public static TsIterator appendMutators(TsIterator it, Mutator[] mutators) {
-		
-		if(mutators == null || mutators.length == 0) {
+	private final Mutator mutator;
+	
+	/**
+	 * Apply mutator to elements of iterator
+	 * @param it
+	 * @param mutator nullable
+	 * @return resulting iterator
+	 */
+	public static TsIterator appendMutator(TsIterator it, Mutator mutator) {		
+		if(mutator == null) {
 			return it;
 		}
-		
-		if(mutators.length == 1) {
-			Mutator m = mutators[0];
-			return new InputIterator(it, it.getSchema()) {
-				@Override
-				public TsEntry next() {
-					TsEntry e = input_iterator.next();
-					m.apply(e.timestamp, e.data);
-					return e;
-				}			
-			};
-			
-		}
-		
-		return new InputIterator(it, it.getSchema()) {
-			@Override
-			public TsEntry next() {
-				TsEntry e = input_iterator.next();
-				for(Mutator m:mutators) {
-					m.apply(e.timestamp, e.data);
-				}
-				return e;
-			}			
-		};		
+		return new MutatorIterator(it, mutator);	
+	}
+
+	public MutatorIterator(TsIterator it, Mutator mutator) {
+		super(it, it.getSchema());
+		this.mutator = mutator;
+	}
+
+	@Override
+	public TsEntry next() {
+		TsEntry e = input_iterator.next();
+		mutator.apply(e.timestamp, e.data);
+		return e;
 	}
 }

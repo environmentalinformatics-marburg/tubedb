@@ -10,11 +10,14 @@ import org.apache.logging.log4j.Logger;
 
 import tsdb.dsl.Environment;
 import tsdb.dsl.FormulaBuilder;
+import tsdb.dsl.FormulaCollectUnsafeVarVisitor;
 import tsdb.dsl.FormulaCompileVisitor;
 import tsdb.dsl.FormulaResolveUnifyVisitor;
-import tsdb.dsl.computation.Computation;
 import tsdb.dsl.formula.Formula;
+import tsdb.util.Computation;
 import tsdb.util.DataRow;
+import tsdb.util.Mutator;
+import tsdb.util.Mutators;
 import tsdb.util.Util;
 import tsdb.util.yaml.YamlMap;
 
@@ -59,15 +62,6 @@ public class PropertyComputation {
 	}
 
 	public void calculate(Collection<DataRow> rows, String[] sensorNames, long firstTimestamp, long lastTimestamp) {
-		Map<String, Integer> sensorMap = Util.stringArrayToMap(sensorNames, true);
-		Integer p = sensorMap.get(target);
-		if(p == null) {
-			throw new RuntimeException("target not found: "+target+"  in "+Arrays.toString(sensorNames));
-		}
-		int pos = p;
-		Environment env = new Environment(sensorMap);
-		Formula formula = formula_org.accept(new FormulaResolveUnifyVisitor(env));
-		Computation computation = formula.accept(new FormulaCompileVisitor(env));
 		Iterator<DataRow> it = rows.iterator();
 		if(!it.hasNext()) {
 			return;
@@ -79,9 +73,21 @@ public class PropertyComputation {
 			}
 			cur = it.next();
 		}
-		while(cur.timestamp<=lastTimestamp) {
-			float[] data = cur.data;
-			data[pos] = computation.eval(cur.timestamp, data);
+		
+		Map<String, Integer> sensorMap = Util.stringArrayToMap(sensorNames, true);
+		Integer p = sensorMap.get(target);
+		if(p == null) {
+			throw new RuntimeException("target not found: "+target+"  in "+Arrays.toString(sensorNames));
+		}
+		int pos = p;
+		Environment env = new Environment(sensorMap);
+		Formula formula = formula_org.accept(new FormulaResolveUnifyVisitor(env));
+		int[] unsafeVarIndices = formula.accept(new FormulaCollectUnsafeVarVisitor()).getDataVarIndices(env);
+		Computation computation = formula.accept(new FormulaCompileVisitor(env));
+		Mutator mutator = Mutators.getMutator(computation, pos, unsafeVarIndices);
+		
+		while(cur.timestamp<=lastTimestamp) {			
+			mutator.apply(cur.timestamp, cur.data);
 			if(!it.hasNext()) {
 				return;
 			}

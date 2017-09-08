@@ -1,5 +1,7 @@
 package tsdb.dsl.computation;
 
+import tsdb.util.Computation;
+
 public class BooleanComputationLessNum1 extends BooleanComputation {
 	public final float a;
 	public final Computation b;

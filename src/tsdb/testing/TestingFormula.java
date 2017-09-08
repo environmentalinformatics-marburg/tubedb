@@ -23,8 +23,8 @@ import tsdb.dsl.FormulaCompileVisitor;
 import tsdb.dsl.FormulaJavaVisitor;
 import tsdb.dsl.FormulaResolveUnifyVisitor;
 import tsdb.dsl.computation.BooleanComputation;
-import tsdb.dsl.computation.Computation;
 import tsdb.dsl.formula.Formula;
+import tsdb.util.Computation;
 import tsdb.util.Timer;
 
 public class TestingFormula {

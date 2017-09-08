@@ -1,8 +1,6 @@
 package tsdb.dsl.formula;
 
 import tsdb.dsl.BooleanFormulaVisitor1;
-import tsdb.dsl.Environment;
-import tsdb.dsl.computation.BooleanComputation;
 
 public class BooleanFormulaAND extends BooleanFormulaBinary {
 	public BooleanFormulaAND(BooleanFormula a, BooleanFormula b) {

@@ -19,7 +19,6 @@ import tsdb.dsl.computation.BooleanComputationNotEqual;
 import tsdb.dsl.computation.BooleanComputationNotEqualNum;
 import tsdb.dsl.computation.BooleanComputationOr;
 import tsdb.dsl.computation.BooleanComputationTrue;
-import tsdb.dsl.computation.Computation;
 import tsdb.dsl.computation.ComputationAdd;
 import tsdb.dsl.computation.ComputationAddNum;
 import tsdb.dsl.computation.ComputationAddVar;
@@ -76,6 +75,7 @@ import tsdb.dsl.formula.FormulaNum;
 import tsdb.dsl.formula.FormulaPow;
 import tsdb.dsl.formula.FormulaSub;
 import tsdb.dsl.formula.FormulaVar;
+import tsdb.util.Computation;
 
 public class FormulaCompileVisitor implements FormulaVisitor1<Computation>, BooleanFormulaVisitor1<BooleanComputation> {
 

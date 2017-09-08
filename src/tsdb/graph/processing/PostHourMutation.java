@@ -11,18 +11,18 @@ import tsdb.util.iterator.TsIterator;
 
 public class PostHourMutation implements Continuous {
 	private final Continuous source;
-	private final Mutator[] postHourMutators;
+	private final Mutator postHourMutator;
 	
-	public PostHourMutation(Continuous source, Mutator[] postHourMutators) {
+	public PostHourMutation(Continuous source, Mutator postHourMutator) {
 		throwNull(source);
 		this.source = source;
-		this.postHourMutators = postHourMutators;
+		this.postHourMutator = postHourMutator;
 	}		
 
 	@Override
 	public TsIterator get(Long start, Long end) {
 		TsIterator it = source.get(start, end);
-		return MutatorIterator.appendMutators(it, postHourMutators);
+		return MutatorIterator.appendMutator(it, postHourMutator);
 	}
 
 	@Override

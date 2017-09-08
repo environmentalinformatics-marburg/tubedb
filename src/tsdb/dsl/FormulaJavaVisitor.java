@@ -3,7 +3,9 @@ package tsdb.dsl;
 import java.util.ArrayList;
 import java.util.List;
 
-import tsdb.dsl.computation.Computation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import tsdb.dsl.formula.BooleanFormula;
 import tsdb.dsl.formula.BooleanFormulaAND;
 import tsdb.dsl.formula.BooleanFormulaEqual;
@@ -22,8 +24,10 @@ import tsdb.dsl.formula.FormulaNum;
 import tsdb.dsl.formula.FormulaPow;
 import tsdb.dsl.formula.FormulaSub;
 import tsdb.dsl.formula.FormulaVar;
+import tsdb.util.Computation;
 
 public class FormulaJavaVisitor implements FormulaVisitor1<String>, BooleanFormulaVisitor1<String>  {
+	private static final Logger log = LogManager.getLogger();
 	
 	private final Environment env;
 	private final FormulaCompileVisitor formulaCompileVisitor;
@@ -175,6 +179,7 @@ public class FormulaJavaVisitor implements FormulaVisitor1<String>, BooleanFormu
 	}
 	
 	private String insertComputation(Formula formula) {
+		log.info("insertComputation");
 		int pos = computations.size();
 		Computation computation = formula.accept(formulaCompileVisitor);
 		computations.add(computation);

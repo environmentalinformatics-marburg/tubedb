@@ -1,5 +1,7 @@
 package tsdb.dsl.computation;
 
+import tsdb.util.Computation;
+
 public class ComputationAddVarVar extends Computation {
 	public final int a;
 	public final int b;

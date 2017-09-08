@@ -1,5 +1,7 @@
 package tsdb.dsl.computation;
 
+import tsdb.util.Computation;
+
 public class BooleanComputationEqualNum extends BooleanComputation {
 	public final Computation a;
 	public final float b;

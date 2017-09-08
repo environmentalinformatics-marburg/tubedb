@@ -1,5 +1,7 @@
 package tsdb.dsl.computation;
 
+import tsdb.util.Computation;
+
 public class ComputationConditional extends Computation {
 	private final BooleanComputation p;
 	public final Computation a;

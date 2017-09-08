@@ -1,5 +1,7 @@
 package tsdb.dsl.computation;
 
+import tsdb.util.Computation;
+
 public class ComputationSubNum extends Computation {
 	public final float a;
 	public final Computation b;

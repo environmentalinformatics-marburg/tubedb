@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 
 import tsdb.dsl.FormulaASTVisitor;
 import tsdb.dsl.FormulaBaseVisitor;
-import tsdb.dsl.FormulaParser;
 import tsdb.dsl.FormulaParser.EqualContext;
 import tsdb.dsl.FormulaParser.GreaterContext;
 import tsdb.dsl.FormulaParser.Greater_equalContext;

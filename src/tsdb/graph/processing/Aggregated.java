@@ -28,21 +28,21 @@ public class Aggregated extends Continuous.Abstract {
 
 	private final Continuous source; //not null
 	private final AggregationInterval aggregationInterval; //not null
-	private final Mutator[] dayMutators;
+	private final Mutator dayMutator; // nullable
 
-	protected Aggregated(TsDB tsdb, Continuous source, AggregationInterval aggregationInterval, Mutator[] dayMutators) {
+	protected Aggregated(TsDB tsdb, Continuous source, AggregationInterval aggregationInterval, Mutator dayMutator) {
 		super(tsdb);
 		throwNulls(source,aggregationInterval);
 		this.source = source;
 		this.aggregationInterval = aggregationInterval;
-		this.dayMutators = dayMutators;
+		this.dayMutator = dayMutator;
 		if(!source.isContinuous()) {
 			throw new RuntimeException("source needs to be continuous");
 		}
 	}
 
-	public static Aggregated of(TsDB tsdb, Continuous source, AggregationInterval aggregationInterval, Mutator[] dayMutators) {
-		return new Aggregated(tsdb, source, aggregationInterval, dayMutators);
+	public static Aggregated of(TsDB tsdb, Continuous source, AggregationInterval aggregationInterval, Mutator dayMutator) {
+		return new Aggregated(tsdb, source, aggregationInterval, dayMutator);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class Aggregated extends Continuous.Abstract {
 			return continuous_iterator;
 		}
 		
-		DayAggregationIterator day_iterator = new DayAggregationIterator(tsdb,continuous_iterator, dayMutators);
+		DayAggregationIterator day_iterator = new DayAggregationIterator(tsdb,continuous_iterator, dayMutator);
 		if(day_iterator==null||!day_iterator.hasNext()) {
 			return null;
 		}

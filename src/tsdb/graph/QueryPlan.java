@@ -115,10 +115,10 @@ public final class QueryPlan {
 			//log.info("continuous "+continuous);
 		}
 		Plot plot = tsdb.getPlot(plotID);
-		Mutator[] postHourMutators = QueryPlanGenerators.getPostHourMutators(tsdb, plot, schema);
-		continuous = new PostHourMutation(continuous, postHourMutators);
-		Mutator[] postDayMutators = QueryPlanGenerators.getPostDayMutators(tsdb, plot, schema);
-		return Aggregated.of(tsdb, continuous, aggregationInterval, postDayMutators);
+		Mutator postHourMutator = QueryPlanGenerators.getPostHourMutators(tsdb, plot, schema);
+		continuous = new PostHourMutation(continuous, postHourMutator);
+		Mutator postDayMutator = QueryPlanGenerators.getPostDayMutators(tsdb, plot, schema);
+		return Aggregated.of(tsdb, continuous, aggregationInterval, postDayMutator);
 	}
 
 	/**
@@ -139,7 +139,7 @@ public final class QueryPlan {
 		}
 		Continuous continuous = Continuous.of(base);
 		Plot plot = tsdb.getPlot(plotID);
-		Mutator[] dayMutators = QueryPlanGenerators.getPostDayMutators(tsdb, plot, schema);
+		Mutator dayMutators = QueryPlanGenerators.getPostDayMutators(tsdb, plot, schema);
 		return Aggregated.of(tsdb, continuous, aggregationInterval, dayMutators);
 	}
 

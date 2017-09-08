@@ -1,5 +1,7 @@
 package tsdb.dsl.computation;
 
+import tsdb.util.Computation;
+
 public class ComputationNeg extends Computation {
 	public final Computation a;
 	public ComputationNeg(Computation a) {

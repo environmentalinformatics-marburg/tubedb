@@ -1,12 +1,6 @@
 package tsdb.dsl.formula;
 
-import java.util.Map;
-import java.util.Set;
-
-import tsdb.dsl.Environment;
 import tsdb.dsl.FormulaVisitor1;
-import tsdb.dsl.computation.BooleanComputation;
-import tsdb.dsl.computation.Computation;
 
 public class FormulaConditional extends Formula {
 	public final BooleanFormula p;

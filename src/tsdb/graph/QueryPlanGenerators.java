@@ -17,12 +17,12 @@ import tsdb.VirtualCopyList;
 import tsdb.component.Sensor;
 import tsdb.dsl.Environment;
 import tsdb.dsl.FormulaBuilder;
+import tsdb.dsl.FormulaCollectUnsafeVarVisitor;
 import tsdb.dsl.FormulaCollectVarVisitor;
 import tsdb.dsl.FormulaCompileVisitor;
 import tsdb.dsl.FormulaJavaVisitor;
 import tsdb.dsl.FormulaResolveUnifyVisitor;
 import tsdb.dsl.PlotEnvironment;
-import tsdb.dsl.computation.Computation;
 import tsdb.dsl.formula.Formula;
 import tsdb.graph.node.Base;
 import tsdb.graph.node.Continuous;
@@ -46,8 +46,10 @@ import tsdb.iterator.ElementCopyIterator.Action;
 import tsdb.iterator.SunshineIterator;
 import tsdb.iterator.SunshineOlivieriIterator;
 import tsdb.util.AggregationInterval;
+import tsdb.util.Computation;
 import tsdb.util.DataQuality;
 import tsdb.util.Mutator;
+import tsdb.util.Mutators;
 import tsdb.util.Util;
 
 public final class QueryPlanGenerators {
@@ -185,13 +187,12 @@ public final class QueryPlanGenerators {
 	public static ContinuousGen getDayAggregationGen(TsDB tsdb, DataQuality dataQuality) {
 		return (String plotID, String[] schema)->{
 			Continuous continuous = getContinuousGen(tsdb, dataQuality).get(plotID, schema);
-			Mutator[] dayMutators = getPostDayMutators(tsdb, tsdb.getPlot(plotID), schema);
+			Mutator dayMutators = getPostDayMutators(tsdb, tsdb.getPlot(plotID), schema);
 			return Aggregated.of(tsdb, continuous, AggregationInterval.DAY, dayMutators);
 		};
 	}
 
 	public static Mutator getMutator(Sensor sensor, String func, Plot plot, String[] schema) {
-		Mutator mutator = null;
 		try {
 			int iTarget = Util.getIndexInArray(sensor.name, schema);
 
@@ -222,85 +223,64 @@ public final class QueryPlanGenerators {
 				log.warn(e);
 			}
 			int[] varIndices = formula.accept(new FormulaCollectVarVisitor()).getDataVarIndices(env);
+			int[] unsafeVarIndices = formula.accept(new FormulaCollectUnsafeVarVisitor()).getDataVarIndices(env);
 			log.info("----");
-			log.info(Arrays.toString(varIndices));
-			Computation computation = formula.accept(new FormulaCompileVisitor(env));
-			switch(varIndices.length) {
-			case 1: {
-				int var1 = varIndices[0];
-				mutator = new Mutator() {						
-					@Override
-					public void apply(long timestamp, float[] data) {
-						data[iTarget] = Float.isNaN(data[var1]) ? Float.NaN : computation.eval(timestamp, data);						
-					}
-				};
-				break;
-			}
-			case 2: {
-				int var1 = varIndices[0];
-				int var2 = varIndices[1];
-				mutator = new Mutator() {						
-					@Override
-					public void apply(long timestamp, float[] data) {
-						data[iTarget] = Float.isNaN(data[var1]) && Float.isNaN(data[var2]) ? Float.NaN : computation.eval(timestamp, data);						
-					}
-				};
-				break;
-			}
-			default: {
-				mutator = new Mutator() {						
-					@Override
-					public void apply(long timestamp, float[] data) {
-						for(int varIndex:varIndices) {
-							if(Float.isNaN(data[varIndex])) {
-								data[iTarget] = Float.NaN;
-								return;
-							}
-						}
-						data[iTarget] = computation.eval(timestamp, data);						
-					}
-				};
-			}
-			};
-
+			log.info(Arrays.toString(varIndices)+"    "+Arrays.toString(unsafeVarIndices));
+			Computation computation = formula.accept(new FormulaCompileVisitor(env));			
+			return Mutators.getMutator(computation, iTarget, unsafeVarIndices);
 		} catch(Exception e) {
 			e.printStackTrace();
 			log.error("could not create mutator: "+func+"    "+e);
+			return null;
 		}
-		return mutator;
 	}
 
-	public static Mutator[] getPostHourMutators(TsDB tsdb, Plot plot, String[] schema) {
-		ArrayList<Mutator> mutators = null;
-		for(String sensorName:schema) {
-			Sensor sensor = tsdb.getSensor(sensorName);
-			if(sensor != null && sensor.post_hour_func != null) {
-				Mutator mutator = getMutator(sensor, sensor.post_hour_func, plot, schema);
-				if(mutator != null) {
-					if(mutators == null) {
-						mutators = new ArrayList<Mutator>();
-					}
-					mutators.add(mutator);
-				}
-			}
-		}
-		return mutators == null ? null : mutators.toArray(new Mutator[0]);
-	}
-
-	public static Mutator[] getPostDayMutators(TsDB tsdb, Plot plot, String[] schema) {
-		ArrayList<Mutator> mutators = null;
+	public static Mutator getPostHourMutators(TsDB tsdb, Plot plot, String[] schema) {		
+		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
+		ArrayList<String> funcs = new ArrayList<String>();
 		for(String sensorName:tsdb.order_by_dependency(schema)) {
 			Sensor sensor = tsdb.getSensor(sensorName);
-			if(sensor != null && sensor.post_day_func != null) {
-				Mutator mutator = getMutator(sensor, sensor.post_day_func, plot, schema);
-				if(mutator != null) {
-					if(mutators == null) {
-						mutators = new ArrayList<Mutator>();
-					}
-					mutators.add(mutator);
-				}
+			String func = sensor.post_hour_func;
+			if(sensor != null &&  func != null) {
+				sensors.add(sensor);
+				funcs.add(func);
 			}
 		}
-		return mutators == null ? null : mutators.toArray(new Mutator[0]);
-	}	
+		if(sensors.isEmpty()) {
+			return null;
+		}
+		return getMutators(sensors, funcs, plot, schema);
+	}
+
+	public static Mutator getPostDayMutators(TsDB tsdb, Plot plot, String[] schema) {
+		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
+		ArrayList<String> funcs = new ArrayList<String>();
+		for(String sensorName:tsdb.order_by_dependency(schema)) {
+			Sensor sensor = tsdb.getSensor(sensorName);
+			String func = sensor.post_day_func;
+			if(sensor != null &&  func != null) {
+				sensors.add(sensor);
+				funcs.add(func);
+			}
+		}
+		if(sensors.isEmpty()) {
+			return null;
+		}
+		return getMutators(sensors, funcs, plot, schema);
+	}
+	
+	public static Mutator getMutators(ArrayList<Sensor> sensors, ArrayList<String> funcs, Plot plot, String[] schema) {
+		ArrayList<Mutator> mutators = new ArrayList<Mutator>();
+		int len = sensors.size();
+		for (int i = 0; i < len; i++) {
+			Sensor sensor = sensors.get(i);
+			String func = funcs.get(i);
+			Mutator mutator = getMutator(sensor, func, plot, schema);
+			if(mutator != null) {
+				mutators.add(mutator);
+			}
+		}
+		log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "+mutators.size()+"     "+funcs.toString());
+		return Mutators.bundle(mutators);
+	}
 }

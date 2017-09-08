@@ -1,5 +1,6 @@
 package tsdb.dsl.computation;
 
+import tsdb.util.Computation;
 import tsdb.util.TimeUtil;
 
 public class ComputationCumsumByYearNeg extends Computation {
