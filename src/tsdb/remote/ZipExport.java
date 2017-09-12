@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -60,6 +61,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 	private final DataQuality dataQuality;
 	private final boolean interpolated;
 	private final boolean allInOne;
+	private final boolean validate_sensors = true; // filter sensors based on selected plots
 	private final boolean desc_sensor;
 	private final boolean desc_plot;
 	private final boolean desc_settings;
@@ -133,7 +135,11 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 	public boolean writeToStream(OutputStream outputstream) {
 		printLine("start export...");
 		printLine("");
-		printLine("sensorNames       "+Util.arrayToString(sensorNames));
+		printLine("climate parameters ("+sensorNames.length+"):");
+		for(String sensorName:sensorNames) {
+			printLine(sensorName);
+		}
+		printLine("");
 		if(Util.empty(sensorNames)) {
 			return false;
 		}
@@ -147,6 +153,30 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 			ZipOutputStream zipOutputStream = new ZipOutputStream(outputstream);
 			zipOutputStream.setComment("TubeDB time series data");
 			zipOutputStream.setLevel(9);
+
+			if(validate_sensors) {
+				try {
+					LinkedHashSet<String> processingSensorNames = new LinkedHashSet<>();
+					for(String plotID:plotIDs) {
+						String[] schema = tsdb.getValidSchemaWithVirtualSensors(plotID, sensorNames);
+						processingSensorNames.addAll(Arrays.asList(schema));
+					}
+					if(processingSensorNames.size() != sensorNames.length) {
+						printLine("Not all selected climate parameters are available on selected plots.");
+						printLine("");
+						sensorNames = processingSensorNames.toArray(new String[0]);
+						printLine("processing climate parameters ("+sensorNames.length+"):");
+						for(String sensorName:sensorNames) {
+							printLine(sensorName);
+						}
+						printLine("");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					log.error(e);
+					printLine("ERROR "+e);
+				}
+			}
 
 			if(desc_settings) {
 				zipOutputStream.putNextEntry(new ZipEntry("processing_settings.yaml"));
@@ -173,7 +203,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 				write_plot_description_CSV(bufferedWriter);
 				bufferedWriter.flush();
 				writer.flush();
-			}
+			}			
 
 			if(allInOne) {				
 				zipOutputStream.putNextEntry(new ZipEntry("plots.csv"));
@@ -184,7 +214,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 				}
 				processedPlots = 0;
 				for(String plotID:plotIDs) {
-					printLine("processing plot "+plotID);
+					printLine("processing plot "+plotID+" ...");
 					try {
 						String[] schema = tsdb.getValidSchemaWithVirtualSensors(plotID, sensorNames);
 						if(!Util.empty(schema)) {

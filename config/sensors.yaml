@@ -1453,6 +1453,7 @@ SWDR_300_calc:
   step_range: [0.0, 1000.0]
   empirical_diff: 157.2
   interpolation_mse: 10000   
+  visibility: internal
   
 SWUR_300_calc:
   description: Shortwave Upward Radiation at 3 meters height
@@ -1462,7 +1463,8 @@ SWUR_300_calc:
   step_range: [0.0, 1000.0]
   empirical_diff: 43.03
   interpolation_mse: 10000   
-  
+  visibility: internal
+ 
 LWDR_300_calc:
   description: Longwave Downward Radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
@@ -1471,6 +1473,7 @@ LWDR_300_calc:
   step_range: [0.0, 220.0]
   empirical_diff: 34.29
   interpolation_mse: 10000   
+  visibility: internal
   
 LWUR_300_calc:
   description: Longwave Upward Radiation at 3 meters height
@@ -1480,6 +1483,7 @@ LWUR_300_calc:
   step_range: [0.0, 1000.0]
   empirical_diff: 18.31
   interpolation_mse: 10000
+  visibility: internal
 
 PAR_300_calc:
   description: Photosynthetically activ radiation at 3 meters height
@@ -1489,6 +1493,7 @@ PAR_300_calc:
   step_range: [0.0, 1000.0]
   empirical_diff: 610.46
   interpolation_mse: 10000
+  visibility: internal
 
 Albedo_calc:
   description: Albedo (SWUR/SWDR)
@@ -1499,6 +1504,7 @@ Albedo_calc:
   empirical_diff: 0.31  
   dependency: [SWUR_300_calc, SWDR_300_calc]
   post_hour_func: "(SWDR_300_calc > 0.01 && SWUR_300_calc < SWDR_300_calc * 0.9 ? SWUR_300_calc / SWDR_300_calc : NA)"
+  visibility: internal
 
 Rn_300_calc:
   description: Net radiation at 3 meters height
@@ -1510,6 +1516,7 @@ Rn_300_calc:
   interpolation_mse: 10000
   dependency: [SWDR_300_calc, SWUR_300_calc, LWDR_300_calc, LWUR_300_calc]
   post_hour_func: "SWDR_300_calc - SWUR_300_calc + LWDR_300_calc - LWUR_300_calc"
+  visibility: internal
 
 Tsky_calc:
   description: Sky temperature
@@ -1522,6 +1529,7 @@ Tsky_calc:
   category: temperature
   dependency: LWDR_300_calc
   post_hour_func: "(LWDR_300_calc / 5.67e-11)^0.25 - 273.15"
+  visibility: internal
 
 Tgnd_calc:
   description: Ground temperature
@@ -1533,4 +1541,79 @@ Tgnd_calc:
   interpolation_mse: 7
   category: temperature
   dependency: LWUR_300_calc
-  post_hour_func: "(LWUR_300_calc / 5.67e-11)^0.25 - 273.15" 
+  post_hour_func: "(LWUR_300_calc / 5.67e-11)^0.25 - 273.15"
+  visibility: internal
+
+#calc radiation 2017_09_12
+SWDR_3700_calc:
+  description: Shortwave Downward Radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 157.2
+  interpolation_mse: 10000   
+  visibility: internal
+  
+SWUR_3700_calc:
+  description: Shortwave Upward Radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 43.03
+  interpolation_mse: 10000   
+  visibility: internal
+  
+LWDR_3700_calc:
+  description: Longwave Downward Radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 220.0]
+  empirical_diff: 34.29
+  interpolation_mse: 10000   
+  visibility: internal
+ 
+LWUR_3700_calc:
+  description: Longwave Upward Radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 18.31
+  interpolation_mse: 10000
+  visibility: internal
+
+Rn_3700_calc:
+  description: Net radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 112.19
+  interpolation_mse: 10000
+  dependency: [SWDR_3700_calc, SWUR_3700_calc, LWDR_3700_calc, LWUR_3700_calc]
+  post_hour_func: "SWDR_3700_calc - SWUR_3700_calc + LWDR_3700_calc - LWUR_3700_calc"
+  visibility: internal
+
+PAR_1000_calc:
+  description: Photosynthetically activ radiation at 10 meters height
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 610.46
+  interpolation_mse: 10000
+  visibility: internal
+  
+PAR_2000_calc:
+  description: Photosynthetically activ radiation at 20 meters height
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 610.46
+  interpolation_mse: 10000
+  visibility: internal
+  

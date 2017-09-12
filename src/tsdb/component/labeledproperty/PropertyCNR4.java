@@ -1,5 +1,6 @@
 package tsdb.component.labeledproperty;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import tsdb.util.DataRow;
@@ -8,28 +9,41 @@ import tsdb.util.yaml.YamlMap;
 
 public class PropertyCNR4 {
 
-	private static final String[] names = new String[]{"SWDR_300", "SWDR_300_U", "SWUR_300", "SWUR_300_U", "LWDR_300", "LWDR_300_U", "LWUR_300", "LWUR_300_U", "Trad"};
+	private static final String[] NAMES_DEFAULT = new String[]{"SWDR_300", "SWDR_300_U", "SWUR_300", "SWUR_300_U", "LWDR_300", "LWDR_300_U", "LWUR_300", "LWUR_300_U", "Trad"};
 	private static final double sigma =  5.670367E-8;  // Stefan Boltzmann constant 5.670367*10^-8 W/(m^2*K^4)
 	private static final double zero_degree = 273.15; // 0°C in K
+	
+	private final String[] names;
 
 	public final double swdr;
 	public final double swur;
 	public final double lwdr;
 	public final double lwur;
 
-	public PropertyCNR4(double swdr, double swur, double lwdr, double lwur) {
+	public PropertyCNR4(double swdr, double swur, double lwdr, double lwur, String[] names) {
 		this.swdr = swdr;
 		this.swur = swur;
 		this.lwdr = lwdr;
 		this.lwur = lwur;
+		this.names = names;
 	}
 
 	public static PropertyCNR4 parse(YamlMap map) {
 		double swdr = map.optDouble("SWDR");
 		double swur = map.optDouble("SWUR");
 		double lwdr = map.optDouble("LWDR");
-		double lwur = map.optDouble("LWUR");		
-		return new PropertyCNR4(swdr, swur, lwdr, lwur);
+		double lwur = map.optDouble("LWUR");
+		String[] names = Arrays.copyOf(NAMES_DEFAULT, NAMES_DEFAULT.length);
+		map.optFunString("SWDR_target", name -> names[0] = name);
+		map.optFunString("SWDR_source", name -> names[1] = name);
+		map.optFunString("SWUR_target", name -> names[2] = name);
+		map.optFunString("SWUR_source", name -> names[3] = name);
+		map.optFunString("LWDR_target", name -> names[4] = name);
+		map.optFunString("LWDR_source", name -> names[5] = name);
+		map.optFunString("LWUR_target", name -> names[6] = name);
+		map.optFunString("LWUR_source", name -> names[7] = name);
+		map.optFunString("Trad_source", name -> names[8] = name);
+		return new PropertyCNR4(swdr, swur, lwdr, lwur, names);
 	}
 
 	@Override

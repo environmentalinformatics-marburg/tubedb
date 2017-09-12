@@ -24,7 +24,6 @@ import tsdb.TsDB;
 import tsdb.component.SourceEntry;
 import tsdb.component.labeledproperty.LabeledProperty;
 import tsdb.component.labeledproperty.PropertyCNR4;
-import tsdb.component.labeledproperty.PropertyCNR4_calc;
 import tsdb.component.labeledproperty.PropertyComputation;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataRow;
@@ -254,16 +253,7 @@ public class TimeSeriesLoaderBE {
 					try {
 						((PropertyCNR4)prop.content).calculate(rows, station.loggerType.sensorNames);
 					} catch(Exception e) {
-						log.warn(e);
-					}
-					break;
-				}
-				case "CNR4_calc": {
-					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
-					try {
-						((PropertyCNR4_calc)prop.content).calculate(rows, station.loggerType.sensorNames);
-					} catch(Exception e) {
-						log.warn(e);
+						log.warn(station.stationID+"   "+ e);
 					}
 					break;
 				}
