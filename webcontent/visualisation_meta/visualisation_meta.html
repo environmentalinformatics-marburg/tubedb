@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="visualisation_meta.css" type="text/css">
 	<script src="vue.js"></script>
 	<script src="axios.js"></script>
+	<script src="qs.js"></script>
 	<script src="visualisation_meta.js"></script>
   </head>
   
@@ -286,15 +287,12 @@
 					
 					<div v-show="(viewTypeHover || viewTypeHoverStay)" style="position: absolute; top: 25px; left: 0px; white-space: nowrap; text-align: left;" class="overlay_settings">
 						<div>
-							type
-							<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="viewType">
-								<option v-for="v in viewTypes">
-									{{v}}
-								</option>
-							</select>
-							<br>
-							<br>
-						</div>						
+							<div v-for="v in viewTypes">
+								<input type="radio" :id="v" :value="v" name="viewtypeselect" v-model="viewType" />
+								<label :for="v">{{v}}</label>
+							</div>
+						</div>
+						<hr>
 						<div v-show="viewType === 'diagram' || viewType === 'boxplot'">
 							<div>
 								width
@@ -316,6 +314,12 @@
 							<input type="checkbox" id="byYear" v-model="byYear">
 							<label for="byYear">by year</label>
 						</div>
+						<div v-show="viewType === 'table'">
+							rows
+							<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="filteredtableMaxRowCountText">
+									<option v-for="v in filteredtableMaxRowCountTexts">{{v}}</option>
+							</select>
+						</div>
 					</div>
 				
 				</div>
@@ -324,42 +328,66 @@
 				
 			</div>
 			
-			<!--<div class="interactive" style="display: inline-block;" @click="interpolation = !interpolation" @mouseover="interpolationHover = true" @mouseleave="interpolationHover = false">
-				
-				<div class="centered title">Settings</div>
-				
-				<div class="centered state" style="position: relative;">
-				
-					<div class="state">...</div>
-					
-					<div v-show="interpolationHover" style="position: absolute; top: 0px; left: 0px;">
-						
-					</div>
-				
-				</div>
-				
-			</div>-->
-						
-			
 			<div id="results" class="results">
 				
-				<div v-for="view in views">
-					<div v-if="view.status == 'init'">
-						{{view.plot}} / {{view.sensor}} queued
-						<div style="width: 1000px; height: 100px">
+				<div v-if="viewType === 'diagram' || viewType === 'heatmap' || viewType === 'boxplot'">
+					<div v-for="view in views">
+						<div v-if="view.status == 'init'">
+							{{view.plot}} / {{view.sensor}} queued
+							<div style="width: 1000px; height: 100px">
+							</div>
+						</div>
+						<div v-if="view.status == 'running'">
+							{{view.plot}} / {{view.sensor}} processing
+							<div style="width: 1000px; height: 100px">
+							</div>						
+						</div>
+						<div v-if="view.status == 'done'">
+							{{view.plot}} / {{view.sensor}} : {{sensorMap[view.sensor].description}} -- {{sensorMap[view.sensor].unit_description}} <br>
+							<img :src="view.url"> </img>
+						</div>
+						<div v-if="view.status == 'error'">
+							{{view.plot}} / {{view.sensor}} error
 						</div>
 					</div>
-					<div v-if="view.status == 'running'">
-						{{view.plot}} / {{view.sensor}} processing
-						<div style="width: 1000px; height: 100px">
-						</div>						
-					</div>
-					<div v-if="view.status == 'done'">
-						{{view.plot}} / {{view.sensor}} : {{sensorMap[view.sensor].description}} -- {{sensorMap[view.sensor].unit_description}} <br>
-						<img :src="view.url"> </img>
-					</div>
-					<div v-if="view.status == 'error'">
-						{{view.plot}} / {{view.sensor}} error
+				</div>
+				
+				<div v-if="viewType === 'table'">
+					<div v-for="view in views">
+						<div v-if="view.status == 'init'">
+							table queued
+						</div>
+						<div v-if="view.status == 'running'">
+							table processing
+						</div>
+						<div v-if="view.status == 'done'">
+							
+							<button type="button" @click="filteredtableStartRow = 0;">|&lt;</button>
+							<button type="button" @click="filteredtableStartRow -= filteredtableFastMoveFactor * filteredtableMaxRowCount;">&lt;&lt;</button>							
+							<button type="button" @click="filteredtableStartRow -= filteredtableMaxRowCount;">&lt;</button>							
+							<button type="button" @click="filteredtableStartRow += filteredtableMaxRowCount;">&gt;</button>
+							<button type="button" @click="filteredtableStartRow += filteredtableFastMoveFactor * filteredtableMaxRowCount;">&gt;&gt;</button>							
+							<button type="button" @click="filteredtableStartRow = table.data.length - filteredtableMaxRowCount;">&gt;|</button>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+							[ {{filteredTableData[0].split(',')[0]}} to {{filteredTableData[filteredTableData.length - 1].split(',')[0]}} ]
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 							
+							of &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	<b>[ {{table.data[0].split(',')[0]}} to {{table.data[table.data.length - 1].split(',')[0]}} ]</b>						
+							<table>
+								<thead>
+									<tr>
+										<th v-for="col in table.header.split(',')">{{col}}</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="row in filteredTableData">
+										<td v-for="col in row.split(',')">{{col}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div v-if="view.status == 'error'">
+							table error
+						</div>
 					</div>
 				</div>
 				

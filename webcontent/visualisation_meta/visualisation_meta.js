@@ -7,6 +7,7 @@ var url_region_json = url_api_base + "tsdb/region.json";
 var url_metadata_json = url_api_base + "tsdb/metadata.json";
 var url_query_image = url_api_base + "tsdb/query_image";
 var url_query_heatmap = url_api_base + "tsdb/query_heatmap";
+var url_query_csv = url_api_base + "tsdb/query_csv";
 
 Array.prototype.contains = function (e) {
    for (var i in this) {
@@ -102,7 +103,7 @@ data: function () {
 		
 		viewTypeHover: false,
 		viewTypeHoverStay: false,
-		viewTypes: ["diagram", "heatmap", "boxplot", "sensors", "plots"],
+		viewTypes: ["diagram", "heatmap", "boxplot", "table", "sensors", "plots"],
 		viewType: "diagram",
 		widthTexts: ["auto", "large", "maximum", "custom"],
 		widthTextMap: {"large": 4096, "maximum": 65535},
@@ -121,10 +122,20 @@ data: function () {
 		viewPrecessingEnd: 0,
 		viewsLimited: false,	
 		divContainer: undefined,
+		
+		table: undefined,
+		filteredtableStartRow: 0,
+		filteredtableMaxRowCountTexts: ["10", "20", "50", "100"],
+		filteredtableMaxRowCountText: "20",
+		filteredtableMaxRowCountMap: {"10": 10, "20": 20, "50": 50, "100": 100},
+		filteredtableFastMoveFactor: 20,
 	}
 }, //end data
 
 computed: {
+	filteredtableMaxRowCount: function() {
+		return this.filteredtableMaxRowCountMap[this.filteredtableMaxRowCountText];
+	},
 	plots: function() {
 		var self = this;
 		if(this.groupID == "*") {
@@ -315,6 +326,56 @@ computed: {
 			return this.heightTextMap[this.heightText];
 		}
 	},
+	filteredTableData: function() {
+		var data = this.table.data;
+		var len = data.length;
+		var start = this.filteredtableStartRow;
+		var rowCount = this.filteredtableMaxRowCount;
+		if(start < 0 || len <= rowCount) {
+			start = 0;
+			this.filteredtableStartRow = start;
+		}
+		if(len <= start) {
+			start = len - rowCount;
+			this.filteredtableStartRow = start;
+		}
+		if(start + rowCount > len) {
+			rowCount = len - start;
+		}
+		var result = data.slice(start, start + rowCount);
+		return result;
+	},
+	processingSensors: function() {
+		var self = this;
+		var sensors = [];
+		if(this.sensorIDs[0] == '*') {
+			this.metadata.sensors.forEach(function(s){
+				if( !s.raw || (s.raw && self.aggregation === 'raw')) {
+					sensors.push(s);
+				}
+			});
+		} else if(this.sensorIDs[0] == 'all_measurements') {
+			this.metadata.sensors.forEach(function(s){
+				if( !s.internal && !s.derived && ( !s.raw || (s.raw && self.aggregation === 'raw') )) {
+					sensors.push(s);
+				}
+			});
+		} else if(this.sensorIDs[0] == 'all_derived') {
+			this.metadata.sensors.forEach(function(s){
+				if( !s.internal && s.derived && ( !s.raw || (s.raw && self.aggregation === 'raw') )) {
+					sensors.push(s);
+				}
+			});
+		} else {
+			this.sensorIDs.forEach(function(o){
+				var s = self.sensorMap[o];
+				if( !s.raw || (s.raw && self.aggregation === 'raw')) {
+					sensors.push(s);
+				}
+			});
+		}
+		return sensors;
+	},
 }, //end computed
 
 mounted: function () {
@@ -350,48 +411,7 @@ methods: {
 			return;
 		}
 		
-		/*var plots = [];
-		if(this.plotIDs[0] == '*') {
-			plots = this.plots;
-		} else {
-			this.plotIDs.forEach(function(o){
-				plots.push(self.plotMap[o]);
-			});
-		}*/
-		
 		var plotstations = self.plotstations.filter(function(o){return o.selected;});
-		
-		console.log("this.sensorIDs[0] "+this.sensorIDs[0]);
-		
-		var sensors = [];
-		if(this.sensorIDs[0] == '*') {
-			this.metadata.sensors.forEach(function(s){
-				if( !s.raw || (s.raw && self.aggregation === 'raw')) {
-					sensors.push(s);
-				}
-			});
-		} else if(this.sensorIDs[0] == 'all_measurements') {
-			this.metadata.sensors.forEach(function(s){
-				if( !s.internal && !s.derived && ( !s.raw || (s.raw && self.aggregation === 'raw') )) {
-					sensors.push(s);
-				}
-			});
-		} else if(this.sensorIDs[0] == 'all_derived') {
-			this.metadata.sensors.forEach(function(s){
-				if( !s.internal && s.derived && ( !s.raw || (s.raw && self.aggregation === 'raw') )) {
-					sensors.push(s);
-				}
-			});
-		} else {
-			this.sensorIDs.forEach(function(o){
-				var s = self.sensorMap[o];
-				if( !s.raw || (s.raw && self.aggregation === 'raw')) {
-					sensors.push(s);
-				}
-			});
-		}
-		//console.log(plots);
-		//console.log(sensors);
 		
 		/*var container = document.getElementById("container");
 		var width = container == null ? 100 : (container.clientWidth - 30 < 100 ? 100 : container.clientWidth - 30);*/
@@ -399,7 +419,8 @@ methods: {
 		var height = this.heightValue;
 		
 		var views = [];
-		sensors.forEach(function(sensor){
+		var sensorNames = this.processingSensors.map(function(sensor) {return sensor.id;});
+		this.processingSensors.forEach(function(sensor){
 			var innerPlotMap = self.sensorNamePlotMap[sensor.id];
 			var innerStationMap = self.sensorNameStationMap[sensor.id];
 			if(innerStationMap == undefined) {
@@ -419,12 +440,19 @@ methods: {
 					var view = {status: "init", url: "no", type: self.viewType, plot: plotStationName, sensor: sensor.id, aggregation: self.aggregation, quality: self.quality, interpolated: self.interpolation, width: width, height: height, byYear: self.byYear};
 					view.by_year = true;
 					Object.assign(view, self.timeParameters);
+					if(self.viewType == 'table') {
+						view.sensor = sensorNames;
+					}
 					views.push(view);
 				}
 			});
 		});
 		//this.views = views;
 		var maxViews = 500;
+		if(self.viewType === 'table') {
+			maxViews = 1;
+		}
+		
 		if(views.length <= maxViews) {
 			this.viewsLimited = false;
 			var new_views = views;
@@ -503,6 +531,7 @@ methods: {
 		}
 		
 		var url= 'unknown';
+		var responseType = 'blob';
 		switch(view.type) {
 			case 'diagram':
 				url = url_query_image;
@@ -513,21 +542,42 @@ methods: {
 				break;			
 			case 'heatmap':
 				url = url_query_heatmap;
-				/*if(true) {
-					params.by_year = view.by_year;
-				}*/
 				break;
+			case 'table':
+				url = url_query_csv;
+				responseType = 'text';			
+				break;				
 			default:
 				url = 'error';
 		}
 		
+		var paramsSerializer = function(params) {
+			return Qs.stringify(params, {arrayFormat: 'repeat'})
+		};		
 
-		axios.get(url, {responseType: 'blob', params: params})
+		axios.get(url, {responseType: responseType, params: params, paramsSerializer: paramsSerializer})
 		.then(function(response) {
-			//console.log(response.data);
-			var url = URL.createObjectURL(response.data);
-			view.url = url;
-			view.status = "done";
+			switch(view.type) {
+			case 'diagram':
+			case 'boxplot':
+			case 'heatmap': {
+				var url = URL.createObjectURL(response.data);
+				view.url = url;
+				view.status = "done";
+				break;
+			}
+			case 'table': {
+				var data = response.data.split('\r\n');
+				var header = data.shift();
+				data.pop(); //remove last empty line
+				self.table = {header: header, data: data};
+				view.status = "done";
+				break;
+			}
+			default: {
+				view.status = "error";
+			}
+			}
 			self.taskEnd(currentCycle);
 			self.taskRunner(currentCycle);
 		})

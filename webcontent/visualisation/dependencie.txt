@@ -1,0 +1,4 @@
+qs.js
+https://github.com/ljharb/qs/releases/tag/v6.5.1
+A querystring parser with nesting support
+License: qs_LICENSE 
