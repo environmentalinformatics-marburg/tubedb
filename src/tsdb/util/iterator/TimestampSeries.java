@@ -13,6 +13,7 @@ import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -381,5 +382,15 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 				raf.close();
 			}
 		}
-	}	
+	}
+	
+	public void changeTime(int timeOffset) {
+		int len = entryList.size();
+		TsEntry[] result = new TsEntry[len];
+		int i = 0;
+		for(TsEntry entry:entryList) {			
+			result[i++] = entry.withTimeOffset(timeOffset);			
+		}
+		entryList = Arrays.asList(result);
+	}
 }

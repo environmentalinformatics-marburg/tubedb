@@ -24,7 +24,9 @@ import tsdb.TsDB;
 import tsdb.component.SourceEntry;
 import tsdb.component.labeledproperty.LabeledProperty;
 import tsdb.component.labeledproperty.PropertyCNR4;
+import tsdb.component.labeledproperty.PropertyClear;
 import tsdb.component.labeledproperty.PropertyComputation;
+import tsdb.component.labeledproperty.PropertyReassign;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataRow;
 import tsdb.util.Interval;
@@ -252,6 +254,24 @@ public class TimeSeriesLoaderBE {
 					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
 					try {
 						((PropertyCNR4)prop.content).calculate(rows, station.loggerType.sensorNames);
+					} catch(Exception e) {
+						log.warn(station.stationID+"   "+ e);
+					}
+					break;
+				}
+				case "reassign": {
+					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
+					try {
+						((PropertyReassign)prop.content).calculate(rows, station.loggerType.sensorNames);
+					} catch(Exception e) {
+						log.warn(station.stationID+"   "+ e);
+					}
+					break;
+				}
+				case "clear": {
+					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
+					try {
+						((PropertyClear)prop.content).calculate(rows, station.loggerType.sensorNames);
 					} catch(Exception e) {
 						log.warn(station.stationID+"   "+ e);
 					}

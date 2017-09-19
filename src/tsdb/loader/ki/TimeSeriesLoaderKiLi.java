@@ -49,13 +49,14 @@ public class TimeSeriesLoaderKiLi {
 	/**
 	 * load files of structure tsm and recursive directories
 	 * @param root
+	 * @param timeOffset 
 	 */
-	public void loadDirectory_with_stations_recursive(Path root, boolean checkExcluded) {
+	public void loadDirectory_with_stations_recursive(Path root, boolean checkExcluded, int timeOffset) {
 		log.info("load directory:      "+root);		
 		TreeMap<String,Path> ascCollectorMap = new TreeMap<String,Path>();		
 		loadDirectory_with_stations_recursive_internal(root, checkExcluded, ascCollectorMap);
 		//loadWithAscCollectorMap(ascCollectorMap);
-		loadWithAscCollectorMapNewParser(ascCollectorMap);
+		loadWithAscCollectorMapNewParser(ascCollectorMap, timeOffset);
 	}
 
 	private void loadDirectory_with_stations_recursive_internal(Path root, boolean checkExcluded, TreeMap<String,Path> ascCollectorMap) {
@@ -121,7 +122,7 @@ public class TimeSeriesLoaderKiLi {
 		}
 	}
 
-	public void loadWithAscCollectorMapNewParser(TreeMap<String,Path> ascCollectorMap) {
+	public void loadWithAscCollectorMapNewParser(TreeMap<String,Path> ascCollectorMap, int timeOffset) {
 		String currentInfoPrefix = "";
 
 		for(Entry<String, Path> ascMapEntry:ascCollectorMap.entrySet()) {
@@ -150,7 +151,9 @@ public class TimeSeriesLoaderKiLi {
 				if(timestampseries.entryList.isEmpty()) {
 					log.info("empty timestampseries in  "+infoFilename);
 					continue;
-				}				
+				}
+				
+				timestampseries.changeTime(timeOffset); // apply time offset to timeseries
 
 				Station station = tsdb.getStation(timestampseries.name);
 				if(station==null) {
@@ -184,12 +187,12 @@ public class TimeSeriesLoaderKiLi {
 			log.error("no loader found for  "+station.stationID);
 			return;
 		}
-		List<DataRow> eventList = loader.load(station, station.loggerType.sensorNames, timestampSeries);
-		if(eventList==null) {
+		List<DataRow> resultRows = loader.load(station, station.loggerType.sensorNames, timestampSeries);
+		if(resultRows==null) {
 			log.error("no entries for "+station.stationID+"   in   "+ascPath);
 			return;
 		}
-		tsdb.streamStorage.insertDataRows(timestampSeries.name, eventList, timestampSeries.getFirstTimestamp(), timestampSeries.getLastTimestamp(), station.loggerType.sensorNames);
+		tsdb.streamStorage.insertDataRows(timestampSeries.name, resultRows, timestampSeries.getFirstTimestamp(), timestampSeries.getLastTimestamp(), station.loggerType.sensorNames);
 		String[] resultSchema = loader.getResultSchema();
 
 		tsdb.sourceCatalog.insert(SourceEntry.of(timestampSeries, ascPath, resultSchema));

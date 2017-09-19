@@ -68,3 +68,54 @@
 - {station: SEG50, content: {label: CNR4, SWDR: 14.29, SWUR: 17.69, LWDR: 9.67, LWUR: 9.75, comment: "2017-09-05 recalculate", SWDR_target: SWDR_300_calc, SWUR_target: SWUR_300_calc, LWDR_target: LWDR_300_calc, LWUR_target: LWUR_300_calc} }
 - {station: AET06, content: {label: CNR4, SWDR: 14.98, SWUR: 19.00, LWDR: 10.27, LWUR: 10.12, comment: "2017-09-11 recalculate", SWDR_target: SWDR_3700_calc, SWUR_target: SWUR_3700_calc, LWDR_target: LWDR_3700_calc, LWUR_target: LWUR_3700_calc, SWDR_source: SWDR_U, SWUR_source: SWUR_U, LWDR_source: LWDR_U, LWUR_source: LWUR_U} }
 - {station: SET39, content: {label: CNR4, SWDR: 16.48, SWUR: 18.10, LWDR: 8.87, LWUR: 9.70, comment: "2017-09-11 recalculate", SWDR_target: SWDR_3700_calc, SWUR_target: SWUR_3700_calc, LWDR_target: LWDR_3700_calc, LWUR_target: LWUR_3700_calc, SWDR_source: SWDR_U, SWUR_source: SWUR_U, LWDR_source: LWDR_U, LWUR_source: LWUR_U} }
+
+# 2017_09_19 reassign entries in SEG35:
+# P_container_RT -> Ta_10
+# Ta_10 -> Ts_10
+# Ts_10 -> Ts_50
+# Ts_50 -> P_container_NRT
+# Ts_50 -> P_container_RT  # use P_container_NRT for P_container_RT
+# P_container_NRT -> UOtt
+# UOtt -> PAR_300_U
+# 
+# WV_gust -> Ts_05
+# Ts_05 -> Ts_20
+# Ts_20 -> P_RT_NRT (not collected)
+#
+# NA -> WD
+# NA -> WV
+# NA -> WV_gust
+# NA -> CycleCounter
+# NA -> PAR_300
+# NA -> SM_10_U
+# NA -> SM_10
+# NA -> T_Ott
+- {station: SEG35, start: "2017-07-03T05:50", end: "2017-07-12T10:40", content: {label: reassign, 
+                                                                                source: [P_container_RT, Ta_10, Ts_10, Ts_50, Ts_50, P_container_NRT, UOtt, WV_gust, Ts_05, NA, NA, NA, NA, NA, NA, NA, NA], 
+                                                                                target: [Ta_10, Ts_10, Ts_50, P_container_NRT, P_container_RT, UOtt, PAR_300_U, Ts_05, Ts_20, WD, WV, WV_gust, CycleCounter, PAR_300, SM_10_U, SM_10, T_Ott], 
+                                                                                comment: "2017-09-19 reassign"}}
+# 2017_09_19 reassign entries in SEG35:
+# remove noise
+- {station: SEG35, start: "2017-07-02T09:40", end: "2017-07-05T09:20", content: {label: clear, target: [P_container_RT, P_container_NRT, CycleCounter, SM_10, SM_10_U, Ta_10, Ts_50, UOtt, Ts_10, Ts_20], comment: "2017-09-19 reassign"} }
+- {station: SEG35, start: "2017-07-12T10:40", end: "2017-07-12T10:40", content: {label: clear, target: [P_container_RT, P_container_NRT, PAR_300_U, Ta_10, Ts_10, Ts_20, Ts_50, UOtt], comment: "2017-09-19 reassign"} }
+- {station: SEG35, start: "2017-07-12T10:30", end: "2017-07-12T10:30", content: {label: clear, target: [LWDR_300, LWUR_300, Tgnd, Tsky], comment: "2017-09-19 reassign"} }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -165,4 +165,8 @@ public class TsEntry implements Serializable {
 		}
 		return s;
 	}
+	
+	public TsEntry withTimeOffset(int minutes) {
+		return new TsEntry(timestamp + minutes, data, qualityFlag, qualityCounter, interpolated);
+	}
 }

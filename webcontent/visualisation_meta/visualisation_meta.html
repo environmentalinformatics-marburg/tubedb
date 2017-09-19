@@ -361,7 +361,6 @@
 							table processing
 						</div>
 						<div v-if="view.status == 'done'">
-							
 							<button type="button" @click="filteredtableStartRow = 0;">|&lt;</button>
 							<button type="button" @click="filteredtableStartRow -= filteredtableFastMoveFactor * filteredtableMaxRowCount;">&lt;&lt;</button>							
 							<button type="button" @click="filteredtableStartRow -= filteredtableMaxRowCount;">&lt;</button>							
@@ -372,6 +371,8 @@
 							[ {{filteredTableData[0].split(',')[0]}} to {{filteredTableData[filteredTableData.length - 1].split(',')[0]}} ]
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 							
 							of &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	<b>[ {{table.data[0].split(',')[0]}} to {{table.data[table.data.length - 1].split(',')[0]}} ]</b>						
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+							{{view.plot}} 
 							<table>
 								<thead>
 									<tr>
