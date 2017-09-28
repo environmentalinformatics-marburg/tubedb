@@ -443,6 +443,26 @@
 					</table>
 				</div>
 				
+				<div v-if="viewType === 'csv-file'" style="padding: 10px;">
+					<div v-for="view in views">
+						<h2>Export Climate Data</h2>
+						<div>
+							<b>plots: </b>
+							<span v-for="plot in view.plot">{{plot}} </span>
+						</div>
+						<br>
+						<div>
+							<b>parameters: </b>
+							<span v-for="sensor in view.sensor">{{sensor}} </span>
+						</div>
+						<br>
+						<a :href="view.url" download="climate_data.csv">download CSV-File</a>
+						<br>
+						<p>CSV-File contains data with applied processing as selected. It is designed for quick analysation of time series.</p>
+						<p>For further usage the recommanded method of climate data download is utilization of the export page.</p>
+					</div>
+				</div>
+				
 			</div>
 			
 		</div>

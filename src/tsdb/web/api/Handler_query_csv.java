@@ -3,6 +3,7 @@ package tsdb.web.api;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -13,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Request;
 
+import tsdb.iterator.ProjectionFillIterator;
 import tsdb.remote.RemoteTsDB;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataQuality;
@@ -60,12 +62,29 @@ public class Handler_query_csv extends MethodHandler {
 		baseRequest.setHandled(true);
 		response.setContentType("text/plain;charset=utf-8");
 
-		String plot = request.getParameter("plot");
-		if(plot==null) {
-			log.warn("wrong call no plot");
+		if(request.getParameter("plot") == null) {
+			log.warn("wrong call no plot parameter");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
+		String[] plots = request.getParameterValues("plot");
+		
+		String col_plot_text = request.getParameter("col_plot");
+		boolean col_plot = false;
+		if(col_plot_text != null) {
+			switch(col_plot_text) {
+			case "true":
+				col_plot = true;
+				break;
+			case "false":
+				col_plot = false;
+				break;
+			default:
+				log.warn("unknown input");
+				col_plot = false;				
+			}
+		}
+
 		//String sensorName = request.getParameter("sensor");
 		String[] sensorNames = request.getParameterValues("sensor");
 
@@ -117,7 +136,7 @@ public class Handler_query_csv extends MethodHandler {
 				isInterpolated = false;				
 			}
 		}
-		
+
 		String timeYear = request.getParameter("year");
 		Long startTime = null;
 		Long endTime = null;
@@ -175,32 +194,43 @@ public class Handler_query_csv extends MethodHandler {
 				return;
 			}
 		}
-		
+
 		String nanText = request.getParameter("nan_text") == null ? "NA" : request.getParameter("nan_text");
-	
+
 
 		try {
-			sensorNames = tsdb.supplementSchema(sensorNames, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
-			String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, sensorNames);
-			if(sensorNames.length!=validSchema.length) {
-				String error = "some sensors not in plot: "+plot+"  "+Arrays.toString(sensorNames);
-				log.info(error);
-				response.getWriter().println(error);
-				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);				
-				return;
+			LinkedHashSet<String> processingSensorNameCollector = new LinkedHashSet<>();
+			for(String plot:plots) {
+				String[] schema = tsdb.getValidSchemaWithVirtualSensors(plot, sensorNames);
+				processingSensorNameCollector.addAll(Arrays.asList(schema));
 			}
-			TimestampSeries ts = tsdb.plot(null, plot, sensorNames, agg, dataQuality, isInterpolated, startTime, endTime);
-			if(ts==null) {
-				String error = "TimestampSeries null: "+plot;
-				log.info(error);
-				response.getWriter().println(error);
-				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);				
-				return;
-			}
-			
+			String[] processingSensorNames = processingSensorNameCollector.toArray(new String[0]);
+
 			ServletOutputStream out = response.getOutputStream();
-			
-			CSV.write(ts.tsIterator(), true, out, ",", nanText, CSVTimeType.DATETIME, false, false, agg);
+			boolean firstPlot = true;
+			for(String plot:plots) {
+				sensorNames = tsdb.supplementSchema(sensorNames, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
+				String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, sensorNames);
+				/*if(sensorNames.length!=validSchema.length) {
+					String error = "some sensors not in plot: "+plot+"  "+Arrays.toString(sensorNames);
+					log.info(error);
+					response.getWriter().println(error);
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);				
+					return;
+				}*/
+				try {
+				TimestampSeries ts = tsdb.plot(null, plot, validSchema, agg, dataQuality, isInterpolated, startTime, endTime);
+				if(ts != null) {					
+					ProjectionFillIterator it = new ProjectionFillIterator(ts.tsIterator(), processingSensorNames);
+					String plot_text = col_plot ? plot : null;
+					CSV.write(it, firstPlot, out, ",", nanText, CSVTimeType.DATETIME, false, false, agg, plot_text);
+					firstPlot = false;
+				}
+				} catch (Exception e) {
+					e.printStackTrace();
+					log.error(e);
+				}
+			}
 
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {

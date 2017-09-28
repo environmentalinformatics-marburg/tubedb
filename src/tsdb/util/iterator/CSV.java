@@ -53,18 +53,32 @@ public class CSV {
 		write(it, true, filename, separator, nanText, csvTimeType, qualityFlag, qualityCounter, datetimeFormat);
 	}
 	
-	
-		
-
 	public static void write(TsIterator it, boolean header, String filename, String separator, String nanText, CSVTimeType csvTimeType, boolean qualityFlag, boolean qualityCounter, AggregationInterval datetimeFormat) {
 		try {
 			FileOutputStream out = new FileOutputStream(filename);
-			write(it, header, out, separator, nanText, csvTimeType, qualityFlag, qualityCounter, datetimeFormat);
+			write(it, header, out, separator, nanText, csvTimeType, qualityFlag, qualityCounter, datetimeFormat, null);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-	public static void write(TsIterator it, boolean header, OutputStream out, String separator, String nanText, CSVTimeType csvTimeType, boolean qualityFlag, boolean qualityCounter, AggregationInterval datetimeFormat) {		
+	
+	/**
+	 * Write iterator to CSV
+	 * @param it
+	 * @param header
+	 * @param out
+	 * @param separator
+	 * @param nanText
+	 * @param csvTimeType
+	 * @param qualityFlag
+	 * @param qualityCounter
+	 * @param datetimeFormat
+	 * @param plotLabel nullable, if present write column plot
+	 */
+	public static void write(TsIterator it, boolean header, OutputStream out, String separator, String nanText, CSVTimeType csvTimeType, boolean qualityFlag, boolean qualityCounter, AggregationInterval datetimeFormat, String plotLabel) {		
+		boolean writePlot = plotLabel != null;
+		String plotWithSeperator = writePlot ? plotLabel + separator : "";
+		
 		boolean time=false;
 		if(csvTimeType==CSVTimeType.TIMESTAMP||csvTimeType==CSVTimeType.DATETIME||csvTimeType==CSVTimeType.TIMESTAMP_AND_DATETIME) {
 			time=true;
@@ -73,6 +87,11 @@ public class CSV {
 			PrintStream printStream = new PrintStream(out,true);
 
 			if(header) {
+				
+				if(writePlot) {
+					printStream.print("plot");
+					printStream.print(separator);
+				}
 
 				if(time) {
 					switch(csvTimeType) {
@@ -121,6 +140,10 @@ public class CSV {
 				TsEntry entry = it.next();	
 				long timestamp = entry.timestamp;
 				float[] data = entry.data;
+				
+				if(writePlot) {
+					printStream.print(plotWithSeperator);
+				}
 
 				if(time) {
 					switch(csvTimeType) {

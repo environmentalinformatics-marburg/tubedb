@@ -103,7 +103,7 @@ data: function () {
 		
 		viewTypeHover: false,
 		viewTypeHoverStay: false,
-		viewTypes: ["diagram", "heatmap", "boxplot", "table", "sensors", "plots"],
+		viewTypes: ["diagram", "heatmap", "boxplot", "table", "sensors", "plots", "csv-file"],
 		viewType: "diagram",
 		widthTexts: ["auto", "large", "maximum", "custom"],
 		widthTextMap: {"large": 4096, "maximum": 65535},
@@ -420,6 +420,7 @@ methods: {
 		
 		var views = [];
 		var sensorNames = this.processingSensors.map(function(sensor) {return sensor.id;});
+		var plotStationNames = plotstations.map(function(plotstation) {return plotstation.full_plot ? plotstation.plot : plotstation.plot + ':' + plotstation.station});
 		this.processingSensors.forEach(function(sensor){
 			var innerPlotMap = self.sensorNamePlotMap[sensor.id];
 			var innerStationMap = self.sensorNameStationMap[sensor.id];
@@ -440,8 +441,11 @@ methods: {
 					var view = {status: "init", url: "no", type: self.viewType, plot: plotStationName, sensor: sensor.id, aggregation: self.aggregation, quality: self.quality, interpolated: self.interpolation, width: width, height: height, byYear: self.byYear};
 					view.by_year = true;
 					Object.assign(view, self.timeParameters);
-					if(self.viewType == 'table') {
+					if(self.viewType == 'table' || self.viewType == 'csv-file') {
 						view.sensor = sensorNames;
+					}
+					if(self.viewType == 'csv-file') {
+						view.plot = plotStationNames;
 					}
 					views.push(view);
 				}
@@ -449,7 +453,7 @@ methods: {
 		});
 		//this.views = views;
 		var maxViews = 500;
-		if(self.viewType === 'table') {
+		if(self.viewType === 'table' || self.viewType == 'csv-file') {
 			maxViews = 1;
 		}
 		
@@ -530,6 +534,10 @@ methods: {
 			params.day = view.day;
 		}
 		
+		var paramsSerializer = function(params) {
+			return Qs.stringify(params, {arrayFormat: 'repeat'})
+		};
+		
 		var url= 'unknown';
 		var responseType = 'blob';
 		switch(view.type) {
@@ -546,14 +554,23 @@ methods: {
 			case 'table':
 				url = url_query_csv;
 				responseType = 'text';			
+				break;
+			case 'csv-file':
+				params.col_plot = true;
+				url = url_query_csv + '?' + paramsSerializer(params);
+				responseType = 'text';			
 				break;				
 			default:
 				url = 'error';
 		}
 		
-		var paramsSerializer = function(params) {
-			return Qs.stringify(params, {arrayFormat: 'repeat'})
-		};		
+		if(self.viewType == 'csv-file') {
+			view.url = url;
+			view.status = "done";
+			self.taskEnd(currentCycle);
+			self.taskRunner(currentCycle);
+			return;
+		}
 
 		axios.get(url, {responseType: responseType, params: params, paramsSerializer: paramsSerializer})
 		.then(function(response) {
