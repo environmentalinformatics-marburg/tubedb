@@ -103,7 +103,7 @@ data: function () {
 		
 		viewTypeHover: false,
 		viewTypeHoverStay: false,
-		viewTypes: ["diagram", "heatmap", "boxplot", "table", "sensors", "plots", "csv-file"],
+		viewTypes: ["diagram", "heatmap", "boxplot", "table", "csv-file", "sensors", "plots"],
 		viewType: "diagram",
 		widthTexts: ["auto", "large", "maximum", "custom"],
 		widthTextMap: {"large": 4096, "maximum": 65535},
