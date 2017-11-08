@@ -100,17 +100,50 @@
 - {station: SEG35, start: "2017-07-12T10:40", end: "2017-07-12T10:40", content: {label: clear, target: [P_container_RT, P_container_NRT, PAR_300_U, Ta_10, Ts_10, Ts_20, Ts_50, UOtt], comment: "2017-09-19 reassign"} }
 - {station: SEG35, start: "2017-07-12T10:30", end: "2017-07-12T10:30", content: {label: clear, target: [LWDR_300, LWUR_300, Tgnd, Tsky], comment: "2017-09-19 reassign"} }
 
+# 2017_11_07 swap Ta_200 and rH_200
+- {station: HEW29, start: "2017-07-17T14:00", end: "2017-09-26T10:00", content: {label: reassign, 
+                                                                                source: [rH_200, rH_200_min_raw, rH_200_max_raw, Ta_200, Ta_200_min_raw, Ta_200_max_raw], 
+                                                                                target: [Ta_200, Ta_200_min_raw, Ta_200_max_raw, rH_200, rH_200_min_raw, rH_200_max_raw], 
+                                                                                comment: "2017_11_07 swap Ta_200 and rH_200"}}
 
+- {station: HEW41, start: "2017-07-18T09:00", end: "2017-09-25T13:00", content: {label: reassign, 
+                                                                                source: [rH_200, rH_200_min_raw, rH_200_max_raw, Ta_200, Ta_200_min_raw, Ta_200_max_raw], 
+                                                                                target: [Ta_200, Ta_200_min_raw, Ta_200_max_raw, rH_200, rH_200_min_raw, rH_200_max_raw], 
+                                                                                comment: "2017_11_07 swap Ta_200 and rH_200"}}
+                                                                                
+- {station: HEG06, start: "2017-07-17T11:00", end: "2017-09-26T10:00", content: {label: reassign, 
+                                                                                source: [rH_200, rH_200_min_raw, rH_200_max_raw, Ta_200, Ta_200_min_raw, Ta_200_max_raw], 
+                                                                                target: [Ta_200, Ta_200_min_raw, Ta_200_max_raw, rH_200, rH_200_min_raw, rH_200_max_raw], 
+                                                                                comment: "2017_11_07 swap Ta_200 and rH_200"}}                                                                                
 
+# 2017_11_08 Ta_200 and rH_200 correction
+# temperature HEW29 HEW41 input 0 V to 1 V ==> -30 °C to 70 °C   range 100 °K   factor 100   offset -30
+# temperature HEG06 input 0 V to 1 V ==> -40 °C to 60 °C   range 100 °K   factor 100   offset -40
+# moisture input 0 V to 1 V ==> 0 % to 100 %   range 100 pp  factor 100   offset 0
+# wrong Temperature HEW29 HEW41 to true moisture: ((x - (-30)) / 100) * 100 + 0 == x + 30
+# wrong Temperature HEG06 to true moisture: ((x - (-40)) / 100) * 100 + 0 == x + 40
+# wrong moisture to true Temperature HEW29 HEW41: ((x - 0) / 100) * 100 -30 == x - 30
+# wrong moisture to true Temperature HEG06: ((x - 0) / 100) * 100 -40 = x - 40
+- {station: HEW29, start: "2017-07-17T14:00", end: "2017-09-26T10:00", content: {label: computation, target: rH_200, formula: "rH_200 + 30", comment: "2017_11_08 correction"}}
+- {station: HEW41, start: "2017-07-18T09:00", end: "2017-09-25T13:00", content: {label: computation, target: rH_200, formula: "rH_200 + 30", comment: "2017_11_08 correction"}}
+- {station: HEG06, start: "2017-07-17T11:00", end: "2017-09-26T10:00", content: {label: computation, target: rH_200, formula: "rH_200 + 40", comment: "2017_11_08 correction"}}
+- {station: HEW29, start: "2017-07-17T14:00", end: "2017-09-26T10:00", content: {label: computation, target: Ta_200, formula: "Ta_200 - 30", comment: "2017_11_08 correction"}}
+- {station: HEW41, start: "2017-07-18T09:00", end: "2017-09-25T13:00", content: {label: computation, target: Ta_200, formula: "Ta_200 - 30", comment: "2017_11_08 correction"}}
+- {station: HEG06, start: "2017-07-17T11:00", end: "2017-09-26T10:00", content: {label: computation, target: Ta_200, formula: "Ta_200 - 40", comment: "2017_11_08 correction"}}
 
+- {station: HEW29, start: "2017-07-17T14:00", end: "2017-09-26T10:00", content: {label: computation, target: rH_200_min_raw, formula: "rH_200_min_raw + 30", comment: "2017_11_08 correction"}}
+- {station: HEW41, start: "2017-07-18T09:00", end: "2017-09-25T13:00", content: {label: computation, target: rH_200_min_raw, formula: "rH_200_min_raw + 30", comment: "2017_11_08 correction"}}
+- {station: HEG06, start: "2017-07-17T11:00", end: "2017-09-26T10:00", content: {label: computation, target: rH_200_min_raw, formula: "rH_200_min_raw + 40", comment: "2017_11_08 correction"}}
+- {station: HEW29, start: "2017-07-17T14:00", end: "2017-09-26T10:00", content: {label: computation, target: Ta_200_min_raw, formula: "Ta_200_min_raw - 30", comment: "2017_11_08 correction"}}
+- {station: HEW41, start: "2017-07-18T09:00", end: "2017-09-25T13:00", content: {label: computation, target: Ta_200_min_raw, formula: "Ta_200_min_raw - 30", comment: "2017_11_08 correction"}}
+- {station: HEG06, start: "2017-07-17T11:00", end: "2017-09-26T10:00", content: {label: computation, target: Ta_200_min_raw, formula: "Ta_200_min_raw - 40", comment: "2017_11_08 correction"}}
 
-
-
-
-
-
-
-
+- {station: HEW29, start: "2017-07-17T14:00", end: "2017-09-26T10:00", content: {label: computation, target: rH_200_max_raw, formula: "rH_200_max_raw + 30", comment: "2017_11_08 correction"}}
+- {station: HEW41, start: "2017-07-18T09:00", end: "2017-09-25T13:00", content: {label: computation, target: rH_200_max_raw, formula: "rH_200_max_raw + 30", comment: "2017_11_08 correction"}}
+- {station: HEG06, start: "2017-07-17T11:00", end: "2017-09-26T10:00", content: {label: computation, target: rH_200_max_raw, formula: "rH_200_max_raw + 40", comment: "2017_11_08 correction"}}
+- {station: HEW29, start: "2017-07-17T14:00", end: "2017-09-26T10:00", content: {label: computation, target: Ta_200_max_raw, formula: "Ta_200_max_raw - 30", comment: "2017_11_08 correction"}}
+- {station: HEW41, start: "2017-07-18T09:00", end: "2017-09-25T13:00", content: {label: computation, target: Ta_200_max_raw, formula: "Ta_200_max_raw - 30", comment: "2017_11_08 correction"}}
+- {station: HEG06, start: "2017-07-17T11:00", end: "2017-09-26T10:00", content: {label: computation, target: Ta_200_max_raw, formula: "Ta_200_max_raw - 40", comment: "2017_11_08 correction"}}
 
 
 

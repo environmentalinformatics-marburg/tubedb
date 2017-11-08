@@ -7,6 +7,11 @@ import tsdb.util.DataRow;
 import tsdb.util.Util;
 import tsdb.util.yaml.YamlMap;
 
+/**
+ * Copy source to target name.
+ * Fill target with NA if source name is "NA".
+ *
+ */
 public class PropertyReassign {
 
 	private final String[] source;
@@ -31,19 +36,33 @@ public class PropertyReassign {
 	}
 
 	public void calculate(Collection<DataRow> rows, String[] sensorNames) {
-		int sensorNamesLen_1 = sensorNames.length;
-		int naPos = sensorNamesLen_1 - 1;
-		sensorNames = Arrays.copyOf(sensorNames, sensorNamesLen_1);
-		sensorNames[naPos] = "NA";
-		int[] sourceIndex = Util.stringArrayToPositionIndexArray(source, sensorNames, false, true);
-		int[] targetIndex = Util.stringArrayToPositionIndexArray(target, sensorNames, false, true);
-		int indexLen = sourceIndex.length;
-		for(DataRow row:rows) {
-			float[] data = row.data;
-			float[] temp = Arrays.copyOf(data, sensorNamesLen_1);
-			temp[naPos] = Float.NaN;
-			for (int i = 0; i < indexLen; i++) {
-				data[targetIndex[i]] = temp[sourceIndex[i]];
+		if(Util.containsString(source, "NA")) { // one NA source
+			int sensorNamesLen_plus_one = sensorNames.length + 1;
+			int naPos = sensorNamesLen_plus_one - 1;
+			String[] sensorNamesWithNA = Arrays.copyOf(sensorNames, sensorNamesLen_plus_one);
+			sensorNamesWithNA[naPos] = "NA";
+			int[] sourceIndex = Util.stringArrayToPositionIndexArray(source, sensorNamesWithNA, false, true);
+			int[] targetIndex = Util.stringArrayToPositionIndexArray(target, sensorNames, false, true);
+			int indexLen = sourceIndex.length;
+			for(DataRow row:rows) {
+				float[] data = row.data;
+				float[] temp = Arrays.copyOf(data, sensorNamesLen_plus_one);
+				temp[naPos] = Float.NaN;
+				for (int i = 0; i < indexLen; i++) {
+					data[targetIndex[i]] = temp[sourceIndex[i]];
+				}
+			}
+		} else { //no NA source			
+			int[] sourceIndex = Util.stringArrayToPositionIndexArray(source, sensorNames, false, true);
+			int[] targetIndex = Util.stringArrayToPositionIndexArray(target, sensorNames, false, true);
+			int sensorNamesLen = sensorNames.length;
+			int indexLen = sourceIndex.length;
+			for(DataRow row:rows) {
+				float[] data = row.data;
+				float[] temp = Arrays.copyOf(data, sensorNamesLen).clone();
+				for (int i = 0; i < indexLen; i++) {
+					data[targetIndex[i]] = temp[sourceIndex[i]];
+				}
 			}
 		}
 	}
