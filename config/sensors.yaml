@@ -673,7 +673,7 @@ B_01:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements) 
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -681,7 +681,7 @@ B_02:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
  
@@ -689,7 +689,7 @@ B_03:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -697,7 +697,7 @@ B_04:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -705,7 +705,7 @@ B_05:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -713,7 +713,7 @@ B_06:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -721,7 +721,7 @@ B_07:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -729,7 +729,7 @@ B_08:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -737,7 +737,7 @@ B_09:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -745,7 +745,7 @@ B_10:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -753,7 +753,7 @@ B_11:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -761,7 +761,7 @@ B_12:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
  
@@ -769,7 +769,7 @@ B_13:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -777,7 +777,7 @@ B_14:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -785,7 +785,7 @@ B_15:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -793,7 +793,7 @@ B_16:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -801,7 +801,7 @@ B_17:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -809,7 +809,7 @@ B_18:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -817,7 +817,7 @@ B_19:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -825,7 +825,7 @@ B_20:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -833,7 +833,7 @@ B_21:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -841,7 +841,7 @@ B_22:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -849,7 +849,7 @@ B_23:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -857,7 +857,7 @@ B_24:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -865,7 +865,7 @@ B_25:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -873,7 +873,7 @@ B_26:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -881,7 +881,7 @@ B_27:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -889,7 +889,7 @@ B_28:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -897,7 +897,7 @@ B_29:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -905,7 +905,7 @@ B_30:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   step_range: [0.0, 1000.0]
   category: water 
   
@@ -913,7 +913,7 @@ Fog:
   description: Fog
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 500.0]
+  physical_range: [0.0, 1000.0]
   category: water 
   
 Rainfall:
@@ -1506,6 +1506,16 @@ PAR_300_calc:
   empirical_diff: 610.46
   interpolation_mse: 10000
   visibility: internal
+  
+PAR_200_calc:
+  description: Photosynthetically activ radiation at 2 meters height
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 610.46
+  interpolation_mse: 10000
+  visibility: internal  
 
 Albedo_calc:
   description: Albedo (SWUR/SWDR)
