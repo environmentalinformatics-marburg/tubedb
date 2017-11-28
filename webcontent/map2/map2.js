@@ -41,6 +41,7 @@ data: {
 	showPlotDialog: false,
 	selectedPlot: undefined,
 	featureSource: undefined,
+	visibleHelp: false,
 },
 
 mounted: function () {
@@ -259,6 +260,10 @@ methods: {
 		this.selectedPlot = plot;
 		this.showPlotDialog = true;
 		console.log(plot);
+	},
+
+	toggleHelp() {
+		this.visibleHelp = ! this.visibleHelp;
 	},
 }, // end of methods
 

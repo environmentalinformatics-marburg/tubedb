@@ -1,20 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="robots" content="noindex" />
 	<link rel="shortcut icon" href="../favicon.png">
-    <title>Visualisation</title>
+	<title>Visualisation</title>
 	<link rel="stylesheet" href="visualisation_meta.css" type="text/css">
 	<script src="vue.js"></script>
 	<script src="axios.js"></script>
 	<script src="qs.js"></script>
 	<script src="visualisation_meta.js"></script>
-  </head>
-  
-  <script type="text/x-template" id="visualisation-template">
+</head>
+
+<script type="text/x-template" id="help-template">
+	<div id="help" v-if="visible" class="help_container" @click.self="visible = false;">
+		<div class="help_box">
+			<h1 style="text-align: center;">Instructions</h1>
+			<hr>
+			<button class="help_close_button" @click="visible = false;">X (close)</button>
+			<br>
+			Climate Data Explorer is a tool to visualise climate time series.
+			<br><br>
+			A selection of plots and climate parameters can be visualised as diagram, heatmap, boxplot or table of values.
+			<br>
+			Visualisation properties (e.g. interval of time, aggregation of time, gap-filling, qualitycontrol) can be specified by several controls.
+			<br>To open detail-view of a control move mouse over the control. Then you can change settings of that control. 
+			<br>A setting change updates the visualisation immediately. 
+			
+			<hr>
+			<h2>Controls</h2>
+			In the following the provided controls are described.
+			<h3>Summary</h3>
+			<ul>
+				<li><b>Project:</b> selected project</li>
+				<li><b>Group:</b> selected group of plots</li> 
+				<li><b>Plot:</b> selected plots</li>
+				<li><b>Sensor:</b> selected climate parameters</li>
+				<li><b>Time:</b> selected interval of time</li>
+				<li><b>Resolution:</b> selected aggregation of time</li>
+				<li><b>Quality:</b> selected quality checks</li>
+				<li><b>Interpolation:</b> applied gap-filling</li>
+				<li><b>View:</b> visualisation type</li>
+			</ul>
+			
+			<h3>Project</h3>
+			Select a project for visualisation. 
+			<br>If there is just one project this control is not changeable.	
+			
+			<h3>Group</h3>
+			A project may consist of a set of plots that are organised by groups of plots. Selection of group filters plots in the plot-control.
+			<br>
+			<br> <b>*</b>-group denotes all plots of the project.
+			
+			<h3>Plot</h3>
+			A plot denotes a geographic position with climate parameter measurement sensors.
+
+			<br><br> <b>*</b>-plot denotes all plots of the project. By click on a plot name, that plot is selected and visualised.
+			<br>Holding down ctrl-key (alias control-key or strg-key) enables selection of multiple plots. (Make sure to don't include the *-plot as it denotes all plots.)
+			<br><br>Depending on the project a plot my contain several measurement stations. 
+			<br>If this is the case individual stations of one plot can be selected by click on the station column.
+			
+			<h3>Sensor</h3>
+			With sensor-control climate parameters can be selected.
+			<br><br>
+			Click on a sensor name to select it for visualisation.
+			<br>Holding down ctrl-key (alias control-key or strg-key) enables selection of multiple sensors. (Make sure to don't include *-sensor as it denotes all sensors.)
+			<br>Sensors are categorised in "Measurement", "Derived" and "Internal".
+			<br> <b>*</b>-sensor at top level denotes all sensors, <b>*</b>-sensor in a category denotes all sensors of that category.
+			
+			<h3>Time</h3>
+			Select period of time for visualisation.
+			<br>
+			<br>sub-control <b>year</b>: one year can be selected or <b>*</b> denotes full range of time (all years).
+			<br>sub-control <b>month</b>: if one year is selected one month can be selected or <b>*</b> denotes full year.
+			<br>sub-control <b>day</b>: if one month is selected one day can be selected or <b>*</b> denotes full month.
+			
+			<h3>Resolution</h3>
+
+			Time-aggregation of measurement data.
+
+			<ul>
+				<li><b>raw:</b> Measurements will not be time-aggregated.</li>
+				<li><b>hour:</b> Aggregation to time-steps of hour</li>
+				<li><b>day:</b> Aggregation to time-steps of day</li>
+				<li><b>week:</b> Aggregation to time-steps of calendar week (Monday to Sunday)</li>
+				<li><b>month:</b> Aggregation to time-steps of calendar month</li>
+				<li><b>year:</b> Aggregation to time-steps of calendar year</li>
+			</ul>
+			
+			<h3>Quality</h3>
+
+			Select quality checks that should be applied.
+			
+			<h3>Interpolation</h3>
+
+			Select if gaps in time should be filled if possible.
+			
+			<h3>View</h3>
+
+			Select type of visualisation.
+			<br><br>
+			See details in next chapter.
+
+			<hr>
+			<h2>Visualisations</h2>
+
+			In the following the provided visualisation types are described. 
+
+			<h3>Summary</h3>
+			<ul>
+				<li><b>diagram</b></li>
+				<li><b>heatmap</b></li>
+				<li><b>boxplot</b></li>
+				<li><b>table</b></li>
+				<li><b>csv-file</b></li>
+				<li><b>sensors</b></li>
+				<li><b>plots</b></li>
+			</ul>
+
+			<h3>diagram</h3>
+
+			time-value diagram
+
+			<h3>heatmap</h3>
+
+			heatamp
+
+			<h3>boxplot</h3>
+
+			boxplot of values diagram
+
+			<h3>table</h3>
+
+			table of values
+
+			<h3>csv-file</h3>
+
+			download of time series as CSV-file.
+
+			<h3>sensors</h3>
+
+			Table of sensors.
+
+			<h3>plots</h3>
+
+			Table of Plots.
+			
+			<div style="text-align: center;" ><button @click="visible = false;">close</button></div>
+		</div>
+	</div>
+  </script>
+
+<script type="text/x-template" id="visualisation-template">
 	<div id="container">
-		<a class="main_page_link" href="../index.html">main-page</a>
+		<help-interface ref="help"></help-interface>		
+		<div class="main_page_link_and_help"><a href="../index.html" title="go to main page">main-page</a> <button title="show help" @click="$refs.help.show();">?</button></div>
 		<div v-if="appMessage != undefined">
 			{{appMessage}}
 		</div>
@@ -468,53 +609,57 @@
 		</div>
 	</div>
   </script>
-  
 
-  
-  
-  <body ondragstart="return false;" ondrop="return false;">
+
+
+
+<body ondragstart="return false;" ondrop="return false;">
 	<div id="app">
-	<transition name="fade">
-	<div v-if="appMessage != undefined">
-		{{appMessage}}
-	</div>
-	<div v-else>
-	
-	<div v-show="projects.length > 1" @mouseover="projectHover = true" @mouseleave="projectHover = false" class="interactive projects" style="display: inline-block;">
-		Project: 
-		<div style="position: relative; display: inline-block;">
-		
-			<div class="state hide" style="display: inline-block;">
-				<div v-for="project in projects">
-					{{project.name}}
+		<transition name="fade">
+			<div v-if="appMessage != undefined">
+				{{appMessage}}
+			</div>
+			<div v-else>
+
+				<div v-show="projects.length > 1" @mouseover="projectHover = true" @mouseleave="projectHover = false" class="interactive projects"
+				 style="display: inline-block;">
+					Project:
+					<div style="position: relative; display: inline-block;">
+
+						<div class="state hide" style="display: inline-block;">
+							<div v-for="project in projects">
+								{{project.name}}
+							</div>
+						</div>
+
+						<div style="position: absolute; top: 0px; left: 0px;" class="state" v-show="!(projectHover||projectHoverStay)">
+							{{projectMap[projectID].name}}
+						</div>
+
+						<div style="position: absolute; top: 0px; left: 0px;" v-show="(projectHover||projectHoverStay)">
+							<select @focus="projectHoverStay = true" @blur="projectHoverStay = false" v-model="projectID">
+								<option v-for="project in projects" v-bind:value="project.id">
+									{{project.name}}
+								</option>
+							</select>
+						</div>
+
+					</div>
 				</div>
+				<div v-show="projects.length == 1">
+					Project: {{projectMap[projectID].name}}
+				</div>
+
+				<div>
+					<div class="caption">Climate Data Explorer</div>
+				</div>
+
+				<visualisation-interface :project="projectMap[projectID]">
+				</visualisation-interface>
+
 			</div>
-			
-			<div style="position: absolute; top: 0px; left: 0px;" class="state" v-show="!(projectHover||projectHoverStay)">
-				{{projectMap[projectID].name}}
-			</div>
-			
-			<div style="position: absolute; top: 0px; left: 0px;" v-show="(projectHover||projectHoverStay)">
-				<select @focus="projectHoverStay = true" @blur="projectHoverStay = false" v-model="projectID">
-					<option v-for="project in projects" v-bind:value="project.id">
-					{{project.name}}
-					</option>
-				</select>
-			</div>
-			
-		</div>
+		</transition>
 	</div>
-	<div v-show="projects.length == 1">
-		Project: {{projectMap[projectID].name}}
-	</div>
-	
-	<div><div class="caption">Climate Data Explorer</div></div>
-	
-	<visualisation-interface :project="projectMap[projectID]">	
-	</visualisation-interface>
-	
-	</div>
-	</transition>
-	</div>
-  </body>
+</body>
+
 </html>

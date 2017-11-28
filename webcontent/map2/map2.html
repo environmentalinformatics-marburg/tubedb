@@ -102,7 +102,27 @@
 		</plots-dialog>
 		<plot-dialog v-if="showPlotDialog" @close="showPlotDialog = false" :plot="selectedPlot">
 		</plot-dialog>
-		<a class="main_page_link" href="../index.html">main-page</a>
+    <div class="main_page_link_and_help">
+    <a href="../index.html">main-page</a>
+    <button @click="toggleHelp">?</button>
+    </div>
+
+
+    <div id="help" v-if="visibleHelp">
+      <h1>Instructions</h1>
+      <hr>
+      (Press ?-button again to hide this help-box.)
+      <br><br>
+      The map-page shows measurement plots on a world-map.
+      <br>
+      <br>
+      A circles with number represent the count of plots at that position.
+      <br>
+      When you zoom-in (use the mouse-wheel) circles with plot-names appear.
+      <br><br> If you click on a circle with numbers, a box opens with contained plot-names.
+      <br> Click on a plot-name to show infos about the plot.
+      <br><br> If you click on a circle with plot-name, the box with plot infos opens.
+    </div>
 	</div>
   </body>
 </html>

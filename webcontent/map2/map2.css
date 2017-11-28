@@ -15,7 +15,7 @@ body {
 	width: 100%;
 }
 
-.main_page_link {
+.main_page_link_and_help {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -131,4 +131,14 @@ body {
 
 .ol-dragbox {
 	color: #42b983;
+}
+
+#help {
+  position: absolute;
+  z-index: 999999;
+  top: 0;
+  left: 0;
+  background-color: rgb(197, 197, 197);
+  padding: 10px;
+  border: solid;  
 }

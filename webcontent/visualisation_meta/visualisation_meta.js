@@ -745,7 +745,37 @@ watch: {
 
 });	//end visualisation-interface
 	
+
+Vue.component('help-interface', {
 	
+template: '#help-template',
+
+data: function () {
+	return {
+
+	visible: false,
+
+	};
+},
+
+mounted: function() {
+	var self = this;
+	window.addEventListener('keyup', function (e) {
+		if (e.keyCode == 27) {
+			console.log(e);
+			self.visible = false;
+		}
+	});
+},
+
+methods: {
+	show() {
+		this.visible = true;
+	}
+},
+
+});
+
 
 var app = new Vue({
 	
