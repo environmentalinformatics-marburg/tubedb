@@ -33,7 +33,7 @@ import tsdb.util.Util;
 public class TsDB implements AutoCloseable {
 	private static final Logger log = LogManager.getLogger();
 	
-	public static final String tubedb_version = "1.7.7";
+	public static final String tubedb_version = "1.8.0";
 
 	/**
 	 * map regionName -> Region
@@ -51,6 +51,12 @@ public class TsDB implements AutoCloseable {
 	 * HEG01, ...
 	 */
 	private Map<String,Station> stationMap;
+	
+	/**
+	 * alias names for stations
+	 * does include station names
+	 */
+	private Map<String,Station> stationAliasMap;
 
 	/**
 	 * general station name	->	GeneralStation Object
@@ -111,6 +117,7 @@ public class TsDB implements AutoCloseable {
 		this.streamStorage = new StreamStorageStreamDB(streamdbPathPrefix);
 		loggerTypeMap = new TreeMap<String, LoggerType>();
 		stationMap = new TreeMap<String,Station>();
+		stationAliasMap = new TreeMap<String,Station>();
 		generalStationMap = new TreeMap<String, GeneralStation>();
 		sensorMap = new TreeMap<String,Sensor>();
 		ignoreSensorNameSet = new TreeSet<String>();
@@ -246,9 +253,26 @@ public class TsDB implements AutoCloseable {
 	public Station getStation(String stationName) {
 		return stationMap.get(stationName);		
 	}
-
+	
+	public Station getStationWithAlias(String stationName) {
+		return stationAliasMap.get(stationName);		
+	}
+	
 	public Collection<Station> getStations() {
 		return stationMap.values();
+	}
+	
+	public void refresStationAliasMap() {
+		stationAliasMap.clear();
+		stationAliasMap.putAll(stationMap);
+		for(Station station:getStations()) {
+			for(String alias : station.getAliases()) {
+				if(stationAliasMap.containsKey(alias)) {
+					log.warn("alias already in map: "+alias +" with "+stationAliasMap.get(alias).stationID+" overwrite with "+station.stationID);
+				}
+				stationAliasMap.put(alias, station);
+			}
+		}
 	}
 
 	public Set<String> getStationNames() {
@@ -257,6 +281,10 @@ public class TsDB implements AutoCloseable {
 
 	public boolean stationExists(String stationName) {
 		return stationMap.containsKey(stationName);
+	}
+	
+	public boolean stationExistsWithAlias(String stationName) {
+	    return stationAliasMap.containsKey(stationName);
 	}
 
 	public void insertStation(Station station) {

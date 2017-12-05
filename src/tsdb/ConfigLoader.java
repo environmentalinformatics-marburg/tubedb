@@ -509,8 +509,10 @@ public class ConfigLoader {
 				if(Float.isFinite(elevation)) {
 					station.elevation = elevation;
 				}
-				station.alternativeID = alternative_id;
 				tsdb.insertStation(station);
+				if(alternative_id != null) {
+					station.addAlias(alternative_id);
+				}
 			} else {
 				VirtualPlot virtualPlot = new VirtualPlot(tsdb, plotID, generalStation, easting, northing, isFocalPlot);
 				virtualPlot.geoPosLatitude = lat;
@@ -606,6 +608,7 @@ public class ConfigLoader {
 						VirtualPlot virtualPlot = pair.a;
 						StationProperties stationProperties = pair.b;
 						virtualPlot.addStationEntry(station, stationProperties);
+						station.addAlias(stationProperties.get_aliases());
 					}
 				}
 			}

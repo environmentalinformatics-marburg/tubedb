@@ -31,6 +31,7 @@ public class StationProperties implements Serializable{
 	public final static String PROPERTY_PLOTID = "PLOTID";
 	public final static String PROPERTY_SERIAL = "SERIAL";
 	public final static String PROPERTY_TYPE = "TYPE"; //type: EP or VIP
+	public final static String PROPERTY_ALIAS = "alias";
 
 	public final static String TYPE_VIP = "VIP";
 
@@ -138,6 +139,20 @@ public class StationProperties implements Serializable{
 
 	public String get_serial() {
 		return propertyMap.get(PROPERTY_SERIAL);
+	}
+	
+	private static final String[] NO_ALIASES = new String[0];
+	
+	public String[] get_aliases() {
+		String aliasText = propertyMap.get(PROPERTY_ALIAS);
+		if(aliasText == null) {
+			return NO_ALIASES;
+		}
+		aliasText = aliasText.trim();
+		if(aliasText.isEmpty()) {
+			return NO_ALIASES;
+		}
+		return aliasText.split(";");
 	}
 
 	@Override

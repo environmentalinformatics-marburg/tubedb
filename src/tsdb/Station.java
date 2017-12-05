@@ -3,6 +3,8 @@ package tsdb;
 import static tsdb.util.AssumptionCheck.throwNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,12 +77,13 @@ public class Station {
 	 */
 	public List<Station> nearestStations;
 
-	/**
-	 * serial number of station: A19557, A2277, ...
-	 * not used currently - station is identified with plotID
-	 */
-	public String alternativeID = null;
 	//*** end of fields that are used if this station is identical to one plot ***
+
+	/**
+	 * nullable
+	 */
+	private static final String[] NO_ALIASES = new String[0];
+	private String[] aliases = NO_ALIASES;
 
 	public Station(TsDB tsdb, GeneralStation generalStation, String stationID, LoggerType loggerType, List<StationProperties> propertyMapList, boolean isPlot) {
 		throwNull(tsdb);
@@ -322,4 +325,61 @@ public class Station {
 		}
 		return schema;		
 	}
+
+	public void addAlias(String... aliases) {
+		if(aliases.length == 0) {
+			return;
+		}
+		ArrayList<String> result = new ArrayList<String>(Arrays.asList(this.aliases));
+		alias_loop: for(String alias : aliases) {
+			if(alias == null || alias.isEmpty() || alias.equals(stationID)) {
+				continue alias_loop;
+			}
+			for(String a:result) {
+				if(alias.equals(a)) {
+					continue alias_loop;
+				}
+			}
+			result.add(alias);
+		}
+		this.aliases = result.toArray(new String[0]);
+	}
+
+	public List<String> getAliases() {
+		if(aliases == NO_ALIASES) {
+			return Collections.emptyList();
+		} else {
+			return Collections.unmodifiableList(Arrays.asList(aliases));
+		}
+	}
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

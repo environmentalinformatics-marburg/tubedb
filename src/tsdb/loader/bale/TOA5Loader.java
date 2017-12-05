@@ -6,15 +6,18 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
 import tsdb.util.DataEntry;
 import tsdb.util.Table.ColumnReaderFloat;
 import tsdb.util.Table.ColumnReaderSpaceTimestamp;
+import tsdb.util.Table.ColumnReaderString;
 
 public class TOA5Loader {
 	private static final Logger log = LogManager.getLogger();
@@ -55,17 +58,28 @@ public class TOA5Loader {
 			return;
 		}
 
+		//log.info(Arrays.toString(table.names));
 		ColumnReaderSpaceTimestamp timestampReader = table.getColumnReader("TIMESTAMP", ColumnReaderSpaceTimestamp::new);
 		//ColumnReaderInt recordReader = table.createColumnReaderInt("RECORD");
-		//ColumnReaderString stationNameReader = table.createColumnReader("StationName");
-
-		//String stationName = stationNameReader.get(table.rows[0]);
-		String stationName = table.recordingName;
-
-		if(!tsdb.stationExists(stationName)) {
-			log.error("station not in database "+stationName+"  at  "+filename);
+		
+		String stationNameText = table.recordingName;
+		if(tsdb.stationExistsWithAlias(stationNameText)) {
+			// nothing
+		} else if(table.containsColumn("StationName")) {
+			stationNameText = table.createColumnReader("StationName").get(table.rows[0]);
+			if(tsdb.stationExistsWithAlias(stationNameText)) {
+				// nothing
+			} else {
+				log.error("station not in database "+stationNameText+"  at  "+filename);
+				return;
+			}
+		} else {
+			log.error("station not in database "+stationNameText+"  at  "+filename);
 			return;
 		}
+		
+		Station station = tsdb.getStationWithAlias(stationNameText);
+
 
 		ArrayList<String> valueNameList = new ArrayList<>();
 		ArrayList<ColumnReaderFloat> valueReaderList = new ArrayList<>();
@@ -82,7 +96,7 @@ public class TOA5Loader {
 				//just exclude
 				break;
 			default:
-				String translation = tsdb.getStation(stationName).translateInputSensorName(name, true);
+				String translation = station.translateInputSensorName(name, true);
 				if(translation==null || !translation.equals("NaN")) {
 					valueNameList.add(name);
 					valueReaderList.add(table.createColumnReaderFloat(name));
@@ -127,9 +141,9 @@ public class TOA5Loader {
 					}
 				}
 				DataEntry[] dataEntries = vList.toArray(new DataEntry[0]);
-				String translation = tsdb.getStation(stationName).translateInputSensorName(valueNames[i], true);
+				String translation = station.translateInputSensorName(valueNames[i], true);
 				String sensorName = translation == null ? valueNames[i] : translation;
-				tsdb.streamStorage.insertDataEntryArray(stationName, sensorName, dataEntries);				
+				tsdb.streamStorage.insertDataEntryArray(station.stationID, sensorName, dataEntries);				
 			} catch(Exception e) {
 				e.printStackTrace();
 				log.error(e+" with name "+valueNames[i]+"  in "+filename);
@@ -149,7 +163,7 @@ public class TOA5Loader {
 		String[] headerNames = traceHeaderList.toArray(new String[0]);
 		String[] sensorNames = traceTranslatedList.toArray(new String[0]);
 		int timeStep = table.metaHeaderContains("TableMetHour") ? 60 : -1;
-		SourceEntry sourceEntry = new SourceEntry(filename, stationName, firstTimestamp, lastTimestamp, rowCount, headerNames, sensorNames, timeStep);
+		SourceEntry sourceEntry = new SourceEntry(filename, station.stationID, firstTimestamp, lastTimestamp, rowCount, headerNames, sensorNames, timeStep);
 		tsdb.sourceCatalog.insert(sourceEntry);
 	}
 }

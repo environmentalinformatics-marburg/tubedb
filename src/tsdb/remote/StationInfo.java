@@ -32,7 +32,8 @@ public class StationInfo implements Serializable {
 		geoPoslongitude = station.geoPosLongitude;
 		geoPosLatitude = station.geoPosLatitude;
 		generalStationInfo = Util.ifnull(station.generalStation, gs->new GeneralStationInfo(gs));
-		alternativeID = station.alternativeID;
+		List<String> aliases = station.getAliases();
+		alternativeID = aliases.isEmpty() ? null : aliases.get(0);
 		intervalList = station.propertiesList;
 	}		
 }
