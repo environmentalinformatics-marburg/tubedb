@@ -33,7 +33,7 @@ import tsdb.util.Util;
 public class TsDB implements AutoCloseable {
 	private static final Logger log = LogManager.getLogger();
 	
-	public static final String tubedb_version = "1.8.1";
+	public static final String tubedb_version = "1.8.2";
 
 	/**
 	 * map regionName -> Region

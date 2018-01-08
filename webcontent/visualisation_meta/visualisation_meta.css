@@ -110,7 +110,7 @@ option {
 .processing {
 	position: fixed;
 	top: 0;
-	right: 100px;
+	right: 120px;
 	background-color: rgba(140, 135, 130, 0.4);
 	border-radius: 5px;
 	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
@@ -127,7 +127,7 @@ progress {
 .runtime {
 	position: absolute;
 	top: 0;
-	right: 100px;
+	right: 120px;
 	background-color: rgba(140, 135, 130, 0.1);
 	/*border-radius: 5px;*/
 	/*box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);*/
