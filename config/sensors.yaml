@@ -1639,3 +1639,11 @@ PAR_2000_calc:
   interpolation_mse: 10000
   visibility: internal
   
+precipitation_radolan:
+  description: Precipitation based on RADOLAN product
+  unit: mm (millimeter)
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  interpolation_mse: 4
+  category: water  
