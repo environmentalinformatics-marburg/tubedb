@@ -33,7 +33,7 @@ import tsdb.util.Util;
 public class TsDB implements AutoCloseable {
 	private static final Logger log = LogManager.getLogger();
 	
-	public static final String tubedb_version = "1.8.3";
+	public static final String tubedb_version = "1.8.4";
 
 	/**
 	 * map regionName -> Region
@@ -683,8 +683,15 @@ public class TsDB implements AutoCloseable {
 				if(schema[i].equals("Ta_200")) {
 					result[i] = virtualPlot.elevationTemperature;
 				}
+				if(schema[i].equals("Ta_200_min")) {
+					result[i] = virtualPlot.elevationTemperature;
+				}
+				if(schema[i].equals("Ta_200_max")) {
+					result[i] = virtualPlot.elevationTemperature;
+				}
 			}
 		}
+		//log.info("ref " + Arrays.toString(result));
 		return result;
 	}
 
@@ -914,7 +921,7 @@ public class TsDB implements AutoCloseable {
 				includedSensors.add(s.name);
 			}
 		}
-		log.info("sort "+Arrays.toString(schema)+"   ->   "+includedSensors.toString());
+		//log.info("sort "+Arrays.toString(schema)+"   ->   "+includedSensors.toString());
 		return includedSensors.toArray(new String[0]);
 	}	
 }

@@ -67,18 +67,20 @@ public class EmpiricalIterator extends TsIterator {
 		DataQuality[] resultQf = new DataQuality[schema.length];
 		for(int colIndex=0;colIndex<schema.length;colIndex++) {
 			if(element.qualityFlag[colIndex]==DataQuality.STEP) {
+				float value = element.data[colIndex];
 				if(maxDiff[colIndex]!=null&&!Float.isNaN(compareElement.data[colIndex])) {
-					//log.info("check");
-					if(Math.abs((element.data[colIndex]-refValues[colIndex])-compareElement.data[colIndex])<=maxDiff[colIndex]) { // check successful
+					//log.info("check " + value + " corr " + (value - refValues[colIndex]) + " cmp " + compareElement.data[colIndex] + " diff " + Math.abs((value - refValues[colIndex])-compareElement.data[colIndex]));
+					if(Math.abs((value - refValues[colIndex]) - compareElement.data[colIndex]) <= maxDiff[colIndex]) { // check successful
+						//log.info("OK");
 						resultQf[colIndex] = DataQuality.EMPIRICAL;
-						result[colIndex] = element.data[colIndex];
+						result[colIndex] = value;
 					} else { // remains STEP
 						resultQf[colIndex] = DataQuality.STEP;
 						result[colIndex] = Float.NaN;
 					}
 				} else { // no check possible
 					resultQf[colIndex] = DataQuality.EMPIRICAL;
-					result[colIndex] = element.data[colIndex];
+					result[colIndex] = value;
 				}
 			} else {
 				//log.info("no "+element);

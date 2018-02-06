@@ -1498,7 +1498,7 @@ LWUR_300_calc:
   visibility: internal
 
 PAR_300_calc:
-  description: Photosynthetically activ radiation at 3 meters height
+  description: Photosynthetically active radiation at 3 meters height
   unit: µmol/(m^2*s) (micromol photons per square meter per second) 
   aggregation: average
   physical_range: [0.0, 3000.0]
@@ -1508,7 +1508,7 @@ PAR_300_calc:
   visibility: internal
   
 PAR_200_calc:
-  description: Photosynthetically activ radiation at 2 meters height
+  description: Photosynthetically active radiation at 2 meters height
   unit: µmol/(m^2*s) (micromol photons per square meter per second) 
   aggregation: average
   physical_range: [0.0, 3000.0]
@@ -1620,7 +1620,7 @@ Rn_3700_calc:
   visibility: internal
 
 PAR_1000_calc:
-  description: Photosynthetically activ radiation at 10 meters height
+  description: Photosynthetically active radiation at 10 meters height
   unit: µmol/(m^2*s) (micromol photons per square meter per second) 
   aggregation: average
   physical_range: [0.0, 3000.0]
@@ -1630,7 +1630,7 @@ PAR_1000_calc:
   visibility: internal
   
 PAR_2000_calc:
-  description: Photosynthetically activ radiation at 20 meters height
+  description: Photosynthetically active radiation at 20 meters height
   unit: µmol/(m^2*s) (micromol photons per square meter per second) 
   aggregation: average
   physical_range: [0.0, 3000.0]

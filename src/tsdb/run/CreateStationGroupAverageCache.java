@@ -19,7 +19,9 @@ import tsdb.graph.QueryPlanGenerators;
 import tsdb.graph.node.Continuous;
 import tsdb.graph.node.ContinuousGen;
 import tsdb.graph.processing.Addition;
+import tsdb.graph.processing.AdditionFirst;
 import tsdb.graph.processing.Averaged;
+import tsdb.graph.processing.Subtraction;
 import tsdb.util.DataQuality;
 import tsdb.util.iterator.TimestampSeries;
 import tsdb.util.iterator.TsIterator;
@@ -157,9 +159,10 @@ public class CreateStationGroupAverageCache {
 							//log.info(Arrays.toString(schema)+"of "+Arrays.toString(plot.getSensorNames()));
 							Continuous continuous = continuousGen.get(plotID, schema);
 							if(continuous!=null) {
-								Addition addition = Addition.createWithElevationTemperature(tsdb,continuous,plotID);
-								if(addition!=null) {
-									additions.add(addition);
+								Subtraction subtraction = Subtraction.createWithElevationTemperature(tsdb,continuous,plotID);
+								if(subtraction!=null) {
+									//log.info("with ref " + plotID + " " + processingSensorName);
+									additions.add(subtraction);
 								}
 								sources.add(continuous);
 							}

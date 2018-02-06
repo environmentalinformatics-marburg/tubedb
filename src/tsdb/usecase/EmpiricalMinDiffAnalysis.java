@@ -19,11 +19,13 @@ import tsdb.graph.QueryPlanGenerators;
 import tsdb.graph.node.Continuous;
 import tsdb.graph.node.ContinuousGen;
 import tsdb.graph.processing.Addition;
+import tsdb.graph.processing.AdditionFirst;
 import tsdb.graph.processing.Averaged;
 import tsdb.graph.processing.Difference;
 import tsdb.graph.processing.Differential;
 import tsdb.graph.processing.Middle;
 import tsdb.graph.processing.MinDiff;
+import tsdb.graph.processing.Subtraction;
 import tsdb.graph.processing.TransformLinear;
 import tsdb.graph.source.GroupAverageSource_NEW;
 import tsdb.util.DataQuality;
@@ -56,7 +58,7 @@ public class EmpiricalMinDiffAnalysis {
 		Long end = TimeConverter.ofDateEndHour(2010);*/
 
 		Continuous source = continuousGen.getWithSensorNames(plotID,sensorName);
-		Addition addSource = Addition.createWithElevationTemperature(tsdb, source, plotID);
+		Subtraction addSource = Subtraction.createWithElevationTemperature(tsdb, source, plotID);
 		if(addSource!=null) {
 			source = addSource;
 		}
@@ -86,7 +88,7 @@ public class EmpiricalMinDiffAnalysis {
 					if(con==null) {
 						return null;
 					}
-					Addition add = Addition.createWithElevationTemperature(tsdb, con, p.getPlotID());
+					Subtraction add = Subtraction.createWithElevationTemperature(tsdb, con, p.getPlotID());
 					if(add!=null) {
 						return add;
 					}

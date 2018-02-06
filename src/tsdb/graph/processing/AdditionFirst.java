@@ -10,25 +10,25 @@ import tsdb.util.iterator.InputProcessingIterator;
 import tsdb.util.iterator.TsIterator;
 
 /**
- * Node: adds a value to all entries of source
+ * Node: adds a value to first entry of source
  * @author woellauer
  *
  */
-public class Addition implements Continuous {
+public class AdditionFirst implements Continuous {
 	
 	private final Continuous source;
 	private final float value;
 	
-	protected Addition(Continuous source, float value) {
+	protected AdditionFirst(Continuous source, float value) {
 		throwNull(source);
 		this.source = source;
 		this.value = value;
 	}
 	
-	public static Addition of(Continuous source, float value) {
-		return new Addition(source, value);
+	public static AdditionFirst of(Continuous source, float value) {
+		return new AdditionFirst(source, value);
 	}
-	
+
 	@Override
 	public TsIterator get(Long start, Long end) {
 		TsIterator input_iterator = source.get(start, end);
@@ -45,8 +45,9 @@ public class Addition implements Continuous {
 				TsEntry element = input_iterator.next();
 				float[] data = element.data;
 				float[] result = new float[data.length];
-				for(int i=0;i<data.length;i++) {
-					result[i] = data[i]+value;
+				result[0] = data[0] + value;
+				for(int i = 1; i < data.length; i++) {
+					result[i] = data[i];
 				}
 				return new TsEntry(element.timestamp, result);
 			}			

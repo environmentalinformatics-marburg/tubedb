@@ -4,7 +4,7 @@ import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.graph.QueryPlanGenerators;
 import tsdb.graph.node.Continuous;
-import tsdb.graph.processing.Addition;
+import tsdb.graph.processing.Subtraction;
 import tsdb.util.DataQuality;
 
 public class TestingAddition {
@@ -15,7 +15,7 @@ public class TestingAddition {
 		String plotID = "foc1";
 		
 		Continuous source = QueryPlanGenerators.getContinuousGen(tsdb, DataQuality.STEP).get(plotID, new String[]{"Ta_200"});
-		source = Addition.createWithElevationTemperature(tsdb, source, plotID);
+		source = Subtraction.createWithElevationTemperature(tsdb, source, plotID);
 		source.writeConsole(null, null);
 	}
 
