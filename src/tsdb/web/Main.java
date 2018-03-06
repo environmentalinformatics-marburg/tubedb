@@ -46,6 +46,7 @@ import tsdb.remote.ServerTsDB;
 import tsdb.util.Table;
 import tsdb.util.Table.ColumnReaderString;
 import tsdb.util.gui.TimeSeriesPainterGraphics2D;
+import tsdb.web.api.IotAPIHandler;
 import tsdb.web.api.SupplementHandler;
 import tsdb.web.api.TsDBAPIHandler;
 import tsdb.web.api.TsDBExportAPIHandler;
@@ -74,6 +75,7 @@ public class Main {
 
 	private static final String SUPPLEMENT_PART_URL = "/supplement";
 	private static final String FILES_PART_URL = "/files";
+	private static final String IOT_PART_URL = "/iot";
 
 	private static final String WEB_SERVER_LOGIN_PROPERTIES_FILENAME = "realm.properties";
 	private static final String REALM_IP_CSV_FILENAME = "realm_ip.csv";
@@ -199,6 +201,7 @@ public class Main {
 				wrapLogin(createContextSupplement(),wrap), 
 				wrapLogin(createContextWebDownload(),wrap),
 				wrapLogin(createContextWebFiles(),wrap),
+				createContextIot(tsdb),
 				contextRedirect,
 				Robots_txt_Handler.CONTEXT_HANDLER,
 				createContextShutdown(),
@@ -327,6 +330,17 @@ public class Main {
 		//handler.setStopTimeout(TSDB_API_TIMEOUT_MILLISECONDS);
 		contextTsdb.setHandler(handler);
 		return contextTsdb;
+	}
+
+	private static ContextHandler createContextIot(RemoteTsDB tsdb) {
+		ContextHandler contextIot = new ContextHandler(IOT_PART_URL);
+		if(TsDBFactory.IOT_API) {
+			IotAPIHandler handler = new IotAPIHandler(tsdb);
+			contextIot.setHandler(handler);
+		} else {
+			contextIot.setHandler(new InvalidUrlHandler("IoT API is not activated"));
+		}
+		return contextIot;
 	}
 
 

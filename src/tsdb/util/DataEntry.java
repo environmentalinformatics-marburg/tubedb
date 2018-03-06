@@ -2,6 +2,7 @@ package tsdb.util;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.mapdb.DataInput2;
 import org.mapdb.DataOutput2;
@@ -14,7 +15,7 @@ import org.mapdb.Serializer;
  * @author woellauer
  *
  */
-public final class DataEntry implements Comparable<DataEntry> {
+public final class DataEntry implements Comparable<DataEntry>, Serializable {
 
 	public final int timestamp;
 	public final float value;

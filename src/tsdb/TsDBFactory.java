@@ -59,6 +59,9 @@ public final class TsDBFactory {
 	//public static String JUST_ONE_REGION = "SA";
 
 	public static boolean HIDE_INTENAL_SENSORS = true;
+	
+	public static boolean IOT_API = false;
+	public static String IOT_API_KEY = ""; //no key
 
 	private TsDBFactory(){}
 
@@ -112,6 +115,9 @@ public final class TsDBFactory {
 
 			WEB_SERVER_HTTPS = getBoolean(pathMap,"WEB_SERVER_HTTPS",WEB_SERVER_HTTPS);
 			WEB_SERVER_HTTPS_KEY_STORE_PASSWORD = getString(pathMap, "WEB_SERVER_HTTPS_KEY_STORE_PASSWORD", WEB_SERVER_HTTPS_KEY_STORE_PASSWORD);
+			
+			IOT_API = getBoolean(pathMap, "IOT_API", IOT_API);
+			IOT_API_KEY = getString(pathMap, "IOT_API_KEY", IOT_API_KEY);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}		

@@ -1,8 +1,12 @@
 package tsdb.web.util;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -146,6 +150,39 @@ public class Web {
 		}
 		//log.info("check "+region+"   "+userIdentity.isUserInRole(region, null)+"   "+userIdentity);
 		return userIdentity.isUserInRole(region, null);
+	}
+	
+	public static String requestContentToString(Request request) throws IOException {
+		return new String(readAllBytes(request.getInputStream(),request.getContentLength()), StandardCharsets.UTF_8);
+	}
+
+	private static final int DEFAULT_BUFFER_SIZE = 8192;
+	private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
+	public static byte[] readAllBytes(InputStream in) throws IOException {
+		return readAllBytes(in, DEFAULT_BUFFER_SIZE);
+	}
+
+	//derived from JDK 9
+	public static byte[] readAllBytes(InputStream in, int startBufferSize) throws IOException {
+		byte[] buf = new byte[DEFAULT_BUFFER_SIZE];
+		int capacity = buf.length;
+		int nread = 0;
+		int n;
+		for (;;) {
+			while ((n = in.read(buf, nread, capacity - nread)) > 0)
+				nread += n;
+			if (n < 0)
+				break;
+			if (capacity <= MAX_BUFFER_SIZE - capacity) {
+				capacity = capacity << 1;
+			} else {
+				if (capacity == MAX_BUFFER_SIZE)
+					throw new OutOfMemoryError("Required array size too large");
+				capacity = MAX_BUFFER_SIZE;
+			}
+			buf = Arrays.copyOf(buf, capacity);
+		}
+		return (capacity == nread) ? buf : Arrays.copyOf(buf, nread);
 	}
 
 }

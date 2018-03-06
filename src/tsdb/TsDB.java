@@ -903,7 +903,7 @@ public class TsDB implements AutoCloseable {
 				boolean valid = true;
 				if(sensor.dependency != null) {
 					for(String dep:sensor.dependency) {
-						if(!includedSensors.contains(dep)) {
+						if(!dep.equals(sensor.name) && !includedSensors.contains(dep)) {
 							valid = false;
 						}
 					}

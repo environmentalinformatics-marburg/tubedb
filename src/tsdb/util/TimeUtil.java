@@ -3,9 +3,11 @@ package tsdb.util;
 import java.io.Serializable;
 import java.time.DateTimeException;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalField;
@@ -111,8 +113,8 @@ public final class TimeUtil implements Serializable {
 	}
 
 	private static final DateTimeFormatter DATE_TIME_FORMATER_SLASH = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
-	//private static final DateTimeFormatter DATE_TIME_FORMATER_SPACE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	private static final DateTimeFormatter DATE_TIME_FORMATER_SPACE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	public static final DateTimeFormatter DATE_TIME_FORMATER_SPACE_SECONDS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	
 	/**
 	 * format: yyyy/MM/dd HH:mm
@@ -616,6 +618,12 @@ public final class TimeUtil implements Serializable {
 		c[12] = (char) ('0'+(h%10));
 
 		return c;		
+	}
+	
+	public static LocalDateTime unixTimeToLocalDateTime(long unixTime) {
+		Instant instant = Instant.ofEpochSecond(unixTime);
+		LocalDateTime datetime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+		return datetime;
 	}
 
 

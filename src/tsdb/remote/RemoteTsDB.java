@@ -9,6 +9,7 @@ import tsdb.component.Region;
 import tsdb.component.Sensor;
 import tsdb.component.SourceEntry;
 import tsdb.util.AggregationInterval;
+import tsdb.util.DataEntry;
 import tsdb.util.DataQuality;
 import tsdb.util.Pair;
 import tsdb.util.TimeSeriesMask;
@@ -97,4 +98,11 @@ public interface RemoteTsDB extends Remote {
 	
 	//info
 	String get_tubedb_version() throws RemoteException;
+	
+	//IoT API support
+	void clearData() throws RemoteException;
+	void insertOneValue(String stationName, String sensorName, int timestamp, float value) throws RemoteException;
+	String[] getInternalStoredStationNames() throws RemoteException;
+	DataEntry[] readRawData(String stationName, String sensorName) throws RemoteException;
+	TimestampSeries readRawData(String stationName, String[] sensorNames) throws RemoteException;
 }

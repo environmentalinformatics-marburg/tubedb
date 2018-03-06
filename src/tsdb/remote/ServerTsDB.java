@@ -581,4 +581,40 @@ public class ServerTsDB implements RemoteTsDB {
 		// TODO Auto-generated method stub
 		return TsDB.tubedb_version;
 	}
+	
+	// ---- IoT API support -----
+
+	@Override
+	public void clearData() throws RemoteException {
+		tsdb.clear();		
+	}
+
+	@Override
+	public void insertOneValue(String stationName, String sensorName, int timestamp, float value) throws RemoteException {
+		DataEntry[] dataEntries = new DataEntry[] {new DataEntry(timestamp, value)};
+		tsdb.streamStorage.insertDataEntryArray(stationName, sensorName, dataEntries );
+		tsdb.streamStorage.commit();		
+	}
+
+	@Override
+	public String[] getInternalStoredStationNames() throws RemoteException {
+		return tsdb.streamStorage.getStationNames().toArray(new String[0]);
+	}
+	
+	public DataEntry[] readRawData(String stationName, String sensorName) throws RemoteException {
+		StreamIterator it = tsdb.streamStorage.getRawSensorIterator(stationName, sensorName, null, null);
+		if(it == null || !it.hasNext()) {
+			return null;
+		}
+		return it.remainingToArray();
+	}
+
+	@Override
+	public TimestampSeries readRawData(String stationName, String[] sensorNames) throws RemoteException {
+		TsIterator it = tsdb.streamStorage.getRawIterator(stationName, sensorNames, null, null);
+		if(it == null || !it.hasNext()) {
+			return null;
+		}
+		return it.toTimestampSeries(stationName);
+	}
 }
