@@ -277,35 +277,6 @@ LWUR_300:
   empirical_diff: 18.31
   interpolation_mse: 10000   
   
-Rn_300:
-  description: Net radiation at 3 meters height
-  unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
-  step_range: [0.0, 1000.0]
-  empirical_diff: 112.19
-  interpolation_mse: 10000   
-  
-Tsky:
-  description: Sky temperature
-  unit: °C (degree Celcius) 
-  aggregation: average
-  physical_range: [-40.0, 60.0]
-  step_range: [0.0, 10.0]  
-  empirical_diff: 5.8
-  interpolation_mse: 7
-  category: temperature
-  
-Tgnd:
-  description: Ground temperature
-  unit: °C (degree Celcius) 
-  aggregation: average
-  physical_range: [-40.0, 60.0] 
-  step_range: [0.0, 10.0]
-  empirical_diff: 2.65
-  interpolation_mse: 7
-  category: temperature
-  
 Trad:
   description: Radiation temperature
   unit: °C (degree Celcius) 
@@ -522,16 +493,6 @@ rH_3700:
   unit: '% (percentage of relative humidity, 0-100)'
   aggregation: average
 
-#added 2016_03_08
-Rn_3700:
-  description: Net radiation at 37 meters height
-  unit: kWh/m^2 (kilo watt hour per square meter)
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
-  step_range: [0.0, 1000.0]
-  empirical_diff: 112.19
-  interpolation_mse: 10000   
-
 #****** new sensors in SET39 ********
 
 SWDR_4400:
@@ -574,16 +535,6 @@ rH_4400:
   unit: '% (percentage of relative humidity, 0-100)' 
   aggregation: average
 
-#added 2016_03_08
-Rn_4400:
-  description: Net radiation at 44 meters height
-  unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
-  step_range: [0.0, 1000.0]
-  empirical_diff: 112.19
-  interpolation_mse: 10000   
-  
 #****** Kili Sensors ********** (sensors that are not in BE)
 
 p_200:
@@ -1457,78 +1408,37 @@ ETsz24:
   visibility: internal
 
 #calc radiation 2017_09_05
-SWDR_300_calc:
-  description: Shortwave Downward Radiation at 3 meters height
-  unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
-  step_range: [0.0, 1000.0]
-  empirical_diff: 157.2
-  interpolation_mse: 10000   
-  visibility: internal
-  
-SWUR_300_calc:
-  description: Shortwave Upward Radiation at 3 meters height
-  unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  step_range: [0.0, 1000.0]
-  empirical_diff: 43.03
-  interpolation_mse: 10000   
-  visibility: internal
- 
-LWDR_300_calc:
-  description: Longwave Downward Radiation at 3 meters height
-  unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  step_range: [0.0, 220.0]
-  empirical_diff: 34.29
-  interpolation_mse: 10000   
-  visibility: internal
-  
-LWUR_300_calc:
-  description: Longwave Upward Radiation at 3 meters height
-  unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  step_range: [0.0, 1000.0]
-  empirical_diff: 18.31
-  interpolation_mse: 10000
-  visibility: internal
-
-PAR_300_calc:
-  description: Photosynthetically active radiation at 3 meters height
-  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
-  aggregation: average
-  physical_range: [0.0, 3000.0]
-  step_range: [0.0, 1000.0]
-  empirical_diff: 610.46
-  interpolation_mse: 10000
-  visibility: internal
-  
-PAR_200_calc:
-  description: Photosynthetically active radiation at 2 meters height
-  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
-  aggregation: average
-  physical_range: [0.0, 3000.0]
-  step_range: [0.0, 1000.0]
-  empirical_diff: 610.46
-  interpolation_mse: 10000
-  visibility: internal  
-
-Albedo_calc:
-  description: Albedo (SWUR/SWDR)
+Albedo_300:
+  description: Albedo (SWUR_300/SWDR_300)
   unit: ratio (0 to 1)
   aggregation: average_albedo
   physical_range: [0.0, 1.0]
   step_range: [0.0, 1000.0]
   empirical_diff: 0.31  
-  dependency: [SWUR_300_calc, SWDR_300_calc]
-  post_hour_func: "(SWDR_300_calc > 0.01 && SWUR_300_calc < SWDR_300_calc * 0.9 ? SWUR_300_calc / SWDR_300_calc : NA)"
-  visibility: internal
+  dependency: [SWUR_300, SWDR_300]
+  post_hour_func: "(SWDR_300 > 0.01 && SWUR_300 < SWDR_300 * 0.9 ? SWUR_300 / SWDR_300 : NA)"
 
-Rn_300_calc:
+Albedo_3700:
+  description: Albedo (SWUR_3700/SWDR_3700)
+  unit: ratio (0 to 1)
+  aggregation: average_albedo
+  physical_range: [0.0, 1.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 0.31  
+  dependency: [SWUR_3700, SWDR_3700]
+  post_hour_func: "(SWDR_3700 > 0.01 && SWUR_3700 < SWDR_3700 * 0.9 ? SWUR_3700 / SWDR_3700 : NA)"
+  
+Albedo_4400:
+  description: Albedo (SWUR_4400/SWDR_4400)
+  unit: ratio (0 to 1)
+  aggregation: average_albedo
+  physical_range: [0.0, 1.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 0.31  
+  dependency: [SWUR_4400, SWDR_4400]
+  post_hour_func: "(SWDR_4400 > 0.01 && SWUR_4400 < SWDR_4400 * 0.9 ? SWUR_4400 / SWDR_4400 : NA)"
+
+Rn_300:
   description: Net radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
   aggregation: sum_radiation
@@ -1536,11 +1446,32 @@ Rn_300_calc:
   step_range: [0.0, 1000.0]
   empirical_diff: 112.19
   interpolation_mse: 10000
-  dependency: [SWDR_300_calc, SWUR_300_calc, LWDR_300_calc, LWUR_300_calc]
-  post_hour_func: "SWDR_300_calc - SWUR_300_calc + LWDR_300_calc - LWUR_300_calc"
-  visibility: internal
+  dependency: [SWDR_300, SWUR_300, LWDR_300, LWUR_300]
+  post_hour_func: "SWDR_300 - SWUR_300 + LWDR_300 - LWUR_300"
+  
+Rn_3700:
+  description: Net radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 112.19
+  interpolation_mse: 10000
+  dependency: [SWDR_3700, SWUR_3700, LWDR_3700, LWUR_3700]
+  post_hour_func: "SWDR_3700 - SWUR_3700 + LWDR_3700 - LWUR_3700"
 
-Tsky_calc:
+Rn_4400:
+  description: Net radiation at 44 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 112.19
+  interpolation_mse: 10000
+  dependency: [SWDR_4400, SWUR_4400, LWDR_4400, LWUR_4400]
+  post_hour_func: "SWDR_4400 - SWUR_4400 + LWDR_4400 - LWUR_4400"
+
+Tsky:
   description: Sky temperature
   unit: °C (degree Celcius) 
   aggregation: average
@@ -1549,11 +1480,10 @@ Tsky_calc:
   empirical_diff: 5.8
   interpolation_mse: 7
   category: temperature
-  dependency: LWDR_300_calc
-  post_hour_func: "(LWDR_300_calc / 5.67e-11)^0.25 - 273.15"
-  visibility: internal
+  dependency: LWDR
+  post_hour_func: "(LWDR / 5.67e-11)^0.25 - 273.15"
 
-Tgnd_calc:
+Tgnd:
   description: Ground temperature
   unit: °C (degree Celcius) 
   aggregation: average
@@ -1562,82 +1492,8 @@ Tgnd_calc:
   empirical_diff: 2.65
   interpolation_mse: 7
   category: temperature
-  dependency: LWUR_300_calc
-  post_hour_func: "(LWUR_300_calc / 5.67e-11)^0.25 - 273.15"
-  visibility: internal
-
-#calc radiation 2017_09_12
-SWDR_3700_calc:
-  description: Shortwave Downward Radiation at 37 meters height
-  unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
-  step_range: [0.0, 1000.0]
-  empirical_diff: 157.2
-  interpolation_mse: 10000   
-  visibility: internal
-  
-SWUR_3700_calc:
-  description: Shortwave Upward Radiation at 37 meters height
-  unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  step_range: [0.0, 1000.0]
-  empirical_diff: 43.03
-  interpolation_mse: 10000   
-  visibility: internal
-  
-LWDR_3700_calc:
-  description: Longwave Downward Radiation at 37 meters height
-  unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  step_range: [0.0, 220.0]
-  empirical_diff: 34.29
-  interpolation_mse: 10000   
-  visibility: internal
- 
-LWUR_3700_calc:
-  description: Longwave Upward Radiation at 37 meters height
-  unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  step_range: [0.0, 1000.0]
-  empirical_diff: 18.31
-  interpolation_mse: 10000
-  visibility: internal
-
-Rn_3700_calc:
-  description: Net radiation at 37 meters height
-  unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
-  step_range: [0.0, 1000.0]
-  empirical_diff: 112.19
-  interpolation_mse: 10000
-  dependency: [SWDR_3700_calc, SWUR_3700_calc, LWDR_3700_calc, LWUR_3700_calc]
-  post_hour_func: "SWDR_3700_calc - SWUR_3700_calc + LWDR_3700_calc - LWUR_3700_calc"
-  visibility: internal
-
-PAR_1000_calc:
-  description: Photosynthetically active radiation at 10 meters height
-  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
-  aggregation: average
-  physical_range: [0.0, 3000.0]
-  step_range: [0.0, 1000.0]
-  empirical_diff: 610.46
-  interpolation_mse: 10000
-  visibility: internal
-  
-PAR_2000_calc:
-  description: Photosynthetically active radiation at 20 meters height
-  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
-  aggregation: average
-  physical_range: [0.0, 3000.0]
-  step_range: [0.0, 1000.0]
-  empirical_diff: 610.46
-  interpolation_mse: 10000
-  visibility: internal
+  dependency: LWUR
+  post_hour_func: "(LWUR / 5.67e-11)^0.25 - 273.15"
   
 precipitation_radolan:
   description: Precipitation based on RADOLAN product
@@ -1646,4 +1502,16 @@ precipitation_radolan:
   physical_range: [0.0, 500.0]
   step_range: [0.0, 1000.0]
   interpolation_mse: 4
-  category: water  
+  category: water
+
+#added 2018-04-04 generic PAR
+PAR:
+  description: Photosynthetically activ radiation
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  raw_source: [PAR_200, PAR_300, PAR_1000, PAR_2000] # use first available sensor in list
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 610.46
+  interpolation_mse: 10000
+  
