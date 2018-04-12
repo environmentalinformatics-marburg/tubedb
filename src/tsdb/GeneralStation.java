@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import tsdb.component.Region;
+import tsdb.util.Interval;
 
 /**
  * This class contains metadata that is associated with a group of stations like HEG or HEW.
@@ -29,7 +30,9 @@ public class GeneralStation {
 	
 	public final String group;//not null //  if no group: name of general station
 	
-	public GeneralStation(String name, Region region, String longName, String group) {
+	public final Interval viewTimeRange; //nullable
+	
+	public GeneralStation(String name, Region region, String longName, String group, Interval viewTimeRange) {
 		this.name = name;
 		this.region = region;
 		this.longName = longName;
@@ -37,6 +40,7 @@ public class GeneralStation {
 		this.sensorNameTranlationMap = new HashMap<String,String>();
 		this.virtualPlots = new ArrayList<VirtualPlot>();
 		this.group = group;
+		this.viewTimeRange = viewTimeRange;
 	}
 	
 	public Stream<String> getStationAndVirtualPlotNames() {

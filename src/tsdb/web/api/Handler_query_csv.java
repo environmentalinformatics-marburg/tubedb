@@ -194,6 +194,59 @@ public class Handler_query_csv extends MethodHandler {
 				return;
 			}
 		}
+		
+		String timeEndYear = request.getParameter("end_year");
+		if(timeEndYear != null) {
+			try {
+				int year = Integer.parseInt(timeEndYear);
+				if(year < Handler_query_image.MIN_YEAR || year > Handler_query_image.MAX_YEAR) {
+					log.error("end_year out of range "+year);
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					return;
+				}
+				String timeEndMonth = request.getParameter("end_month");
+				if(timeEndMonth == null) {
+					endTime = TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, 12, 31, 23, 0));
+				} else {
+					try {
+						int month = Integer.parseInt(timeEndMonth);
+						if(month<1||month>12) {
+							log.error("end_month out of range "+month);
+							response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+							return;
+						}
+						String timeEndDay = request.getParameter("end_day");
+						if(timeEndDay == null) {
+							LocalDateTime dateMonth = LocalDateTime.of(year, month, 1, 0, 0);
+							endTime = TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, dateMonth.toLocalDate().lengthOfMonth(), 23, 0));
+						} else {
+							try {
+								int day = Integer.parseInt(timeEndDay);
+								if(day < 1 || day > 31) {
+									log.error("end_day out of range "+day);
+									response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+									return;
+								}
+								LocalDateTime dateDay = LocalDateTime.of(year, month, day, 0, 0);
+								endTime = TimeUtil.dateTimeToOleMinutes(dateDay.plusDays(1));
+							} catch (Exception e) {
+								log.error(e);
+								response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+								return;
+							}	
+						}
+					} catch (Exception e) {
+						log.error(e);
+						response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+						return;
+					}	
+				}
+			} catch (Exception e) {
+				log.error(e);
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return;
+			}
+		}
 
 		String nanText = request.getParameter("nan_text") == null ? "NA" : request.getParameter("nan_text");
 

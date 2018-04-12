@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 import tsdb.GeneralStation;
 import tsdb.component.Region;
+import tsdb.util.Interval;
 
 /**
  * Serializable general station info
@@ -19,6 +20,7 @@ public class GeneralStationInfo implements Serializable, Comparable<GeneralStati
 	public final String longName;
 	public final String group;
 	public final Region region;
+	public final Interval viewTimeRange; //nullable
 	public final int stationCount;
 	public final int virtualPlotCount;
 	
@@ -27,6 +29,7 @@ public class GeneralStationInfo implements Serializable, Comparable<GeneralStati
 		this.longName = generalStation.longName;
 		this.group = generalStation.group;
 		this.region = generalStation.region;
+		this.viewTimeRange = generalStation.viewTimeRange;
 		this.stationCount = generalStation.stationList.size();
 		this.virtualPlotCount = generalStation.virtualPlots.size();
 	}
@@ -37,6 +40,7 @@ public class GeneralStationInfo implements Serializable, Comparable<GeneralStati
 		this.longName = generalName;
 		this.group = generalName;
 		this.region = new Region(regionName, regionName);
+		this.viewTimeRange = null;
 		this.stationCount = 0;
 		this.virtualPlotCount = 0;
 	}

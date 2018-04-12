@@ -138,7 +138,7 @@ computed: {
 	},
 	plots: function() {
 		var self = this;
-		if(this.groupID == "*") {
+		if(this.groupID === '*') {
 			return this.metadata.plots;
 		}
 		var values = [];
@@ -246,7 +246,11 @@ computed: {
 	},
 	timeParameters: function() {		
 		if(this.timeYear === '*') {
-			return {};
+			if(this.groupViewYearRange === undefined) {
+				return {};
+			} else {
+				return {year: this.groupViewYearRange.start, end_year: this.groupViewYearRange.end};
+			}
 		}
 		if(this.timeMonth === '*') {
 			return {year: this.timeYear};
@@ -256,6 +260,26 @@ computed: {
 		}
 		console.log("day "+this.timeDay);
 		return {year: this.timeYear, month: this.timeMonthsNumber[this.timeMonth], day: this.timeDay};
+	},
+	groupViewYearRange: function() {
+		if(this.groupID === '*') {
+			if(this.metadata.region === undefined || this.metadata.region.view_year_range === undefined) {
+				return undefined;
+			} else {
+				return this.metadata.region.view_year_range;
+			}
+		} else {
+			var group = this.groupMap[this.groupID];
+			if(group.view_year_range === undefined) {
+				if(this.metadata.region === undefined || this.metadata.region.view_year_range === undefined) {
+					return undefined;
+				} else {
+					return this.metadata.region.view_year_range;
+				}
+			} else {
+				return group.view_year_range;
+			}
+		}		
 	},
 	isMessageRawWarning: function() {
 		var self = this;
@@ -484,6 +508,7 @@ methods: {
 		if(a.width !== b.width) return false;
 		if(a.height !== b.height) return false;
 		if(a.year !== b.year) return false;
+		if(a.end_year !== b.end_year) return false;
 		if(a.month !== b.month) return false;
 		if(a.day !== b.day) return false;
 		if(a.quality !== b.quality) return false;
@@ -526,6 +551,9 @@ methods: {
 		var params = {plot: view.plot, sensor: view.sensor, aggregation: view.aggregation, interpolated: "false", quality: view.quality, interpolated: view.interpolated, width: view.width, height: view.height, by_year: view.byYear};		
 		if(view.hasOwnProperty('year')) {
 			params.year = view.year;
+		}
+		if(view.hasOwnProperty('end_year')) {
+			params.end_year = view.end_year;
 		}
 		if(view.hasOwnProperty('month')) {
 			params.month = view.month;
@@ -625,11 +653,16 @@ watch: {
 		this.updateMetadata();
 	},
 	metadata: function() {
+		var self = this;
 		console.log("metadata update");
 		this.groupID = "*";
+		var defaultGroup = this.metadata.region.default_general_station;
 		var values = {"*":{id:"*", name:"*"}};
 		this.metadata.general_stations.forEach(function(o){
 			values[o.id] = o;
+			if(defaultGroup !== undefined && defaultGroup === o.id) {
+				self.groupID = o.id;
+			}
 		});
 		this.groupMap = values;
 		
@@ -686,9 +719,6 @@ watch: {
 		for(var i=startYear; i<=endYear; i++) {
 			y.push(i);
 		}
-		if(y.length==1) {
-			this.timeframeYear = y[0];
-		}
 		this.timeYears = y;
 		
 		
@@ -740,6 +770,24 @@ watch: {
 	},
 	byYear: function() {
 		this.updateViews();
+	},
+	groupViewYearRange: function() {
+		if(this.groupViewYearRange != undefined) {
+			var startYear = this.groupViewYearRange.start;
+			var endYear = this.groupViewYearRange.end;
+			var y = [];
+			var validYear = false;
+			for(var i=startYear; i<=endYear; i++) {
+				y.push(i);
+				if(i == this.timeYear) {
+					validYear = true;
+				}
+			}
+			this.timeYears = y;		
+			if(!validYear) {
+				this.timeYear = '*';
+			}
+		}
 	},
 }, //end watch
 

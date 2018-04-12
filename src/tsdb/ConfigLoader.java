@@ -70,19 +70,20 @@ public class ConfigLoader {
 		public Region region;
 		public String longName;
 		public String group;
+		public Interval viewTimeRange; //nullable
 
 		public GeneralStationBuilder(String name) {
 			this.name = name;
 		}
 
-		public GeneralStation create() {
+		public GeneralStation build() {			                  
 			if(longName==null) {
 				longName = name;
 			}
 			if(group==null) {
 				group = name;
 			}
-			return new GeneralStation(name, region, longName, group);
+			return new GeneralStation(name, region, longName, group, viewTimeRange);
 		}
 	}
 
@@ -127,9 +128,32 @@ public class ConfigLoader {
 					}
 				}
 			}
+			
+			Section section_general_station_view_time_ranges = ini.get("general_station_view_time_ranges");  //******************** [general_station_view_time_ranges]
+			if(section_general_station_view_time_ranges!=null) {
+				for(Entry<String, String> entry:section_general_station_view_time_ranges.entrySet()) {
+					if(creationMap.containsKey(entry.getKey())) {
+						String range = entry.getValue();
+						Interval interval = Interval.parse(range);
+						if(interval != null) {
+							if(interval.start>=1900&&interval.start<=2100&&interval.end>=1900&&interval.end<=2100) {
+								int startTime = (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(interval.start, 1, 1, 0, 0));
+								int endTime = (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(interval.end, 12, 31, 23, 0));
+								creationMap.get(entry.getKey()).viewTimeRange = Interval.of(startTime,endTime);
+							} else {
+								log.warn("general_station_view_time_ranges section invalid year range "+range);
+							}
+						}
+						
+						
+					} else {
+						log.warn("general station unknown: "+entry.getKey());
+					}
+				}
+			}
 
 			for(GeneralStationBuilder e:creationMap.values()) {
-				tsdb.insertGeneralStation(e.create());
+				tsdb.insertGeneralStation(e.build());
 			}
 
 		} catch (Exception e) {
@@ -451,6 +475,24 @@ public class ConfigLoader {
 			} else {
 				log.warn("region_view_time_range section not found");
 			}
+			
+			section = ini.get("region_default_general_station");
+			if(section!=null) {
+				Map<String, String> defaultGeneralStationNameMap = Util.readIniSectionMap(section);
+				for(Entry<String, String> entry:defaultGeneralStationNameMap.entrySet()) {
+					String regionName = entry.getKey();
+					if(justRegion==null || justRegion.toLowerCase().equals(regionName.toLowerCase())) {
+						String name = entry.getValue();
+						Region region1 = tsdb.getRegion(regionName);
+						if(region1 != null) {
+							region1.defaultGeneralStation = name;
+						} else {
+							log.warn("region not found: "+regionName);
+						}
+					}
+				}
+			}
+			
 			return region;
 		} catch (IOException e) {
 			e.printStackTrace();

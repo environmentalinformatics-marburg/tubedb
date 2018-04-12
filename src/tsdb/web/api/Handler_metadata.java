@@ -88,6 +88,10 @@ public class Handler_metadata extends MethodHandler {
 		json_output.key("end");
 		json_output.value(String.valueOf(TimeUtil.fastDateWriteYears(TimeUtil.oleMinutesToLocalDateTime(region.viewTimeRange.end).toLocalDate())));
 		json_output.endObject();
+		if(region.defaultGeneralStation != null) {
+			json_output.key("default_general_station");
+			json_output.value(region.defaultGeneralStation);
+		}
 		json_output.endObject();
 
 		GeneralStationInfo[] generalStationInfos = tsdb.getGeneralStationsOfRegion(region.name);		
@@ -99,6 +103,15 @@ public class Handler_metadata extends MethodHandler {
 			json_output.value(generalStationInfo.name);
 			json_output.key("name");
 			json_output.value(generalStationInfo.longName);
+			if(generalStationInfo.viewTimeRange != null) {
+				json_output.key("view_year_range");
+				json_output.object();
+				json_output.key("start");
+				json_output.value(String.valueOf(TimeUtil.fastDateWriteYears(TimeUtil.oleMinutesToLocalDateTime(generalStationInfo.viewTimeRange.start).toLocalDate())));
+				json_output.key("end");
+				json_output.value(String.valueOf(TimeUtil.fastDateWriteYears(TimeUtil.oleMinutesToLocalDateTime(generalStationInfo.viewTimeRange.end).toLocalDate())));
+				json_output.endObject();
+			}
 			json_output.endObject();
 		}
 		json_output.endArray();

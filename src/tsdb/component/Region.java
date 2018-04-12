@@ -18,11 +18,13 @@ public class Region implements Serializable {
 	public final String name;
 	public final String longName;
 	public Interval viewTimeRange; //nullable
+	public String defaultGeneralStation;  //nullable
 	
 	public Region(String name, String longName) {
 		throwNulls(name,longName);
 		this.name = name;
 		this.longName = longName;
 		this.viewTimeRange = null;
+		this.defaultGeneralStation = null;
 	}
 }
