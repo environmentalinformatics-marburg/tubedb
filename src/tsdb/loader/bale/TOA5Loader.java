@@ -6,7 +6,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +16,6 @@ import tsdb.component.SourceEntry;
 import tsdb.util.DataEntry;
 import tsdb.util.Table.ColumnReaderFloat;
 import tsdb.util.Table.ColumnReaderSpaceTimestamp;
-import tsdb.util.Table.ColumnReaderString;
 
 public class TOA5Loader {
 	private static final Logger log = LogManager.getLogger();

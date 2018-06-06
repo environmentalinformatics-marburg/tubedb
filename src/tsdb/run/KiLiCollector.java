@@ -60,6 +60,8 @@ public class KiLiCollector {
 	private static final String PREPROCESSED_EMPTY_PATH = PREPROCESS_PATH+"/preprocessed_empty";
 	private static final String PREPROCESSED_ERROR_PATH = PREPROCESS_PATH+"/preprocessed_error";
 	private static final String PREPROCESSED_NO_PLOT_PATH = PREPROCESS_PATH+"/preprocessed_no_plot";
+	private static final String PREPROCESSED_STATION_NOT_FOUND_PATH = PREPROCESS_PATH+"/preprocessed_station_not_found";
+	
 	private static final String PREPROCESSED_REMOVED_PATH = PREPROCESS_PATH+"/preprocessed_removed";
 
 	private static final String pathLogAllFiles = LOG_PATH+"/"+"all_files.csv";
@@ -219,6 +221,9 @@ public class KiLiCollector {
 				case "removed":
 					targetRoot = PREPROCESSED_REMOVED_PATH;
 					break;
+				case "station not found":
+					targetRoot = PREPROCESSED_STATION_NOT_FOUND_PATH;
+					break;
 				default:
 					//nothing: targetRoot --> PREPROCESSED_ERROR_PATH
 				}
@@ -374,7 +379,7 @@ public class KiLiCollector {
 			}			
 
 			try {
-				TimestampSeries timestampseries = AscParser.parse(ascPath);
+				TimestampSeries timestampseries = AscParser.parse(ascPath, true);
 				if(timestampseries==null) {
 					log.error("read error in "+infoFilename);
 					collectorEntry.status = "read error";

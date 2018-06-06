@@ -18,8 +18,6 @@ import tsdb.component.Sensor;
 import tsdb.graph.QueryPlanGenerators;
 import tsdb.graph.node.Continuous;
 import tsdb.graph.node.ContinuousGen;
-import tsdb.graph.processing.Addition;
-import tsdb.graph.processing.AdditionFirst;
 import tsdb.graph.processing.Averaged;
 import tsdb.graph.processing.Subtraction;
 import tsdb.util.DataQuality;

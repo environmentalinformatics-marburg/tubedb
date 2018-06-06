@@ -1,8 +1,8 @@
 package tsdb.graph.processing;
 
 import static tsdb.util.AssumptionCheck.throwNull;
+
 import tsdb.Station;
-import tsdb.TsDB;
 import tsdb.VirtualPlot;
 import tsdb.graph.node.Continuous;
 import tsdb.util.TsEntry;

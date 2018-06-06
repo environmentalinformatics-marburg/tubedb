@@ -2,8 +2,6 @@ package tsdb.graph.processing;
 
 import static tsdb.util.AssumptionCheck.throwNull;
 
-import java.util.Arrays;
-
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.VirtualPlot;

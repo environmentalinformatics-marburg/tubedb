@@ -143,7 +143,7 @@ public class TimeSeriesLoaderKiLi {
 			}			
 
 			try {
-				TimestampSeries timestampseries = AscParser.parse(ascPath);
+				TimestampSeries timestampseries = AscParser.parse(ascPath, true);
 				if(timestampseries==null) {
 					log.error("read error in "+infoFilename);
 					continue;

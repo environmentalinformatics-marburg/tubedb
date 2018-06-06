@@ -127,6 +127,7 @@ Ts_50:
   description: Soil temperature at 50 centimeters below surface
   unit: °C (degree Celcius, -40 to 60) 
   aggregation: average
+  physical_range: [-40.0, 60.0]  
   step_range: [0.0, 0.6]   
   empirical_diff: 3.18
   interpolation_mse: 7

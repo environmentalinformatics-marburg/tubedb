@@ -6,15 +6,12 @@ import java.nio.file.Paths;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.swing.plaf.synth.SynthSeparatorUI;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.loader.burgwald.HoboLoader;
-import tsdb.loader.burgwald.HoboTable;
 
 public class TestingHobo {
 	private static final Logger log = LogManager.getLogger();

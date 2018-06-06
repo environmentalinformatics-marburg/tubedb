@@ -30,14 +30,17 @@ public class AscParser {
 	
 	private static final Charset ASC_CHARSET = Charset.forName("windows-1252");
 
-	private static final DateTimeFormatter dateFormate = new DateTimeFormatterBuilder().append(DateTimeFormatter.ofPattern("dd.MM.yy")).toFormatter();
-	private static final DateTimeFormatter timeFormater = new DateTimeFormatterBuilder().append(DateTimeFormatter.ofPattern("HH:mm:00")).toFormatter();
+	private static final DateTimeFormatter DATE_FORMATTER = new DateTimeFormatterBuilder().append(DateTimeFormatter.ofPattern("dd.MM.yy")).toFormatter();
+	private static final DateTimeFormatter TIME_FORMATTER_FULL_MINUTES = new DateTimeFormatterBuilder().append(DateTimeFormatter.ofPattern("HH:mm:00")).toFormatter();
+	private static final DateTimeFormatter TIME_FORMATTER_SKIP_SECONDS = new DateTimeFormatterBuilder().append(DateTimeFormatter.ofPattern("HH:mm:ss")).toFormatter();
 
 	public static TimestampSeries parse(Path filename) throws IOException {
 		return parse(filename,false);
 	}
 
 	public static TimestampSeries parse(Path filename, boolean ignoreSeconds) throws IOException {
+		DateTimeFormatter timeFormatter = ignoreSeconds ? TIME_FORMATTER_SKIP_SECONDS : TIME_FORMATTER_FULL_MINUTES;
+		
 		final String[] lines = Files.readAllLines(filename, ASC_CHARSET).toArray(new String[0]);
 
 		String serial = null;
@@ -64,41 +67,6 @@ public class AscParser {
 			log.warn("no serial found: "+filename);
 			return null;
 		}
-
-		/* // old asc column header parser
-		String[] header = null;
-		while(currentLineIndex<lines.length) {  // search header
-			String currentLine = lines[currentLineIndex++];
-			if(currentLine.startsWith("Date	Time")||currentLine.startsWith("Datum	Zeit")||currentLine.startsWith("Date;Time;")||currentLine.startsWith("Date  Time")) {
-				header = currentLine.split("(\\s|;)+");
-				break;
-			}
-		}
-
-		if(header==null) {
-			log.warn("no header found: "+filename);
-			return null;
-		}
-
-
-		ArrayList<String> tempHeader = new ArrayList<String>();
-		String prev = null;
-		for(int i=2;i<header.length;i++) {
-			if(header[i].startsWith("[")) {
-				if(prev!=null) {
-					tempHeader.add(prev);
-					prev=null;
-				}
-			} else {
-				if(prev==null) {
-					prev = header[i];
-				} else {
-					prev += ' '+header[i];
-				}
-			}
-		}
-		String[] sensorNames = tempHeader.toArray(new String[0]);
-		 */
 
 		String[] sensorNames = null;
 		String[] sensorUnits = null;
@@ -181,12 +149,14 @@ public class AscParser {
 					break rowLoop;
 				}
 
-				LocalDate date = LocalDate.parse(columns[0], dateFormate);
+				LocalDate date = LocalDate.parse(columns[0], DATE_FORMATTER);
+				
 				String timeText = columns[1];
-				if(ignoreSeconds) {
+				/*if(ignoreSeconds) {
 					timeText = timeText.substring(0, timeText.length()-2)+"00";
 				}				
-				LocalTime time = LocalTime.parse(timeText, timeFormater);
+				LocalTime time = LocalTime.parse(timeText, TIME_FORMATTER_FULL_MINUTES);*/
+				LocalTime time = LocalTime.parse(timeText, timeFormatter);
 
 				LocalDateTime datetime = LocalDateTime.of(date, time);
 
@@ -269,7 +239,7 @@ public class AscParser {
 	}
 
 	/**
-	 * Add unit name to sensorname that may contain more than one unit. eg. Temperature °C and K
+	 * Add unit name to sensorname that may contain more than one unit. eg. Temperature ï¿½C and K
 	 * @param sensorNames
 	 * @param sensorUnits
 	 * @return

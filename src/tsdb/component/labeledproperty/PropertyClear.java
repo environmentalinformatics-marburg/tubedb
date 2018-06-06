@@ -1,6 +1,5 @@
 package tsdb.component.labeledproperty;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import tsdb.util.DataRow;

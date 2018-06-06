@@ -47,7 +47,7 @@ public class TestingAscParser {
 							int ascIndex = filename.indexOf(".asc");
 							if(ascIndex!=-1) {						
 								//String fileKey = filename.substring(0, ascIndex);						
-								AscParser.parse(ascPath);
+								AscParser.parse(ascPath, true);
 							} else {
 								log.warn("no asc file: "+filename);
 							}

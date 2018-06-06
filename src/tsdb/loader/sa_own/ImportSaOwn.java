@@ -81,7 +81,7 @@ public class ImportSaOwn {
 	public void loadFile(Path filePath) {
 		try {
 			log.trace("load file "+filePath);
-			TimestampSeries timestampseries = AscParser.parse(filePath);
+			TimestampSeries timestampseries = AscParser.parse(filePath, true);
 			if(timestampseries==null) {
 				log.error("timestampseries null");
 				return;
