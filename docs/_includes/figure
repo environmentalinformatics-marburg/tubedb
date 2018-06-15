@@ -1,0 +1,33 @@
+<figure class="{{ include.class }}">
+  {% if include.url %}
+    <a href=
+      {% if include.url contains "://" %}
+        "{{ include.url }}"
+      {% else %}
+        "{{ include.url | absolute_url }}"
+      {% endif %}
+      {% if include.title %}title="{{ include.title }}"{% endif %}
+	  target="_blank"
+    >
+    <img src=
+      {% if include.image_path contains "://" %}
+        "{{ include.image_path }}"
+      {% else %}
+        "{{ include.image_path | absolute_url }}"
+      {% endif %}
+      alt="{% if include.alt %}{{ include.alt }}{% endif %}"
+	>
+    </a>
+  {% else %}
+    <img src=
+      {% if include.image_path contains "://" %}
+        "{{ include.image_path }}"
+      {% else %}
+        "{{ include.image_path | absolute_url }}"
+      {% endif %}
+      alt="{% if include.alt %}{{ include.alt }}{% endif %}">
+  {% endif %}
+  {% if include.caption %}
+    <figcaption>{{ include.caption | markdownify | remove: "<p>" | remove: "</p>" }}</figcaption>
+  {% endif %}
+</figure>

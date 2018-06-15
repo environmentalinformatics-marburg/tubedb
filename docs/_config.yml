@@ -1,0 +1,154 @@
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely edit after that. If you find
+# yourself editing this file very often, consider using Jekyll's data files
+# feature for the data you need to update frequently.
+#
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'bundle exec jekyll serve'. If you change this file, please restart the server process.
+
+# Site settings
+# These are used to personalize your new site. If you look in the HTML files,
+# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
+# You can create any custom variable you would like, and they will be accessible
+# in the templates via {{ site.myvariable }}.
+repository: 'environmentalinformatics-marburg/tubedb'
+title: Environmental Informatics Lab
+name: &name "Environmental Informatics Lab" # &name is a YAML anchor which can be *referenced later
+email: umweltinformatik@geo.uni-marburg.de
+description: >- # this means to ignore newlines until "baseurl:"
+  Write an awesome description for your new site here. You can edit this
+  line in _config.yml. It will appear in your document head meta (for
+  Google search results) and in your feed.xml site description.
+title_separator: "|"
+baseurl: "/tubedb" # the subpath of your site, e.g. /blog
+url: "https://environmentalinformatics-marburg.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+twitter_username: Envin_UMR
+github_username:  environmentalinformatics-marburg
+
+# Build settings
+markdown: kramdown
+# theme: minima
+remote_theme: "marburg-open-courseware/jekyll-template-moer"
+minimal_mistakes_skin    : "default" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
+auto_ids: true
+
+include:
+  - _pages
+  
+collections:
+  doc:
+    output: true
+    permalink: /:collection/:title/
+  installation:
+    output: true
+    permalink: /:collection/:title/
+  functionality:
+    output: true
+    permalink: /:collection/:title/
+  r:
+    output: true
+    permalink: /:collection/:title/
+
+defaults:
+  # pages
+  - scope:
+      path: ""
+      type: pages
+    values:
+      category: "Pages"
+      tags: "Pages"
+      layout: single
+      sidebar:
+        nav: "docs" 
+  # doc
+  - scope:
+      path: ""
+      type: doc
+    values:
+      category: "Documentation"
+      tags: "Documentation"
+      layout: single
+      sidebar:
+        nav: "docs" 
+  # installation
+  - scope:
+      path: ""
+      type: installation
+    values:
+      category: "Installation"
+      tags: "Documentation"
+      layout: single
+      sidebar:
+        nav: "docs" 
+  # functionality
+  - scope:
+      path: ""
+      type: functionality
+    values:
+      category: "Installation"
+      tags: "Documentation"
+      layout: single
+      sidebar:
+        nav: "docs" 
+  # r
+  - scope:
+      path: ""
+      type: r
+    values:
+      category: "Installation"
+      tags: "Documentation"
+      layout: single
+      sidebar:
+        nav: "docs" 
+  
+# theme: jekyll-theme-cayman
+# Exclude from processing.
+# The following items will not be processed, by default. Create a custom list
+# to override the default setting.
+# exclude:
+#   - Gemfile
+#   - Gemfile.lock
+#   - node_modules
+#   - vendor/bundle/
+#   - vendor/cache/
+#   - vendor/gems/
+#   - vendor/ruby/
+
+# Site Author
+author:
+  name             : *name # *name is a YAML reference pointing to the &anchor earlier
+  avatar           : "/assets/images/tnauss.jpg"
+  bio              : "Marburg University"
+  location         : "Marburg, DE"
+  email            : "umweltinformatik@geo.uni-marburg.de"
+  uri              : "https://www.uni-marburg.de/fb19/fachgebiete/umweltinformatik/"
+#  home             : "https://www.uni-marburg.de/fb19/fachgebiete/umweltinformatik/nausst/index.html"
+  bitbucket        :
+  codepen          :
+  dribbble         :
+  flickr           : "https://www.flickr.com/environmentalinformatics-marburg/"
+  facebook         : "https://www.facebook.com/GeographieMarburg/"
+  foursquare       :
+  github           : "github.com/environmentalinformatics-marburg/tubedb"
+  gitlab           :
+  google_plus      :
+  keybase          :
+  instagram        : 
+  lastfm           :
+  linkedin         :
+  pinterest        :
+  soundcloud       :
+  stackoverflow    : # https://stackoverflow.com/users/123456/username
+  steam            :
+  tumblr           :
+  twitter          : "https://twitter.com/geographie_umr"
+  vine             :
+  weibo            :
+  xing             :
+  youtube          : "https://www.youtube.com/channel/UCGiwSv5KYjsNXl6-nZq0SDA"
+
+
+
+theme: jekyll-theme-cayman
