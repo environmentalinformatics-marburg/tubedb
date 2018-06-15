@@ -265,10 +265,10 @@
 - {station: SEW21, content: {label: computation, target: PAR_200, formula: "PAR_200_U * 45.444", comment: "2018-06-15 recalculate auto generated"}}
 - {station: SEW22, content: {label: computation, target: PAR_200, formula: "PAR_200_U * 45.067", comment: "2018-06-15 recalculate auto generated"}}
 - {station: SEW23, content: {label: computation, target: PAR_200, formula: "PAR_200_U * 43.268", comment: "2018-06-15 recalculate auto generated"}}
-- {station: SEW24, content: {label: computation, target: PAR_200, formula: "PAR_200_U * 45.011", comment: "2018-06-15 recalculate auto generated"}}
+- {station: SEW24, content: {label: computation, target: PAR_200, formula: "PAR_200_U * 44.254", comment: "2018-06-15 corrected"}}
 - {station: SEW25, content: {label: computation, target: PAR_200, formula: "PAR_200_U * 45.528", comment: "2018-06-15 recalculate auto generated"}}
 - {station: SEW26, content: {label: computation, target: PAR_200, formula: "PAR_200_U * 45.307", comment: "2018-06-15 recalculate auto generated"}}
-- {station: SEW27, content: {label: computation, target: PAR_200, formula: "PAR_200_U * 44.254", comment: "2018-06-15 recalculate auto generated"}}
+- {station: SEW27, content: {label: computation, target: PAR_200, formula: "PAR_200_U * 45.011", comment: "2018-06-15 corrected"}}
 - {station: SEW28, content: {label: computation, target: PAR_200, formula: "PAR_200_U * 46.003", comment: "2018-06-15 recalculate auto generated"}}
 - {station: SEW29, content: {label: computation, target: PAR_200, formula: "PAR_200_U * 45.686", comment: "2018-06-15 recalculate auto generated"}}
 - {station: SEW30, content: {label: computation, target: PAR_200, formula: "PAR_200_U * 43.475", comment: "2018-06-15 recalculate auto generated"}}
