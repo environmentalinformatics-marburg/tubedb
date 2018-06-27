@@ -16,6 +16,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
 import org.json.JSONWriter;
 
+import tsdb.TsDBFactory;
 import tsdb.remote.RemoteTsDB;
 
 /**
@@ -80,6 +81,12 @@ public class Handler_identity extends MethodHandler {
 		json.value(authMethod);
 		json.key("roles");
 		json.value(roles);
+		json.key("request_port");
+		json.value(request.getServerPort());
+		if(TsDBFactory.WEB_SERVER_HTTPS) {
+			json.key("https_port");
+			json.value(TsDBFactory.WEB_SERVER_HTTPS_PORT);
+		}
 		json.endObject();		
 	}
 }

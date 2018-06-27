@@ -143,6 +143,26 @@ data: {
 	identity: {},
 },
 
+methods: {
+	getHTTPS_url: function() {
+		var port = this.identity.https_port;
+		
+		var host = window.location.host;
+		var pIndex = host.indexOf(':');
+		if(pIndex >= 0) {
+			host = host.slice(0, pIndex);
+		}
+		host = host + ':' + port;		
+		return 'https://' + host + window.location.pathname;
+	},
+},
+
+computed: {
+	HTTPS_url: function() {
+		return this.getHTTPS_url();
+	},
+},
+
 mounted: function () {
 	var self = this;
 	self.loadingMessage =  "loading...";
@@ -173,6 +193,10 @@ mounted: function () {
 		<br>user{{identity.auth_method == "IP" ? " (by "+"ip"+")": ""}}: {{identity.user}}
 		<br>ip: {{identity.ip}}
 		<br>access: {{identity.roles.join(", ")}}
+		<br>connection: {{identity.https_port === undefined || identity.request_port !== identity.https_port ? 'plain' : 'encrypted'}}
+		<span v-if="identity.https_port !== undefined && identity.request_port !== identity.https_port">
+		<br> ==> <a :href="getHTTPS_url()" target="_blank">HTTPS</a>
+		</span>
 	</span>
 </div>
 

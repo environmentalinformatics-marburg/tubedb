@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.jetty.security.MappedLoginService;
 import org.eclipse.jetty.security.UserAuthentication;
+import org.eclipse.jetty.security.UserStore;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
@@ -25,7 +25,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 public class IpAuthentication extends AbstractHandler {
 	private static final Logger log = LogManager.getLogger();
 	
-	private final MappedLoginService loginService;
+	private final UserStore userStore;
 	private Map<String, String> ipMap = new HashMap<String, String>();
 	
 	/**
@@ -33,8 +33,8 @@ public class IpAuthentication extends AbstractHandler {
 	 * @param loginService with user mapping (live lookup)
 	 * @param ipMap (entries are copied. lookup at creation time)
 	 */
-	IpAuthentication(MappedLoginService loginService, Map<String, String> ipMap) {
-		this.loginService = loginService;
+	IpAuthentication(UserStore userStore, Map<String, String> ipMap) {
+		this.userStore = userStore;
 		this.ipMap = new HashMap<String, String>(ipMap);
 	}
 
@@ -44,8 +44,8 @@ public class IpAuthentication extends AbstractHandler {
 		//log.info("ip "+ip);
 		String user = ipMap.get(ip);
 		if(user!=null) {
-			//log.info("user "+user);
-			UserIdentity userIdentity = loginService.getUsers().get(user);
+			//log.info("user "+user);			
+			UserIdentity userIdentity = userStore.getKnownUserIdentities().get(user);
 			if(userIdentity==null) {
 				log.warn("no identiy for user "+user);
 			} else {

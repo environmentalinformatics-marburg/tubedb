@@ -16,6 +16,8 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
+import org.eclipse.jetty.security.PropertyUserStore;
+import org.eclipse.jetty.security.UserStore;
 import org.eclipse.jetty.security.authentication.DigestAuthenticator;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -35,7 +37,6 @@ import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.ShutdownHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -59,14 +60,9 @@ import tsdb.web.api.TsDBExportAPIHandler;
 public class Main {
 	private static final Logger log = LogManager.getLogger();
 
+
 	private static final int EXPORT_API_SESSION_TIMEOUT_SECONDS = 2*60*60; // set timeout to 2 hours
 	private static final long DATA_TRANSFER_TIMEOUT_MILLISECONDS = 2*60*60*1000; // set timeout to 2 hours
-
-	/*private static final long GENERAL_TIMEOUT_MILLISECONDS = 2*60*60*1000; // set timeout to 2 hours	
-	private static final long FILE_DOWNLOAD_TIMEOUT_MILLISECONDS = 2*60*60*1000; // set timeout to 2 hours
-	private static final long TSDB_API_TIMEOUT_MILLISECONDS = 5*60*1000; // set timeout to 5 minutes
-	private static final long EXPORT_API_TIMEOUT_MILLISECONDS = 2*60*60*1000; // set timeout to 2 hours
-	 */
 
 	private static final String WEBCONTENT_PART_URL = "/content";
 	private static final String TSDB_API_PART_URL = "/tsdb";
@@ -79,7 +75,7 @@ public class Main {
 
 	private static final String WEB_SERVER_LOGIN_PROPERTIES_FILENAME = "realm.properties";
 	private static final String REALM_IP_CSV_FILENAME = "realm_ip.csv";
-	private static final String WEB_SERVER_HTTPS_KEY_STORE_FILENAME = "https_keystore.jks";
+	private static final String WEB_SERVER_HTTPS_KEY_STORE_FILENAME = "keystore.jks";
 
 	public static void main(String[] args) throws Exception {
 		RemoteTsDB tsdb = new ServerTsDB(TsDBFactory.createDefault());
@@ -88,11 +84,7 @@ public class Main {
 
 	public static void run(RemoteTsDB tsdb) throws Exception {
 
-		final int secure_port = 443;
-		//final int secure_port = 8443; //?? alternative
-
 		boolean use_https = TsDBFactory.WEB_SERVER_HTTPS;
-
 
 		createRainbowScale();
 
@@ -102,7 +94,7 @@ public class Main {
 		httpConfiguration.setSendServerVersion(false);
 		httpConfiguration.setSendDateHeader(false);
 		httpConfiguration.setSendXPoweredBy(false);
-		httpConfiguration.setSecurePort(secure_port);
+		httpConfiguration.setSecurePort(TsDBFactory.WEB_SERVER_HTTPS_PORT);
 		httpConfiguration.setSecureScheme("https");
 		httpConfiguration.addCustomizer(new SecureRequestCustomizer());
 
@@ -118,79 +110,19 @@ public class Main {
 				sslContextFactory.setKeyManagerPassword(TsDBFactory.WEB_SERVER_HTTPS_KEY_STORE_PASSWORD);
 				SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory,"http/1.1");
 				ServerConnector sslServerConnector = new ServerConnector(server, sslConnectionFactory, httpConnectionFactory);
-				sslServerConnector.setPort(secure_port);		
+				sslServerConnector.setPort(TsDBFactory.WEB_SERVER_HTTPS_PORT);		
 
 				server.setConnectors(new Connector[]{httpServerConnector, sslServerConnector});
 			} else {
 				use_https = false;
-				log.error("key store file for https not found");
+				log.error("key store file ( " + WEB_SERVER_HTTPS_KEY_STORE_FILENAME + " ) for https not found: HTTPS disabled");
 			}
 		} else {
 			server.setConnectors(new Connector[]{httpServerConnector});
 		}
 
-		//Server server = new Server(WEB_SERVER_PORT);
-		//server.setConnectors(connectors);
-
-		/*for(Connector connector : server.getConnectors()) {
-
-			if(connector instanceof ServerConnector) {
-				ServerConnector serverConnector = (ServerConnector) connector;
-				serverConnector.setIdleTimeout(DATA_TRANSFER_TIMEOUT_MILLISECONDS);
-				System.out.println(serverConnector.getProtocols());
-				System.out.println(serverConnector.getBeans());
-				for(ConnectionFactory connectionFactory  : serverConnector.getConnectionFactories()) {
-					if(connectionFactory instanceof HttpConnectionFactory) {
-						HttpConnectionFactory httpConnectionFactory = (HttpConnectionFactory) connectionFactory;						
-						System.out.println(httpConnectionFactory.getHttpConfiguration().toString());
-						HttpConfiguration httpConfiguration = httpConnectionFactory.getHttpConfiguration();
-						httpConfiguration.setSendServerVersion(false);
-						httpConfiguration.setSendDateHeader(false);
-						httpConfiguration.setSendXPoweredBy(false);
-					} else {
-						log.warn("unknown ConnectionFactory "+connectionFactory);
-					}
-				}
-			} else {
-				log.warn("unknown Connector "+connector);
-			}*/		
-
-
-		/*System.out.println("Connector "+y);
-			ServerConnector sc = (ServerConnector) y;
-			sc.setIdleTimeout(DATA_TRANSFER_TIMEOUT_MILLISECONDS);
-			for(ConnectionFactory x  : y.getConnectionFactories()) {
-				System.out.println("ConnectionFactory "+x);
-				if(x instanceof HttpConnectionFactory) {
-					HttpConfiguration httpConfiguration = ((HttpConnectionFactory)x).getHttpConfiguration();
-					httpConfiguration.setSendServerVersion(false);
-					httpConfiguration.setSendDateHeader(false);
-					httpConfiguration.setSendXPoweredBy(false);
-					Customizer customizer = new Customizer() {
-
-						@Override
-						public void customize(Connector connector, HttpConfiguration channelConfig, Request request) {
-							System.out.println(connector.getClass()+"   idle timeout "+connector.getIdleTimeout());
-							ServerConnector sc = (ServerConnector) connector;
-							sc.setIdleTimeout(DATA_TRANSFER_TIMEOUT_MILLISECONDS); //TODO set earlier !!!
-							System.out.println(connector.getClass()+"   idle timeout "+connector.getIdleTimeout());
-
-
-						}
-					};
-					httpConfiguration.addCustomizer(customizer);
-				}
-			}*/
-		//}
-
-
 		ContextHandler contextRedirect = new ContextHandler(TsDBFactory.WEB_SERVER_PREFIX_BASE_URL);
 		contextRedirect.setHandler(new BaseRedirector(TsDBFactory.WEB_SERVER_PREFIX_BASE_URL+WEBCONTENT_PART_URL));
-
-		//ServletContextHandler x = new ServletContextHandler();		
-		//x.addFilter(holder, pathSpec, dispatches);
-		//x.addServlet(RobotsTxtServlet.SERVLET_HOLDER, "/robots.txt");
-		//x.addServlet(InvalidUrlServlet.SERVLET_HOLDER, "/*");
 
 		boolean wrap = TsDBFactory.WEB_SERVER_LOGIN;
 
@@ -256,12 +188,25 @@ public class Main {
 		System.out.println("...Web Sever stopped");		
 	}
 
+	private static UserStore openUserStore() {
+		PropertyUserStore userStore = new PropertyUserStore();
+		userStore.setConfig(WEB_SERVER_LOGIN_PROPERTIES_FILENAME);
+		try {
+			userStore.start();
+		} catch (Exception e) {
+			log.error(e);
+		}
+		return userStore;
+	}
+
 	private static ContextHandler wrapLogin(ContextHandler contextHandler, boolean wrap) {
 		if(!wrap) {
 			return contextHandler;
 		}
 
-		HashLoginService loginService = new HashLoginService("Web Server Login", WEB_SERVER_LOGIN_PROPERTIES_FILENAME);
+		HashLoginService loginService = new HashLoginService("Web Server Login");
+		UserStore userStore = openUserStore();
+		loginService.setUserStore(userStore);
 
 		Map<String, String> ipMap = new HashMap<String, String>();
 		if(Files.exists(Paths.get(REALM_IP_CSV_FILENAME))) {
@@ -278,7 +223,7 @@ public class Main {
 			}
 		}
 
-		IpAuthentication ipAuthentication = new IpAuthentication(loginService, ipMap);		
+		IpAuthentication ipAuthentication = new IpAuthentication(userStore, ipMap);		
 
 		ConstraintSecurityHandler security = new ConstraintSecurityHandler();
 		security.setHandler(contextHandler);
@@ -348,13 +293,16 @@ public class Main {
 		ContextHandler contextExport = new ContextHandler(TsDBFactory.WEB_SERVER_PREFIX_BASE_URL+EXPORT_API_PART_URL);
 		TsDBExportAPIHandler exportHandler = new TsDBExportAPIHandler(tsdb);
 		//exportHandler.setStopTimeout(EXPORT_API_TIMEOUT_MILLISECONDS);
-		HashSessionManager manager = new HashSessionManager();
+		//HashSessionManager manager = new HashSessionManager();
 
 
-		manager.setMaxInactiveInterval(EXPORT_API_SESSION_TIMEOUT_SECONDS);
-		SessionHandler sessions = new SessionHandler(manager);
-		contextExport.setHandler(sessions);
-		sessions.setHandler(exportHandler);
+		//manager.setMaxInactiveInterval(EXPORT_API_SESSION_TIMEOUT_SECONDS);
+		//SessionHandler sessions = new SessionHandler(manager);
+		SessionHandler sessionHandler = new SessionHandler();
+		sessionHandler.setMaxInactiveInterval(EXPORT_API_SESSION_TIMEOUT_SECONDS);
+
+		contextExport.setHandler(sessionHandler);
+		sessionHandler.setHandler(exportHandler);
 		return contextExport;
 	}
 
