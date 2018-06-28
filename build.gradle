@@ -88,7 +88,7 @@ task _create_javadoc(type: Javadoc) {
 	group = 'project'
 	description 'create javadoc for TubeDB'
 	source = sourceSets.main.allJava
-	destinationDir = file('javadoc')
+	destinationDir = file('docs/javadoc')
 	title = 'TubeDB'
 	options.header = 'TubeDB'
 	options.windowTitle = 'TubeDB'

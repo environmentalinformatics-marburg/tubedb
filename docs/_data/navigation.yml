@@ -2,9 +2,10 @@
 main:
   - title: "Documentation"
     url: /doc/
-  - title: "About"
-    url: /about.html
+  - title: "Javadoc"
+    url: /javadoc/    
   - title: "Source"
     url: https://github.com/environmentalinformatics-marburg/tubedb
-    
+  - title: "About"
+    url: /about.html    
     
