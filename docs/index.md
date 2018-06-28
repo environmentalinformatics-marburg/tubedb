@@ -9,7 +9,7 @@ header:
   overlay_image: "/assets/images/title.jpg"
   caption: 'Photo credit: [**Environmental Informatics Marburg**](https://www.flickr.com/environmentalinformatics-marburg/)'
   cta_label: Install now
-  cta_url: "/installation/installation01"
+  cta_url: "/documentation/installation"
 excerpt: Efficient and easy to use database for climate station observations. Store, check, fill, aggregate, visualize and access your time series data on-demand.
 
 feature_row_intro:
@@ -18,21 +18,21 @@ feature_row_intro:
 feature_row_main:
 - image_path: "/assets/images/c1.jpg"
   alt: install
-  url: "/installation/installation01"
+  url: "/documentation/installation"
   btn_label: "More information"
   btn_class: "btn--primary"
   title: Easy to install
   excerpt: "You don't have to be a Java pro. TubeDB comes with an integrated server. Download pre-build package or build from source automatically with Gradle."
 - image_path: "/assets/images/b1.jpg"
   alt: gui
-  url: "/installation/installation02"
+  url: "/documentation/usage"
   btn_label: "More information"
   btn_class: "btn--primary"
   title: Easy to use
   excerpt: "You don't have to be a database pro. TubeDB comes with an intuitive web-interface for preprocessing, gap filling, temporal aggregation and visualization."
 - image_path: "/assets/images/d1.jpg"
   alt: data
-  url: "/installation/installation03"
+  url: "/documentation/data"
   btn_label: "More information"
   btn_class: "btn--primary"
   title: Your data, your rules

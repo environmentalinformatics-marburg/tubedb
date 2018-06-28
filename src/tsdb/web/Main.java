@@ -166,19 +166,19 @@ public class Main {
 
 		server.start();
 		//server.dumpStdErr();
+		System.out.println("------------------------------------------------------------");
 		System.out.println();
-		System.out.println();
-		System.out.println("to stop Web Server:");
+		System.out.println("stop Web Server:");
 		System.out.println();
 		System.out.println("- directly:  by pressing 'Ctrl-C'");
 		System.out.println();
-		System.out.println("- at local terminal:  curl --proxy '' --request POST http://localhost:8080/shutdown?token=stop");
+		System.out.println("- at local terminal:  curl --proxy '' --request POST http://localhost:" + TsDBFactory.WEB_SERVER_PORT + "/shutdown?token=stop");
 		System.out.println();
 		System.out.println();
-		System.out.println("Web Sever started at    ***      http://[HOSTNAME]:"+TsDBFactory.WEB_SERVER_PORT+TsDBFactory.WEB_SERVER_PREFIX_BASE_URL+"      ***");
+		System.out.println("Web Sever started at    ***      http://[HOSTNAME]:" + TsDBFactory.WEB_SERVER_PORT + TsDBFactory.WEB_SERVER_PREFIX_BASE_URL + "      ***");
 		if(use_https) {
 			System.out.println();
-			System.out.println("secure channel    ***      https://[HOSTNAME]"+TsDBFactory.WEB_SERVER_PREFIX_BASE_URL+"      ***");
+			System.out.println("secure channel    ***      https://[HOSTNAME]:" + TsDBFactory.WEB_SERVER_HTTPS_PORT + TsDBFactory.WEB_SERVER_PREFIX_BASE_URL + "      ***");
 		}
 		System.out.println();
 		System.out.println("waiting for requests...");

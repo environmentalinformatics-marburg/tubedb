@@ -4,7 +4,7 @@ main:
     url: /doc/
   - title: "About"
     url: /about.html
-  - title: "GIT"
+  - title: "Source"
     url: https://github.com/environmentalinformatics-marburg/tubedb
     
     

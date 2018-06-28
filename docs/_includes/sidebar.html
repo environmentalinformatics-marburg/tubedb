@@ -7,7 +7,7 @@
     <input id="ac-toc" name="accordion-toc" type="checkbox">
 	<label for="ac-toc">Toggle Menu</label>
 	  <ul class="nav__items">
-	    {% assign mydocs = site.installation | group_by: 'category' %}
+	    {% assign mydocs = site.documentation | group_by: 'category' %}
         {% for cat in mydocs %}
           <li>
 	        <span class="nav__sub-title">{{ cat.name}}</span>

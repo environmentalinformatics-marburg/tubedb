@@ -38,7 +38,7 @@ include:
   - _pages
   
 collections:
-  doc:
+  documentation:
     output: true
     permalink: /:collection/:title/
   installation:
@@ -52,6 +52,16 @@ collections:
     permalink: /:collection/:title/
 
 defaults:
+  # documentation
+  - scope:
+      path: ""
+      type: documentation
+    values:
+      category: "documentation"
+      tags: "documentation"
+      layout: single
+      sidebar:
+        nav: "docs"   
   # pages
   - scope:
       path: ""
