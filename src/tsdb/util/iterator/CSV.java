@@ -80,7 +80,10 @@ public class CSV {
 		String plotWithSeperator = writePlot ? plotLabel + separator : "";
 		
 		boolean time=false;
-		if(csvTimeType==CSVTimeType.TIMESTAMP||csvTimeType==CSVTimeType.DATETIME||csvTimeType==CSVTimeType.TIMESTAMP_AND_DATETIME) {
+		if(csvTimeType==CSVTimeType.TIMESTAMP
+				||csvTimeType==CSVTimeType.DATETIME
+				||csvTimeType==CSVTimeType.TIMESTAMP_AND_DATETIME
+				||csvTimeType==CSVTimeType.CUSTOM) {
 			time=true;
 		}
 
@@ -105,6 +108,9 @@ public class CSV {
 						printStream.print("timestamp");
 						printStream.print(separator);
 						printStream.print("datetime");
+						break;
+					case CUSTOM:
+						printStream.print("custom");
 						break;
 					default:
 						printStream.print("???");
@@ -159,6 +165,9 @@ public class CSV {
 						printStream.print(separator);
 						//printStream.print(TimeUtil.oleMinutesToLocalDateTime(timestamp));
 						printStream.print(TimeUtil.fastTimestampWrite(timestamp, datetimeFormat));
+						break;
+					case CUSTOM:
+						printStream.print(TimeUtil.fastTimestampWrite_custom(timestamp, datetimeFormat));
 						break;
 					default:
 						printStream.print("---");

@@ -2,6 +2,7 @@ package tsdb.remote;
 
 import static tsdb.util.AssumptionCheck.throwNull;
 
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ import tsdb.streamdb.StreamIterator;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataEntry;
 import tsdb.util.DataQuality;
+import tsdb.util.DataRow;
 import tsdb.util.Pair;
 import tsdb.util.TimeSeriesMask;
 import tsdb.util.TimestampInterval;
@@ -592,7 +594,7 @@ public class ServerTsDB implements RemoteTsDB {
 	@Override
 	public void insertOneValue(String stationName, String sensorName, int timestamp, float value) throws RemoteException {
 		DataEntry[] dataEntries = new DataEntry[] {new DataEntry(timestamp, value)};
-		tsdb.streamStorage.insertDataEntryArray(stationName, sensorName, dataEntries );
+		tsdb.streamStorage.insertDataEntryArray(stationName, sensorName, dataEntries);
 		tsdb.streamStorage.commit();		
 	}
 
@@ -616,5 +618,20 @@ public class ServerTsDB implements RemoteTsDB {
 			return null;
 		}
 		return it.toTimestampSeries(stationName);
+	}
+	
+	// ---- insert support -----
+	
+	@Override
+	public void insertDataRows(String stationName, String[] sensorNames, Collection<DataRow> dataRows) throws RemoteException {
+		tsdb.streamStorage.insertDataRows(stationName, sensorNames, dataRows);
+		tsdb.streamStorage.commit();
+
+	}
+	
+	@Override
+	public void insertSourceCatalogEntry(SourceEntry sourceEntry) throws RemoteException {
+		tsdb.sourceCatalog.insert(sourceEntry);
+		tsdb.sourceCatalog.commit();
 	}
 }

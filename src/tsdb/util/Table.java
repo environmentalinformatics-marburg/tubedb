@@ -5,7 +5,10 @@ import static tsdb.util.AssumptionCheck.throwFalse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -382,6 +385,33 @@ public class Table {
 
 	public static Table readCSV(String filename, char separator) {
 		return readCSV(new File(filename), separator);
+	}
+	
+	public static Table readCSV(Reader r, char separator) throws IOException {
+
+			CSVReader reader = new CSVReader(r,separator);
+
+			List<String[]> list = reader.readAll();
+
+			reader.close();
+
+			String[] columnsNames = list.get(0);
+			if(columnsNames.length>0) { // filter UTF8 BOM
+				if(columnsNames[0].startsWith(UTF8_BOM)) {
+					columnsNames[0] = columnsNames[0].substring(1, columnsNames[0].length());
+				}
+			}
+			
+			Table table = new Table();			
+			table.updateNames(columnsNames);			
+
+			table.rows = new String[list.size()-1][];
+
+			for(int i=1;i<list.size();i++) {
+				table.rows[i-1] = list.get(i);
+			}
+
+			return table;		 	
 	}
 
 	/**

@@ -65,6 +65,10 @@ public class SourceCatalog {
 		return getEntries().stream().filter((SourceEntry x)->x.stationName.equals(stationName)).collect(Collectors.toList());		
 	}
 	
+	public void commit() {
+		db.commit();
+	}
+	
 	public void close() {
 		db.commit();
 		db.close();

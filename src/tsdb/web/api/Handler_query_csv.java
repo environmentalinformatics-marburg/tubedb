@@ -62,13 +62,28 @@ public class Handler_query_csv extends MethodHandler {
 		baseRequest.setHandled(true);
 		response.setContentType("text/plain;charset=utf-8");
 
+		CSVTimeType csvTimeType = CSVTimeType.DATETIME;
+		{
+			String datetime_fomat = request.getParameter("datetime_format");
+			log.info("dt " + datetime_fomat);
+			if(datetime_fomat != null) {
+				switch(datetime_fomat) {
+				case "custom":
+					csvTimeType = CSVTimeType.CUSTOM;
+					break;
+				default:
+					log.warn("unknown datetime_fomat");
+				}
+			}
+		}
+
 		if(request.getParameter("plot") == null) {
 			log.warn("wrong call no plot parameter");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
 		String[] plots = request.getParameterValues("plot");
-		
+
 		String col_plot_text = request.getParameter("col_plot");
 		boolean col_plot = false;
 		if(col_plot_text != null) {
@@ -194,7 +209,7 @@ public class Handler_query_csv extends MethodHandler {
 				return;
 			}
 		}
-		
+
 		String timeEndYear = request.getParameter("end_year");
 		if(timeEndYear != null) {
 			try {
@@ -272,13 +287,13 @@ public class Handler_query_csv extends MethodHandler {
 					return;
 				}*/
 				try {
-				TimestampSeries ts = tsdb.plot(null, plot, validSchema, agg, dataQuality, isInterpolated, startTime, endTime);
-				if(ts != null) {					
-					ProjectionFillIterator it = new ProjectionFillIterator(ts.tsIterator(), processingSensorNames);
-					String plot_text = col_plot ? plot : null;
-					CSV.write(it, firstPlot, out, ",", nanText, CSVTimeType.DATETIME, false, false, agg, plot_text);
-					firstPlot = false;
-				}
+					TimestampSeries ts = tsdb.plot(null, plot, validSchema, agg, dataQuality, isInterpolated, startTime, endTime);
+					if(ts != null) {					
+						ProjectionFillIterator it = new ProjectionFillIterator(ts.tsIterator(), processingSensorNames);
+						String plot_text = col_plot ? plot : null;
+						CSV.write(it, firstPlot, out, ",", nanText, csvTimeType, false, false, agg, plot_text);
+						firstPlot = false;
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 					log.error(e);

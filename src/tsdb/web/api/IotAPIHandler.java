@@ -36,6 +36,7 @@ public class IotAPIHandler extends AbstractHandler {
 		handlerMap = new HashMap<String,Handler>();
 		addMethodHandler(new Handler_iot_sensor(tsdb));
 		addMethodHandler(new Handler_iot_clear(tsdb));
+		addMethodHandler(new Handler_iot_insert_csv(tsdb));
 	}
 
 	private void addMethodHandler(MethodHandler methodHandler) {

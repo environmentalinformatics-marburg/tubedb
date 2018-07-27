@@ -475,6 +475,10 @@ public final class TimeUtil implements Serializable {
 	public static char[] fastTimestampWrite(long timestamp, AggregationInterval datetimeFormat) {
 		return fastTimestampWrite(TimeUtil.oleMinutesToLocalDateTime(timestamp), datetimeFormat);		
 	}
+	
+	public static char[] fastTimestampWrite_custom(long timestamp, AggregationInterval datetimeFormat) {
+		return fastTimestampWrite_custom(TimeUtil.oleMinutesToLocalDateTime(timestamp), datetimeFormat);		
+	}
 
 	public static char[] fastTimestampWrite(LocalDateTime datetime, AggregationInterval datetimeFormat) {
 		switch(datetimeFormat) {
@@ -490,6 +494,23 @@ public final class TimeUtil implements Serializable {
 			return TimeUtil.fastDateTimeWriteHours(datetime);
 		default:
 			return TimeUtil.fastDateTimeWrite(datetime);	
+		}				
+	}
+	
+	public static char[] fastTimestampWrite_custom(LocalDateTime datetime, AggregationInterval datetimeFormat) {
+		switch(datetimeFormat) {
+		case YEAR:
+			return TimeUtil.fastDateWriteYears(datetime.toLocalDate());
+		case MONTH:
+			return TimeUtil.fastDateWriteMonths(datetime.toLocalDate());
+		case WEEK:
+			return TimeUtil.fastDateWriteWeeks(datetime.toLocalDate());
+		case DAY:
+			return TimeUtil.fastDateWrite(datetime.toLocalDate());
+		case HOUR:
+			return TimeUtil.fastDateTimeWriteHours_custom(datetime);
+		default:
+			return TimeUtil.fastDateTimeWrite_custom(datetime);	
 		}				
 	}
 
@@ -593,6 +614,36 @@ public final class TimeUtil implements Serializable {
 
 		return c;		
 	}
+	
+	public static char[] fastDateTimeWrite_custom(LocalDateTime localDateTime) {
+		char[] c = new char[16];
+
+		LocalDate localDate = localDateTime.toLocalDate();
+		int y = localDate.getYear();
+		c[0] = (char) ('0'+  y/1000);
+		c[1] = (char) ('0'+ ((y%1000)/100)  );
+		c[2] = (char) ('0'+ ((y%100)/10)  );
+		c[3] = (char) ('0'+ (y%10)  );
+		c[4] = (char) ('-');
+		int m = localDate.getMonthValue();
+		c[5] = (char) ('0'+(m/10));
+		c[6] = (char) ('0'+(m%10));
+		c[7] = (char) ('-');
+		int d = localDate.getDayOfMonth();
+		c[8] = (char) ('0'+(d/10));
+		c[9] = (char) ('0'+(d%10));
+		c[10] = (char) (' ');
+		LocalTime localTime = localDateTime.toLocalTime();
+		int h = localTime.getHour();
+		c[11] = (char) ('0'+(h/10));
+		c[12] = (char) ('0'+(h%10));
+		c[13] = (char) (':');
+		int mo = localTime.getMinute();
+		c[14] = (char) ('0'+(mo/10));
+		c[15] = (char) ('0'+(mo%10));
+
+		return c;		
+	}
 
 	public static char[] fastDateTimeWriteHours(LocalDateTime localDateTime) {
 		char[] c = new char[13];
@@ -612,6 +663,32 @@ public final class TimeUtil implements Serializable {
 		c[8] = (char) ('0'+(d/10));
 		c[9] = (char) ('0'+(d%10));
 		c[10] = (char) ('T');
+		LocalTime localTime = localDateTime.toLocalTime();
+		int h = localTime.getHour();
+		c[11] = (char) ('0'+(h/10));
+		c[12] = (char) ('0'+(h%10));
+
+		return c;		
+	}
+	
+	public static char[] fastDateTimeWriteHours_custom(LocalDateTime localDateTime) {
+		char[] c = new char[13];
+
+		LocalDate localDate = localDateTime.toLocalDate();
+		int y = localDate.getYear();
+		c[0] = (char) ('0'+  y/1000);
+		c[1] = (char) ('0'+ ((y%1000)/100)  );
+		c[2] = (char) ('0'+ ((y%100)/10)  );
+		c[3] = (char) ('0'+ (y%10)  );
+		c[4] = (char) ('-');
+		int m = localDate.getMonthValue();
+		c[5] = (char) ('0'+(m/10));
+		c[6] = (char) ('0'+(m%10));
+		c[7] = (char) ('-');
+		int d = localDate.getDayOfMonth();
+		c[8] = (char) ('0'+(d/10));
+		c[9] = (char) ('0'+(d%10));
+		c[10] = (char) (' ');
 		LocalTime localTime = localDateTime.toLocalTime();
 		int h = localTime.getHour();
 		c[11] = (char) ('0'+(h/10));

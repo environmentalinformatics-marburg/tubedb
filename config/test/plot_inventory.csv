@@ -1,0 +1,11 @@
+plot,general,lat,lon,focal,is_station,logger,alternative_id,elevation,comment
+test_station_1,test_stations,,,Y,Y,test_logger,,,
+test_station_2,test_stations,,,Y,Y,test_logger,,,
+test_station_3,test_stations,,,Y,Y,test_logger,,,
+test_station_4,test_stations,,,Y,Y,test_logger,,,
+test_station_5,test_stations,,,Y,Y,test_logger,,,
+test_station_6,test_stations,,,Y,Y,test_logger,,,
+test_station_7,test_stations,,,Y,Y,test_logger,,,
+test_station_8,test_stations,,,Y,Y,test_logger,,,
+test_station_9,test_stations,,,Y,Y,test_logger,,,
+

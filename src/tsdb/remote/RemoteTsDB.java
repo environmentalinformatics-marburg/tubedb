@@ -3,6 +3,7 @@ package tsdb.remote;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import tsdb.component.LoggerType;
 import tsdb.component.Region;
@@ -11,6 +12,7 @@ import tsdb.component.SourceEntry;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataEntry;
 import tsdb.util.DataQuality;
+import tsdb.util.DataRow;
 import tsdb.util.Pair;
 import tsdb.util.TimeSeriesMask;
 import tsdb.util.TimestampInterval;
@@ -105,4 +107,8 @@ public interface RemoteTsDB extends Remote {
 	String[] getInternalStoredStationNames() throws RemoteException;
 	DataEntry[] readRawData(String stationName, String sensorName) throws RemoteException;
 	TimestampSeries readRawData(String stationName, String[] sensorNames) throws RemoteException;
+	
+	//insert support
+	void insertDataRows(String stationName, String[] sensorNames, Collection<DataRow> dataRows) throws RemoteException;
+	void insertSourceCatalogEntry(SourceEntry sourceEntry) throws RemoteException;
 }

@@ -57,7 +57,9 @@ public class Handler_iot_sensor extends MethodHandler {
 				response.setContentType("text/plain;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
 				PrintWriter writer = response.getWriter();
-				String[] lines = Web.requestContentToString(request).split("\n");
+				String req_data = Web.requestContentToString(request);
+				String[] lines = req_data.split("\n");
+				log.info("req " + req_data);
 				for(String rawLine:lines) {
 					String line = rawLine.trim();
 					if(!line.isEmpty()) {
