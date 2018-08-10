@@ -155,7 +155,7 @@
 <script type="text/x-template" id="visualisation-template">
 	<div id="container">
 		<help-interface ref="help"></help-interface>		
-		<div class="main_page_link_and_help"><a href="../index.html" title="go to main page">main-page</a> <button title="show help" @click="$refs.help.show();">?</button></div>
+		<div class="main_page_link_and_help"><a v-if="back_link" href="../index.html" title="go to main page">main-page</a> <button title="show help" @click="$refs.help.show();">?</button></div>
 		<div v-if="appMessage != undefined">
 			{{appMessage}}
 		</div>
@@ -182,7 +182,7 @@
 				<div v-show="viewsLimited" class="message_error">Limited to first 500 views to prevent browser overload.</div>
 			</div>
 			
-			<div v-show="metadata.general_stations.length>1" class="interactive" style="display: inline-block;" @mouseover="groupHover = true" @mouseleave="groupHover = false">
+			<div v-show="pinned_plot === undefined && metadata.general_stations.length>1" class="interactive" style="display: inline-block;" @mouseover="groupHover = true" @mouseleave="groupHover = false">
 				
 				<div class="centered title">Group</div>
 				

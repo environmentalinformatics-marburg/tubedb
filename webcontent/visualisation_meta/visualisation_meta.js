@@ -42,6 +42,17 @@ if (typeof Object.assign != 'function') {
   };
 }
 
+function getUrlQueryParams(qs) { // based on http://stackoverflow.com/a/1099670
+    qs = qs.split('+').join(' ');
+    var params = {};
+    var tokens;
+    var re = /[?&]?([^=]+)=([^&]*)/g;
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+    }
+    return params;
+}
+
 function init() {
 	
 Vue.component('visualisation-interface', {
@@ -54,7 +65,8 @@ props: {
 
 data: function () {
 	return {
-		appMessage: "init view ...",		
+		appMessage: "init view ...",
+		back_link: true,		
 		metadata: {},
 		
 		groupHover: false,
@@ -67,6 +79,7 @@ data: function () {
 		plotMap: {},
 		stationMap: {},
 		plotstations: [],
+		pinned_plot: undefined,
 		
 		sensorHover: false,
 		sensorIDs: [],
@@ -403,6 +416,15 @@ computed: {
 }, //end computed
 
 mounted: function () {
+	var self = this;
+	var pageParams = getUrlQueryParams(document.location.search);
+	if(pageParams.pinned_plot !== undefined) {
+		self.pinned_plot = pageParams.pinned_plot;
+	}
+	if(pageParams.back_link !== undefined) {
+		self.back_link = pageParams.back_link === 'false' ? false : true;
+	}
+
 	this.divContainer = document.getElementById("container");
 	this.updateMetadata();	
 }, //end mounted
@@ -447,8 +469,11 @@ methods: {
 		var plotStationNames = plotstations.map(function(plotstation) {return plotstation.full_plot ? plotstation.plot : plotstation.plot + ':' + plotstation.station});
 		this.processingSensors.forEach(function(sensor){
 			var innerPlotMap = self.sensorNamePlotMap[sensor.id];
+			if(innerPlotMap === undefined) {
+				innerPlotMap = {};
+			}
 			var innerStationMap = self.sensorNameStationMap[sensor.id];
-			if(innerStationMap == undefined) {
+			if(innerStationMap === undefined) {
 				innerStationMap = {};
 			}
 			/*plots.forEach(function(plot){
@@ -656,7 +681,7 @@ watch: {
 		var self = this;
 		console.log("metadata update");
 		this.groupID = "*";
-		var defaultGroup = this.metadata.region.default_general_station;
+		var defaultGroup = self.pinned_plot === undefined ? this.metadata.region.default_general_station : '*';
 		var values = {"*":{id:"*", name:"*"}};
 		this.metadata.general_stations.forEach(function(o){
 			values[o.id] = o;
@@ -666,12 +691,28 @@ watch: {
 		});
 		this.groupMap = values;
 		
+		if(self.pinned_plot !== undefined) {
+			this.metadata.plots = this.metadata.plots.filter(function(o) {
+				if(self.pinned_plot === o.id) {
+					if(o.general_station !== undefined) {
+						self.groupID = o.general_station; // set groupID to plot group for correct plot group time ranges	
+					}
+					return true;
+				} else {
+					return false;
+				}
+			});
+		}
 		this.plotIDs = this.metadata.plots.length==0 ? ["*"] : [this.metadata.plots[0].id];
 		values = {"*":{id:"*", name:"*"}};
 		this.metadata.plots.forEach(function(o){
 			values[o.id] = o;
 		});
 		this.plotMap = values;
+
+		if(this.metadata.plots.length==0) {
+			self.appMessage = self.pinned_plot === undefined ? "no plots" : "plot not found: " + self.pinned_plot;
+		}
 		
 		values = {};
 		this.metadata.stations.forEach(function(o){
@@ -836,21 +877,38 @@ data: {
 	projects: [],
 	projectMap: {},
 	projectID: "",
+	pinned_project: undefined,
 }, //end data
 
 mounted: function () {
 	var self = this;
 	self.appMessage = "query projects...";
+
+	var pageParams = getUrlQueryParams(document.location.search);
+	if(pageParams.pinned_project !== undefined) {
+		self.pinned_project = pageParams.pinned_project;
+	}
+
 	axios.get(url_region_json)
 	.then(function(response) {
 		self.projects = response.data;
+		if(self.pinned_project !== undefined) {
+			self.projects = self.projects.filter(function(o) {
+				return self.pinned_project === o.id;
+			});
+		}
 		var values = {};
 		self.projects.forEach(function(o){
 			values[o.id] = o;
 		})
 		self.projectMap = values;
-		self.projectID = self.projects[0].id;
-		self.appMessage = null;		
+		if(self.projects.length > 0) {
+			self.projectID = self.projects[0].id;
+			self.appMessage = null;
+		} else {
+			self.projectID = "";
+			self.appMessage = self.pinned_project === undefined ? "no projects" : "project not found: " + self.pinned_project;
+		}		
 	})
 	.catch(function(error) {
 		self.appMessage = "ERROR: "+error;
