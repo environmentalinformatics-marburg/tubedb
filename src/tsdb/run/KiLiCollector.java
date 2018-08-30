@@ -18,8 +18,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.DatatypeConverter;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -333,7 +331,7 @@ public class KiLiCollector {
 			MessageDigest md5 = MessageDigest.getInstance("md5");
 			byte[] bytes = Files.readAllBytes(filename);
 			byte[] checksum = md5.digest(bytes);
-			return DatatypeConverter.printHexBinary(checksum);
+			return Util.bytesToHex(checksum);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

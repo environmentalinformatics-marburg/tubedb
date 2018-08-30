@@ -11,10 +11,10 @@ import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.stream.StreamSupport;
 
-import javax.xml.bind.DatatypeConverter;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import tsdb.util.Util;
 
 public class DirectoryDuplicateDataChecker {
 	private static final Logger log = LogManager.getLogger();
@@ -90,7 +90,7 @@ public class DirectoryDuplicateDataChecker {
 		MessageDigest md5 = MessageDigest.getInstance("md5");
 		byte[] bytes = Files.readAllBytes(filename);
 		byte[] checksum = md5.digest(bytes);
-		return DatatypeConverter.printHexBinary(checksum);
+		return Util.bytesToHex(checksum);
 	}
 
 	private void compare() throws Exception {

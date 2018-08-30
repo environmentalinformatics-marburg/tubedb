@@ -1,6 +1,9 @@
 apply plugin: 'java'
 
-dependencies.compile fileTree('lib')
+dependencies {
+    compile fileTree('lib') // include local libraries
+    compileOnly files('/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/jfxrt.jar') //optional dependency for openjfx on ubuntu (openjdk does not include openjfx), correct path for at least OpenJDK J10
+}
 
 sourceSets.main.java.srcDir 'src'
 sourceSets.main.java.srcDir 'dsl/src_generated'
