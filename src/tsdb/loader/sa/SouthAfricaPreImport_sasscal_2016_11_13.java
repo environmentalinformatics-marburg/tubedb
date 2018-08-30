@@ -66,8 +66,8 @@ public class SouthAfricaPreImport_sasscal_2016_11_13 {
 		sensorTranslation.put("TempAmbiet", "Ta_200");
 		sensorTranslation.put("SoilTemp", "Ts_10");
 		sensorTranslation.put("Humidity", "rH_200");
-		sensorTranslation.put("SolarIrra", "Rn_300"); // W/m²
-		sensorTranslation.put("SolarRadiation", "Rn_300"); // MJ/m² will be converted
+		sensorTranslation.put("SolarIrra", "Rn_300"); // W/mÂ²
+		sensorTranslation.put("SolarRadiation", "Rn_300"); // MJ/mÂ² will be converted
 		sensorTranslation.put("Rain", "P_RT_NRT");
 
 
@@ -76,7 +76,7 @@ public class SouthAfricaPreImport_sasscal_2016_11_13 {
 		sensorIgnore.add("Station ID");
 		sensorIgnore.add("Datum");
 		sensorIgnore.add("Hour");
-		sensorIgnore.add("SolarIrra2"); //MJ/m²
+		sensorIgnore.add("SolarIrra2"); //MJ/mÂ²
 
 		log.info("read "+filepath);
 		Table table = Table.readCSV(filepath, ';');

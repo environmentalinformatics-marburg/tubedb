@@ -16,21 +16,21 @@ public class RemoveSouthAfricaStationBeginings {
 	private static final Logger log = LogManager.getLogger();
 
 	/**
-Station 1: bis einschließlich 4.3. löschen
-Station 2: bis einschließlich 5.3. löschen
-Station 3: bis einschließlich 6.3. löschen
-Station 4: bis einschließlich 7.3. löschen
-Station 5: bis einschließlich 10.3. löschen
-Station 6: bis einschließlich 11.3. löschen
-Station 7: bis einschließlich 12.3. löschen
-Station 8: bis einschließlich 13.3. löschen
-Station 9: bis einschließlich 15.3. löschen
-Station 10: bis einschließlich 20.3. löschen
-Station 11: bis einschließlich 21.3. löschen
-Station 12: bis einschließlich 22.3. löschen
-Station 13: bis einschließlich 24.3. löschen
-Station 14: bis einschließlich 25.3. löschen
-Station 15: bis einschließlich 26.3. löschen
+Station 1: bis einschlieÃŸlich 4.3. lÃ¶schen
+Station 2: bis einschlieÃŸlich 5.3. lÃ¶schen
+Station 3: bis einschlieÃŸlich 6.3. lÃ¶schen
+Station 4: bis einschlieÃŸlich 7.3. lÃ¶schen
+Station 5: bis einschlieÃŸlich 10.3. lÃ¶schen
+Station 6: bis einschlieÃŸlich 11.3. lÃ¶schen
+Station 7: bis einschlieÃŸlich 12.3. lÃ¶schen
+Station 8: bis einschlieÃŸlich 13.3. lÃ¶schen
+Station 9: bis einschlieÃŸlich 15.3. lÃ¶schen
+Station 10: bis einschlieÃŸlich 20.3. lÃ¶schen
+Station 11: bis einschlieÃŸlich 21.3. lÃ¶schen
+Station 12: bis einschlieÃŸlich 22.3. lÃ¶schen
+Station 13: bis einschlieÃŸlich 24.3. lÃ¶schen
+Station 14: bis einschlieÃŸlich 25.3. lÃ¶schen
+Station 15: bis einschlieÃŸlich 26.3. lÃ¶schen
 	 */
 	public static void run(TsDB tsdb) {
 		final int startTime = 0;

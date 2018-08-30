@@ -17,7 +17,8 @@ jar {
 }
 
 tasks.withType(JavaCompile){
-    //options.deprecation = true
+	options.encoding = 'UTF-8' // set text encoding of java files to UTF-8
+	//options.deprecation = true
 	//options.listFiles = true
 	//options.verbose = true
 }
