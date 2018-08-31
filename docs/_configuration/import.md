@@ -6,7 +6,7 @@ Import of station raw source files is specified by import type and path to data 
 
 ### import types
 
-For file format description see [import formats](import_formats.md).
+For file format description see [import formats](../../documentation/import_formats).
 
 * `csv`
   

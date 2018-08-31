@@ -2,7 +2,7 @@
 title: "Example package"
 ---
 
-The folder *example* contains a package of TubeDB with some time series source data files. It is runnable with Linux or Windows.
+The folder [example](https://github.com/environmentalinformatics-marburg/tubedb/tree/master/example) contains a package of TubeDB with some time series source data files. It is runnable with Linux or Windows.
 
 Linux
 ---

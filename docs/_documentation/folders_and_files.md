@@ -8,7 +8,7 @@ Contains files that will be added when building TubeDB distribution.
 
 ### config
 
-see [distribution](distribution.md)
+see [distribution](../distribution)
 
 ### documentation
 
@@ -34,7 +34,7 @@ Java source code of TubeDB with javadoc documentation.
 
 ### webcontent
 
-see [distribution](distribution.md)
+see [distribution](../distribution)
 
 ### root folder
 
@@ -44,8 +44,8 @@ see [distribution](distribution.md)
 
 `LICENSE` GPLv3 license of TubeDB.
 
-`tsdb_paths.ini` see [distribution](distribution.md)
+`tsdb_paths.ini` see [distribution](../distribution)
 
-`realm.properties` see [distribution](distribution.md)
+`realm.properties` see [distribution](../distribution)
 
 `.project` and `.classpath` settings required to directly import project into Eclipse.

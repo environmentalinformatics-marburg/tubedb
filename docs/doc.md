@@ -11,19 +11,15 @@ sidebar:
   <p><a href="{{ item.url | prepend: site.baseurl}}">{{ item.title }}</a></p>
 {% endfor %}
 
-
-## Installation
-{% for item in site.installation %}
+## [Configuration](configuration)
+{% for item in site.configuration %}
   <p><a href="{{ item.url | prepend: site.baseurl}}">{{ item.title }}</a></p>
 {% endfor %}
 
-## Functionality
-{% for item in site.functionality %}
+## [API](api)
+{% for item in site.api %}
   <p><a href="{{ item.url | prepend: site.baseurl}}">{{ item.title }}</a></p>
 {% endfor %}
 
-## R Interface
-{% for item in site.r %}
-  <p><a href="{{ item.url | prepend: site.baseurl}}">{{ item.title }}</a></p>
-{% endfor %}
+
 

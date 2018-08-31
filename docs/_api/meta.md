@@ -16,7 +16,7 @@ In the following methods of Meta Data API are specified and described:
 * `status`
 * `plot_info`
 
-###region_list
+## region_list
 
 Get regions (collection of plots within one project).
 
@@ -33,7 +33,7 @@ example of returned data:
 `KI;Kilimanjaro`
 
 
-###region.json
+## region.json
 
 Get meta data of region.
 
@@ -48,7 +48,7 @@ example of returned data:
 `{"id":"BE","name":"Exploratories","view_year_range":{"start":"2008","end":"2017"}}` 
 
 
-###generalstation_list
+## generalstation_list
 
 Get general stations of one region (sub-collection of plots in one region / project). 
 
@@ -62,12 +62,12 @@ Retrieves a new-line separated list of general stations with general station ide
 
 example of returned data:
 
-`AEG;Schw�bische Alb Gr�nland`
+`AEG;Schwäbische Alb Grünland`
 
-`AEW;Schw�bische Alb Wald`
+`AEW;Schwäbische Alb Wald`
 
 
-###plot_list
+## plot_list
 
 Get plots of one general station or of one region (all plots from all general stations within one region).
 
@@ -84,7 +84,7 @@ example of returned data:
 `AEW10;normal;00CEMU`
 
 
-###plotstation_list
+## plotstation_list
 
 Get stations of one plot.
 
@@ -105,7 +105,7 @@ example of returned data:
 `51021020218;rug`
 
 
-###sensor_list
+## sensor_list
 
 Get all sensors (climatic parameters) of one plot or of one general station or of one region or of one station.
 
@@ -129,10 +129,10 @@ example of returned data:
 
 `rH_200;Relative air humidity at 2 meters above ground;% (percentage of relative humidity, 0-100);AVERAGE;false`
 
-`Ta_200;Air temperature at 2 meters above ground;�C (degree Celcius, -40 to 60);AVERAGE;false`
+`Ta_200;Air temperature at 2 meters above ground;°C (degree Celcius, -40 to 60);AVERAGE;false`
 
 
-###status
+## status
 
 Get plot status information of plots within one general station or within one region.
 
@@ -163,7 +163,7 @@ example of returned data:
 `[{"plot":"AEW10","first_timestamp":1234,"last_timestamp":2234,"first_datetime":"2000-01-01T00:00","last_datetime":"2010-10-10T10:10","voltage":12.76,"message_date":"2010-10-10T10:20","message":"OK"},{"plot":"AEW11","first_timestamp":1244,"last_timestamp":2244,"first_datetime":"2000-01-02T00:00","last_datetime":"2010-10-10T10:30","voltage":11.92,"message_date":"2010-10-10T10:40","message":"OK"}]`
 
 
-###plot_info
+## plot_info
 
 Get plot positions (WGS 84) by region.
 
@@ -189,4 +189,4 @@ JSON object of one plot:
 
 example of returned data:
 
-`[{"name":"AEG01","general":"Schw�bische Alb Gr�nland","lat":48.421234,"lon":9.331234},{"name":"AEG02","general":"Schw�bische Alb Gr�nland","lat":48.321234,"lon":9.431234}]`
+`[{"name":"AEG01","general":"Schwäbische Alb Grünland","lat":48.421234,"lon":9.331234},{"name":"AEG02","general":"Schwäbische Alb Grünland","lat":48.321234,"lon":9.431234}]`

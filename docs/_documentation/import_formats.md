@@ -4,10 +4,10 @@ title: "Import Formats"
 
 TubeDB contains readers for several timeseries data source file formats:
 
-* `CSV` - generic comma-separated values *text format*
-* `ASC` - specific logger *text format*
-* `UDBF` - specific logger *binary  format*
-* `TSA` - TubeDB timeseries archive *binary format*
+- `CSV` - generic comma-separated values: *text format*
+- `ASC` - specific logger: *text format*
+- `UDBF` - specific logger: *binary  format*
+- `TSA` - TubeDB timeseries archive: *binary format*
 
 
 CSV - Comma Separated Values
@@ -23,20 +23,20 @@ typical file pattern: `*.csv`
 
 reader class: `tsdb.run.ImportGenericCSV`
 
-###format specification
+### format specification
 
-####filename:
+#### filename:
 
 Station name of timeseries is extracted from filename. 
 
 format: `STATION_TEXT.csv`
 
 examples: 
-* `HEG01_.csv` -> HEG01 
-* `MyPlot_2010.csv` -> MyPlot 
-* `123_old.csv` -> 123
+- `HEG01_.csv` -> HEG01 
+- `MyPlot_2010.csv` -> MyPlot 
+- `123_old.csv` -> 123
 
-####header:
+#### header:
 
 First line of file content is header. 
 
@@ -45,17 +45,17 @@ First columns is date and following columns contain sensor names.
 format: `datetime,SENSOR1,SENSOR2,SENSOR2,...`
 
 examples: 
-* `datetime,Ta_200,rH_200,p_QNH,WV,WD,P_RT_NRT_01,Trad,SWDR_300,SWUR_300,LWDR_300,LWUR_300,Rn_300`
-* `datetime,Ta_200,rH_200`
+- `datetime,Ta_200,rH_200,p_QNH,WV,WD,P_RT_NRT_01,Trad,SWDR_300,SWUR_300,LWDR_300,LWUR_300,Rn_300`
+- `datetime,Ta_200,rH_200`
 
-####data-rows:
+#### data-rows:
 
 format: `DATETIME,VALUE1,VALUE2,VALUE3` 
 
 Datetime is in format `yyyy-mm-ddThh:MM` *(ISO 8601)*  e.g. `2014-10-12T09:50`
 
 
-####complete example:
+#### complete example:
 
 filename: `aet1_2014__2015_11_05.csv` -> plot: aet1
 
@@ -104,36 +104,36 @@ reader class: `tsdb.TimeSeriesArchivReader`
 
 writer class: `tsdb.TimeSeriesArchivWriter`
 
-###format specification
+### format specification
 
 data type definitions:
-* *(byte)* one byte
-* *(int)* 32 bit integer (four bytes big-endian)
-* *(packed_int)* packed integer number (one to five bytes): Sequence of bytes. If highest bit of current byte is set then next byte is part of this sequence. Lower 7 bits of byte are used to code value: bn denotes the 7 value bits of byte n:  interger value == b1 | (b2<<7) | (b3<<14)
-* *(text)*  sequence of characters coded by count of characters followed by characters as bytes: *(packed_int)* *(byte)* *(byte)* *(byte)* ...
-* marker is coded as *(text)*
-* *(float)* IEEE 754 single-precision binary floating-point format 32 bit (four bytes big-endian)
+- *(byte)* one byte
+- *(int)* 32 bit integer (four bytes big-endian)
+- *(packed_int)* packed integer number (one to five bytes): Sequence of bytes. If highest bit of current byte is set then next byte is part of this sequence. Lower 7 bits of byte are used to code value: bn denotes the 7 value bits of byte n: interger `value == b1 | (b2<<7) | (b3<<14)`
+- *(text)*  sequence of characters coded by count of characters followed by characters as bytes: *(packed_int)* *(byte)* *(byte)* *(byte)* ...
+- marker is coded as *(text)*
+- *(float)* IEEE 754 single-precision binary floating-point format 32 bit (four bytes big-endian)
 
 
 marker definitions:
-* `TOC_HEAD` = "`Time_Series_Archiv_v_1_0_0`"
-* `TOC_START` = "`TimeSeriesArchiv:start`"
-* `TOC_END` = "`TimeSeriesArchiv:end`"
-* `TOC_ENTRY` = "`Entry`"
-* `TOC_TYPE_TIMESTAMPSERIES` = "`TimestampSeries`"
-* `TOC_TYPE_DATAENTRYARRAY` = "`DataEntryArray`"
+- `TOC_HEAD` = "`Time_Series_Archiv_v_1_0_0`"
+- `TOC_START` = "`TimeSeriesArchiv:start`"
+- `TOC_END` = "`TimeSeriesArchiv:end`"
+- `TOC_ENTRY` = "`Entry`"
+- `TOC_TYPE_TIMESTAMPSERIES` = "`TimestampSeries`"
+- `TOC_TYPE_DATAENTRYARRAY` = "`DataEntryArray`"
 
 File content starts (at position 0) with `TOC_HEAD` then `TOC_START` , contains one ore more entries and ends with `TOC_END`.
 
 An entry starts with `TOC_ENTRY` and then entry type `TOC_TYPE_TIMESTAMPSERIES` or `TOC_TYPE_DATAENTRYARRAY`.
 
-####entry `TOC_TYPE_DATAENTRYARRAY`:
+#### entry `TOC_TYPE_DATAENTRYARRAY`:
 
 This entry stores one time series of one station and one sensor.
 
 marker definitions:
-* `TOC_START` = "`DataEntryArray:start`"
-* `TOC_END` = "`DataEntryArray:end`"
+- `TOC_START` = "`DataEntryArray:start`"
+- `TOC_END` = "`DataEntryArray:end`"
 
 content:
  
@@ -162,13 +162,13 @@ content:
 `TOC_END`
 
 
-####entry `TOC_TYPE_TIMESTAMPSERIES`:
+#### entry `TOC_TYPE_TIMESTAMPSERIES`:
 
 This entry stores one time series of one station and several sensors.
 
 marker definitions:
-* `TOC_START` = "`TimestampSeries:start`";
-* `TOC_END` = "`TimestampSeries:end`";
+- `TOC_START` = "`TimestampSeries:start`";
+- `TOC_END` = "`TimestampSeries:end`";
 
 content:
 

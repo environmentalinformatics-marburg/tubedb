@@ -13,7 +13,7 @@ In the following methods of query API are specified and described:
 * `query_image`
 
 
-###query_csv
+## query_csv
 
 Get one timeseries as CSV-file.
 
@@ -82,7 +82,7 @@ example of returned data:
 `2010-02-02T00:00,87.1,-2.4`
 
 
-###query_heatmap
+## query_heatmap
 
 Get heatmap of one sensor of one timeseries aggregated to timesteps of hour.
 
@@ -108,7 +108,7 @@ example: `http://localhost:8080/tsdb/query_heatmap?plot=AEW02&sensor=Ta_200&qual
 
 Retrieves a PNG-image-file.
 
-###heatmap_scale
+## heatmap_scale
 
 Get color scale of heatmap of one sensor.
 
@@ -118,7 +118,7 @@ example: `http://localhost:8080/tsdb/heatmap_scale?sensor=Ta_200`
 
 Retrieves a PNG-image-file.
 
-###query_image
+## query_image
 
 Get diagram or box-plot of one sensor of one timeseries.
 

@@ -41,15 +41,15 @@ collections:
   documentation:
     output: true
     permalink: /:collection/:title/
-  installation:
+  usage:
     output: true
     permalink: /:collection/:title/
-  functionality:
+  configuration:
     output: true
-    permalink: /:collection/:title/
-  r:
+    permalink: /:collection/:title/ 
+  api:
     output: true
-    permalink: /:collection/:title/
+    permalink: /:collection/:title/         
 
 defaults:
   # documentation
@@ -61,7 +61,37 @@ defaults:
       tags: "documentation"
       layout: single
       sidebar:
-        nav: "docs"   
+        nav: "docs"
+  # usage
+  - scope:
+      path: ""
+      type: usage
+    values:
+      category: "usage"
+      tags: "usage"
+      layout: single
+      sidebar:
+        nav: "usage"
+  # configuration
+  - scope:
+      path: ""
+      type: configuration
+    values:
+      category: "configuration"
+      tags: "configuration"
+      layout: single
+      sidebar:
+        nav: "configuration"                    
+  # api
+  - scope:
+      path: ""
+      type: api
+    values:
+      category: "api"
+      tags: "api"
+      layout: single
+      sidebar:
+        nav: "api"             
   # pages
   - scope:
       path: ""
@@ -92,39 +122,6 @@ defaults:
       layout: single
       sidebar:
         nav: "docs" 
-  # functionality
-  - scope:
-      path: ""
-      type: functionality
-    values:
-      category: "Installation"
-      tags: "Documentation"
-      layout: single
-      sidebar:
-        nav: "docs" 
-  # r
-  - scope:
-      path: ""
-      type: r
-    values:
-      category: "Installation"
-      tags: "Documentation"
-      layout: single
-      sidebar:
-        nav: "docs" 
-  
-# theme: jekyll-theme-cayman
-# Exclude from processing.
-# The following items will not be processed, by default. Create a custom list
-# to override the default setting.
-# exclude:
-#   - Gemfile
-#   - Gemfile.lock
-#   - node_modules
-#   - vendor/bundle/
-#   - vendor/cache/
-#   - vendor/gems/
-#   - vendor/ruby/
 
 # Site Author
 author:
