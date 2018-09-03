@@ -108,7 +108,7 @@ public class StreamDB {
 			}
 			//sensorMap.clear();
 			db.delete(stationMeta.db_name_sensor_map);
-			
+
 			db.delete(stationMeta.db_name_sensor_time_series_mask_map);			
 		}
 		stationMetaMap.clear();		
@@ -120,7 +120,7 @@ public class StreamDB {
 	protected void finalize() throws Throwable {
 		close();
 	}
-	
+
 	/**
 	 * Check if station exists in StreamDB. Station exists only if it contains time series data.
 	 * @param stationID
@@ -129,7 +129,7 @@ public class StreamDB {
 	public boolean existStation(String stationID) {
 		return stationMetaMap.containsKey(stationID);
 	}
-	
+
 	/**
 	 * Check if data of sensor exits in station. If station does not exist return false. 
 	 * @param stationID
@@ -143,7 +143,7 @@ public class StreamDB {
 		}
 		return getSensorMap(stationMeta).containsKey(sensorName);
 	}
-	
+
 	private StationMeta getStationMeta(String stationName, boolean createIfNotExists) {
 		throwNull(stationName);
 		StationMeta stationMeta = stationMetaMap.get(stationName);		
@@ -200,7 +200,7 @@ public class StreamDB {
 		}
 		return sensorMeta;
 	}
-	
+
 	public SensorMeta getSensorMeta(String stationName, String sensorName) {
 		return getSensorMeta(stationName, sensorName, false);
 	}
@@ -305,7 +305,7 @@ public class StreamDB {
 			insertIntoOneChunk(chunkMetaMap,chunkMap,entryList);
 		}
 	}
-	
+
 	public void removeSensorData(String stationName, String sensorName, int start, int end) {
 		SensorMeta sensorMeta = getSensorMeta(stationName,sensorName,false);
 		if(sensorMeta==null) {
@@ -314,9 +314,9 @@ public class StreamDB {
 		}
 		BTreeMap<Integer, ChunkMeta> chunkMetaMap = getSensorChunkMetaMap(sensorMeta);
 		BTreeMap<Integer, Chunk> chunkMap = getSensorChunkMap(sensorMeta);
-		
+
 		ChunkMeta[] allChunkMetas = chunkMetaMap.values().toArray(new ChunkMeta[0]); //proxy
-		
+
 		for(ChunkMeta chunkMeta:allChunkMetas) {
 			if(start<=chunkMeta.firstTimestamp&&chunkMeta.lastTimestamp<=end) { //remove full chunk
 				removeChunk(chunkMetaMap,chunkMap,chunkMeta);
@@ -330,11 +330,11 @@ public class StreamDB {
 				} else {
 					log.error("chunk not removed (internal error): "+chunkMeta);
 				}
-				
+
 			}
 		}
 	}
-	
+
 	/**
 	 * returns a new chunk without data in interval
 	 * @param chunk
@@ -351,7 +351,7 @@ public class StreamDB {
 		}
 		return Chunk.of(result);
 	}
-	
+
 	/**
 	 * get meta, that is correct target of timestamp if present
 	 * @param timestamp
@@ -530,7 +530,7 @@ public class StreamDB {
 		}		
 		return getSensorMap(stationMeta);
 	}
-	
+
 	public int[] getSensorTimeInterval(String stationName, String sensorName) {
 		SensorMeta sensorMeta = getSensorMeta(stationName, sensorName);
 		if(sensorMeta==null) {
@@ -572,7 +572,7 @@ public class StreamDB {
 		}
 		return new int[]{minTimestamp,maxTimestamp};	
 	}
-	
+
 	public void printStatistics() {
 		for(StationMeta stationMeta:stationMetaMap.values()) {
 			System.out.println(stationMeta.stationName);
@@ -595,7 +595,8 @@ public class StreamDB {
 	}
 
 	public void compact() {
-		db.compact();
+		log.warn("ignore db compact: unfixed bug in compact");
+		//db.compact();
 	}
 
 	public void removeInterval(String stationName, int start, int end) {//TODO remove empty streams and stations

@@ -19,7 +19,7 @@ public class RunCompact {
 		
 		StreamDB streamDB = new StreamDB(TsDBFactory.STORAGE_PATH+"/"+"streamdb");
 
-		try {		
+		try {
 			streamDB.compact();		
 		} catch(Exception e) {
 			log.error(e);

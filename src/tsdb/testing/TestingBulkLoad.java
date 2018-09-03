@@ -3,12 +3,15 @@ package tsdb.testing;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Fun.Tuple2;
 
 public class TestingBulkLoad {
+	private static final Logger log = LogManager.getLogger();
 
 	public static void main(String[] args) {
 		
@@ -34,7 +37,8 @@ public class TestingBulkLoad {
 		System.out.println("commit...");
 		db.commit();
 		System.out.println("compact...");
-		db.compact();		
+		log.warn("ignore db compact: unfixed bug in compact");
+		//db.compact();		
 		System.out.println("...end");
 		db.close();
 		

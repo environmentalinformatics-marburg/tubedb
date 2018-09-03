@@ -6,6 +6,8 @@ requirement: [installed TubeDB](../install)
 
 TubeDB is managed by shell scripts.
 
+**Note**: Only one instance of TubeDB may open the database. So you can start TubeDB as server or for data import or as local GUI etc. but only one at a time. If you run TubeDB as background server make sure to shutdown the server before you initiate a data import etc.
+
 Linux (Ubuntu)
 ---
 
@@ -16,13 +18,13 @@ Start (web)server. Open a browser and type `http://localhost:8080` (default). Te
 Open desktop GUI for time series and meta data inspection.
 
 #### `clear_import.sh`
-Clear all time series (and mask) data and import time series from data files.
+Clear all time series and import from data files and load masks from config.
 
 #### `import.sh`
-Import time series from data files. Does not clear previous time series.
+import time series data from files and load masks from config. Does not clear previous time series.
 
 #### `clear_load_masks.sh`
-Clear all mask data and load masks from config files.
+Clear all time series masks and load from config. Does not clear time series data.
 
 #### `interactive.sh` (for advanced usage)
 Open TubeDB shell.
@@ -36,27 +38,28 @@ For operation in background TubeDB uses [screen](https://wiki.ubuntuusers.de/Scr
 Following scripts manage TubeDB in background mode with screen.
 
 #### `start_server_background.sh`
-runs the TubeDB webserver in background. For this the application *screen* is required (e.g. run `sudo apt-get install screen`)
-
-#### `stop_server_background.sh`
-stops a running background server of TubeDB.
+Start TubeDB (web)server in background.
 
 #### `shutdown_server.sh`
+Send shutdown request to background TubeDB (web)server to terminate.
+
+#### `stop_server_background.sh`
+Directly terminate background TubeDB (web)server.
 
 #### `check_server_background.sh`
-checks if a TubeDB server is running in background.
+Check if background TubeDB (web)server is running.
 
 #### Advanced Usage
 
-If you are experienced with screen. You can operate with the TubeDB background session. The screen session name is `tubedb`. It is recommended to first become familiar with [screen](https://wiki.ubuntuusers.de/Screen/) workflow.
+If you are experienced with screen you can operate with the TubeDB background session. The screen session name is `tubedb`. It is recommended to first become familiar with [screen](https://wiki.ubuntuusers.de/Screen/) workflow.
 
 Check if screen session is running `screen -ls`
 
 Open running screen session `screen -r tubedb` or `screen -d -r tubedb` (if session is attached)
 
-Leaf opened screen session, session continues to run in background `ctrl-a d`
+Leave opened screen session, session continues to run in background `ctrl-a d`
 
-Leaf and terminate opened screen session `ctrl-a \`
+Leave and terminate opened screen session `ctrl-a \`
 
 ### Automated Operation
 
@@ -83,13 +86,13 @@ Start (web)server. Open a browser and type `http://localhost:8080` (default). Te
 Open desktop GUI for time series and meta data inspection.
 
 #### `clear_import.cmd`
-Clear all time series (and mask) data and import time series from data files.
+Clear all time series and import from data files and load masks from config.
 
 #### `import.cmd`
-Import time series from data files. Does not clear previous time series.
+import time series data from files and load masks from config. Does not clear previous time series.
 
 #### `clear_load_masks.cmd`
-Clear all mask data and load masks from config files.
+Clear all time series masks and load from config. Does not clear time series data.
 
 #### `interactive.cmd` (for advanced usage)
 Open TubeDB shell.
