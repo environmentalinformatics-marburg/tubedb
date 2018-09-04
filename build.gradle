@@ -19,8 +19,20 @@ jar {
     }
 }
 
+
 tasks.withType(JavaCompile){
 	options.encoding = 'UTF-8' // set text encoding of java files to UTF-8
+	
+	def v = JavaVersion.current()
+	
+	if(v==JavaVersion.VERSION_1_1||v==JavaVersion.VERSION_1_2||v==JavaVersion.VERSION_1_3||v==JavaVersion.VERSION_1_4||v==JavaVersion.VERSION_1_5||v==JavaVersion.VERSION_1_6||v==JavaVersion.VERSION_1_7) {
+		throw new GradleException('java version 8 or newer needed for build')
+	}
+	
+	if(v != JavaVersion.VERSION_1_8) { // java version is newer than java 8 (java 9 with modules)
+		options.compilerArgs.addAll(["--add-exports", "javafx.base/com.sun.javafx.binding=ALL-UNNAMED"]) // compatiblity to modules in java 9 and newer
+	}
+
 	//options.deprecation = true
 	//options.listFiles = true
 	//options.verbose = true
