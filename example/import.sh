@@ -1,1 +1,1 @@
-exec ./tsdb.sh clear_import
+exec ./tsdb.sh import

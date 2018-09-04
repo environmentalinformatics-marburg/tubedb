@@ -1,0 +1,5 @@
+plot,general,lat,lon,is_station,logger
+plotRed,groupOne,50.89,8.79,Y,logger1
+plotGreen,groupOne,50.88,8.88,Y,logger1
+plotYellow,groupTwo,50.97,8.67,Y,logger1
+plotBlue,groupTwo,50.96,8.76,Y,logger1

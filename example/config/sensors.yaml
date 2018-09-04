@@ -1,0 +1,1134 @@
+Ta_200:
+  description: Air temperature at 2 meters above ground
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+
+Ta_200_min:
+  description: Minimum value of Ta_200
+  unit: °C (degree Celcius, -40 to 60)
+  raw_source: [Ta_200_min_raw, Ta_200] # use Ta_200_min_raw if available else use Ta_200
+  aggregation: minimum
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+  
+Ta_200_max:
+  description: Maximum value of Ta_200
+  unit: °C (degree Celcius, -40 to 60)
+  raw_source: [Ta_200_max_raw, Ta_200] # use Ta_200_max_raw if available else use Ta_200
+  aggregation: maximum
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]  
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+  
+Ta_200_min_raw:
+  aggregation: minimum
+  visibility: internal
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  
+Ta_200_max_raw:
+  aggregation: maximum
+  visibility: internal
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  
+rH_200:
+  description: Relative air humidity at 2 meters above ground
+  unit: '% (percentage of relative humidity, 0-100)'
+  aggregation: average
+  physical_range: [15.0, 100.0]
+  step_range: [0.0, 100.0] #high fluctuation possible
+  empirical_diff: 50
+  interpolation_mse: 100   
+  
+rH_200_min:
+  description: Minimum value of rH_200
+  unit: '% (percentage of relative humidity, 0-100)'
+  raw_source: [rH_200_min_raw, rH_200] # use rH_200_min_raw if available else use rH_200
+  aggregation: minimum
+  physical_range: [15.0, 100.0]
+  step_range: [0.0, 100.0] #high fluctuation possible 
+  empirical_diff: 50  
+  interpolation_mse: 100   
+  
+rH_200_max:
+  description: Maximum value of rH_200
+  unit: '% (percentage of relative humidity, 0-100)'
+  raw_source: [rH_200_max_raw, rH_200] # use rH_200_max_raw if available else use rH_200 
+  aggregation: maximum
+  physical_range: [15.0, 100.0] 
+  step_range: [0.0, 100.0] #high fluctuation possible 
+  empirical_diff: 50  
+  interpolation_mse: 100
+
+rH_200_min_raw:
+  aggregation: minimum
+  physical_range: [15.0, 100.0] 
+  step_range: [0.0, 100.0] #high fluctuation possible 
+  visibility: internal
+  
+rH_200_max_raw:
+  aggregation: maximum
+  physical_range: [15.0, 100.0] 
+  step_range: [0.0, 100.0] #high fluctuation possible
+  visibility: internal  
+  
+Ta_10:
+  description: Air temperature 10 centimeters above surface within the ground vegetation layer
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 100.0]  
+  empirical_diff: 3.38
+  interpolation_mse: 7
+  category: temperature
+  
+Ts_05:
+  description: Soil temperature at 5 centimeters below surface
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 1.85]   
+  empirical_diff: 3.31 
+  interpolation_mse: 7
+  category: temperature
+  
+Ts_10:
+  description: Soil temperature at 10 centimeters below surface 
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 1.7]  
+  empirical_diff: 3.6
+  interpolation_mse: 7
+  category: temperature
+  
+Ts_20: 
+  description: Soil temperature at 20 centimeters below surface 
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0] 
+  step_range: [0.0, 0.9]
+  empirical_diff: 3.03  
+  interpolation_mse: 7
+  category: temperature
+  
+Ts_50:
+  description: Soil temperature at 50 centimeters below surface
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0]  
+  step_range: [0.0, 0.6]   
+  empirical_diff: 3.18
+  interpolation_mse: 7
+  category: temperature
+  
+SM_10:
+  description: Soil moisture at 10 centimeters below surface
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 29.04
+  interpolation_mse: 100   
+  
+SM_15:
+  description: Soil moisture at 15 centimeters below surface (BeCycles sensor type at Exploratories) 
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 18.28
+  interpolation_mse: 100   
+  
+SM_20:
+  description: Soil moisture at 20 centimeters below surface
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 23.13
+  interpolation_mse: 100   
+  
+SM_30: 
+  description: Soil moisture at 30 centimeters below surface (BeCycles sensor type at Exploratories) 
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 23.83
+  interpolation_mse: 100   
+  
+SM_40:
+  description: Soil moisture at 40 centimeters below surface (BeCycles sensor type at Exploratories)
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 27.53
+  interpolation_mse: 100   
+  
+SM_50:   
+  description: Soil moisture at 50 centimeters below surface (BeCycles sensor type at Exploratories) 
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 11.71
+  interpolation_mse: 100   
+  
+#****** new BeCycles sensors ********
+
+SM_10_2:
+  description: Soil moisture at 10 centimeters below surface (BeCycles sensor type at Exploratories)
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 29.04  
+  interpolation_mse: 100   
+ 
+SM_20_2:
+  description: Soil moisture at 20 centimeters below surface (BeCycles sensor type at Exploratories)
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 23.13  
+  interpolation_mse: 100   
+  
+SM_35:
+  description: Soil moisture at 35 centimeters below surface (BeCycles sensor type at Exploratories)
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 23.83
+  interpolation_mse: 100   
+  
+#************************************
+
+PAR_200:
+  description: Photosynthetically activ radiation at 2 meters height
+  unit: µmol/(m^2*s) (micromol photons per square meter per second)
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  step_range: [0.0, 1000.0]
+  
+PAR_300:
+  description: Photosynthetically activ radiation at 3 meters height
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 610.46
+  interpolation_mse: 10000   
+   
+Albedo:
+  description: Albedo (SWUR/SWDR)
+  unit: ratio (0 to 1)
+  aggregation: average_albedo
+  physical_range: [0.0, 1.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 0.31
+  
+SWDR_300:
+  description: Shortwave Downward Radiation at 3 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 157.2
+  interpolation_mse: 10000   
+  
+SWUR_300:
+  description: Shortwave Upward Radiation at 3 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 43.03
+  interpolation_mse: 10000   
+  
+LWDR_300:
+  description: Longwave Downward Radiation at 3 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 220.0]
+  empirical_diff: 34.29
+  interpolation_mse: 10000   
+  
+LWUR_300:
+  description: Longwave Upward Radiation at 3 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 18.31
+  interpolation_mse: 10000   
+  
+Trad:
+  description: Radiation temperature
+  unit: °C (degree Celcius) 
+  aggregation: average
+  physical_range: [-40.0, 60.0]   
+  step_range: [0.0, 10.0] 
+  empirical_diff: 3.07
+  interpolation_mse: 7
+  category: temperature
+  
+WD:
+  description: Wind direction
+  unit: ° (degree of arc 0-360)
+  dependency: [WD, WV]  # self dependency WD to prevent interpretation as virtual sensor
+  aggregation: average_wind_direction
+  physical_range: [0.0, 360.0]   
+  step_range: [0.0, 1000.0]
+  derived: false # dependency set for aggregation only
+  
+WV:
+  description: Wind velocity
+  unit: m/s (meter per second) 
+  aggregation: average_wind_velocity
+  physical_range: [0.0, 100.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 2.93
+  
+WV_gust:
+  description: Max. wind velocity (gust of wind)
+  unit: m/s (meter per second)
+  aggregation: maximum
+  physical_range: [0.0, 100.0]  
+  step_range: [0.0, 1000.0]
+  
+p_QNH:
+  description: Barometric pressure QNH/MSL, adjusted to mean sea level
+  unit: hPa (hectopascal)
+  aggregation: average
+  physical_range: [300.0, 1100.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 1.83
+  interpolation_mse: 2500
+  
+p_local:
+  description: Barometric pressure, local
+  unit: hPa (hectopascal)
+  aggregation: average
+  physical_range: [300.0, 1100.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 1.83
+  interpolation_mse: 2500
+  
+P_RT_NRT:
+  description: Precipitation
+  unit: mm (millimeter)
+  dependency: P_container_NRT # TODO optional dependency P_container_NRT is not needed if P_RT_NRT is available as real sensor
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  interpolation_mse: 4
+  category: water
+  derived: false # optional dependency
+  
+P_container_RT:
+  description: Precipitation, actual unfiltered amount in container
+  unit: mm (millimeter)
+  aggregation: average
+  physical_range: [20.0, 850.0]  
+  step_range: [0.0, 1000.0]
+  category: water 
+  
+P_container_NRT:
+  description: Precipitation, actual filtered amount in container   
+  unit: mm (millimeter) 
+  aggregation: average
+  physical_range: [20.0, 850.0]
+  step_range: [0.0, 1000.0]
+  category: water 
+
+#general radiation
+
+SWDR:
+  description: Shortwave Downward Radiation
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  raw_source: [SWDR_300, SWDR_3700, SWDR_4400, SWDR_200] # use first available sensor in list
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 157.2
+  interpolation_mse: 10000   
+  
+SWUR:
+  description: Shortwave Upward Radiation
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  raw_source: [SWUR_300, SWUR_3700, SWUR_4400] # use first available sensor in list  
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 43.03
+  interpolation_mse: 10000   
+  
+LWDR:
+  description: Longwave Downward Radiation
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  raw_source: [LWDR_300, LWDR_3700, LWDR_4400] # use first available sensor in list
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 220.0]
+  empirical_diff: 34.29
+  interpolation_mse: 10000   
+  
+LWUR:
+  description: Longwave Upward Radiation
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  raw_source: [LWUR_300, LWUR_3700, LWUR_4400] # use first available sensor in list
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 18.31
+  interpolation_mse: 10000   
+
+#****** new sensors in AET06 ********
+
+SWDR_3700:
+  description: Shortwave Downward Radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  interpolation_mse: 10000   
+  
+SWUR_3700:
+  description: Shortwave Upward Radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  interpolation_mse: 10000   
+  
+LWDR_3700:
+  description: Longwave Downward Radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  interpolation_mse: 10000   
+  
+LWUR_3700:
+  description: Longwave Upward Radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  interpolation_mse: 10000   
+  
+PAR_2000:
+  description: Photosynthetically activ radiation at 20 meters height
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  interpolation_mse: 40000   
+  
+PAR_1000:
+  description: Photosynthetically activ radiation at 10 meters height
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  interpolation_mse: 40000   
+  
+Ta_1000:
+  description: Air temperature at 10 meters above ground
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [0.0, 100.0] 
+  category: temperature
+  
+rH_1000:
+  description: Relative air humidity at 10 meters above ground
+  unit: '% (percentage of relative humidity, 0-100)'
+  aggregation: average
+  physical_range: [0.0, 100.0] 
+  
+Ta_2000:
+  description: Air temperature at 20 meters above ground
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [0.0, 100.0] 
+  category: temperature
+ 
+rH_2000:
+  description: Relative air humidity at 20 meters above ground
+  unit: '% (percentage of relative humidity, 0-100)' 
+  aggregation: average
+  physical_range: [0.0, 100.0] 
+  
+Ta_3000:
+  description: Air temperature at 30 meters above ground
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [0.0, 100.0] 
+  category: temperature
+  
+rH_3000:
+  description: Relative air humidity at 30 meters above ground
+  unit: '% (percentage of relative humidity, 0-100)' 
+  aggregation: average
+  physical_range: [0.0, 100.0]
+  
+Ta_3700:
+  description: Air temperature at 37 meters above ground
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [0.0, 100.0] 
+  category: temperature
+  
+rH_3700:
+  description: Relative air humidity at 37 meters above ground
+  unit: '% (percentage of relative humidity, 0-100)'
+  aggregation: average
+
+#****** new sensors in SET39 ********
+
+SWDR_4400:
+  description: Shortwave Downward Radiation at 44 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  interpolation_mse: 10000   
+  
+SWUR_4400:
+  description: Shortwave Upward Radiation at 44 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  interpolation_mse: 10000   
+  
+LWDR_4400:
+  description: Longwave Downward Radiation at 44 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  interpolation_mse: 10000   
+  
+LWUR_4400:
+  description: Longwave Upward Radiation at 44 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1000.0]
+  interpolation_mse: 10000   
+ 
+Ta_4400:
+  description: Air temperature at 44 meters above ground
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [0.0, 100.0] 
+  category: temperature
+
+rH_4400:
+  description: Relative air humidity at 44 meters above ground
+  unit: '% (percentage of relative humidity, 0-100)' 
+  aggregation: average
+
+
+#************* virtual sensors for exploratories *********
+
+SD:
+  description: sunshine duration (vague estimated) (time of SWDR >= 120 W/m^2)
+  unit: h (hour)
+  dependency: SWDR
+  aggregation: sum_sunshine
+
+SD_Olivieri:
+  description: sunshine duration (based on SWDR with Oliviéri algorithm and solar elevation angle)
+  unit: h (hour)
+  raw_source: SWDR
+  aggregation: sum_sunshine
+
+SDUR_SPN1:
+  description: sunshine duration (time of radiation >= 120 W/m^2)
+  unit: h (hour)  
+  aggregation: sum_second_to_hour
+
+#new sensors 2015_01_27 south africa own (station 10)
+
+dew_point:
+  description: dew point temperature
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  category: temperature
+  
+absH_200:
+  description: Absolute air humidity at 2 meters above ground
+  unit: g/m^3 (gram per cubic meter)
+  aggregation: average  
+  
+wet_bulb_temp:
+  description: Wet-bulb temperature  
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  category: temperature
+
+#************* raw sensors at exploratories *********
+
+SM_15_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  visibility: internal
+  
+UOtt:
+  aggregation: none
+  physical_range: [0.0, 30.0]   
+  visibility: internal
+  
+SM_50_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  visibility: internal
+  
+Trad_R:
+  description: PT100 sensor radiometer temperature
+  unit: Ω (ohm)  
+  aggregation: none
+  physical_range: [80.0, 125.0]
+  visibility: internal
+  
+T_Ott:
+  aggregation: none
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+SWUR_300_U:
+  aggregation: none
+  physical_range: [-10.0, 10.0]
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+SM_30_U:
+  aggregation: average
+  physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+SWDR_300_U:
+  aggregation: none
+  physical_range: [-10.0, 100.0]
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+LWUR_300_U:
+  aggregation: none
+  physical_range: [-10.0, 10.0]
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+SM_20_U:
+  aggregation: average
+  physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+SM_10_U:
+  aggregation: average
+  physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+SM_40_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+UB:
+  description: Datalogger Battery Voltage measurement
+  unit: V (volt)  
+  aggregation: none
+  physical_range: [0.0, 30.0]
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+LWDR_300_U:
+  aggregation: none
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+PAR_200_U:
+  aggregation: none
+  physical_range: [0.0, 15.0]
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+PAR_300_U:
+  aggregation: none
+  physical_range: [0.0, 15.0]
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+SM_50_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+UOtt:
+  aggregation: none
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+SM_40_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+T_Ott:
+  aggregation: none
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+Trad_R:
+  aggregation: none
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+SM_15_U:
+  aggregation: none
+  physical_range: [0.0, 1.5]
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+LWDR_300_U:
+  aggregation: none
+  step_range: [0.0, 1000.0]
+  visibility: internal
+  
+CycleCounter:
+  visibility: internal
+  
+# other raw sensors
+
+rain_container:
+  visibility: internal
+  
+# virtual sensors  
+
+evaporation:
+  description: evaporation
+  unit: mm/h (mm per hour)
+  raw_source: P_container_NRT
+  aggregation: average
+  
+Ta_200_DTR:  
+  description: DTR (Diurnal Temperature Range) of Ta_200
+  unit: °K (degree Kelvin)
+  dependency: [Ta_200_min, Ta_200_max]
+  post_day_func: "Ta_200_max - Ta_200_min"
+  aggregation: average
+  category: temperature
+
+rH_200_DMR:  
+  description: DMR (Diurnal Moisture Range) of rH_200
+  unit: pp (percentage point)
+  dependency: [rH_200_min, rH_200_max]
+  post_day_func: "rH_200_max - rH_200_min"
+  aggregation: average
+
+Ta_200_ice_days:  
+  description: ice days Tmax < 0°C of Ta_200
+  unit: d (day)
+  dependency: Ta_200_max
+  post_day_func: "(Ta_200_max < 0 ? 1 : 0)"
+  aggregation: sum
+  
+Ta_200_cold_days:  
+  description: cold days Tmin < 0°C of Ta_200
+  unit: d (day)
+  dependency: Ta_200_min
+  post_day_func: "(Ta_200_min < 0 ? 1 : 0)"
+  aggregation: sum
+  
+Ta_200_cool_days:  
+  description: cool days Tmax < 10°C of Ta_200
+  unit: d (day)
+  dependency: Ta_200_max
+  post_day_func: "(Ta_200_max < 10 ? 1 : 0)"
+  aggregation: sum
+
+Ta_200_warm_days:  
+  description: warm days Tmax >= 20°C of Ta_200
+  unit: d (day)
+  dependency: Ta_200_max
+  post_day_func: "(Ta_200_max >= 20 ? 1 : 0)"
+  aggregation: sum
+  
+Ta_200_tropical_nights:  
+  description: tropical nights Tmin >= 20°C of Ta_200
+  unit: d (day)
+  dependency: Ta_200_min
+  post_day_func: "(Ta_200_min >= 20 ? 1 : 0)"
+  aggregation: sum  
+  
+Ta_200_summer_days:  
+  description: summer days Tmax >= 25°C of Ta_200
+  unit: d (day)
+  dependency: Ta_200_max
+  post_day_func: "(Ta_200_max >= 25 ? 1 : 0)"
+  aggregation: sum  
+
+Ta_200_tropical_days:  
+  description: tropical days Tmax >= 30°C of Ta_200
+  unit: d (day)
+  dependency: Ta_200_max
+  post_day_func: "(Ta_200_max >= 30 ? 1 : 0)"
+  aggregation: sum
+  
+P_RT_NRT_rain_days:  
+  description: rain days as P_RT_NRT >= 0.1 mm per day
+  unit: d (day)
+  dependency: P_RT_NRT
+  post_day_func: "(P_RT_NRT >= 0.1 ? 1 : 0)"
+  aggregation: sum
+  category: water
+  
+Ta_200_cold_sum:  
+  description: sum of mean day Ta_200 with < 0 °C
+  unit: (amount)
+  dependency: Ta_200
+  post_day_func: "(Ta_200 < 0 ? - Ta_200 : 0)"
+  aggregation: sum
+
+Ta_200_warm20_sum:  
+  description: sum of mean day Ta_200 (minus 20) with > 20 °C
+  unit: (amount)
+  dependency: Ta_200
+  post_day_func: "(Ta_200 > 20 ? Ta_200 - 20 : 0)"
+  aggregation: sum
+
+Ta_200_warm10_sum:  
+  description: sum of mean day Ta_200 (minus 10) with > 10 °C
+  unit: (amount)
+  dependency: Ta_200
+  post_day_func: "(Ta_200 > 10 ? Ta_200 - 10 : 0)"
+  aggregation: sum
+
+Ta_200_heating_degree_sum:  
+  description: sum of mean day Ta_200 (plus 20) with < 12 °C
+  unit: (amount)
+  dependency: Ta_200
+  post_day_func: "(Ta_200 < 12 ? 20 - Ta_200 : 0)"
+  aggregation: sum  
+  
+Ta_200_growth_sum:  
+  description: sum of mean day Ta_200 (minus 5) with > 5 °C
+  unit: (amount)
+  dependency: Ta_200
+  post_day_func: "(Ta_200 > 5 ? Ta_200 - 5 : 0)"
+  aggregation: sum
+
+Ta_200_growing_degree_days:  
+  description: growing day with (min max) mean temperature in range 10°C to 30°C
+  unit: (amount)
+  dependency: [Ta_200_min, Ta_200_max]
+  post_day_func: "((Ta_200_min + Ta_200_max) / 2 > 10 && (Ta_200_min + Ta_200_max) / 2 < 30 ? 1 : 0)"
+  aggregation: sum
+
+Ta_200_heat_index:  
+  description: heat index based on Ta_200 and rH_200
+  unit: °C (degree Celcius)
+  dependency: [Ta_200, rH_200]
+  # reference https://de.wikipedia.org/wiki/Hitzeindex
+  post_hour_func: "(26.7 <= Ta_200 && 40 <= rH_200 ? -8.784695 +1.61139411*Ta_200 +2.338549*rH_200 -0.14611605*Ta_200*rH_200 -1.2308094e-2*Ta_200^2 -1.6424828e-2*rH_200^2 +2.211732e-3*Ta_200^2*rH_200 +7.2546e-4*Ta_200*rH_200^2 -3.582e-6*Ta_200^2*rH_200^2 : Ta_200)"
+  # reference http://myscope.net/hitzeindex-gefuehle-temperatur/
+  #post_hour_func: "(26.7 <= Ta_200 && 40 <= rH_200 ? -8.784695 + 1.61139411*Ta_200 + 2.338549*rH_200 - 0.14611605*Ta_200*rH_200 - 0.012308094*Ta_200*Ta_200 - 0.016424828*rH_200*rH_200 + 0.002211732*Ta_200*Ta_200*rH_200 + 0.00072546*Ta_200*rH_200*rH_200 - 0.000003582*Ta_200*Ta_200*rH_200*rH_200 : Ta_200)"
+  aggregation: average
+  category: temperature  
+  
+Ta_200_humidex:  
+  description: humidex based on Ta_200 and rH_200
+  unit: °C (degree Celcius)
+  dependency: [Ta_200, rH_200]
+  # reference http://myscope.net/hitzeindex-gefuehle-temperatur/
+  post_hour_func: "Ta_200 + 5/9 * (6.112 * 10 ^ (7.5 * Ta_200 / (237.7+Ta_200)) * rH_200 / 100 - 10)"
+  aggregation: average 
+  category: temperature
+  
+Ta_200_SSI:  
+  description: Summer-Simmer-Index based on Ta_200 and rH_200
+  unit: °C (degree Celcius)
+  dependency: [Ta_200, rH_200]
+  # reference http://myscope.net/hitzeindex-gefuehle-temperatur/
+  post_hour_func: "(1.98 * (Ta_200 * 1.8 + 32 - (0.55 - 0.0055 * rH_200) * (Ta_200 * 1.8 + 32 - 58)) - 56.83 - 32) * 5/9"
+  aggregation: average 
+  category: temperature
+
+Ta_200_vapour_pressure:  
+  description: vapour_pressure (Arden Buck equation)
+  unit: hPa (hectopascal)
+  dependency: Ta_200
+  # reference https://en.wikipedia.org/wiki/Arden_Buck_equation
+  post_hour_func: "(  0 < Ta_200 ? 6.1121 * exp( (18.678 - Ta_200/234.5) * (Ta_200/(257.14+Ta_200)) ) : 6.1115 * exp( (23.036 - Ta_200/333.7) * (Ta_200/(279.82+Ta_200)) )  )"
+  aggregation: average
+
+Ta_200_dew_point_approx:  
+  description: preliminary approximate dew point based on Ta_200 and rH_200
+  unit: °C (degree Celcius)
+  dependency: [Ta_200, rH_200]
+  # reference https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
+  post_hour_func: "Ta_200 - ((100 - rH_200) / 5)"
+  aggregation: average
+  category: temperature
+
+Ta_200_dew_point:  
+  description: dew point based on Ta_200 and rH_200
+  unit: °C (degree Celcius)
+  dependency: [Ta_200, rH_200]
+  # reference https://de.wikipedia.org/wiki/Taupunkt
+  # formula K3 * ( ((K2*t)/(K3+t) + ln(r)) / ((K2*K3)/(K3+t) - ln(r)) )
+  post_hour_func: "272.62 * ( ((22.46*Ta_200)/(272.62+Ta_200) + ln(rH_200/100)) / ((22.46*272.62)/(272.62+Ta_200) - ln(rH_200/100)) )"
+  aggregation: average
+  category: temperature
+
+Ta_200_windchill:  
+  description: windchill based on Ta_200 and WV
+  unit: °C (degree Celcius)
+  dependency: [Ta_200, WV]
+  # reference https://de.wikipedia.org/wiki/Windchill
+  post_hour_func: "(5/3.6 < WV ? 13.12 + 0.6215 * Ta_200 + (0.3965 * Ta_200 - 11.37) * (WV * 3.6) ^ 0.16 : Ta_200)"
+  aggregation: average
+  
+Ta_200_gruenlandtemperatur:  
+  description: Grünlandtemperatur day value
+  unit: (amount)
+  dependency: Ta_200
+  # reference https://de.wikipedia.org/wiki/Gr%C3%BCnlandtemperatursumme
+  post_day_func: "((month > 2 ? 1 : (month == 2 ? 0.75 : 0.5))) * ((Ta_200 > 0 ? Ta_200 : 0))"
+  aggregation: sum
+
+Ta_200_gruenlandtemperatursumme:  
+  description: Grünlandtemperatursumme (GTS) (Cumulative Sum by year of Ta_200_gruenlandtemperatur)
+  unit: (amount)
+  dependency: Ta_200_gruenlandtemperatur
+  # reference https://de.wikipedia.org/wiki/Gr%C3%BCnlandtemperatursumme
+  post_day_func: "cumsum_by_year(Ta_200_gruenlandtemperatur)"
+  aggregation: maximum
+
+Ta_200_min_m:
+  description: monthly minimum air temperature at 2 meters above ground
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: last # pass-through monthly values from raw to month aggregation
+  aggregation_year: minimum # aggregation from month to year
+  category: temperature
+  
+Ta_200_max_m:
+  description: monthly maximum air temperature at 2 meters above ground
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: last # pass-through monthly values from raw to month aggregation
+  aggregation_year: maximum # aggregation from month to year
+  category: temperature
+  
+P_RT_NRT_m:
+  description: monthly precipitation
+  unit: mm (millimeter)
+  aggregation: last # pass-through monthly values from raw to month aggregation
+  aggregation_year: sum # aggregation from month to year
+  category: water
+
+PTemp_C:
+  description: (internal) Panel Temperature measurement
+  visibility: internal
+
+LithiumBattV:
+  description: (internal)
+  visibility: internal
+
+WindDir_SD1_WVT:  
+  description: (internal)
+  visibility: internal
+  
+Rain_mm:
+  description: TE525 Rain Gauge measurement 0.2mm
+  
+evaporation_calculated:
+  description: water lost due to evapotranspiration
+  unit: mm/h (mm per hour)
+  aggregation: average
+  derived: true
+  
+SWDR_200:
+  description: Shortwave Downward Radiation at 2 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 157.2
+  interpolation_mse: 10000 
+  
+SWDR_200_MJ:
+  description: (internal) Shortwave Downward Radiation at 2 meters height
+  unit: MJ/m^2 (megajoule per square meter)
+  aggregation: sum
+  visibility: internal
+
+SWDR_200_clear_sky_MJ:
+  description: (internal) calculated Shortwave Downward Radiation for clear sky
+  unit: MJ/m^2 (megajoule per square meter)
+  aggregation: sum
+  visibility: internal
+
+diag:
+  description: (internal)
+  visibility: internal
+
+ET24Cnt:
+  description: (internal)
+  visibility: internal 
+
+ETsz24:
+  description: (internal)
+  visibility: internal
+
+LowPower:
+  description: (internal)
+  visibility: internal  
+
+ModemReset:
+  description: (internal)
+  visibility: internal  
+
+nmbr_bytes_rtrnd:
+  description: (internal)
+  visibility: internal  
+
+Rain_mm:
+  description: (internal)
+  visibility: internal  
+
+ETsz24:
+  description: (internal)
+  visibility: internal  
+
+ETsz24:
+  description: (internal)
+  visibility: internal  
+
+ETsz24:
+  description: (internal)
+  visibility: internal
+
+#calc radiation 2017_09_05
+Albedo_300:
+  description: Albedo (SWUR_300/SWDR_300)
+  unit: ratio (0 to 1)
+  aggregation: average_albedo
+  physical_range: [0.0, 1.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 0.31  
+  dependency: [SWUR_300, SWDR_300]
+  post_hour_func: "(SWDR_300 > 0.01 && SWUR_300 < SWDR_300 * 0.9 ? SWUR_300 / SWDR_300 : NA)"
+
+Albedo_3700:
+  description: Albedo (SWUR_3700/SWDR_3700)
+  unit: ratio (0 to 1)
+  aggregation: average_albedo
+  physical_range: [0.0, 1.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 0.31  
+  dependency: [SWUR_3700, SWDR_3700]
+  post_hour_func: "(SWDR_3700 > 0.01 && SWUR_3700 < SWDR_3700 * 0.9 ? SWUR_3700 / SWDR_3700 : NA)"
+  
+Albedo_4400:
+  description: Albedo (SWUR_4400/SWDR_4400)
+  unit: ratio (0 to 1)
+  aggregation: average_albedo
+  physical_range: [0.0, 1.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 0.31  
+  dependency: [SWUR_4400, SWDR_4400]
+  post_hour_func: "(SWDR_4400 > 0.01 && SWUR_4400 < SWDR_4400 * 0.9 ? SWUR_4400 / SWDR_4400 : NA)"
+
+Rn_300:
+  description: Net radiation at 3 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 112.19
+  interpolation_mse: 10000
+  dependency: [SWDR_300, SWUR_300, LWDR_300, LWUR_300]
+  post_hour_func: "SWDR_300 - SWUR_300 + LWDR_300 - LWUR_300"
+  
+Rn_3700:
+  description: Net radiation at 37 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 112.19
+  interpolation_mse: 10000
+  dependency: [SWDR_3700, SWUR_3700, LWDR_3700, LWUR_3700]
+  post_hour_func: "SWDR_3700 - SWUR_3700 + LWDR_3700 - LWUR_3700"
+
+Rn_4400:
+  description: Net radiation at 44 meters height
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum_radiation
+  physical_range: [-100.0, 1500.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 112.19
+  interpolation_mse: 10000
+  dependency: [SWDR_4400, SWUR_4400, LWDR_4400, LWUR_4400]
+  post_hour_func: "SWDR_4400 - SWUR_4400 + LWDR_4400 - LWUR_4400"
+
+Tsky:
+  description: Sky temperature
+  unit: °C (degree Celcius) 
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]  
+  empirical_diff: 5.8
+  interpolation_mse: 7
+  category: temperature
+  dependency: LWDR
+  post_hour_func: "(LWDR / 5.67e-11)^0.25 - 273.15"
+
+Tgnd:
+  description: Ground temperature
+  unit: °C (degree Celcius) 
+  aggregation: average
+  physical_range: [-40.0, 60.0] 
+  step_range: [0.0, 10.0]
+  empirical_diff: 2.65
+  interpolation_mse: 7
+  category: temperature
+  dependency: LWUR
+  post_hour_func: "(LWUR / 5.67e-11)^0.25 - 273.15"
+  
+precipitation_radolan:
+  description: Precipitation based on RADOLAN product
+  unit: mm (millimeter)
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  interpolation_mse: 4
+  category: water
+
+#added 2018-04-04 generic PAR
+PAR:
+  description: Photosynthetically activ radiation
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  raw_source: [PAR_200, PAR_300, PAR_1000, PAR_2000] # use first available sensor in list
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 610.46
+  interpolation_mse: 10000
+  

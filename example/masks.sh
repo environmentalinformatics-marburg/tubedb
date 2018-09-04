@@ -1,1 +1,0 @@
-exec ./tsdb.sh masks

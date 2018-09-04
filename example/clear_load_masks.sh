@@ -1,0 +1,1 @@
+exec ./tsdb.sh clear_load_masks

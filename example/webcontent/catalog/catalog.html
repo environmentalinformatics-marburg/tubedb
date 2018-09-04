@@ -142,18 +142,28 @@
 			{{year}}
 			</option>
 		</select>
+		<span v-show="year != '*'">
+		&gt
+		Month
+		<select v-model="month">
+			<option v-for="m in months" v-bind:value="m">
+			{{monthsText[m]}}
+			</option>
+		</select>
+		</span>
 		&gt
 		Search 
 		<input v-model="tableFilterKey" placeholder="search rows">
 		<br>
 		<i>(click on table row to view details)</i>
-		<catalog-table :header="tableHeader" :data="tableData" :message="tableMessage" :filter-key="tableFilterKey" :filter-year="year">
+		<catalog-table :header="tableHeader" :data="tableData" :message="tableMessage" :filter-key="tableFilterKey" :filter-year="year" :filter-month="month">
 		</catalog-table>
 	</div>
 	<div v-else key="message">
 		{{appMessage}}  
 	</div>
-	</transition>	
+	</transition>
+	<a class="main_page_link" href="../index.html">main-page</a>	
 </div> <!--end app-->
 </body>
 </html>

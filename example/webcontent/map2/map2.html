@@ -27,7 +27,7 @@
           </div>
 
           <div class="modal-body">
-			<a :href="'../visual_plotstation_raw.html?region='+encodeURIComponent(plot.region)+'&plot='+encodeURIComponent(plot.name)">view climate data</a>
+			<a :href="'../visual_plotstation_raw.html?region='+encodeURIComponent(plot.region)+'&plot='+encodeURIComponent(plot.name)" target="_blank">view climate data</a>
 			<br>
 			<br>
 			<table>
@@ -35,6 +35,7 @@
 			<tr><td>project: </td><td>{{plot.region}}</td></tr>
 			<tr><td>group: </td><td>{{plot.general}}</td></tr>			
 			<tr><td>position (WGS84): </td><td>{{plot.lat.toFixed(4)}}, {{plot.lon.toFixed(4)}}</td></tr>
+			<tr v-if="plot.elevation !== undefined"><td>elevation: </td><td>{{plot.elevation.toFixed(0)}}</td></tr>
 			</tbody>
 			</table>
           </div>
@@ -101,6 +102,27 @@
 		</plots-dialog>
 		<plot-dialog v-if="showPlotDialog" @close="showPlotDialog = false" :plot="selectedPlot">
 		</plot-dialog>
+    <div class="main_page_link_and_help">
+    <a href="../index.html">main-page</a>
+    <button @click="toggleHelp">?</button>
+    </div>
+
+
+    <div id="help" v-if="visibleHelp">
+      <h1>Instructions</h1>
+      <hr>
+      (Press ?-button again to hide this help-box.)
+      <br><br>
+      The map-page shows measurement plots on a world-map.
+      <br>
+      <br>
+      A circles with number represent the count of plots at that position.
+      <br>
+      When you zoom-in (use the mouse-wheel) circles with plot-names appear.
+      <br><br> If you click on a circle with numbers, a box opens with contained plot-names.
+      <br> Click on a plot-name to show infos about the plot.
+      <br><br> If you click on a circle with plot-name, the box with plot infos opens.
+    </div>
 	</div>
   </body>
 </html>

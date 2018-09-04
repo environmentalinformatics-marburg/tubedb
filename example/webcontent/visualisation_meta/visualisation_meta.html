@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="robots" content="noindex" />
+	<link rel="shortcut icon" href="../favicon.png">
+	<title>Visualisation</title>
+	<link rel="stylesheet" href="visualisation_meta.css" type="text/css">
+	<script src="vue.js"></script>
+	<script src="axios.js"></script>
+	<script src="qs.js"></script>
+	<script src="visualisation_meta.js"></script>
+</head>
+
+<script type="text/x-template" id="help-template">
+	<div id="help" v-if="visible" class="help_container" @click.self="visible = false;">
+		<div class="help_box">
+			<h1 style="text-align: center;">Instructions</h1>
+			<hr>
+			<button class="help_close_button" @click="visible = false;">X (close)</button>
+			<br>
+			Climate Data Explorer is a tool to visualise climate time series.
+			<br><br>
+			A selection of plots and climate parameters can be visualised as diagram, heatmap, boxplot or table of values.
+			<br>
+			Visualisation properties (e.g. interval of time, aggregation of time, gap-filling, qualitycontrol) can be specified by several controls.
+			<br>To open detail-view of a control move mouse over the control. Then you can change settings of that control. 
+			<br>A setting change updates the visualisation immediately. 
+			
+			<hr>
+			<h2>Controls</h2>
+			In the following the provided controls are described.
+			<h3>Summary</h3>
+			<ul>
+				<li><b>Project:</b> selected project</li>
+				<li><b>Group:</b> selected group of plots</li> 
+				<li><b>Plot:</b> selected plots</li>
+				<li><b>Sensor:</b> selected climate parameters</li>
+				<li><b>Time:</b> selected interval of time</li>
+				<li><b>Resolution:</b> selected aggregation of time</li>
+				<li><b>Quality:</b> selected quality checks</li>
+				<li><b>Interpolation:</b> applied gap-filling</li>
+				<li><b>View:</b> visualisation type</li>
+			</ul>
+			
+			<h3>Project</h3>
+			Select a project for visualisation. 
+			<br>If there is just one project this control is not changeable.	
+			
+			<h3>Group</h3>
+			A project may consist of a set of plots that are organised by groups of plots. Selection of group filters plots in the plot-control.
+			<br>
+			<br> <b>*</b>-group denotes all plots of the project.
+			
+			<h3>Plot</h3>
+			A plot denotes a geographic position with climate parameter measurement sensors.
+
+			<br><br> <b>*</b>-plot denotes all plots of the project. By click on a plot name, that plot is selected and visualised.
+			<br>Holding down ctrl-key (alias control-key or strg-key) enables selection of multiple plots. (Make sure to don't include the *-plot as it denotes all plots.)
+			<br><br>Depending on the project a plot my contain several measurement stations. 
+			<br>If this is the case individual stations of one plot can be selected by click on the station column.
+			
+			<h3>Sensor</h3>
+			With sensor-control climate parameters can be selected.
+			<br><br>
+			Click on a sensor name to select it for visualisation.
+			<br>Holding down ctrl-key (alias control-key or strg-key) enables selection of multiple sensors. (Make sure to don't include *-sensor as it denotes all sensors.)
+			<br>Sensors are categorised in "Measurement", "Derived" and "Internal".
+			<br> <b>*</b>-sensor at top level denotes all sensors, <b>*</b>-sensor in a category denotes all sensors of that category.
+			
+			<h3>Time</h3>
+			Select period of time for visualisation.
+			<br>
+			<br>sub-control <b>year</b>: one year can be selected or <b>*</b> denotes full range of time (all years).
+			<br>sub-control <b>month</b>: if one year is selected one month can be selected or <b>*</b> denotes full year.
+			<br>sub-control <b>day</b>: if one month is selected one day can be selected or <b>*</b> denotes full month.
+			
+			<h3>Resolution</h3>
+
+			Time-aggregation of measurement data.
+
+			<ul>
+				<li><b>raw:</b> Measurements will not be time-aggregated.</li>
+				<li><b>hour:</b> Aggregation to time-steps of hour</li>
+				<li><b>day:</b> Aggregation to time-steps of day</li>
+				<li><b>week:</b> Aggregation to time-steps of calendar week (Monday to Sunday)</li>
+				<li><b>month:</b> Aggregation to time-steps of calendar month</li>
+				<li><b>year:</b> Aggregation to time-steps of calendar year</li>
+			</ul>
+			
+			<h3>Quality</h3>
+
+			Select quality checks that should be applied.
+			
+			<h3>Interpolation</h3>
+
+			Select if gaps in time should be filled if possible.
+			
+			<h3>View</h3>
+
+			Select type of visualisation.
+			<br><br>
+			See details in next chapter.
+
+			<hr>
+			<h2>Visualisations</h2>
+
+			In the following the provided visualisation types are described. 
+
+			<h3>Summary</h3>
+			<ul>
+				<li><b>diagram</b></li>
+				<li><b>heatmap</b></li>
+				<li><b>boxplot</b></li>
+				<li><b>table</b></li>
+				<li><b>csv-file</b></li>
+				<li><b>sensors</b></li>
+				<li><b>plots</b></li>
+			</ul>
+
+			<h3>diagram</h3>
+
+			time-value diagram
+
+			<h3>heatmap</h3>
+
+			heatamp
+
+			<h3>boxplot</h3>
+
+			boxplot of values diagram
+
+			<h3>table</h3>
+
+			table of values
+
+			<h3>csv-file</h3>
+
+			download of time series as CSV-file.
+
+			<h3>sensors</h3>
+
+			Table of sensors.
+
+			<h3>plots</h3>
+
+			Table of Plots.
+			
+			<div style="text-align: center;" ><button @click="visible = false;">close</button></div>
+		</div>
+	</div>
+  </script>
+
+<script type="text/x-template" id="visualisation-template">
+	<div id="container">
+		<help-interface ref="help"></help-interface>		
+		<div class="main_page_link_and_help"><a v-if="back_link" href="../index.html" title="go to main page">main-page</a> <button title="show help" @click="$refs.help.show();">?</button></div>
+		<div v-if="appMessage != undefined">
+			{{appMessage}}
+		</div>
+		<div v-else>
+		
+			<div v-show="viewsDone < views.length" class="processing">
+				<!--<img src="busy.gif" />-->
+				<progress :value="viewsDone" :max="views.length"></progress>
+				{{viewsDone}} / {{views.length}}  <button type="button" @click="viewCycle++; viewsDone = views.length" style="padding: 1px; margin: -2px;" title="cancel processing">X</button> 				
+			</div>
+			
+			<div v-show="viewPrecessingStart < viewPrecessingEnd" class="runtime">
+				{{views.length}} {{views.length == 1 ? 'view' : 'views'}} {{((viewPrecessingEnd - viewPrecessingStart) / 1000).toFixed(3)}} s
+			</div>
+			
+			<div class="message_box">
+				<div v-show="isMessageRawWarning" class="message_error">Raw parameters can be shown at raw resolution only.</div>
+				<div v-show="viewType=='heatmap' && aggregation!='hour'" class="message_error">Heatmaps are best viewed in hour resolution.</div>
+				<div v-show="viewType=='boxplot' && (aggregation=='raw' || aggregation=='hour')" class="message_error">Boxplots need data of resolution day or higher.</div>
+				<div v-show="quality=='empirical' && plotstations.filter(function(o){return o.selected;}).some(function(o){return !o.full_plot;})" class="message_error">Empirical qualitiy check is not applicable for sub stations of plot.</div>
+				<div v-show="aggregation=='raw' && quality=='empirical' && viewType!='heatmap'" class="message_error">Empirical qualitiy check is not applicable for data of resolution raw.</div>				
+				<div v-show="interpolation && plotstations.filter(function(o){return o.selected;}).some(function(o){return !o.full_plot;})" class="message_error">Interpolation is not applicable for sub stations of plot.</div>
+				<div v-show="aggregation=='raw' && interpolation && viewType!='heatmap'" class="message_error">Interpolation is not applicable for data of resolution raw.</div>
+				<div v-show="viewsLimited" class="message_error">Limited to first 500 views to prevent browser overload.</div>
+			</div>
+			
+			<div v-show="pinned_plot === undefined && metadata.general_stations.length>1" class="interactive" style="display: inline-block;" @mouseover="groupHover = true" @mouseleave="groupHover = false">
+				
+				<div class="centered title">Group</div>
+				
+				<div class="centered state" style="position: relative;">
+
+					<div class="state hide">
+						<div v-for="group in metadata.general_stations">
+							{{group.name}} w
+						</div>
+					</div>
+					
+    				<div class="centered state" v-show="!(groupHover||groupHoverStay)">
+						{{groupMap[groupID].name}}
+					</div>
+					
+					<div v-show="(groupHover||groupHoverStay)">
+						select
+					</div>
+					
+					<div style="position: absolute; top: 0px; left: 0px;" v-show="(groupHover||groupHoverStay)">
+						<select @focus="groupHoverStay = true" @blur="groupHoverStay = false" v-model="groupID">
+							<option value="*">*</option>
+							<option v-for="group in metadata.general_stations" v-bind:value="group.id">
+							{{group.name}}
+							</option>
+						</select>
+					</div>		
+				
+				</div>
+
+			</div>
+
+			<div v-show="plots.length!=1" class="interactive" style="display: inline-block;" @mouseover="plotHover = true" @mouseleave="plotHover = false" title="select multiple plots: press and hold key CTRL + left mouse click">
+				<div class="centered title">Plot</div>
+				
+				<div style="position: relative;">
+				
+					<div class="state hide">
+						<div v-for="plot in plots">
+						{{plot.id}} ...
+						</div>
+					</div>
+					
+					<div v-show="plotHover" style="position: absolute; top: 25px; left: 0px; white-space: nowrap; vertical-align: top;" class="overlay_settings" >
+						<div  style="display: inline-block;">
+						<div  class="centered title">Plot</div>
+						<select multiple :size="plots.length + 1 > 20 ? 20 : plots.length + 1" v-model="plotIDs">
+							<option value="*">*</option>
+							<option v-for="plot in plots" v-bind:value="plot.id">
+							{{plot.id}} {{plot.logger_type !== undefined ?'&lt;'+plot.logger_type+'&gt;':''}} {{plot.vip?'(vip)':''}}
+							</option>
+						</select>
+						</div>
+						<div style="display: inline-block; vertical-align: top;">
+						<div  class="centered title">Station</div>
+						<div style="overflow-y: auto; overflow-x: hidden; max-height: 350px;">
+						<div v-for="plotstation in plotstations" :class="[ { selected: plotstation.selected}]" @click="onClickPlotstation(plotstation)">
+						
+						<span v-show="plotstation.type === 'plot'"><span :class="[ { important: plotstation.important}]">{{plotstation.plot}} </span><span style="font-size: small;">&lt;{{plotstation.logger_type}}&gt;</span></span>
+						<span v-show="plotstation.type === 'merged'"><span :class="[ { important: plotstation.important}]">{{plotstation.plot}}</span> <span style="font-size: small;">&lt;merged&gt;</span></span>
+						<span v-show="plotstation.type === 'station'"><span :class="[ { important: plotstation.important}]">{{plotstation.plot}}</span> <span style="font-size: small;">{{plotstation.station}} &lt;{{plotstation.logger_type}}&gt;</span></span>
+						
+						</div>
+						</div>
+						</div>
+					</div>					
+					
+					<div class="centered state" v-show="!plotHover">{{plotIDs[0]}}{{plotIDs.length>1 && plotIDs[0] != "*" ? " ...":""}}</div>
+					
+					<div v-show="plotHover">+</div>
+				
+				</div>
+				
+			</div>
+			<div v-show="plots.length==1" style="display: inline-block;">
+				<div class="centered">Plot</div>
+				<div class="centered">{{plotIDs[0]}}{{plotIDs.length>1 && plotIDs[0] != "*" ? " ...":""}}</div>
+			</div>
+			
+			<div v-show="sensors.length>0" class="interactive" style="display: inline-block;" @mouseover="sensorHover = true" @mouseleave="sensorHover = false" title="select multiple parameters: press and hold key CTRL + left mouse click">				
+				<div class="centered title">Parameter</div>
+				
+				<div class="state" style="position: relative;">
+				
+					<div class="hide">
+						<div v-for="sensor in sensors">
+							{{sensor.id}} ...
+						</div>						
+					</div>
+					
+					<div style="position: absolute; top: 0px; left: 0px;" v-show="sensorHover">
+						<select multiple :size="sensors.length + 1 > 20 ? 20 : sensors.length + 5" v-model="sensorIDs">
+							<option value="*">*</option>
+							<optgroup label="Measurement">
+								<option value="all_measurements">*</option>
+								<option v-for="sensor in visibleNotDerivedSensors" v-bind:value="sensor.id">
+								{{sensor.id}}{{sensor.raw?' (raw)':''}}
+								</option>
+							</optgroup>
+							<optgroup label="Derived" v-show="visibleDerivedSensors.length > 0">
+								<option value="all_derived">*</option>
+								<option v-for="sensor in visibleDerivedSensors" v-bind:value="sensor.id">
+								{{sensor.id}}{{sensor.raw?' (raw)':''}}
+								</option>
+							</optgroup>
+							<optgroup label="Internal" v-show="visibleDerivedSensors.length > 0">
+								<option v-for="sensor in visibleInternalSensors" v-bind:value="sensor.id">
+								{{sensor.id}}{{sensor.raw?' (raw)':''}}
+								</option>
+							</optgroup>
+						</select>
+					</div>
+					
+					<div class="centered state" v-show="!sensorHover">{{sensorIDs.length>0 ? sensorIDs[0] : '?'}}{{sensorIDs.length>1 && sensorIDs[0] != "*" ? " ...":""}}</div>
+					
+					<div v-show="sensorHover">select</div>
+				
+				</div>
+				
+			</div>
+			<div v-show="sensors.length == 0" style="display: inline-block;">
+				no sensors
+			</div>
+
+			<div class="interactive" style="display: inline-block;" @mouseover="timeHover = true" @mouseleave="timeHover = false">
+				
+				<div class="centered title">Time</div>
+				
+				<div class="centered" style="position: relative;">
+				
+					<div class="hide">
+						9999-999-99					
+					</div>
+				
+					<div :class="[ { just_hide: (timeHover || timeHoverStay)}]" class="state">{{timeText}}</div>
+
+					
+					<div v-show="(timeHover || timeHoverStay)" style="position: absolute; top: 25px; left: 0px; white-space: nowrap;" class="overlay_settings">
+						<div style="display: inline-block;">
+						<div class="centered title">year</div>
+						<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeYear">
+							<option>*</option>
+							<option v-for="y in timeYears">{{y}}</option>
+						</select>
+						</div>
+						-
+						<div style="display: inline-block;">
+						<div class="centered title">month</div>
+						<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeMonth" :class="[ { just_hide: timeYear === '*'}]">
+							<option>*</option>
+							<option v-for="m in timeMonths">{{m}}</option>
+						</select>
+						</div>
+						-
+						<div style="display: inline-block;">
+						<div class="centered title">day</div>
+						<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeDay" :class="[ { just_hide: timeYear === '*' || timeMonth === '*'}]">
+							<option>*</option>
+							<option v-for="d in timeDays">{{d}}</option>
+						</select>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+			<div class="interactive" style="display: inline-block;" @mouseover="aggregationHover = true" @mouseleave="aggregationHover = false">
+				
+				<div class="centered title">Resolution</div>
+				
+				<div class="centered state" style="position: relative;">
+				
+					<div :class="[ { just_hide: (aggregationHover || aggregationHoverStay)}]" class="state">{{aggregationsText[aggregation]}}</div>
+					
+					<div v-show="(aggregationHover || aggregationHoverStay)" style="position: absolute; top: 0px; left: 0px;">
+						<select @focus="aggregationHoverStay = true" @blur="aggregationHoverStay = false" v-model="aggregation">
+							<option v-for="a in aggregations">
+								{{a}}
+							</option>
+						</select>
+					</div>
+				
+				</div>
+				
+			</div>
+			
+			<div class="interactive" style="display: inline-block;" @mouseover="qualityHover = true" @mouseleave="qualityHover = false">
+				
+				<div class="centered title">Quality</div>
+				
+				<div class="centered state" style="position: relative;">
+				
+					<div class="hide">
+						{{qualitiesText.empirical}}				
+					</div>
+				
+					<div :class="[ { just_hide: (qualityHover || qualityHoverStay)}]" class="state">{{qualitiesText[quality]}}</div>
+					
+					<div v-show="(qualityHover || qualityHoverStay)" style="position: absolute; top: 0px; left: 0px;">
+						<select @focus="qualityHoverStay = true" @blur="qualityHoverStay = false" v-model="quality">
+							<option v-for="q in qualities">
+								{{q}}
+							</option>
+						</select>
+					</div>
+				
+				</div>
+				
+			</div>
+			
+			<div class="interactive" style="display: inline-block;" @click="interpolation = !interpolation" @mouseover="interpolationHover = true" @mouseleave="interpolationHover = false">
+				
+				<div class="centered title">Interpolation</div>
+				
+				<div class="centered state" style="position: relative;">
+				
+					<div class="state">{{this.interpolation ? 'yes' : 'no'}}</div>
+					
+					<div v-show="interpolationHover" style="position: absolute; top: 0px; left: 0px;">
+						<input type="checkbox" v-model="interpolation">
+					</div>
+				
+				</div>
+				
+			</div>
+			
+			<div class="interactive" style="display: inline-block;" @mouseover="viewTypeHover = true" @mouseleave="viewTypeHover = false">
+				
+				<div class="centered title">View</div>
+				
+				<div style="position: relative;">
+				
+					<div class="state hide">
+						<div v-for="v in viewTypes">
+							{{v}} w
+						</div>				
+					</div>
+				
+					<div v-show="!(viewTypeHover || viewTypeHoverStay)" class="centered state">{{viewType}}</div>
+					<div v-show="(viewTypeHover || viewTypeHoverStay)">+</div>
+					
+					
+					
+					<div v-show="(viewTypeHover || viewTypeHoverStay)" style="position: absolute; top: 25px; left: 0px; white-space: nowrap; text-align: left;" class="overlay_settings">
+						<div>
+							<div v-for="v in viewTypes">
+								<input type="radio" :id="v" :value="v" name="viewtypeselect" v-model="viewType" />
+								<label :for="v">{{v}}</label>
+							</div>
+						</div>
+						<hr>
+						<div v-show="viewType === 'diagram' || viewType === 'boxplot'">
+							<div>
+								width
+								<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="widthText">
+									<option v-for="text in widthTexts">{{text}}</option>
+								</select>
+								<input v-show="widthText=='custom'" v-model="widthCustom" @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" placeholder="width" maxlength="5" size="5" v-bind:class="{ invalid: !validWidthCustom }">
+							</div>
+							<div>
+								height
+								<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="heightText">
+									<option v-for="text in heightTexts">{{text}}</option>
+								</select>
+								<input v-show="heightText=='custom'" v-model="heightCustom" @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" placeholder="height" maxlength="4" size="4" v-bind:class="{ invalid: !validHeightCustom }">
+								
+							</div>
+						</div>
+						<div v-show="viewType === 'heatmap'">
+							<input type="checkbox" id="byYear" v-model="byYear">
+							<label for="byYear">by year</label>
+						</div>
+						<div v-show="viewType === 'table'">
+							rows
+							<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="filteredtableMaxRowCountText">
+									<option v-for="v in filteredtableMaxRowCountTexts">{{v}}</option>
+							</select>
+						</div>
+					</div>
+				
+				</div>
+				
+				
+				
+			</div>
+			
+			<div id="results" class="results">
+				
+				<div v-if="viewType === 'diagram' || viewType === 'heatmap' || viewType === 'boxplot'">
+					<div v-for="view in views">
+						<div v-if="view.status == 'init'">
+							{{view.plot}} / {{view.sensor}} queued
+							<div style="width: 1000px; height: 100px">
+							</div>
+						</div>
+						<div v-if="view.status == 'running'">
+							{{view.plot}} / {{view.sensor}} processing
+							<div style="width: 1000px; height: 100px">
+							</div>						
+						</div>
+						<div v-if="view.status == 'done'">
+							{{view.plot}} / {{view.sensor}} : {{sensorMap[view.sensor].description}} -- {{sensorMap[view.sensor].unit_description}} <br>
+							<img :src="view.url"> </img>
+						</div>
+						<div v-if="view.status == 'error'">
+							{{view.plot}} / {{view.sensor}} error
+						</div>
+					</div>
+				</div>
+				
+				<div v-if="viewType === 'table'">
+					<div v-for="view in views">
+						<div v-if="view.status == 'init'">
+							table queued
+						</div>
+						<div v-if="view.status == 'running'">
+							table processing
+						</div>
+						<div v-if="view.status == 'done'">
+							<button type="button" @click="filteredtableStartRow = 0;">|&lt;</button>
+							<button type="button" @click="filteredtableStartRow -= filteredtableFastMoveFactor * filteredtableMaxRowCount;">&lt;&lt;</button>							
+							<button type="button" @click="filteredtableStartRow -= filteredtableMaxRowCount;">&lt;</button>							
+							<button type="button" @click="filteredtableStartRow += filteredtableMaxRowCount;">&gt;</button>
+							<button type="button" @click="filteredtableStartRow += filteredtableFastMoveFactor * filteredtableMaxRowCount;">&gt;&gt;</button>							
+							<button type="button" @click="filteredtableStartRow = table.data.length - filteredtableMaxRowCount;">&gt;|</button>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+							[ {{filteredTableData[0].split(',')[0]}} to {{filteredTableData[filteredTableData.length - 1].split(',')[0]}} ]
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 							
+							of &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	<b>[ {{table.data[0].split(',')[0]}} to {{table.data[table.data.length - 1].split(',')[0]}} ]</b>						
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+							{{view.plot}} 
+							<table>
+								<thead>
+									<tr>
+										<th v-for="col in table.header.split(',')">{{col}}</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="row in filteredTableData">
+										<td v-for="col in row.split(',')">{{col}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div v-if="view.status == 'error'">
+							table error
+						</div>
+					</div>
+				</div>
+				
+				<div v-if="viewType === 'sensors'">
+					environmental parameters in selected plots:
+					<table class="sensors">
+						<thead>
+							<tr>
+								<th>name</th>
+								<th>description</th>
+								<th>unit</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="sensor in sensors">
+								<td>{{sensor.id}}</td>
+								<td>{{sensor.description == 'no description' ? '' : sensor.description}}</td>
+								<td>{{sensor.unit_description == 'no unit' ? '' : sensor.unit_description}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				
+				<div v-if="viewType === 'plots'">
+					plots in selected group:
+					<table class="sensors">
+						<thead>
+							<tr>
+								<th>name</th>
+								<th>vip</th>
+								<th>logger</th>
+								<th>group</th>
+								<th>latitude</th>
+								<th>longitude</th>
+								<th>elevation</th>
+								<th>parameters</th>
+								
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="plot in plots">
+								<td>{{plot.id}}</td>
+								<td>{{plot.vip?'x':''}}</td>
+								<td>{{plot.logger_type}}</td>
+								<td>{{plot.general_station}}</td>
+								<td>{{plot.latitude}}</td>
+								<td>{{plot.longitude}}</td>
+								<td>{{plot.elevation}}</td>			
+								<td>{{plot.sensor_names.length}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				
+				<div v-if="viewType === 'csv-file'" style="padding: 10px;">
+					<div v-for="view in views">
+						<h2>Export Climate Data</h2>
+						<div>
+							<b>plots: </b>
+							<span v-for="plot in view.plot">{{plot}} </span>
+						</div>
+						<br>
+						<div>
+							<b>parameters: </b>
+							<span v-for="sensor in view.sensor">{{sensor}} </span>
+						</div>
+						<br>
+						<a :href="view.url" download="climate_data.csv">download CSV-File</a>
+						<br>
+						<p>CSV-File contains data with applied processing as selected. It is designed for quick analysation of time series.</p>
+						<p>For further usage the recommanded method of climate data download is utilization of the export page.</p>
+					</div>
+				</div>
+				
+			</div>
+			
+		</div>
+	</div>
+  </script>
+
+
+
+
+<body ondragstart="return false;" ondrop="return false;">
+	<div id="app">
+		<transition name="fade">
+			<div v-if="appMessage != undefined">
+				{{appMessage}}
+			</div>
+			<div v-else>
+
+				<div v-show="projects.length > 1" @mouseover="projectHover = true" @mouseleave="projectHover = false" class="interactive projects"
+				 style="display: inline-block;">
+					Project:
+					<div style="position: relative; display: inline-block;">
+
+						<div class="state hide" style="display: inline-block;">
+							<div v-for="project in projects">
+								{{project.name}}
+							</div>
+						</div>
+
+						<div style="position: absolute; top: 0px; left: 0px;" class="state" v-show="!(projectHover||projectHoverStay)">
+							{{projectMap[projectID].name}}
+						</div>
+
+						<div style="position: absolute; top: 0px; left: 0px;" v-show="(projectHover||projectHoverStay)">
+							<select @focus="projectHoverStay = true" @blur="projectHoverStay = false" v-model="projectID">
+								<option v-for="project in projects" v-bind:value="project.id">
+									{{project.name}}
+								</option>
+							</select>
+						</div>
+
+					</div>
+				</div>
+				<div v-show="projects.length == 1">
+					Project: {{projectMap[projectID].name}}
+				</div>
+
+				<div>
+					<div class="caption">Climate Data Explorer</div>
+				</div>
+
+				<visualisation-interface :project="projectMap[projectID]">
+				</visualisation-interface>
+
+			</div>
+		</transition>
+	</div>
+</body>
+
+</html>

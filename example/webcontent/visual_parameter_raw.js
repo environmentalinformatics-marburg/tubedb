@@ -1,6 +1,7 @@
 var url_base = "../";
 
 var url_region_list = url_base + "tsdb/region_list";
+var url_region_json = url_base + "tsdb/region.json";
 var url_generalstation_list = url_base + "tsdb/generalstation_list";
 var url_plot_list = url_base + "tsdb/plot_list";
 var url_plotstation_list = url_base + "tsdb/plotstation_list";
@@ -12,7 +13,7 @@ var url_query_csv = url_base + "tsdb/query_csv";
 
 var url_detail_visualisation = "../files/vis.html";
 
-var time_year_text = ["[all]","2008","2009","2010","2011","2012","2013","2014","2015","2016"];
+var time_year_text = ["[all]"];
 var time_month_text = ["year","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
 var aggregation_text = ["raw","hour","day","week","month","year"];
 var aggregation_raw_text = ["raw"];
@@ -118,7 +119,8 @@ function document_ready() {
 	incTask();
 	
 	updateRegions();
-	updateTimeYears();
+	//updateTimeYears(); //moved
+	updateMonths();
 	//updateAggregations(); //moved
 	//updateQualities(); //moved
 	updateTypes();
@@ -147,7 +149,42 @@ function updateRegions() {
 }
 
 function onRegionChange() {
+	updateTimeYears();
 	updateGeneralStations();
+}
+
+function updateTimeYears() {
+	var prevYear = time_year_select.val()==null?null:time_year_text[time_year_select.val()];
+	time_year_select.empty();
+	
+	incTask();
+	$.get(url_region_json+"?region="+region_select.val()).done(function(json) {		
+		time_year_text = ["[all]"];
+		for(var year = json.view_year_range.start; year <= json.view_year_range.end; year++) {
+			time_year_text.push(year);
+		}	
+		$.each(time_year_text, function(i,text) {
+			time_year_select.append(new Option(text,i));
+			if(prevYear != null && text == prevYear) {
+				time_year_select.val(i);
+			}
+		});
+		onTimeYearChange();			
+		decTask();
+	}).fail(function() {alert("error getting data");decTask();});	
+}
+
+function updateMonths() {
+	time_month_select.empty();
+	$.each(time_month_text, function(i,text) {time_month_select.append(new Option(text,i));});
+}
+
+function onTimeYearChange() {
+	if(time_year_select.val()==0) {
+		time_month_select.hide();
+	} else {
+		time_month_select.show();
+	}
 }
 
 function updateGeneralStations() {
@@ -555,20 +592,6 @@ function addCSVFile(plotName, sensors) {
 		addText(table,data);
 		decTask();
 	}).fail(function() {getID("div_result").innerHTML = "no data";decTask();});*/	
-}
-
-function updateTimeYears() {
-	$.each(time_year_text, function(i,text) {time_year_select.append(new Option(text,i));});
-	$.each(time_month_text, function(i,text) {time_month_select.append(new Option(text,i));});
-	onTimeYearChange();
-}
-
-function onTimeYearChange() {
-	if(time_year_select.val()==0) {
-		time_month_select.hide();
-	} else {
-		time_month_select.show();
-	}
 }
 
 function onAggregationChange() {

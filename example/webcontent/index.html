@@ -5,6 +5,8 @@
 <meta name="robots" content="noindex" />
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="favicon.png" />
+<script src="vue.js"></script>
+<script src="axios.js"></script>
 <style type="text/css">
 button.linkbutton { width: 170px; }
 table { background-color:#f6f6f6; }
@@ -109,9 +111,95 @@ td {
 	opacity: 0.7;
 }
 
+.deprecated {
+	opacity: 0.7;
+}
+
+#app {
+	position: absolute; 
+	top: 25px; 
+	right: 2px;
+	/*background-color: #4D472BE6;*/
+	opacity: 0.6;
+	text-align: left;
+	font-family: sans-serif;
+	font-size:10px;
+}
+
 </style>
+
+<script>
+"use strict";
+document.addEventListener('DOMContentLoaded', function() {init();}, false);
+
+function init() {
+	
+var app = new Vue({
+	
+el: '#app',
+
+data: {
+	loadingMessage: "init...",
+	identity: {},
+},
+
+methods: {
+	getHTTPS_url: function() {
+		var port = this.identity.https_port;
+		
+		var host = window.location.host;
+		var pIndex = host.indexOf(':');
+		if(pIndex >= 0) {
+			host = host.slice(0, pIndex);
+		}
+		host = host + ':' + port;		
+		return 'https://' + host + window.location.pathname;
+	},
+},
+
+computed: {
+	HTTPS_url: function() {
+		return this.getHTTPS_url();
+	},
+},
+
+mounted: function () {
+	var self = this;
+	self.loadingMessage =  "loading...";
+	axios.get("../tsdb/identity")
+	.then(function(response) {
+		self.loadingMessage = undefined;
+		self.identity = response.data;			
+	})
+	.catch(function(error) {
+		self.loadingMessage = "ERROR " +error;
+	});
+},
+
+});
+
+}
+</script>
+
 </head>
 <body>
+
+<div id="app">
+	<span v-if="loadingMessage != undefined">
+		{{loadingMessage}}
+	</span>
+	<span v-if="loadingMessage == undefined">
+		tubedb version: {{identity.tubedb_version}}
+		<br>user{{identity.auth_method == "IP" ? " (by "+"ip"+")": ""}}: {{identity.user}}
+		<br>ip: {{identity.ip}}
+		<br>access: {{identity.roles.join(", ")}}
+		<br>connection: {{identity.https_port === undefined || identity.request_port !== identity.https_port ? 'plain' : 'encrypted'}}
+		<span v-if="identity.https_port !== undefined && identity.request_port !== identity.https_port">
+		<br> ==> <a :href="getHTTPS_url()" target="_blank">HTTPS</a>
+		</span>
+	</span>
+</div>
+
 <div class="bg">
 <div style="text-align:right">instructions => <button id="button_instructions" onclick="show_instructions()">?</button></div>
 <h1 style="text-align:center">TubeDB</h1>
@@ -148,17 +236,18 @@ This is the central start-page of TubeDB Web Interface.
 	<col width="100px" height="50px"/>
     <col width="600px" height="50px"/>-->
 </colgroup>
-
-<tr><td></td><td><a class="link_button" href="visual_plotstation_raw.html">visualise plot</a></td><td><b>view</b> parameters of one plot (station)</td></tr>
-<tr><td></td><td><a class="link_button" href="visual_parameter_raw.html">visualise parameter</a></td><td><b>view</b> one parameter of a group of plots</td></tr>
+<tr><td></td><td><a class="link_button" href="visualisation_meta/visualisation_meta.html">visualisation</a></td><td><b>visualisation</b> of climate data</td></tr>
+<!--<tr><td>(obsolete)</td><td><a class="link_button" href="visualisation/visualisation.html">interactive visualisation</a></td><td>interactive <b>visualisation</b> of climate data</td></tr>-->
 <tr><td></td><td><a class="link_button" href="export.html">export</a></td><td><b>download</b> time series data</td></tr>
-<tr><td></td><td><a class="link_button" href="map.html">map</a></td><td>map of plots with <i>up-to-date</i> status</td></tr>
-<tr><td></td><td><a class="link_button" href="advanced_status.html">status</a></td><td>detailed <i>up-to-date</i> status of plots</td></tr>
-<tr><td></td><td><a class="link_button" href="../supplement">auxiliary files</a></td><td>supplementary content</td></tr>
-<tr><td></td><td><a class="link_button" href="../tsdb/source_catalog.csv" download="source_catalog.csv">download source catalog</a></td><td>listing of imported data files as CSV</td></tr>
-<tr class="beta"><td>(beta)</td><td><a class="link_button" href="status2/status.html">interactive status</a></td><td>interactive detailed <i>up-to-date</i> status of plots</td></tr>
-<tr class="beta"><td>(beta)</td><td><a class="link_button" href="catalog/catalog.html">interactive source catalog</a></td><td>interactive catalog of imported data files</td></tr>
-<tr class="beta"><td>(beta)</td><td><a class="link_button" href="map2/map2.html">interactive map</a></td><td>interactive map of plots</td></tr>
+<tr><td></td><td><a class="link_button" href="map2/map2.html">map</a></td><td>interactive <b>map</b> of plots</td></tr>
+<tr><td></td><td><a class="link_button" href="status2/status.html">status</a></td><td>interactive detailed <i>up-to-date</i> <b>status</b> of plots</td></tr>
+<tr><td></td><td><a class="link_button" href="catalog/catalog.html">source catalog</a></td><td>interactive <b>catalog</b> of imported data files</td></tr>
+<tr><td></td><td><a class="link_button" href="../supplement/index.html">auxiliary files</a></td><td>supplementary <b>content</b></td></tr>
+<!--<tr class="deprecated"><td>(deprecated)</td><td><a class="link_button" href="map.html">map</a></td><td>map of plots with <i>up-to-date</i> status</td></tr>-->
+<!--<tr class="deprecated"><td>(deprecated)</td><td><a class="link_button" href="advanced_status.html">status</a></td><td>detailed <i>up-to-date</i> status of plots</td></tr>-->
+<!--<tr class="deprecated"><td>(deprecated)</td><td><a class="link_button" href="../tsdb/source_catalog.csv" download="source_catalog.csv">download source catalog</a></td><td>listing of imported data files as CSV</td></tr>-->
+<tr class="deprecated"><td>(obsolete)</td><td><a class="link_button" href="visual_plotstation_raw.html">visualise plot</a></td><td><b>view</b> parameters of one plot (station)</td></tr>
+<tr class="deprecated"><td>(obsolete)</td><td><a class="link_button" href="visual_parameter_raw.html">visualise parameter</a></td><td><b>view</b> one parameter of a group of plots</td></tr>
 </table>
 <div class="entry"><hr></div>
 <div class="entry">Infobox</div>
