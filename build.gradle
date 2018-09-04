@@ -1,5 +1,8 @@
 apply plugin: 'java'
 
+sourceCompatibility = '1.8' // build compatiblity with java 8 and newer
+targetCompatibility = '1.8' // run compatiblity with java 8 and newer
+
 dependencies {
     compile fileTree('lib') // include local libraries
     compileOnly files('/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/jfxrt.jar') //optional dependency for openjfx on ubuntu (openjdk does not include openjfx), correct path for at least OpenJDK 10
@@ -23,15 +26,13 @@ jar {
 tasks.withType(JavaCompile){
 	options.encoding = 'UTF-8' // set text encoding of java files to UTF-8
 	
-	def v = JavaVersion.current()
-	
+	/*def v = JavaVersion.current()	
 	if(v==JavaVersion.VERSION_1_1||v==JavaVersion.VERSION_1_2||v==JavaVersion.VERSION_1_3||v==JavaVersion.VERSION_1_4||v==JavaVersion.VERSION_1_5||v==JavaVersion.VERSION_1_6||v==JavaVersion.VERSION_1_7) {
 		throw new GradleException('java version 8 or newer needed for build')
-	}
-	
+	}	
 	if(v != JavaVersion.VERSION_1_8) { // java version is newer than java 8 (java 9 with modules)
 		options.compilerArgs.addAll(["--add-exports", "javafx.base/com.sun.javafx.binding=ALL-UNNAMED"]) // compatiblity to modules in java 9 and newer
-	}
+	}*/
 
 	//options.deprecation = true
 	//options.listFiles = true
