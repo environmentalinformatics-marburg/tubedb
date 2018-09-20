@@ -11,25 +11,25 @@ TubeDB is managed by shell scripts.
 Linux (Ubuntu)
 ---
 
-#### `server.sh`
+#### `./server.sh`
 Start (web)server. Open a browser and type `http://localhost:8080` (default). Terminate the server with key `ctrl-c`. 
 
-#### `explorer.sh`
+#### `./explorer.sh`
 Open desktop GUI for time series and meta data inspection.
 
-#### `clear_import.sh`
+#### `./clear_import.sh`
 Clear all time series and import from data files and load masks from config.
 
-#### `import.sh`
+#### `./import.sh`
 import time series data from files and load masks from config. Does not clear previous time series.
 
-#### `clear_load_masks.sh`
+#### `./clear_load_masks.sh`
 Clear all time series masks and load from config. Does not clear time series data.
 
-#### `interactive.sh` (for advanced usage)
+#### `./interactive.sh` (for advanced usage)
 Open TubeDB shell.
 
-#### `tsdb.sh` (for advanced usage)
+#### `./tsdb.sh` (for advanced usage)
 Run command in TubeDB (`tsdb.sh [COMMAND]`). This is the entry point for other scripts to execute commands on TubeDB.
 
 ### Background Server
