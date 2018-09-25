@@ -6,6 +6,7 @@ import java.util.Arrays;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import tsdb.util.TimeUtil;
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.InputIterator;
 import tsdb.util.iterator.TsIterator;
@@ -42,7 +43,19 @@ public class NocCheckIterator extends InputIterator {
 			case "Ta_200":
 				//minRange = 5f;
 				//maxDiff = 5f;
-				break;			
+				//maxDiff = 10f;
+				break;
+			case "Ta_200_min":
+				log.info("check");
+				//minRange = 5f;
+				//maxDiff = 5f;
+				//maxDiff = 10f;
+				break;	
+			case "Ta_200_max":
+				//minRange = 5f;
+				//maxDiff = 5f;
+				//maxDiff = 10f;
+				break;	
 			case "rH_200":
 				minRange = 1f;
 				//maxDiff = 10f;
@@ -126,6 +139,7 @@ public class NocCheckIterator extends InputIterator {
 			}
 			if(max_diff[i] != ABSENT && prevDayHour!=null && futureDayHour!=null) {
 				float maxDiff = max_diff[i];
+				//log.info("check!!!"   + maxDiff +"       " + prevDayHour[i] + " " + v + " " + futureDayHour[i]);
 				/*if( (v+maxDiff<prevDayHour[i] && v+maxDiff<futureDayHour[i]) || (prevDayHour[i]<v-maxDiff && futureDayHour[i]<v-maxDiff) ) {
 					flag = true;
 				}*/
@@ -137,6 +151,7 @@ public class NocCheckIterator extends InputIterator {
 				}*/
 				if(Math.abs(v - prevDayHour[i]) > maxDiff && Math.abs(v - futureDayHour[i]) > maxDiff) {
 					flag = true;
+					//log.info("there " + TimeUtil.oleMinutesToText(current.timestamp));
 				}
 			}
 

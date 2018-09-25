@@ -72,7 +72,7 @@ Shutdown server, create backup, clear database, import time series files, start 
 #### `cronjob_internal.sh` (for internal usage)
 Intended to be used as internal skript for `cronjob.sh`. Shutdown server, create backup, clear database, import time series files, start server: `shutdown_server.sh`, `backup_cron.sh`, `clear_import.sh`, `start_server_background.sh`
 
-#### `cronjob_wrapper.sh` (cron job taget)
+#### `cronjob_wrapper.sh` (cron job target)
 Helper script for cronjob.sh to execute in correct working directory if called from outside of working directory (e.g. as cron job). Use this script as linux cron job entry. You need to change absolute path to correct TubeDB working directory.
 
 

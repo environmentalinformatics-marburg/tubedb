@@ -6,9 +6,12 @@ import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.VirtualPlot;
 import tsdb.component.Sensor;
-import tsdb.component.iterator.QualityFlagIterator;
+import tsdb.component.iterator.PeakFlagIterator;
+import tsdb.component.iterator.PhysicalFlagIterator;
+import tsdb.component.iterator.PhysicalStepFlagIterator;
 import tsdb.graph.node.Node;
 import tsdb.util.DataQuality;
+import tsdb.util.iterator.InputIterator;
 import tsdb.util.iterator.LowQualityToNanIterator;
 import tsdb.util.iterator.TsIterator;
 
@@ -30,7 +33,7 @@ public class RangeStepFiltered extends Node.Abstract{ // just range and step
 	}
 	
 	public static RangeStepFiltered of(TsDB tsdb, Node source, DataQuality dataQuality) {
-		if(DataQuality.Na==dataQuality) {
+		if(DataQuality.Na == dataQuality) {
 			throw new RuntimeException();
 		}
 		return new RangeStepFiltered(tsdb, source, dataQuality);
@@ -43,14 +46,16 @@ public class RangeStepFiltered extends Node.Abstract{ // just range and step
 			return null;
 		}
 		Sensor[] sensors = tsdb.getSensors(input_iterator.getNames());
-		QualityFlagIterator qf = new QualityFlagIterator(sensors,input_iterator);
+		//TsIterator qf = new PhysicalStepFlagIterator(sensors,input_iterator);
+		//TsIterator qf = new PhysicalFlagIterator(sensors, input_iterator); // !!! physical check only	
+		TsIterator qf = new PeakFlagIterator(sensors, new PhysicalFlagIterator(sensors, input_iterator)); // !!! added PeakFlagIterator		
 		if(qf==null||!qf.hasNext()) {
 			return null;
 		}
-		if(DataQuality.NO==dataQuality) {
+		if(DataQuality.NO == dataQuality) {
 			return qf;
 		}
-		DataQuality filterQuality = dataQuality==DataQuality.EMPIRICAL?DataQuality.STEP:dataQuality;
+		DataQuality filterQuality = dataQuality == DataQuality.EMPIRICAL ? DataQuality.STEP : dataQuality;
 		LowQualityToNanIterator bqi = new LowQualityToNanIterator(qf, filterQuality);
 		if(bqi==null||!bqi.hasNext()) {
 			return null;
