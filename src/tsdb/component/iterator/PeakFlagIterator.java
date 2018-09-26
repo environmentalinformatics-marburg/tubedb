@@ -16,7 +16,7 @@ import tsdb.util.iterator.TsIterator;
  * @author woellauer
  *
  */
-public class PeakFlagIterator extends WindowIterator {
+public class PeakFlagIterator extends TimeWindowIterator {
 	private static final Logger log = LogManager.getLogger();
 
 	private final int len;
@@ -27,7 +27,7 @@ public class PeakFlagIterator extends WindowIterator {
 		super(input_iterator, 180, input_iterator.getSchema());
 		this.len = schema.length;
 		cleanTimestamp = new long[input_iterator.getNames().length];
-		log.info("PeakFlagIterator schema " + Arrays.toString(input_iterator.getNames()));
+		//log.info("PeakFlagIterator schema " + Arrays.toString(input_iterator.getNames()));
 		steps = Arrays.stream(sensors).mapToDouble(Sensor::getStepMax).toArray();
 	}
 

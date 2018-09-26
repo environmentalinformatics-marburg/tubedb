@@ -2,6 +2,9 @@ package tsdb.iterator;
 
 import java.util.Arrays;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import tsdb.util.TsEntry;
 import tsdb.util.Util;
 import tsdb.util.iterator.InputIterator;
@@ -13,7 +16,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class InterpolationAverageLinearIterator extends InputIterator {
-	//private static final Logger log = LogManager.getLogger();
+	private static final Logger log = LogManager.getLogger();
 
 	private final TsIterator[] interpolationIterators;
 	private final double[][] intercepts;
@@ -64,7 +67,7 @@ public class InterpolationAverageLinearIterator extends InputIterator {
 			return e;
 		}*/
 		
-		boolean[] interpolated = new boolean[y.length];
+		boolean[] interpolated = e.interpolated == null ? new boolean[y.length] : e.interpolated;
 		
 		for(int i=0;i<posIndex.length;i++) {
 			int pos = posIndex[i];

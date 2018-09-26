@@ -155,7 +155,7 @@ public final class QueryPlanGenerators {
 	 */
 	public static ContinuousGen getContinuousGen(TsDB tsdb, DataQuality dataQuality) {
 		return (String plotID, String[] schema)->{
-			log.info("getContinuousGen");
+			//log.info("getContinuousGen");
 			NodeGen stationGen = getStationGen(tsdb, dataQuality);		
 			Base base = null;
 			try {
@@ -169,7 +169,7 @@ public final class QueryPlanGenerators {
 			}
 			Continuous continuous = Continuous.of(base);
 			if(dataQuality.isStep()) {
-				log.info("NocCheck");
+				//log.info("NocCheck");
 				continuous = NocCheck.of(tsdb, continuous);
 			}
 			if(DataQuality.EMPIRICAL==dataQuality) {

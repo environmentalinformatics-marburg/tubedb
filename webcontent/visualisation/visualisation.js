@@ -50,7 +50,7 @@ data: function () {
 		qualityHoverStay: false,
 		qualities: ["no", "physical", "step", "empirical"],
 		qualitiesText: {no:"0: no", physical:"1: physical", step:"2: physical,step", empirical:"3: physical,step,empirical"},
-		quality: "physical",
+		quality: "step",
 		interpolated: false,
 		settingsHover: false,
 		settingsHoverStay: false,

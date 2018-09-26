@@ -10,6 +10,7 @@ import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.VirtualPlot;
 import tsdb.component.Sensor;
+import tsdb.component.iterator.FillIterator;
 import tsdb.graph.node.Continuous;
 import tsdb.graph.node.ContinuousGen;
 import tsdb.iterator.InterpolationAverageLinearIterator;
@@ -108,7 +109,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 		long trainingStart = trainingInterval[0];
 		long trainingEnd = trainingInterval[1];
 
-		TsIterator trainingTargetIterator = trainingTarget.getExactly(trainingStart, trainingEnd);
+		TsIterator trainingTargetIterator = new FillIterator(trainingTarget.getExactly(trainingStart, trainingEnd));
 		if(TsIterator.isNotLive(trainingTargetIterator)) {
 			return null;
 		}
@@ -117,7 +118,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 
 		@SuppressWarnings("unchecked")
 		Pair<Continuous,TsIterator>[] trainingSourcePairs = Arrays.stream(trainingSources)
-		.map(s->Pair.of(s,s.getExactly(trainingStart, trainingEnd)))
+		.map(s->Pair.of(s,new FillIterator(s.getExactly(trainingStart, trainingEnd))))
 		.filter(p->TsIterator.isLive(p.b))
 		.toArray(Pair[]::new);
 
@@ -182,8 +183,8 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 		}
 
 
-		TsIterator sourceIterator = source.getExactly(start, end);
-		TsIterator[] interpolationIterators = Arrays.stream(trainingSources).map(s->s.getExactly(start, end)).toArray(TsIterator[]::new);
+		TsIterator sourceIterator = new FillIterator(source.getExactly(start, end));
+		TsIterator[] interpolationIterators = Arrays.stream(trainingSources).map(s->new FillIterator(s.getExactly(start, end))).toArray(TsIterator[]::new);
 
 
 
@@ -204,19 +205,18 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 
 		};*/
 
-		if(sourceIterator==null) {
+		/*if(sourceIterator==null) {
 			log.error("no interpolation source");
 			//return null;
-		}
+		}*/
 
 		if(interpolationIterators[0]==null) {
 			log.error("no interpolation training sources");
 			//return null;
 		}
 
-
-		//TODO
-		return new InterpolationAverageLinearIterator(sourceIterator, interpolationIterators, intercepts, slopes, interpolationSchema, weights);
+		InterpolationAverageLinearIterator it = new InterpolationAverageLinearIterator(sourceIterator, interpolationIterators, intercepts, slopes, interpolationSchema, weights);
+		return it; 
 	}
 
 	@Override

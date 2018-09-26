@@ -109,7 +109,7 @@ data: function () {
 		qualityHoverStay: false,
 		qualities: ["no", "physical", "step", "empirical"],
 		qualitiesText: {no: "0: no", physical: "1: physical", step: "2: step", empirical: "3: empirical"},
-		quality: "physical",
+		quality: "step",
 		
 		interpolationHover: false,
 		interpolation: false,
