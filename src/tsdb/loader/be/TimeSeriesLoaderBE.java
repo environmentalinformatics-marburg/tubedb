@@ -244,7 +244,9 @@ public class TimeSeriesLoaderBE {
 				case "computation": {
 					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
 					try {
-						((PropertyComputation)prop.content).calculate(rows, station.loggerType.sensorNames);
+						PropertyComputation cprop = (PropertyComputation) prop.content;
+						//log.info("computation "+prop.station + "   " + cprop.target +"    "+ cprop.formula_org);
+						cprop.calculate(rows, station.loggerType.sensorNames);
 					} catch(Exception e) {
 						log.warn(e);
 					}

@@ -432,6 +432,11 @@
 - {station: AEG50, content: {label: computation, target: PAR_200, formula: "PAR_200_U * 53.568", comment: "2018-06-15 recalculate auto generated"}}
 
 
+#correction 2018-09-28
+- {station: AEW20, start: "2010-05-27T10:30", end: "2015-04-24T14:00", content: {label: computation, target: rH_200, formula: "rH_200 + 15.020004", comment: "correction 2018-09-28"}}
+- {station: AEW20, start: "2010-05-27T10:30", end: "2015-04-24T14:00", content: {label: computation, target: rH_200_min_raw, formula: "rH_200_min_raw + 15.020004", comment: "correction 2018-09-28"}}
+- {station: AEW20, start: "2010-05-27T10:30", end: "2015-04-24T14:00", content: {label: computation, target: rH_200_max_raw, formula: "rH_200_max_raw + 15.020004", comment: "correction 2018-09-28"}}
+
 
 
 

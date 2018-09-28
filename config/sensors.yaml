@@ -445,22 +445,31 @@ PAR_1000:
   
 Ta_1000:
   description: Air temperature at 10 meters above ground
-  unit: °C (degree Celcius, -40 to 60) 
+  unit: °C (degree Celcius, -40 to 60)
   aggregation: average
-  physical_range: [0.0, 100.0] 
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
   category: temperature
   
 rH_1000:
   description: Relative air humidity at 10 meters above ground
   unit: '% (percentage of relative humidity, 0-100)'
   aggregation: average
-  physical_range: [0.0, 100.0] 
+  physical_range: [0.0, 100.0]
+  step_range: [0.0, 100.0] #high fluctuation possible
+  empirical_diff: 50
+  interpolation_mse: 100   
   
 Ta_2000:
   description: Air temperature at 20 meters above ground
-  unit: °C (degree Celcius, -40 to 60) 
+  unit: °C (degree Celcius, -40 to 60)
   aggregation: average
-  physical_range: [0.0, 100.0] 
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
   category: temperature
  
 rH_2000:
@@ -468,12 +477,18 @@ rH_2000:
   unit: '% (percentage of relative humidity, 0-100)' 
   aggregation: average
   physical_range: [0.0, 100.0] 
+  step_range: [0.0, 100.0] #high fluctuation possible
+  empirical_diff: 50
+  interpolation_mse: 100 
   
 Ta_3000:
   description: Air temperature at 30 meters above ground
   unit: °C (degree Celcius, -40 to 60)
   aggregation: average
-  physical_range: [0.0, 100.0] 
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
   category: temperature
   
 rH_3000:
@@ -481,18 +496,28 @@ rH_3000:
   unit: '% (percentage of relative humidity, 0-100)' 
   aggregation: average
   physical_range: [0.0, 100.0]
+  step_range: [0.0, 100.0] #high fluctuation possible
+  empirical_diff: 50
+  interpolation_mse: 100 
   
 Ta_3700:
   description: Air temperature at 37 meters above ground
-  unit: °C (degree Celcius, -40 to 60) 
+  unit: °C (degree Celcius, -40 to 60)
   aggregation: average
-  physical_range: [0.0, 100.0] 
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
   category: temperature
   
 rH_3700:
   description: Relative air humidity at 37 meters above ground
   unit: '% (percentage of relative humidity, 0-100)'
   aggregation: average
+  physical_range: [0.0, 100.0]  
+  step_range: [0.0, 100.0] #high fluctuation possible
+  empirical_diff: 50
+  interpolation_mse: 100 
 
 #****** new sensors in SET39 ********
 
@@ -526,15 +551,22 @@ LWUR_4400:
  
 Ta_4400:
   description: Air temperature at 44 meters above ground
-  unit: °C (degree Celcius, -40 to 60) 
+  unit: °C (degree Celcius, -40 to 60)
   aggregation: average
-  physical_range: [0.0, 100.0] 
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
   category: temperature
 
 rH_4400:
   description: Relative air humidity at 44 meters above ground
   unit: '% (percentage of relative humidity, 0-100)' 
   aggregation: average
+  physical_range: [0.0, 100.0]  
+  step_range: [0.0, 100.0] #high fluctuation possible
+  empirical_diff: 50
+  interpolation_mse: 100   
 
 #****** Kili Sensors ********** (sensors that are not in BE)
 
