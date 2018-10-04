@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.loader.be.TimeSeriesLoaderBE;
+import tsdb.loader.csv.ImportGenericCSV;
 import tsdb.loader.ki.TimeSeriesLoaderKiLi_manual_tfi;
 import tsdb.loader.mm.ImportGenericASC;
 import tsdb.loader.ki.TimeSeriesLoaderKiLi;

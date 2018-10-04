@@ -33,7 +33,7 @@ import tsdb.util.Util;
 public class TsDB implements AutoCloseable {
 	private static final Logger log = LogManager.getLogger();
 	
-	public static final String tubedb_version = "1.11.1";
+	public static final String tubedb_version = "1.11.2";
 
 	/**
 	 * map regionName -> Region
@@ -368,7 +368,7 @@ public class TsDB implements AutoCloseable {
 		return generalStationMap.keySet().stream().toArray(String[]::new);
 	}
 
-	public Stream<GeneralStation> getGeneralStations(String regionName) {
+	public Stream<GeneralStation> getGeneralStationsByRegion(String regionName) {
 		return generalStationMap.values().stream().filter(x->regionName.equals(x.region.name));
 	}
 
@@ -536,7 +536,7 @@ public class TsDB implements AutoCloseable {
 
 
 	public String[] getGeneralStationLongNames(String regionName) {
-		return getGeneralStations(regionName).map(x -> x.longName).sorted().toArray(String[]::new);
+		return getGeneralStationsByRegion(regionName).map(x -> x.longName).sorted().toArray(String[]::new);
 	}
 
 	//*********************************************** end Region *************************************************************************

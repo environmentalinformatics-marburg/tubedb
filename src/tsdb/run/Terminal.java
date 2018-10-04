@@ -19,6 +19,7 @@ import tsdb.run.command.CommandType;
 import tsdb.run.command.CountTsDBValues;
 import tsdb.run.command.DataClear;
 import tsdb.run.command.DataImport;
+import tsdb.run.command.Command_export_tsa;
 import tsdb.run.command.MainRunnable;
 import tsdb.run.command.LoadMasks;
 import tsdb.util.yaml.YamlMap;
@@ -118,6 +119,7 @@ public class Terminal {
 		addCommand("references", "refresh time series references", CreateStationGroupAverageCache::main);
 		addCommand("compact", "defragment free space", RunCompact::main);
 		addCommand("count", "count values in database", CountTsDBValues::main);
+		addCommand("export_tsa", "export time series - 1 or 2 parameters: output filename and optional region name", Command_export_tsa::main);
 
 		addCommandSequence("import", "composite of: load - masks - references - compact", "load", "masks", "references", "compact");
 

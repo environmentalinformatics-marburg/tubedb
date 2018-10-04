@@ -1,16 +1,14 @@
 package tsdb.loader.sa;
 
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import tsdb.TimeSeriesArchivReader;
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
+import tsdb.loader.tsa.TsaImport;
 
 /**
  * Reads pre-imported ".tsa"-files and loads content into TsDB
@@ -18,7 +16,6 @@ import tsdb.TsDBFactory;
  *
  */
 public class SouthAfricaImport {
-
 	private static final Logger log = LogManager.getLogger();
 
 	public static void main(String[] args) {
@@ -50,35 +47,9 @@ public class SouthAfricaImport {
 	public SouthAfricaImport(TsDB tsdb) {
 		try {
 			Path root = Paths.get(TsDBFactory.SOURCE_SA_DAT_PATH);
-			readDirectoryRecursive(tsdb,root);
+			TsaImport.readDirectoryRecursive(tsdb,root);
 		} catch (Exception e) {
 			log.error(e);
 		}		
 	}
-
-	public static void readDirectoryRecursive(TsDB tsdb, Path rootDirectory) {
-		try {
-			DirectoryStream<Path> ds = Files.newDirectoryStream(rootDirectory);
-			for(Path subPath:ds) {
-				if(Files.isDirectory(subPath)) {
-					log.info("read directory "+subPath);
-					readDirectoryRecursive(tsdb,subPath);
-				} else {
-					log.info("read file "+subPath);
-					readOneFile(tsdb, subPath);
-				}
-			}
-		} catch (Exception e) {
-			log.error(e);
-		}
-	}
-
-	public static void readOneFile(TsDB tsdb, Path filepath) {
-		try {
-			TimeSeriesArchivReader.importStationsFromFile(tsdb, filepath.toString());
-		} catch (Exception e) {
-			log.error(e);
-		}
-	}
-
 }

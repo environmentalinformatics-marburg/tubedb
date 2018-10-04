@@ -19,13 +19,13 @@ import tsdb.component.Region;
 import tsdb.loader.bale.TOA5Loader;
 import tsdb.loader.be.TimeSeriesLoaderBE;
 import tsdb.loader.burgwald.HoboLoader;
+import tsdb.loader.csv.ImportGenericCSV;
 import tsdb.loader.ki.TimeSeriesLoaderKiLi;
 import tsdb.loader.ki.TimeSeriesLoaderKiLi_manual_tfi;
 import tsdb.loader.mm.ImportGenericASC;
-import tsdb.loader.sa.SouthAfricaImport;
 import tsdb.loader.sa_own.ImportSaOwn;
 import tsdb.loader.sa_own.RemoveSouthAfricaStationBeginings;
-import tsdb.run.ImportGenericCSV;
+import tsdb.loader.tsa.TsaImport;
 import tsdb.util.Interval;
 import tsdb.util.TimeUtil;
 
@@ -116,7 +116,7 @@ public class DataImport {
 				break;
 			}
 			case "tsa": {
-				SouthAfricaImport.readDirectoryRecursive(tsdb, rootDirectory);
+				TsaImport.readDirectoryRecursive(tsdb, rootDirectory);
 				break;
 			}
 			case "toa5": {

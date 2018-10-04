@@ -214,7 +214,7 @@ public class ServerTsDB implements RemoteTsDB {
 
 	@Override
 	public GeneralStationInfo[] getGeneralStationsOfRegion(String regionName) {
-		return tsdb.getGeneralStations(regionName).map(g->new GeneralStationInfo(g)).toArray(GeneralStationInfo[]::new);
+		return tsdb.getGeneralStationsByRegion(regionName).map(g->new GeneralStationInfo(g)).toArray(GeneralStationInfo[]::new);
 	}
 
 	@Override
@@ -336,7 +336,7 @@ public class ServerTsDB implements RemoteTsDB {
 	@Override
 	public ArrayList<TimestampInterval<String>> getPlotTimeSpansOfRegion(String regionName) throws RemoteException {
 		ArrayList<TimestampInterval<String>> result = new ArrayList<TimestampInterval<String>>();
-		tsdb.getGeneralStations(regionName).forEach(generalStation->{
+		tsdb.getGeneralStationsByRegion(regionName).forEach(generalStation->{
 			generalStation.getStationAndVirtualPlotNames().forEach(plotID->{
 				long[] interval = tsdb.getTimeInterval(plotID);
 				if(interval!=null) {
@@ -365,7 +365,7 @@ public class ServerTsDB implements RemoteTsDB {
 
 	@Override
 	public ArrayList<PlotStatus> getPlotStatusesOfRegion(String regionName) {
-		return collectPlotStatuses(tsdb.getGeneralStations(regionName).flatMap(g->g.getStationAndVirtualPlotNames()));
+		return collectPlotStatuses(tsdb.getGeneralStationsByRegion(regionName).flatMap(g->g.getStationAndVirtualPlotNames()));
 	}
 
 	private ArrayList<PlotStatus> collectPlotStatuses(Stream<String> plotIDstream) {
