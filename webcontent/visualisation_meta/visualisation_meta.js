@@ -139,8 +139,8 @@ data: function () {
 		table: undefined,
 		filteredtableStartRow: 0,
 		filteredtableMaxRowCountTexts: ["10", "20", "50", "100"],
-		filteredtableMaxRowCountText: "20",
-		filteredtableMaxRowCountMap: {"10": 10, "20": 20, "50": 50, "100": 100},
+		filteredtableMaxRowCountText: "24",
+		filteredtableMaxRowCountMap: {"10": 10, "24": 24, "50": 50, "100": 100},
 		filteredtableFastMoveFactor: 20,
 	}
 }, //end data

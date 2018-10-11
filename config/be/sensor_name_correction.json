@@ -73,6 +73,13 @@ example file-content:
 {plot:"HEG18", raw:"BT_1", correct:"Ta_10", start:"2012-07-17T15:00", end:"2017-02-23T12:00"}, /* start and end at file boundary (cable exchange at 2017-02-20) */ /*checked*/
 
 {plot:"HEG18", raw:"BT_2", correct:"Ts_50", start:"2012-07-17T15:00", end:"2017-03-23T12:00"}, /* start and end at file boundary (cable exchange at 2017-03-20) */ /*checked*/
-{plot:"HEG18", raw:"BT_4", correct:"Ts_10", start:"2012-07-17T15:00", end:"2017-03-23T12:00"}, /* start and end at file boundary (cable exchange at 2017-03-20) */ /*checked*/ 
+{plot:"HEG18", raw:"BT_4", correct:"Ts_10", start:"2012-07-17T15:00", end:"2017-03-23T12:00"}, /* start and end at file boundary (cable exchange at 2017-03-20) */ /*checked*/
+
+{plot:"SEW40", raw:"LF_200", correct:"Ta_200", start:"2013-02-01T15:00", end:"2013-05-21T14:00"}, /* Ta_200, rH_200 exchange */
+{plot:"SEW40", raw:"LT_200", correct:"rH_200", start:"2013-02-01T15:00", end:"2013-05-21T14:00"}, /* Ta_200, rH_200 exchange */
+{plot:"SEW40", raw:"LF_200_MIN", correct:"Ta_200_min_raw", start:"2013-02-01T15:00", end:"2013-05-21T14:00"}, /* Ta_200, rH_200 exchange */ /*checked*/
+{plot:"SEW40", raw:"LT_200_MIN", correct:"rH_200_min_raw", start:"2013-02-01T15:00", end:"2013-05-21T14:00"}, /* Ta_200, rH_200 exchange */ /*checked*/
+{plot:"SEW40", raw:"LF_200_MAX", correct:"Ta_200_max_raw", start:"2013-02-01T15:00", end:"2013-05-21T14:00"}, /* Ta_200, rH_200 exchange */ /*checked*/
+{plot:"SEW40", raw:"LT_200_MAX", correct:"rH_200_max_raw", start:"2013-02-01T15:00", end:"2013-05-21T14:00"}, /* Ta_200, rH_200 exchange */ /*checked*/
 
 ]

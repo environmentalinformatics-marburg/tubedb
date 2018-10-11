@@ -26,8 +26,6 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 	private static final int MAX_TRAINING_PLOT_COUNT = 15;
 	private static final int MIN_TRAINING_VALUE_COUNT_HOUR = 4*7*24; // four weeks with one hour time interval
 	private static final int MIN_TRAINING_VALUE_COUNT_DAY = 4*7; // four weeks with one day time interval
-	//private static final double MAX_MSE = 7d; // 7 for temperature
-	//private static final double MAX_MSE = 100d; // 100 for humidity
 
 	private final Continuous source;
 	private final Continuous trainingTarget;

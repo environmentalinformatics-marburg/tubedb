@@ -437,6 +437,8 @@
 - {station: AEW20, start: "2010-05-27T10:30", end: "2015-04-24T14:00", content: {label: computation, target: rH_200_min_raw, formula: "rH_200_min_raw + 15.020004", comment: "correction 2018-09-28"}}
 - {station: AEW20, start: "2010-05-27T10:30", end: "2015-04-24T14:00", content: {label: computation, target: rH_200_max_raw, formula: "rH_200_max_raw + 15.020004", comment: "correction 2018-09-28"}}
 
+- {station: AEG32, start: "2017", content: {label: computation, target: Ta_200_min_raw, formula: "(Ta_200_min_raw < -25 ? NA : Ta_200_min_raw)", comment: "2018-10-11 remove outliers"}}
+
 
 
 

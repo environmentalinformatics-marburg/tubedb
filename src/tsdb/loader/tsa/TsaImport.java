@@ -7,8 +7,8 @@ import java.nio.file.Path;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import tsdb.TimeSeriesArchivReader;
 import tsdb.TsDB;
+import tsdb.util.TimeSeriesArchivReader;
 
 public class TsaImport {
 	private static final Logger log = LogManager.getLogger();
@@ -34,6 +34,7 @@ public class TsaImport {
 		try {
 			TimeSeriesArchivReader.importStationsFromFile(tsdb, filepath.toString());
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e);
 		}
 	}

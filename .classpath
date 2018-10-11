@@ -40,5 +40,6 @@
 	<classpathentry kind="lib" path="lib/web/jetty-security-9.4.11.v20180605.jar" sourcepath="lib_src/jetty-security-9.4.11.v20180605-sources.jar"/>
 	<classpathentry kind="lib" path="lib/web/jetty-io-9.4.11.v20180605.jar" sourcepath="lib_src/jetty-io-9.4.11.v20180605-sources.jar"/>
 	<classpathentry kind="lib" path="lib/mapdb-1.0.9.jar" sourcepath="lib_src/mapdb-1.0.9-sources.jar"/>
+	<classpathentry kind="lib" path="lib/zstd-jni-1.3.5-4.jar" sourcepath="lib_src/zstd-jni-1.3.5-4-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

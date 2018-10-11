@@ -45,13 +45,13 @@ public class NocCheckIterator extends InputIterator {
 				//maxDiff = 5f;
 				//maxDiff = 10f;
 				break;
-			case "Ta_200_min":
+			case "Ta_200_min_raw":
 				//log.info("check");
 				//minRange = 5f;
 				//maxDiff = 5f;
 				//maxDiff = 10f;
 				break;	
-			case "Ta_200_max":
+			case "Ta_200_max_raw":
 				//minRange = 5f;
 				//maxDiff = 5f;
 				//maxDiff = 10f;
@@ -60,7 +60,14 @@ public class NocCheckIterator extends InputIterator {
 				minRange = 1f;
 				//maxDiff = 10f;
 				break;
-
+			case "rH_200_min":
+				minRange = 1f;
+				//maxDiff = 10f;
+				break;
+			case "rH_200_max":
+				minRange = 1f;
+				//maxDiff = 10f;
+				break;				
 			case "SM_10":
 				//minRange = 0.1f;
 				//maxDiff = 5f;

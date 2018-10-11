@@ -16,9 +16,9 @@ import java.util.TreeSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import tsdb.TimeSeriesArchivWriter;
 import tsdb.TsDBFactory;
 import tsdb.util.Table;
+import tsdb.util.TimeSeriesArchivWriter;
 import tsdb.util.Table.ColumnReaderFloat;
 import tsdb.util.Table.ColumnReaderString;
 import tsdb.util.Table.ColumnReaderTimestamp;

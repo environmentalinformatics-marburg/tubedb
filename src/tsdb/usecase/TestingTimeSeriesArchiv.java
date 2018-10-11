@@ -5,9 +5,6 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import tsdb.TimeSeriesArchivReader;
-import tsdb.TimeSeriesArchivReader.TimeSeriesArchivVisitor;
-import tsdb.TimeSeriesArchivWriter;
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.graph.QueryPlan;
@@ -15,6 +12,9 @@ import tsdb.graph.node.Node;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataEntry;
 import tsdb.util.DataQuality;
+import tsdb.util.TimeSeriesArchivReader;
+import tsdb.util.TimeSeriesArchivWriter;
+import tsdb.util.TimeSeriesArchivReader.TimeSeriesArchivVisitor;
 import tsdb.util.iterator.TimestampSeries;
 
 public class TestingTimeSeriesArchiv {
