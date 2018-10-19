@@ -9,6 +9,8 @@ import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.component.Region;
+import tsdb.streamdb.StreamIterator;
+import tsdb.util.DataEntry;
 import tsdb.util.TimeSeriesArchivWriter;
 import tsdb.util.iterator.TimestampSeries;
 import tsdb.util.iterator.TsIterator;
@@ -46,32 +48,6 @@ public class Command_export_tsa {
 			log.info("export_tsa needs 1 or 2 parameters: output filename and optional region name");
 			return;
 		}
-		
-		
-		
-		if(args.length != 1) {
-			
-		}
-		
-		
-		/*if(args.length != 2) {
-			log.info("syntax error");
-			return;
-		}
-		try(TsDB tsdb = TsDBFactory.createDefault()) {
-			String regionName = "BEf";
-			Region region = tsdb.getRegion(regionName);
-			if(region == null) {
-				log.info("region not found: "+regionName);
-				return;
-			}
-			String filename = "out.tsa";
-			Command_export_tsa export_region = new Command_export_tsa(tsdb);
-			export_region.run(region, filename);
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error(e);
-		}*/
 	}
 
 	public Command_export_tsa(TsDB tsdb) {
@@ -87,9 +63,18 @@ public class Command_export_tsa {
 				try {
 					String[] sensorNames = tsdb.streamStorage.getSensorNames(s.stationID);
 					if(sensorNames != null && sensorNames.length > 0) {
-						TsIterator it = tsdb.streamStorage.getRawIterator(s.stationID, sensorNames, null, null);
+						/*TsIterator it = tsdb.streamStorage.getRawIterator(s.stationID, sensorNames, null, null);
 						TimestampSeries timestampSeries = it.toTimestampSeries(s.stationID);
-						tsaWriter.writeTimestampSeries(timestampSeries);
+						tsaWriter.writeTimestampSeries(timestampSeries);*/
+						for(String sensorName : sensorNames) {
+							StreamIterator it = tsdb.streamStorage.getRawSensorIterator(s.stationID, sensorName, null, null);
+							if(it != null && it.hasNext()) {
+								DataEntry[] dataEntries = it.remainingToArray();
+								tsaWriter.writeDataEntryArray(s.stationID, sensorName, dataEntries);
+							} else {
+								log.warn("empty sensor " + s.stationID + " " + sensorName);
+							}
+						}
 					} else {
 						//log.info("no sensors in " + s.stationID);
 					}

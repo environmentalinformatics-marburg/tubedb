@@ -33,7 +33,7 @@ import tsdb.util.Util;
 public class TsDB implements AutoCloseable {
 	private static final Logger log = LogManager.getLogger();
 	
-	public static final String tubedb_version = "1.11.3";
+	public static final String tubedb_version = "1.11.4";
 
 	/**
 	 * map regionName -> Region
@@ -714,7 +714,7 @@ public class TsDB implements AutoCloseable {
 
 			for(VirtualCopyList p:raw_copy_lists) { // one source need to be contained
 				innerLoop: for(String source:p.sources) {
-					if(allSensorNames.contains(source)) {
+					if(Util.containsWithRef(allSensorNames, source)) {
 						additionalSensorNames.add(p.target);
 						allSensorNames.add(p.target);
 						break innerLoop;
@@ -725,7 +725,7 @@ public class TsDB implements AutoCloseable {
 			for(VirtualCopyList p:sensor_dependency_lists) { // all sources need to be contained
 				boolean satisfied = true;
 				innerLoop: for(String source:p.sources) {
-					if(!allSensorNames.contains(source)) {
+					if(!Util.containsWithRef(allSensorNames, source)) {
 						satisfied = false;
 						break innerLoop;
 					}
@@ -743,6 +743,8 @@ public class TsDB implements AutoCloseable {
 			return Stream.concat(Arrays.stream(schema), additionalSensorNames.stream()).toArray(String[]::new);			
 		}
 	}
+	
+
 
 	/**
 	 * Add sensors that are needed for virtual sensor processing in schema
@@ -767,7 +769,7 @@ public class TsDB implements AutoCloseable {
 						if(schemaSet.contains(sensorName)) {
 							found = true;
 							break sources;
-						} else if(availableSchemaSet.contains(sensorName)){
+						} else if(Util.containsWithRef(availableSchemaSet, sensorName)){
 							additionalSensorNames.add(sensorName);
 							schemaSet.add(sensorName);
 							found = true;
@@ -785,7 +787,7 @@ public class TsDB implements AutoCloseable {
 					for(String sensorName:list.sources) {
 						if(schemaSet.contains(sensorName)) {
 							// nothing
-						} else if(availableSchemaSet.contains(sensorName)){
+						} else if(Util.containsWithRef(availableSchemaSet, sensorName)){
 							additionalSensorNames.add(sensorName);
 							schemaSet.add(sensorName);
 						} else {
@@ -889,7 +891,7 @@ public class TsDB implements AutoCloseable {
 	 * @param schema
 	 * @return
 	 */
-	public String[] order_by_dependency(String[] schema) {
+	public Sensor[] order_by_dependency(String[] schema) {
 		Sensor[] sensors = this.getSensors(schema);
 		ArrayList<Sensor> waitingSensors = new ArrayList<Sensor>();
 		waitingSensors.addAll(Arrays.asList(sensors));
@@ -922,6 +924,6 @@ public class TsDB implements AutoCloseable {
 			}
 		}
 		//log.info("sort "+Arrays.toString(schema)+"   ->   "+includedSensors.toString());
-		return includedSensors.toArray(new String[0]);
+		return this.getSensors(includedSensors.toArray(new String[0]));
 	}	
 }

@@ -1548,3 +1548,19 @@ PAR:
   empirical_diff: 610.46
   interpolation_mse: 10000
   
+Ta_200_ref:
+  description: reference of Ta_200
+  unit: °C (degree Celcius, -40 to 60)  
+  dependency: [ref_Ta_200]
+  post_hour_func: "ref_Ta_200"
+  aggregation: average
+  category: temperature  
+  visibility: internal   
+  
+Ta_200_ref_diff:
+  description: difference to reference of Ta_200
+  unit: °K (degree Kelvin)  
+  dependency: [Ta_200, ref_Ta_200]
+  post_hour_func: "Ta_200 - ref_Ta_200"
+  aggregation: average
+  visibility: internal 

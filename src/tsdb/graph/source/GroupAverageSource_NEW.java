@@ -61,7 +61,7 @@ public class GroupAverageSource_NEW extends Continuous.Abstract {
 			String[] names = tsSchema.names;
 			Aggregation aggregation = Aggregation.CONSTANT_STEP;
 			int timeStep = BaseAggregationTimeUtil.AGGREGATION_TIME_INTERVAL;
-			boolean isContinuous = true;
+			boolean isContinuous = false;
 			boolean hasQualityFlags = false;
 			boolean hasInterpolatedFlags = false;
 			boolean hasQualityCounters = false;
@@ -75,8 +75,6 @@ public class GroupAverageSource_NEW extends Continuous.Abstract {
 			return input_iterator.next();
 		}		
 	}
- 
-
 
 	@Override
 	public TsIterator get(Long start, Long end) {		

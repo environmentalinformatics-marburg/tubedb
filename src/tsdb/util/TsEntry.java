@@ -23,11 +23,11 @@ public class TsEntry implements Serializable {
 		return new TsEntry(e.timestamp, new float[]{e.value});
 	}
 
-	public TsEntry(long timestamp, float[] data, DataQuality[] qualityFlag,int[][] qualityCounter) {
+	public TsEntry(long timestamp, float[] data, DataQuality[] qualityFlag, int[][] qualityCounter) {
 		this(timestamp, data, qualityFlag, qualityCounter, null);
 	}
 
-	public TsEntry(long timestamp, float[] data, DataQuality[] qualityFlag,int[][] qualityCounter,boolean[] interpolated) {
+	public TsEntry(long timestamp, float[] data, DataQuality[] qualityFlag, int[][] qualityCounter, boolean[] interpolated) {
 		this.timestamp = timestamp;
 		this.data = data;
 		this.qualityFlag = qualityFlag;

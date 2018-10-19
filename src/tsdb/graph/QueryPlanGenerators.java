@@ -37,6 +37,7 @@ import tsdb.graph.processing.Mask;
 import tsdb.graph.processing.NocCheck;
 import tsdb.graph.processing.PeakSmoothed;
 import tsdb.graph.processing.RangeStepFiltered;
+import tsdb.graph.processing.ReferenceSourceMerge;
 import tsdb.graph.processing.Sunshine;
 import tsdb.graph.processing.SunshineOlivieri;
 import tsdb.graph.processing.Virtual_P_RT_NRT;
@@ -155,13 +156,14 @@ public final class QueryPlanGenerators {
 	 */
 	public static ContinuousGen getContinuousGen(TsDB tsdb, DataQuality dataQuality) {
 		return (String plotID, String[] schema)->{
-			//log.info("getContinuousGen");
 			NodeGen stationGen = getStationGen(tsdb, dataQuality);		
 			Base base = null;
 			try {
-				base = BaseFactory.of(tsdb, plotID, schema, stationGen);
-			} catch(Exception e) {
+				String[] realSchema = Util.getSensorNamesWithoutRefs(schema);
+				base = BaseFactory.of(tsdb, plotID, realSchema, stationGen);
+			} catch(Exception e) {				
 				log.warn(e);
+				e.printStackTrace();
 				return null;
 			}
 			if(base == null) {
@@ -174,6 +176,11 @@ public final class QueryPlanGenerators {
 			}
 			if(DataQuality.EMPIRICAL==dataQuality) {
 				continuous = EmpiricalFiltered_NEW.of(tsdb, continuous, plotID);
+			}
+			String[] refRenameSchema = Util.getSensorNamesRefs(schema);
+			if(refRenameSchema.length > 0) {
+				String[] refSourceSchema = Util.convertSensorNamesRefsToSensorNames(refRenameSchema);
+				continuous = ReferenceSourceMerge.of(tsdb, continuous, plotID, refSourceSchema, refRenameSchema, schema);
 			}
 			return continuous;
 		};
@@ -240,8 +247,7 @@ public final class QueryPlanGenerators {
 	public static Mutator getPostHourMutators(TsDB tsdb, Plot plot, String[] schema) {		
 		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
 		ArrayList<String> funcs = new ArrayList<String>();
-		for(String sensorName:tsdb.order_by_dependency(schema)) {
-			Sensor sensor = tsdb.getSensor(sensorName);
+		for(Sensor sensor : tsdb.order_by_dependency(schema)) {
 			String func = sensor.post_hour_func;
 			if(sensor != null &&  func != null) {
 				sensors.add(sensor);
@@ -257,8 +263,7 @@ public final class QueryPlanGenerators {
 	public static Mutator getPostDayMutators(TsDB tsdb, Plot plot, String[] schema) {
 		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
 		ArrayList<String> funcs = new ArrayList<String>();
-		for(String sensorName:tsdb.order_by_dependency(schema)) {
-			Sensor sensor = tsdb.getSensor(sensorName);
+		for(Sensor sensor : tsdb.order_by_dependency(schema)) {
 			String func = sensor.post_day_func;
 			if(sensor != null &&  func != null) {
 				sensors.add(sensor);

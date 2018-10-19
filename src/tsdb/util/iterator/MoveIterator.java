@@ -12,11 +12,11 @@ import tsdb.util.TsSchema;
  * @author woellauer
  *
  */
-public abstract class MoveIterator extends TsIterator {
+public abstract class MoveIterator extends TsIterator implements TsEnumerator {
 
 	private TsEntry current = null;
 	private boolean closed = false;
-	
+
 	public MoveIterator(TsSchema schema) {
 		super(schema);
 	}
@@ -29,9 +29,9 @@ public abstract class MoveIterator extends TsIterator {
 		if(closed) {
 			return false;
 		} else {
-			if(current==null) {
+			if(current == null) {
 				current = getNext();
-				if(current==null) {
+				if(current == null) {
 					closed = true;
 					return false;
 				} 
@@ -52,6 +52,25 @@ public abstract class MoveIterator extends TsIterator {
 		return result;
 	}
 
+	@Override
+	public final boolean moveNext() {
+		if(closed) {
+			return false;
+		}
+		current = getNext();
+		if(current == null) {
+			closed = true;
+			return false;
+		}
+		return true;
+
+	}
+
+	@Override
+	public final TsEntry current() {
+		return current;
+	}
+
 	/**
 	 * Request next element. 
 	 * <p>
@@ -61,7 +80,7 @@ public abstract class MoveIterator extends TsIterator {
 	 * @return next element or null if there is no next element
 	 */
 	protected abstract TsEntry getNext();
-	
+
 	/**
 	 * Signals that iterator does not contain a next element. 
 	 * <br>

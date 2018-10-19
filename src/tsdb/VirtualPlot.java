@@ -115,7 +115,7 @@ public class VirtualPlot {
 	}
 	
 	public String[] getValidSchemaEntriesWithVirtualSensors(String[] querySchema) {
-		return Util.getValidEntries(querySchema, tsdb.includeVirtualSensorNames(getSensorNames()));
+		return Util.getValidEntriesWithRefs(querySchema, tsdb.includeVirtualSensorNames(getSensorNames()));
 	}
 
 	/**
@@ -317,7 +317,7 @@ public class VirtualPlot {
 		if(schema==null) {
 			return false;
 		}
-		return !(querySchema==null||querySchema.length==0||!Util.isContained(querySchema, tsdb.includeVirtualSensorNames(schema)));		
+		return !(querySchema==null||querySchema.length==0||!Util.isContainedWithRefs(querySchema, tsdb.includeVirtualSensorNames(schema)));		
 	}
 
 	public boolean isValidBaseSchema(String[] querySchema) {

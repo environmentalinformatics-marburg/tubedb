@@ -65,7 +65,7 @@ public class Handler_query_csv extends MethodHandler {
 		CSVTimeType csvTimeType = CSVTimeType.DATETIME;
 		{
 			String datetime_fomat = request.getParameter("datetime_format");
-			log.info("dt " + datetime_fomat);
+			//log.info("dt " + datetime_fomat);
 			if(datetime_fomat != null) {
 				switch(datetime_fomat) {
 				case "custom":
@@ -287,6 +287,7 @@ public class Handler_query_csv extends MethodHandler {
 					return;
 				}*/
 				try {
+					log.info("load of "+Arrays.toString(validSchema));
 					TimestampSeries ts = tsdb.plot(null, plot, validSchema, agg, dataQuality, isInterpolated, startTime, endTime);
 					if(ts != null) {					
 						ProjectionFillIterator it = new ProjectionFillIterator(ts.tsIterator(), processingSensorNames);

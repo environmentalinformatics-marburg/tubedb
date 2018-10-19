@@ -1,7 +1,5 @@
 package tsdb.usecase;
 
-import java.util.Iterator;
-
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.graph.QueryPlan;
@@ -10,44 +8,20 @@ import tsdb.util.AggregationInterval;
 import tsdb.util.BaseAggregationTimeUtil;
 import tsdb.util.DataQuality;
 import tsdb.util.TsEntry;
+import tsdb.util.iterator.TsEnumerator;
+import tsdb.util.iterator.TsIteratorEnumerator;
 import tsdb.util.iterator.MoveIterator;
 import tsdb.util.iterator.TsIterator;
 
 public class TestingSunshineDuration {
 
-	private static interface Enumerator<T> {
-		public boolean moveNext();
-		public T current();
-	}
-
-	private static class IteratorEnumerator<T> implements Enumerator<T> {
-		private final Iterator<T> iterator;
-		private T current;
-		public IteratorEnumerator(Iterator<T> iterator) {
-			this.iterator = iterator;
-			this.current = null;
-		}
-		@Override
-		public boolean moveNext() {
-			if(iterator.hasNext()) {
-				current = iterator.next();
-				return true;
-			} else {
-				current = null;
-				return false;
-			}
-		}
-		@Override
-		public T current() {
-			return current;
-		}
-	}
-
-	private static abstract class InputEnumerationIterator extends MoveIterator {		
-		protected final Enumerator<TsEntry> input_enumerator;		
+	private static abstract class InputEnumerationIterator extends MoveIterator {
+		
+		protected final TsEnumerator input_enumerator;
+		
 		public InputEnumerationIterator(TsIterator input_iterator) {
 			super(input_iterator.getSchema());
-			this.input_enumerator = new IteratorEnumerator<TsEntry>(input_iterator);
+			this.input_enumerator = TsIteratorEnumerator.of(input_iterator);
 		}		
 	}
 

@@ -182,38 +182,20 @@ public class Station {
 		return stationID+"("+loggerType.typeName+")";
 	}
 
-	/*public String[] getValidSchemaEntries(String[] querySchema) {
-		Map<String, Integer> schemaMap = Util.stringArrayToMap(loggerType.sensorNames);
-		ArrayList<String> resultList = new ArrayList<String>();
-		for(String sensorName:querySchema) {
-			if(schemaMap.containsKey(sensorName)) {
-				resultList.add(sensorName);
-			}
-		}
-		if(resultList.size()==0) {
-			return null;
-		}
-		return resultList.toArray(new String[0]);
-	}*/
-
 	public String[] getValidSchemaEntries(String[] querySchema) {		
-		//return Util.getValidEntries(querySchema, loggerType.sensorNames);
 		return Util.getValidEntries(querySchema, getSensorNames());
 	}
 
 	public String[] getValidSchemaEntriesWithVirtualSensors(String[] querySchema) {		
-		//return Util.getValidEntries(querySchema, loggerType.sensorNames);
-		return Util.getValidEntries(querySchema, tsdb.includeVirtualSensorNames(getSensorNames()));
+		return Util.getValidEntriesWithRefs(querySchema, tsdb.includeVirtualSensorNames(getSensorNames()));
 	}
 
 	public boolean isValidSchema(String[] querySchema) {
-		//return !(querySchema==null||querySchema.length==0||!Util.isContained(querySchema, loggerType.sensorNames));
 		return !(querySchema==null||querySchema.length==0||!Util.isContained(querySchema, getSensorNames()));
 	}
 
 	public boolean isValidSchemaWithVirtualSensors(String[] querySchema) {
-		//return !(querySchema==null||querySchema.length==0||!Util.isContained(querySchema, loggerType.sensorNames));
-		return !(querySchema==null||querySchema.length==0||!Util.isContained(querySchema, tsdb.includeVirtualSensorNames(getSensorNames())));
+		return !(querySchema==null||querySchema.length==0||!Util.isContainedWithRefs(querySchema, tsdb.includeVirtualSensorNames(getSensorNames())));
 	}
 
 	public boolean isValidBaseSchema(String[] querySchema) {

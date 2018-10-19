@@ -608,6 +608,19 @@ public final class Util {
 		return Arrays.asList(names).stream().filter(name->sourceMap.containsKey(name)).toArray(String[]::new);
 	}
 
+	public static String[] getValidEntriesWithRefs(String[] names, String[] source) {
+		Map<String, Integer> sourceMap = Util.stringArrayToMap(source);
+		return Arrays.asList(names).stream().filter(name->{
+			if(sourceMap.containsKey(name)) {
+				return true;
+			}
+			if(!name.startsWith("ref_")) {
+				return false;
+			}
+			return sourceMap.containsKey(name.substring(4));
+		}).toArray(String[]::new);
+	}
+
 	public static boolean isContained(String[] names, String[] source) {
 		throwNulls(names,source);		
 		Map<String, Integer> sourceMap = Util.stringArrayToMap(source);
@@ -617,7 +630,77 @@ public final class Util {
 			}
 		}
 		return true;
-	}	
+	}
+
+	public static boolean isContainedWithRefs(String[] names, String[] source) {
+		throwNulls(names,source);		
+		Map<String, Integer> sourceMap = Util.stringArrayToMap(source);
+		for(String name:names) {
+			if(!sourceMap.containsKey(name)) {
+				if(!name.startsWith("ref_") || !sourceMap.containsKey(name.substring(4))) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	public static String[] getSensorNamesWithoutRefs(String[] schema) {
+		int cnt = 0;
+		for(String name:schema) {
+			if(!name.startsWith("ref_")) {
+				cnt++;
+			}
+		}
+		if(schema.length == cnt) {
+			return schema;
+		}
+		int pos = 0;
+		String[] realSchema = new String[cnt];
+		for(String name:schema) {
+			if(!name.startsWith("ref_")) {
+				realSchema[pos++] = name;
+			}
+		}
+		return realSchema;
+	}
+
+	public static String[] getSensorNamesRefs(String[] schema) {
+		int cnt = 0;
+		for(String name:schema) {
+			if(name.startsWith("ref_")) {
+				cnt++;
+			}
+		}
+		if(schema.length == cnt) {
+			return schema;
+		}
+		int pos = 0;
+		String[] realSchema = new String[cnt];
+		for(String name:schema) {
+			if(name.startsWith("ref_")) {
+				realSchema[pos++] = name;
+			}
+		}
+		return realSchema;
+	}
+
+	public static String[] convertSensorNamesRefsToSensorNames(String[] schema) {
+		int len = schema.length;
+		String[] realSchema = new String[len];
+		for (int i = 0; i < len; i++) {
+			String name = schema[i];
+			if(!name.startsWith("ref_")) {
+				throw new RuntimeException("not a ref");
+			}
+			realSchema[i] = name.substring(4);
+		}
+		return realSchema;
+	}
+
+	public static boolean containsWithRef(Set<String> set, String name) {
+		return set.contains(name) || (name.startsWith("ref_") && set.contains(name.substring(4)));
+	}
 
 	public static <T> ArrayList<T> streamToList(Stream<T> stream) {
 		return (ArrayList<T>) stream.collect(Collectors.toList());
@@ -720,21 +803,21 @@ public final class Util {
 		c[slen+2] = (char) ('0'+(d%10));
 		return c;
 	}
-	
+
 	private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
-	
+
 	/**
 	 * convert byte values to hex text
 	 * @param bytes
 	 * @return
 	 */
 	public static String bytesToHex(byte[] bytes) { // source: https://stackoverflow.com/questions/9655181/how-to-convert-a-byte-array-to-a-hex-string-in-java
-	    char[] hexChars = new char[bytes.length * 2];
-	    for ( int j = 0; j < bytes.length; j++ ) {
-	        int v = bytes[j] & 0xFF;
-	        hexChars[j * 2] = hexArray[v >>> 4];
-	        hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-	    }
-	    return new String(hexChars);
+		char[] hexChars = new char[bytes.length * 2];
+		for ( int j = 0; j < bytes.length; j++ ) {
+			int v = bytes[j] & 0xFF;
+			hexChars[j * 2] = hexArray[v >>> 4];
+			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+		}
+		return new String(hexChars);
 	}
 }

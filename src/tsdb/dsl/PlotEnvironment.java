@@ -36,7 +36,7 @@ public class PlotEnvironment extends Environment {
 		case "longitude":
 			return FormulaNum.of((float)plot.getLatLon()[1]);
 		case "elevation":
-			return FormulaNum.of((float)plot.getElevation());			
+			return FormulaNum.of((float)plot.getElevation());
 		default:
 			throw new RuntimeException("unknown variable "+name);
 		}
