@@ -58,7 +58,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 	public TsDBExportAPIHandler(RemoteTsDB tsdb) {
 		this.tsdb = tsdb;
 	}
-	
+
 	private void resetModel(ExportModel model, UserIdentity userIdentity) {
 		model.reset();
 		//model.plots = new String[]{"HEG01"};
@@ -276,6 +276,10 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 		json.object();
 		json.key("region");
 		json.value(model.region.name);
+		if(model.region.description != null && !model.region.description.isEmpty()) {
+			json.key("region_description");
+			json.value(model.region.description);
+		}
 		json.key("interpolate");
 		json.value(model.interpolate);
 		json.key("desc_sensor");
@@ -425,7 +429,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 			OutputStream outputstream = response.getOutputStream();
 			Region region = model.region;
 			String[] plotIDs = model.plots;
-			
+
 			LinkedHashSet<String> availableSensorNames = new LinkedHashSet<String>();
 			for(String plotID:plotIDs) {
 				String[] sn = tsdb.getSensorNamesOfPlotWithVirtual(plotID);
@@ -437,7 +441,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 			}
 
 			String[] sensorNames = tsdb.supplementSchema(model.sensors, availableSensorNames.toArray(new String[0]));
-			
+
 			AggregationInterval aggregationInterval = model.aggregationInterval;
 			DataQuality dataQuality = model.quality;
 			boolean interpolated = model.interpolate;
@@ -503,11 +507,11 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 			return false;
 		}
 	}
-	
+
 	public static String toJsonID(long id) {
 		return Long.toHexString(id);
 	}
-	
+
 	/**
 	 * Throws exception if wrong format
 	 * @param text
@@ -554,7 +558,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 			if(finished) {
 				json.key("filename");
 				json.value(zipExportProxy.getFilename());
-				
+
 				json.key("title");
 				json.value(zipExportProxy.getTitle());
 			}

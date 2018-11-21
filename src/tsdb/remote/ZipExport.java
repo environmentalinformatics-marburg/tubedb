@@ -64,6 +64,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 	private final boolean validate_sensors = true; // filter sensors based on selected plots
 	private final boolean desc_sensor;
 	private final boolean desc_plot;
+	private final boolean info = true;
 	private final boolean desc_settings;
 	private final boolean write_header;
 	private final Long startTimestamp;
@@ -203,7 +204,18 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 				write_plot_description_CSV(bufferedWriter);
 				bufferedWriter.flush();
 				writer.flush();
-			}			
+			}
+
+			if(info) {
+				if(region.description != null && !region.description.isEmpty()) {
+					zipOutputStream.putNextEntry(new ZipEntry("info.txt"));
+					OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
+					BufferedWriter bufferedWriter = new BufferedWriter(writer);
+					write_info(bufferedWriter);
+					bufferedWriter.flush();
+					writer.flush();
+				}
+			}	
 
 			if(allInOne) {				
 				zipOutputStream.putNextEntry(new ZipEntry("plots.csv"));
@@ -381,6 +393,14 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 				}
 				csvWriter.writeNext(new String[]{sensorName, sensorDescription, sensorUnit}, false);
 			}
+		} catch (Exception e) {
+			log.error(e);
+		}
+	}
+
+	private void write_info(BufferedWriter bufferedWriter) {		
+		try {
+			bufferedWriter.write(region.description);
 		} catch (Exception e) {
 			log.error(e);
 		}

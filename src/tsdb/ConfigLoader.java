@@ -128,7 +128,7 @@ public class ConfigLoader {
 					}
 				}
 			}
-			
+
 			Section section_general_station_view_time_ranges = ini.get("general_station_view_time_ranges");  //******************** [general_station_view_time_ranges]
 			if(section_general_station_view_time_ranges!=null) {
 				for(Entry<String, String> entry:section_general_station_view_time_ranges.entrySet()) {
@@ -144,8 +144,8 @@ public class ConfigLoader {
 								log.warn("general_station_view_time_ranges section invalid year range "+range);
 							}
 						}
-						
-						
+
+
 					} else {
 						log.warn("general station unknown: "+entry.getKey());
 					}
@@ -475,7 +475,7 @@ public class ConfigLoader {
 			} else {
 				log.warn("region_view_time_range section not found");
 			}
-			
+
 			section = ini.get("region_default_general_station");
 			if(section!=null) {
 				Map<String, String> defaultGeneralStationNameMap = Util.readIniSectionMap(section);
@@ -492,7 +492,40 @@ public class ConfigLoader {
 					}
 				}
 			}
-			
+
+			section = ini.get("region_description");
+			if(section!=null) {
+				Map<String, String> regionEntryMap = Util.readIniSectionMap(section);
+				for(Entry<String, String> entry:regionEntryMap.entrySet()) {
+					String regionName = entry.getKey();
+					if(justRegion==null || justRegion.toLowerCase().equals(regionName.toLowerCase())) {
+						String name = entry.getValue();
+						Region region1 = tsdb.getRegion(regionName);
+						if(region1 != null) {
+							log.info("len "+regionName+"  "+section.length(regionName));
+							List<String> yy = section.getAll(regionName);
+							String desc = null;
+							for(String y:yy) {
+								log.info("get "+y);
+								if(desc == null) {
+									desc = y;
+								} else {
+									desc += '\n' + y;
+								}
+							}
+							if(desc != null) {
+								desc = desc.replace("\\n", "\n");
+							}
+							region1.description = desc;
+							log.info("set description for " + region1.name);
+							log.info(region.description);
+						} else {
+							log.warn("region not found: "+regionName);
+						}
+					}
+				}
+			}
+
 			return region;
 		} catch (IOException e) {
 			e.printStackTrace();

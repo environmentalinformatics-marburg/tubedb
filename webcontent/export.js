@@ -66,6 +66,7 @@ var plots_output = getID("plots_output");
 var sensors_output = getID("sensors_output");
 var settings_output = getID("settings_output");
 var region_output = getID("region_output");
+var region_description_output = getID("region_description_output");
 var timespan_output = getID("timespan_output");
 var aggregation_output = getID("aggregation_output");
 
@@ -106,7 +107,7 @@ clear_println(settings_output,"query data...");
 incTask();
 $.getJSON(url_export_settings).done(function( data ) {
 		var json_settings = data;
-		console.log(JSON.stringify(json_settings));		
+		//console.log(JSON.stringify(json_settings));		
 		clear(settings_output);
 		var settings_array = [];
 		//{"col_plotid":true,"col_timestamp":false,"col_datetime":false}
@@ -127,13 +128,6 @@ $.getJSON(url_export_settings).done(function( data ) {
 			timespanText = "[not valid timespan]";
 		}		
 		
-		/*var value = +json_settings.timespan;
-		var timespanText = "[not valid timespan]";
-		if(value===0) {
-			timespanText = "[all]";
-		} else {
-			timespanText = "year "+value;
-		}*/		
 		timespan_output.innerHTML = timespanText;
 		aggregation_output.innerHTML = json_settings.timestep;
 		var raw = false;
@@ -166,6 +160,9 @@ $.getJSON(url_export_settings).done(function( data ) {
 		}		
 		array_to_html_list(settings_output,settings_array);
 		decTask();
+		if(json_settings.region_description !== undefined) {
+			region_description_output.innerHTML = json_settings.region_description;
+		}
 	})
 	.fail(function(data) {clear_println(settings_output,"error getting data");decTask();});	
 
