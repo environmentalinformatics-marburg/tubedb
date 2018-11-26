@@ -502,11 +502,11 @@ public class ConfigLoader {
 						String name = entry.getValue();
 						Region region1 = tsdb.getRegion(regionName);
 						if(region1 != null) {
-							log.info("len "+regionName+"  "+section.length(regionName));
+							//log.info("len "+regionName+"  "+section.length(regionName));
 							List<String> yy = section.getAll(regionName);
 							String desc = null;
 							for(String y:yy) {
-								log.info("get "+y);
+								//log.info("get "+y);
 								if(desc == null) {
 									desc = y;
 								} else {
@@ -517,8 +517,8 @@ public class ConfigLoader {
 								desc = desc.replace("\\n", "\n");
 							}
 							region1.description = desc;
-							log.info("set description for " + region1.name);
-							log.info(region.description);
+							//log.info("set description for " + region1.name);
+							//log.info(region.description);
 						} else {
 							log.warn("region not found: "+regionName);
 						}
