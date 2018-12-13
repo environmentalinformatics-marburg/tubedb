@@ -3,11 +3,12 @@
   <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta name="robots" content="noindex" />
-	<link rel="shortcut icon" href="../favicon.png">
-    <title>Map of Plots</title>
-    <link rel="stylesheet" href="ol.css" type="text/css">
+  <link rel="shortcut icon" href="../favicon.png">
+  <link rel="stylesheet" href="../fonts/fonts.css" type="text/css">
+  <title>Map of Plots</title>
+  <link rel="stylesheet" href="ol.css" type="text/css">
 	<link rel="stylesheet" href="map2.css" type="text/css">
-    <script src="ol-debug.js"></script>
+  <script src="ol-debug.js"></script>
 	<script src="vue.js"></script>
 	<script src="axios.js"></script>
 	<script src="map2.js"></script>
@@ -27,7 +28,8 @@
           </div>
 
           <div class="modal-body">
-			<a :href="'../visual_plotstation_raw.html?region='+encodeURIComponent(plot.region)+'&plot='+encodeURIComponent(plot.name)" target="_blank">view climate data</a>
+      <!--<a :href="'../visual_plotstation_raw.html?region='+encodeURIComponent(plot.region)+'&plot='+encodeURIComponent(plot.name)" target="_blank">view climate data</a>-->
+      <a :href="'../visualisation_meta/visualisation_meta.html?pinned_project='+encodeURIComponent(plot.region)+'&pinned_plot='+encodeURIComponent(plot.name)" target="_blank">view climate data</a>
 			<br>
 			<br>
 			<table>

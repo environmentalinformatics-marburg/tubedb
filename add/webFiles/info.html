@@ -4,19 +4,58 @@
 <title>Info</title>
 <meta name="robots" content="noindex" />
 <meta charset="utf-8">
+<link rel="stylesheet" href="../content/fonts/fonts.css" type="text/css">
 
 <style type="text/css">
+
+body { 
+	font-size: 0.9em;
+	font-family: Roboto,sans-serif;
+}
+
 table, th, td {
     border: 1px solid black;
     border-collapse: collapse;
 }
 
+.horizontal-box {
+  display: flex;
+  flex-flow: row;
+}
+
+.spacer {
+  flex: auto;
+}
+
+.center-box {
+  flex: none;
+}
 
 </style>
 
 </head>
 
 <body>
+
+<div class="horizontal-box">
+<div class="spacer"></div>
+
+<div class="center-box">
+<table>
+<tr><th>Subject</th><th>Date</th></tr>
+<tr><td>some message</td><td>some date</td></tr>
+<tr><td>some message</td><td>some date</td></tr>
+</table>
+
+</div><!--END center-box-->
+
+<div class="spacer"></div>
+</div><!--END horizontal-box-->
+
+<ul>
+<li>some notes</li>
+<li>some notes</li>
+</ul>
 
 </body>
 </html>
