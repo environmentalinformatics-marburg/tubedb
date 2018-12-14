@@ -19,9 +19,6 @@ import ar.com.hjg.pngj.FilterType;
 import ar.com.hjg.pngj.IImageLine;
 import ar.com.hjg.pngj.ImageInfo;
 import ar.com.hjg.pngj.PngWriter;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.WritableImage;
-import javafx.scene.image.WritablePixelFormat;
 
 /**
  * Base class of image creators.
@@ -70,23 +67,27 @@ public class ImageRGBA implements PureImage {
 	 * Get JavaFX image 
 	 * @return
 	 */
-	public WritableImage getWritableImage() {
+	/*public WritableImage getWritableImage() {
 		WritableImage writableImage = new WritableImage(width, height);
 		writableImage.getPixelWriter().setPixels(0, 0, width, height, WritablePixelFormat.getIntArgbInstance(), imageBuffer, 0, width);
 		return writableImage;
-	}
+	}*/
 	
-	public WritableImage getWritableImage2() { //slow
+	/**
+	 * Get JavaFX image 
+	 * @return
+	 */
+	/*public WritableImage getWritableImage2() { //slow
 		BufferedImage bi = getBufferedImage_FAST();
 		return SwingFXUtils.toFXImage(bi, null);
-	}
+	}*/
 	
 	@Override
 	public BufferedImage getBufferedImage() {
 		return getBufferedImage_FAST();
 	}
 
-	/*public BufferedImage getBufferedImage() {//slow old default
+	/*public BufferedImage getBufferedImage() {//slow old default (from JavaFX image)
 		return SwingFXUtils.fromFXImage(getWritableImage(), null);
 	}*/
 	
