@@ -101,11 +101,12 @@ public class Handler_sensor_list extends MethodHandler {
 			String[] webList = Arrays.stream(sensorNames)
 					.map(sensorName->{
 						Sensor sensor = sensorMap.get(sensorName);
-						if(sensor==null) {
+						if(sensor == null) {
 							sensor = new Sensor(sensorName);
+							sensor.internal = true; // sensors that do not exist in config are marked as internal
 						}
 						return sensor;
-					}).filter(s->(!s.internal||!TsDBFactory.HIDE_INTENAL_SENSORS)&&(isRaw||s.isAggregable()))
+					}).filter(s->(!s.internal || !TsDBFactory.HIDE_INTENAL_SENSORS) && (isRaw || s.isAggregable()))
 					.sorted((s1,s2)->{
 						if(s1.internal&&!s2.internal) {
 							return +1;

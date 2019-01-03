@@ -635,6 +635,7 @@ public class TimeSeriesViewScene extends TsdbScene {
 					Sensor sensor = sensorMap.get(sensorName);
 					if(sensor==null) {
 						sensor = new Sensor(sensorName);
+						sensor.internal = true; // sensors that do not exist in config are marked as internal
 					}
 					if(sensor.isAggregable() || agg==AggregationInterval.RAW) {
 						sensorList.addAll(sensor);

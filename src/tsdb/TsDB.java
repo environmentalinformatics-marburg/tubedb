@@ -33,7 +33,7 @@ import tsdb.util.Util;
 public class TsDB implements AutoCloseable {
 	private static final Logger log = LogManager.getLogger();
 	
-	public static final String tubedb_version = "1.11.7";
+	public static final String tubedb_version = "1.11.8";
 
 	/**
 	 * map regionName -> Region
@@ -204,6 +204,7 @@ public class TsDB implements AutoCloseable {
 				log.warn("sensor "+names[i]+" not found");
 				if(createMissing) {
 					sensors[i] = new Sensor(names[i]);
+					sensor.internal = true; // sensors that do not exist in config are marked as internal
 				}
 			}
 		}
@@ -410,10 +411,12 @@ public class TsDB implements AutoCloseable {
 		return sensorMap.get(sensorName);
 	}
 
-	public Sensor getOrCreateSensor(String sensorName) {
+	@Deprecated
+	public Sensor getOrCreateSensor(String sensorName) { // not used
 		Sensor sensor = sensorMap.get(sensorName);
 		if(sensor==null) {
 			sensor = new Sensor(sensorName);
+			sensor.internal = true; // sensors that do not exist in config are marked as internal
 			insertSensor(sensor);
 			return sensor;
 		} else {
@@ -548,11 +551,13 @@ public class TsDB implements AutoCloseable {
 		return baseAggregationSensorNameSet.contains(sensorName);
 	}
 
-	public void insertRawSensor(String sensorName) {
+	@Deprecated
+	public void insertRawSensor(String sensorName) { // not used
 		Sensor sensor = getSensor(sensorName);
 		if(sensor==null) {
 			log.trace("created new sensor "+sensorName);
 			sensor = new Sensor(sensorName);
+			sensor.internal = true; // sensors that do not exist in config are marked as internal
 			insertSensor(sensor);
 		}			
 		if(baseAggregationExists(sensorName)) {

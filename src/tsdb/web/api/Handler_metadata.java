@@ -20,6 +20,7 @@ import org.eclipse.jetty.server.UserIdentity;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import tsdb.TsDBFactory;
 import tsdb.component.Region;
 import tsdb.component.Sensor;
 import tsdb.remote.GeneralStationInfo;
@@ -176,9 +177,15 @@ public class Handler_metadata extends MethodHandler {
 		for(String sensorName:sensorNameSet) {
 			Sensor sensor = sensorMap.get(sensorName);
 			if(sensor == null) {
-				sensorList.add(new Sensor(sensorName));
+				if(!TsDBFactory.HIDE_INTENAL_SENSORS) {
+					sensor = new Sensor(sensorName);
+					sensor.internal = true; // sensors that do not exist in config are marked as internal
+					sensorList.add(sensor);
+				}
 			} else {
-				sensorList.add(sensor);
+				if(!sensor.internal || !TsDBFactory.HIDE_INTENAL_SENSORS) {
+					sensorList.add(sensor);
+				}
 			}
 		}
 		sensorList.sort((a,b)->String.CASE_INSENSITIVE_ORDER.compare(a.name, b.name));

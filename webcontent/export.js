@@ -215,7 +215,7 @@ decTask();
 $.get(url_region_list).done(function(data) {
 		var rows = splitData(data);
 		if(rows.length<2) {
-			$("#choose_region_div")[0].style.display="none";
+			$("#choose_region_div")[0].style.display = "none";
 			$("#div_region").hide();
 		}
 		//decTask();

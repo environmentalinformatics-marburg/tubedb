@@ -183,7 +183,9 @@ public class ConfigLoader {
 					if(tsdb.sensorExists(sensorName)) {
 						// log.info("sensor already exists: "+sensorName+" new in "+typeName);
 					} else {
-						tsdb.insertSensor(new Sensor(sensorName));
+						Sensor sensor = new Sensor(sensorName);
+						sensor.internal = true; // sensors that do not exist in config are marked as internal
+						tsdb.insertSensor(sensor);
 					}
 				}
 				tsdb.insertLoggerType(new LoggerType(typeName, sensorNames));

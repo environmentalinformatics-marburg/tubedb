@@ -1254,11 +1254,11 @@ Ta_200_growth_sum:
   post_day_func: "(Ta_200 > 5 ? Ta_200 - 5 : 0)"
   aggregation: sum
 
-Ta_200_growing_degree_days:  
-  description: growing day with (min max) mean temperature in range 10°C to 30°C
-  unit: (amount)
+Ta_200_growing_degree_days_10:  
+  description: GDD (Growing Degree Days) ([mean of Ta_200_min and Ta_200_max] - 10°C, with Ta_200_min and Ta_200_max capped to range of 10°C to 30°C)
+  unit: index value (°C scale based)
   dependency: [Ta_200_min, Ta_200_max]
-  post_day_func: "((Ta_200_min + Ta_200_max) / 2 > 10 && (Ta_200_min + Ta_200_max) / 2 < 30 ? 1 : 0)"
+  post_day_func: "( ((Ta_200_min <= 10 ? 10 : (Ta_200_min >= 30 ? 30 : Ta_200_min))) + ((Ta_200_max <= 10 ? 10 : (Ta_200_max >= 30 ? 30 : Ta_200_max))) ) / 2 - 10"
   aggregation: sum
 
 Ta_200_heat_index:  
@@ -1567,4 +1567,12 @@ Ta_200_ref_diff:
   dependency: [Ta_200, ref_Ta_200]
   post_hour_func: "Ta_200 - ref_Ta_200"
   aggregation: average
-  visibility: internal 
+  visibility: internal
+
+precipitation_radolan_rain_days:  
+  description: rain days as precipitation_radolan >= 0.1 mm per day
+  unit: d (day)
+  dependency: precipitation_radolan
+  post_day_func: "(precipitation_radolan >= 0.1 ? 1 : 0)"
+  aggregation: sum
+  category: water  

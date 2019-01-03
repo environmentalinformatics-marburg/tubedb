@@ -475,21 +475,21 @@
 				<div v-if="viewType === 'diagram' || viewType === 'heatmap' || viewType === 'boxplot'">
 					<div v-for="view in views">
 						<div v-if="view.status == 'init'">
-							{{view.plot}} / {{view.sensor}} queued
+							<b>{{view.plot}} / {{view.sensor}} &nbsp;&nbsp;&nbsp; </b>queued...
 							<div style="width: 1000px; height: 100px">
 							</div>
 						</div>
 						<div v-if="view.status == 'running'">
-							{{view.plot}} / {{view.sensor}} processing
+							<b>{{view.plot}} / {{view.sensor}} &nbsp;&nbsp;&nbsp; </b>processing...
 							<div style="width: 1000px; height: 100px">
 							</div>						
 						</div>
 						<div v-if="view.status == 'done'">
-							{{view.plot}} / {{view.sensor}} : {{sensorMap[view.sensor].description}} -- {{sensorMap[view.sensor].unit_description}} <br>
+							<b>{{view.plot}} / {{view.sensor}} &nbsp;&nbsp;&nbsp; </b>{{sensorMap[view.sensor].description}} &nbsp;&nbsp;&nbsp; <i style="color: grey;">{{sensorMap[view.sensor].unit_description}}</i><br>
 							<img :src="view.url"> </img>
 						</div>
 						<div v-if="view.status == 'error'">
-							{{view.plot}} / {{view.sensor}} error
+							<b>{{view.plot}} / {{view.sensor}} &nbsp;&nbsp;&nbsp; </b>error
 						</div>
 					</div>
 				</div>
@@ -497,10 +497,10 @@
 				<div v-if="viewType === 'table'">
 					<div v-for="view in views">
 						<div v-if="view.status == 'init'">
-							table queued
+							table queued...
 						</div>
 						<div v-if="view.status == 'running'">
-							table processing
+							table processing...
 						</div>
 						<div v-if="view.status == 'done'">
 							<button type="button" @click="filteredtableStartRow = 0;">|&lt;</button>
