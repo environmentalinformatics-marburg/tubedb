@@ -1,16 +1,35 @@
 plot,general,lat,lon,elevation,focal,is_station,logger
-BALE001 Tulu Dimtu,BALE,6.82693,39.81871,4385,N,N,BALE
-BALE002 Tuluka,BALE,6.78945,39.77511,3848,N,N,BALE
-BALE003 Angesso Station,BALE,6.89642,39.90854,3949,N,N,BALE
-BALE004 Magnete,BALE,6.51622,39.74515,1599,N,N,BALE
-BALE005 Meskel Darkina,BALE,7.05860,39.62336,3724,N,N,BALE
-BALE006 Rira Substation,BALE,6.75912,39.72161,2803,N,N,BALE
-BALE007 Dinsho Head Quarter,BALE,7.09378,39.78966,3208,N,N,BALE
-BALE008 Sodota,BALE,6.99249,39.70171,3529,N,N,BALE
-BALE009 EWCP Station,BALE,6.84945,39.88197,4124,N,N,BALE
-BALE010 Delo Mena,BALE,6.41199,39.83328,1315,N,N,BALE
-Adaba,Meteo,7.01667,39.4,3420,N,Y,Meteo
-Dello Mena,Meteo,6.416667,39.833333,1313,N,Y,Meteo
-Dinsho,Meteo,7.1,39.766667,3072,N,Y,Meteo
-Rira,Meteo,7.01667,39.833333,2700,N,Y,Meteo
-Robe,Meteo,7.133333,40.05,2480,N,Y,Meteo
+BALE001 Tulu Dimtu,bale,6.82693,39.81871,4385,N,N,bale
+BALE002 Tuluka,bale,6.78945,39.77511,3848,N,N,bale
+BALE003 Angesso Station,bale,6.89642,39.90854,3949,N,N,bale
+BALE004 Magnete,bale,6.51622,39.74515,1599,N,N,bale
+BALE005 Meskel Darkina,bale,7.05860,39.62336,3724,N,N,bale
+BALE006 Rira Substation,bale,6.75912,39.72161,2803,N,N,bale
+BALE007 Dinsho Head Quarter,bale,7.09378,39.78966,3208,N,N,bale
+BALE008 Sodota,bale,6.99249,39.70171,3529,N,N,bale
+BALE009 EWCP Station,bale,6.84945,39.88197,4124,N,N,bale
+BALE010 Delo Mena,bale,6.41199,39.83328,1315,N,N,bale
+Adaba,bale_other,7.01667,39.4,3420,N,Y,bale_other
+Dello Mena,bale_other,6.416667,39.833333,1313,N,Y,bale_other
+Dinsho,bale_other,7.1,39.766667,3072,N,Y,bale_other
+Rira,bale_other,7.01667,39.833333,2700,N,Y,bale_other
+Robe,bale_other,7.133333,40.05,2480,N,Y,bale_other
+SL01,bale_soil,6.92725,39.77275,4153,N,Y,bale_soil
+SL02,bale_soil,6.93000,39.77188,4181,N,Y,bale_soil
+SL03,bale_soil,6.78665,39.79342,3877,N,Y,bale_soil
+SL04,bale_soil,6.79474,39.81469,3932,N,Y,bale_soil
+SL05,bale_soil,6.82617,39.81897,4388,N,Y,bale_soil
+TM04,bale_soil,6.84411,39.87876,4129,N,Y,bale_soil
+TM05,bale_soil,6.77522,39.80307,3858,N,Y,bale_soil
+TM06,bale_soil,6.77535,39.80311,3857,N,Y,bale_soil
+TM07,bale_soil,6.77521,39.80318,3856,N,Y,bale_soil
+TM08,bale_soil,6.82617,39.81897,4388,N,Y,bale_soil
+TM09,bale_soil,6.86644,39.74365,4084,N,Y,bale_soil
+TM10,bale_soil,6.85509,39.71345,4022,N,Y,bale_soil
+TM11,bale_soil,7.01307,39.72272,3493,N,Y,bale_soil
+TM12,bale_soil,6.95493,39.73463,3769,N,Y,bale_soil
+TM13,bale_soil,6.91937,39.76898,3930,N,Y,bale_soil
+TM14,bale_soil,6.82605,39.80496,4124,N,Y,bale_soil
+TM15,bale_soil,6.81928,39.81152,4185,N,Y,bale_soil
+TM16,bale_soil,6.81327,39.81968,4103,N,Y,bale_soil
+TM17,bale_soil,6.79197,39.81005,3880,N,Y,bale_soil

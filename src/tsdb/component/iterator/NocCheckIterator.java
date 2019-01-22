@@ -6,7 +6,6 @@ import java.util.Arrays;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import tsdb.util.TimeUtil;
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.InputIterator;
 import tsdb.util.iterator.TsIterator;

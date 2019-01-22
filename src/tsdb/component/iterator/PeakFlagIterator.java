@@ -81,25 +81,32 @@ public class PeakFlagIterator extends TimeWindowIterator {
 			float currV = current.data[columnIndex];
 			float prevV = prev[columnIndex];
 			DataQuality currQ = current.qualityFlag[columnIndex];
-			if(cleanTimestamp[columnIndex] <= current.timestamp && currQ == DataQuality.PHYSICAL && Float.isFinite(prevV)) {
-				currQ = DataQuality.STEP;
-				float diff = Math.abs(prevV - currV);
-				if(diff > steps[columnIndex]) {
-					for(TsEntry e : future) {
-						float f = e.data[columnIndex];
-						if(Float.isFinite(f)) {
-							float fdiff = Math.abs(prevV - f);
-							if(fdiff < steps[columnIndex]) {
-								currQ = DataQuality.PHYSICAL;
-								cleanTimestamp[columnIndex] = e.timestamp;
-								break;
+			if(currQ == DataQuality.PHYSICAL) {
+				if(steps[columnIndex] == Float.MAX_VALUE) { // no step check
+					currQ = DataQuality.STEP;	
+				} else {  // step check
+					if(cleanTimestamp[columnIndex] <= current.timestamp && Float.isFinite(prevV)) {
+						currQ = DataQuality.STEP;
+						float diff = Math.abs(prevV - currV);
+						//log.info("diff " + diff);
+						if(diff > steps[columnIndex]) {
+							for(TsEntry e : future) {
+								float f = e.data[columnIndex];
+								if(Float.isFinite(f)) {
+									float fdiff = Math.abs(prevV - f);
+									if(fdiff < steps[columnIndex]) {
+										currQ = DataQuality.PHYSICAL;
+										cleanTimestamp[columnIndex] = e.timestamp;
+										break;
+									}
+								}
 							}
 						}
 					}
-				}
+				}				
 			}
 			flags[columnIndex] = currQ;			
-			
+
 			/*if(current.timestamp < cleanTimestamp[columnIndex]) {
 				currQ = DataQuality.NO;
 				log.info(TimeUtil.oleMinutesToText(current.timestamp) + " L " + currV);
@@ -125,10 +132,4 @@ public class PeakFlagIterator extends TimeWindowIterator {
 		}
 		return new TsEntry(current.timestamp, current.data, flags);
 	}
-
-
-
-
-
-
 }

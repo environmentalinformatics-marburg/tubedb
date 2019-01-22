@@ -217,6 +217,7 @@ public final class TsDBFactory {
 						configLoader.readOptionalStationProperties(dir+"/station_properties.yaml");
 					}
 				} catch(Exception e) {
+					e.printStackTrace();
 					log.info("could not load meta data of  "+path+"  "+e);
 				}
 			}

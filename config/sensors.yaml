@@ -92,6 +92,16 @@ Ta_10:
   empirical_diff: 3.38
   interpolation_mse: 7
   category: temperature
+
+Ts_02:
+  description: Soil temperature at 2 centimeters below surface
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 1.85]   
+  empirical_diff: 3.31 
+  interpolation_mse: 7
+  category: temperature
   
 Ts_05:
   description: Soil temperature at 5 centimeters below surface

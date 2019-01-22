@@ -1,11 +1,11 @@
 plot,logger,serial,start,end,alias
-BALE001 Tulu Dimtu,BALE,BALE001,*,*,Bale01
-BALE002 Tuluka,BALE,BALE002,*,*,Bale02
-BALE003 Angesso Station,BALE,BALE003,*,*,Bale03
-BALE004 Magnete,BALE,BALE004,*,*,Bale04
-BALE005 Meskel Darkina,BALE,BALE005,*,*,Bale05
-BALE006 Rira Substation,BALE,BALE006,*,*,Bale06
-BALE007 Dinsho Head Quarter,BALE,BALE007,*,*,Bale07
-BALE008 Sodota,BALE,BALE008,*,*,Bale08
-BALE009 EWCP Station,BALE,BALE009,*,*,Bale09
-BALE010 Delo Mena,BALE,BALE010,*,*,Bale10
+BALE001 Tulu Dimtu,bale,BALE001,*,*,Bale01
+BALE002 Tuluka,bale,BALE002,*,*,Bale02
+BALE003 Angesso Station,bale,BALE003,*,*,Bale03
+BALE004 Magnete,bale,BALE004,*,*,Bale04
+BALE005 Meskel Darkina,bale,BALE005,*,*,Bale05
+BALE006 Rira Substation,bale,BALE006,*,*,Bale06
+BALE007 Dinsho Head Quarter,bale,BALE007,*,*,Bale07
+BALE008 Sodota,bale,BALE008,*,*,Bale08
+BALE009 EWCP Station,bale,BALE009,*,*,Bale09
+BALE010 Delo Mena,bale,BALE010,*,*,Bale10
