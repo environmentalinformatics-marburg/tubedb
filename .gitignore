@@ -25,3 +25,6 @@ hs_err_pid*
 .Rhistory
 /keystore.jks
 /recording.jfr
+
+
+/webcontent/.gradle

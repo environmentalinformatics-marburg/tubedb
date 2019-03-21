@@ -159,10 +159,14 @@ public class Main {
 			log.trace("*** request   "+request.getRequestURL()+"  "+request.getQueryString());
 		});
 		requestLogHandler.setHandler(gzipHandler);
-		server.setHandler(requestLogHandler);
-		//contextCollection.add
-		server.setStopTimeout(DATA_TRANSFER_TIMEOUT_MILLISECONDS);
 
+		HandlerList handerList = new HandlerList();
+		handerList.addHandler(new NoindexHandler());
+		handerList.addHandler(requestLogHandler);
+		
+		server.setHandler(handerList);
+
+		server.setStopTimeout(DATA_TRANSFER_TIMEOUT_MILLISECONDS);
 
 		server.start();
 		//server.dumpStdErr();

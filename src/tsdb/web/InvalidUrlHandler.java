@@ -30,7 +30,7 @@ public class InvalidUrlHandler extends AbstractHandler {
 		writer.print("<html lang=\"en\">");
 		writer.print("<head>");
 		writer.print("<meta charset=\"utf-8\">");
-		writer.print("<meta name=\"robots\" content=\"noindex\" />");
+		writer.print("<meta name=\"robots\" content=\"noindex, nofollow\" />");
 		writer.print("<title>");
 		writer.print(message);
 		writer.print("</title>");
