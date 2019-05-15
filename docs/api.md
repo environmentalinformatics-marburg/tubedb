@@ -3,8 +3,10 @@ title: API
 category: "api"
 tags: "api"
 layout: single
+classes: wide
+author_profile: false
 sidebar:
-  nav: "api" 
+  nav: "docs" 
 ---
 
 TubeDB contains API functionality to query meta data, to process timeseries data and to create visualisations.

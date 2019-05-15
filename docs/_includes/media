@@ -1,3 +1,0 @@
-<div class="media-container">
-<iframe src="{{ include.url | absolute_url }}" frameborder="0" width="960" height="749" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
-</div>

@@ -110,7 +110,7 @@ example file-content:
 
 Ta_200:
   description: Air temperature at 2 meters above ground
-  unit: �C (degree Celcius, -40 to 60)
+  unit: °C (degree Celcius, -40 to 60)
   aggregation: average
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]

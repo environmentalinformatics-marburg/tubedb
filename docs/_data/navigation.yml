@@ -9,3 +9,46 @@ main:
   - title: "About"
     url: /about.html    
     
+docs:
+  - title: Usage
+    url: usage
+    children:
+      - title: "Build"
+        url: /usage/build 
+      - title: "Install"
+        url: /usage/install 
+      - title: "Run"
+        url: /usage/run                                     
+
+  - title: Configuration
+    url: configuration
+    children:
+      - title: "sensor configuration"
+        url: /configuration/sensor            
+      - title: "project configuration"
+        url: /configuration/project 
+      - title: "data import configuration"
+        url: /configuration/import
+        
+  - title: API
+    url: api
+    children:
+      - title: "Meta Data API"
+        url: /api/meta 
+      - title: "Query API"
+        url: /api/query                                               
+
+  - title: Documentation
+    url: doc
+    children:
+      - title: "Import Formats"
+        url: /documentation/import_formats 
+      - title: "Example package"
+        url: /documentation/example 
+      - title: "Distribution"
+        url: /documentation/distribution
+      - title: "Project folders and files"
+        url: /documentation/folders_and_files
+      - title: "source structure"
+        url: /documentation/source_structure                                        
+

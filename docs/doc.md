@@ -3,6 +3,8 @@ title: Documentation
 category: "Documentation"
 tags: "Documentation"
 layout: single
+classes: wide
+author_profile: false
 sidebar:
   nav: "docs" 
 ---

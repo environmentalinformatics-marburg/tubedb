@@ -3,8 +3,10 @@ title: Configuration
 category: "configuration"
 tags: "configuration"
 layout: single
+classes: wide
+author_profile: false
 sidebar:
-  nav: "configuration" 
+  nav: "docs" 
 ---
 
 TubeDB meta data is described by configuration files.

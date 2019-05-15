@@ -1,7 +1,11 @@
-lib/* linguist-vendored
-lib_src/* linguist-vendored
-documentation/* linguist-documentation
+# no line ending conversion
+* -crlf
+
+docs/* linguist-documentation
 example/* linguist-documentation
+lib/* linguist-vendored
+lib_old/* linguist-vendored
+lib_src/* linguist-vendored
 
 markerwithlabel.js linguist-vendored
 jquery-2.1.1.min.js linguist-vendored

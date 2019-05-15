@@ -1,7 +1,7 @@
 ---
 title: TubeDB
 layout: splash
-date: '2018-02-06 13:00:00 +0100'
+author_profile: false
 
 header:
   overlay_color: "#000"

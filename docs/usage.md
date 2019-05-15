@@ -3,8 +3,10 @@ title: Usage
 category: "usage"
 tags: "usage"
 layout: single
+classes: wide
+author_profile: false
 sidebar:
-  nav: "usage" 
+  nav: "docs" 
 ---
 
 ### 1. [Build](build) (optional)
