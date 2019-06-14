@@ -33,7 +33,7 @@ import tsdb.util.Util;
 public class TsDB implements AutoCloseable {
 	private static final Logger log = LogManager.getLogger();
 	
-	public static final String tubedb_version = "1.11.13";
+	public static final String tubedb_version = "1.11.14";
 
 	/**
 	 * map regionName -> Region
@@ -198,13 +198,12 @@ public class TsDB implements AutoCloseable {
 	public Sensor[] getSensors(String[] names, boolean createMissing) {
 		Sensor[] sensors = new Sensor[names.length];
 		for(int i=0;i<names.length;i++) {
-			Sensor sensor = sensorMap.get(names[i]);
-			sensors[i] = sensor;
-			if(sensor==null) {
+			sensors[i] = sensorMap.get(names[i]);
+			if(sensors[i]==null) {
 				log.warn("sensor "+names[i]+" not found");
 				if(createMissing) {
 					sensors[i] = new Sensor(names[i]);
-					sensor.internal = true; // sensors that do not exist in config are marked as internal
+					sensors[i].internal = true; // sensors that do not exist in config are marked as internal
 				}
 			}
 		}
