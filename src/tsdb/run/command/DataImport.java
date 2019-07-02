@@ -20,6 +20,9 @@ import tsdb.loader.bale.TOA5Loader;
 import tsdb.loader.be.TimeSeriesLoaderBE;
 import tsdb.loader.burgwald.HoboLoader;
 import tsdb.loader.csv.ImportGenericCSV;
+import tsdb.loader.csv.MofLoader;
+import tsdb.loader.influx.InfluxLoader;
+import tsdb.loader.influx.InfluxLoaderConfig;
 import tsdb.loader.ki.TimeSeriesLoaderKiLi;
 import tsdb.loader.ki.TimeSeriesLoaderKiLi_manual_tfi;
 import tsdb.loader.mm.ImportGenericASC;
@@ -39,6 +42,7 @@ public class DataImport {
 			DataImport dataImport = new DataImport(tsdb);
 			dataImport.run("import.ini");
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e);
 		}
 	}
@@ -121,6 +125,15 @@ public class DataImport {
 			}
 			case "toa5": {
 				new TOA5Loader(tsdb).loadDirectoryRecursive(rootDirectory);
+				break;
+			}
+			case "influx": {
+				InfluxLoaderConfig config = new InfluxLoaderConfig(rootDirectory);
+				new InfluxLoader(tsdb).load(config);
+				break;
+			}
+			case "mof": {
+				new MofLoader(tsdb).load(rootDirectory);
 				break;
 			}
 			default:

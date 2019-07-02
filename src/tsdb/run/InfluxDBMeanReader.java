@@ -12,9 +12,8 @@ import org.influxdb.dto.QueryResult;
 import org.influxdb.dto.QueryResult.Result;
 import org.influxdb.dto.QueryResult.Series;
 
-import com.squareup.okhttp.OkHttpClient;
-
-import retrofit.client.OkClient;
+import okhttp3.OkHttpClient;
+import okhttp3.OkHttpClient.Builder;
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 /*
@@ -35,10 +34,8 @@ public class InfluxDBMeanReader {
 
 	public static void main(String[] args) {		
 		TsDB tsdb = TsDBFactory.createDefault();
-		OkHttpClient okHttpClient = new OkHttpClient();
-		okHttpClient.setReadTimeout(10, TimeUnit.MINUTES);
-		OkClient okClient = new OkClient(okHttpClient);
-		InfluxDB influxDB = InfluxDBFactory.connect(InfluxDBDataWriter.dbHost, "root", "root", okClient);
+		Builder okHttpClientBuilder = new OkHttpClient.Builder().readTimeout(10, TimeUnit.MINUTES);
+		InfluxDB influxDB = InfluxDBFactory.connect(InfluxDBDataWriter.dbHost, "root", "root", okHttpClientBuilder);
 		InfluxDBMeanReader influxDBDataReader = new InfluxDBMeanReader(tsdb, influxDB);
 		influxDBDataReader.readAll();
 		tsdb.close();		

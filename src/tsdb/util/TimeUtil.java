@@ -115,6 +115,7 @@ public final class TimeUtil implements Serializable {
 	private static final DateTimeFormatter DATE_TIME_FORMATER_SLASH = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
 	private static final DateTimeFormatter DATE_TIME_FORMATER_SPACE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 	public static final DateTimeFormatter DATE_TIME_FORMATER_SPACE_SECONDS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	public static final DateTimeFormatter DATE_TIME_FORMATER_MOF = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HHmmss");
 	
 	/**
 	 * format: yyyy/MM/dd HH:mm

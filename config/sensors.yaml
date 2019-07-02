@@ -1585,4 +1585,9 @@ precipitation_radolan_rain_days:
   dependency: precipitation_radolan
   post_day_func: "(precipitation_radolan >= 0.1 ? 1 : 0)"
   aggregation: sum
-  category: water  
+  category: water
+
+illuminance:
+  description: illuminance
+  unit: lx (Lux)
+  aggregation: average 

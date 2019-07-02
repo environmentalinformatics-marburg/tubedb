@@ -550,6 +550,9 @@ public class ConfigLoader {
 		ColumnReaderString cr_alternative_id = table.createColumnReader("alternative_id", null);  // only for plots that are stations
 
 		for(String[] row:table.rows) {
+			if(row.length == 1 && (row[0].length() == 0 || row[0].trim().isEmpty() || row[0].trim().startsWith("#"))) { // skip empty rows and comments
+				continue;
+			}
 			String plotID = cr_plot.get(row);
 			String generalStationName = cr_general.get(row);
 			GeneralStation generalStation = tsdb.getGeneralStation(generalStationName);

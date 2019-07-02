@@ -79,24 +79,12 @@ public class ImportGenericCSV {
 		try {
 			log.info("load file "+filePath);			
 			Table table = Table.readCSV(filePath,',');		
-			int datetimeIndex = table.getColumnIndex("datetime");
+			int datetimeIndex = getDatetimeIndex(table);
 			if(datetimeIndex!=0) {
 				throw new RuntimeException("wrong format");
 			}
 
-			String filename = filePath.getFileName().toString();
-
-			int postFixIndex = filename.indexOf('_'); //filename with station name and postfix
-
-			if(postFixIndex<0) {
-				postFixIndex = filename.indexOf('.'); //filename with station name and without postfix
-			}
-
-			if(postFixIndex<1) {
-				throw new RuntimeException("could not get station name from file name: "+filename);
-			}
-
-			String stationName = filename.substring(0, postFixIndex);
+			String stationName = parseStationName(filePath);
 			log.trace("station "+stationName);
 			Station station = tsdb.getStation(stationName);
 			if(station==null) {
@@ -109,7 +97,7 @@ public class ImportGenericCSV {
 
 			int prevTimestamp = -1;
 			for(String[] row:table.rows) {				
-				int timestamp = (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.parse(row[0]));
+				int timestamp = parseTimestamp(row[0]);
 
 				if(timestamp==prevTimestamp) {
 					log.warn("skip duplicate timestamp "+row[0]+" "+filePath);
@@ -168,5 +156,29 @@ public class ImportGenericCSV {
 			e.printStackTrace();
 			log.error(e+"   "+filePath);
 		}
+	}
+	
+	protected String parseStationName(Path filePath) {
+		String filename = filePath.getFileName().toString();
+
+		int postFixIndex = filename.indexOf('_'); //filename with station name and postfix
+
+		if(postFixIndex<0) {
+			postFixIndex = filename.indexOf('.'); //filename with station name and without postfix
+		}
+
+		if(postFixIndex<1) {
+			throw new RuntimeException("could not get station name from file name: "+filename);
+		}
+
+		return filename.substring(0, postFixIndex);		
+	}
+	
+	protected int parseTimestamp(String timestampText) {
+		return (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.parse(timestampText));
+	}
+	
+	protected int getDatetimeIndex(Table table) {
+		return table.getColumnIndex("datetime");
 	}
 }

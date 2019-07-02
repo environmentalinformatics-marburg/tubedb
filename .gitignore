@@ -23,6 +23,7 @@ hs_err_pid*
 .Rproj.user
 .RData
 .Rhistory
+influx_caldern.yaml
 /keystore.jks
 /recording.jfr
 

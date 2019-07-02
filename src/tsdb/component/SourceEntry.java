@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
+import tsdb.util.DataEntry;
 import tsdb.util.DataRow;
 import tsdb.util.TimeUtil;
 import tsdb.util.TsSchema;
@@ -30,8 +31,8 @@ public class SourceEntry implements Serializable {
 	
 	
 	public SourceEntry(Path filename, String stationName, long firstTimestamp, long lastTimestamp, int rows, String[] headerNames, String[] sensorNames, int timeStep) {
-		this.path = filename.subpath(0, filename.getNameCount()-1).toString();
-		this.filename = filename.getFileName().toString();
+		this.path = filename == null ? "" : filename.subpath(0, filename.getNameCount()-1).toString();
+		this.filename = filename == null ? "" :filename.getFileName().toString();
 		this.stationName = stationName;
 		this.firstTimestamp = firstTimestamp;
 		this.lastTimestamp = lastTimestamp;
@@ -49,6 +50,14 @@ public class SourceEntry implements Serializable {
 		long firstTimestamp = dataRows.get(0).timestamp;
 		long lastTimestamp = dataRows.get(dataRows.size()-1).timestamp;
 		return new SourceEntry(filename, stationName, firstTimestamp, lastTimestamp, dataRows.size(), sensorNames, sensorNames, TsSchema.NO_CONSTANT_TIMESTEP);
+	}
+	
+	public static SourceEntry ofDataEntry(String stationName, String sensorSrcName, String sensorDstName, ArrayList<DataEntry> dataEntryList, Path filename) {
+		long firstTimestamp = dataEntryList.get(0).timestamp;
+		long lastTimestamp = dataEntryList.get(dataEntryList.size()-1).timestamp;
+		String[] sensorSrcNames = new String[] {sensorSrcName};
+		String[] sensorDstNames = new String[] {sensorDstName};
+		return new SourceEntry(filename, stationName, firstTimestamp, lastTimestamp, dataEntryList.size(), sensorSrcNames, sensorDstNames, TsSchema.NO_CONSTANT_TIMESTEP);
 	}
 	
 	@Override
