@@ -18,7 +18,9 @@ docs:
       - title: "Install"
         url: /usage/install 
       - title: "Run"
-        url: /usage/run                                     
+        url: /usage/run
+      - title: "R Package"
+        url: /usage/rpackage        
 
   - title: Configuration
     url: configuration

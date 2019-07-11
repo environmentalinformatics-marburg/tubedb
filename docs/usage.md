@@ -20,3 +20,7 @@ Install TubeDB.
 ### 3. [Run](run)
 
 Run Tubedb.
+
+### 4. [R Package](rpackage)
+
+Install und run R package.
