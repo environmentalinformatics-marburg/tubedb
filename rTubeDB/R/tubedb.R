@@ -14,7 +14,8 @@
 #' r <- region_metadata(tubedb, "REG1")
 #' ts <- query_timeseries(tubedb, plot="PLOT1", sensor="Ta_200", datetimeFormat="POSIXlt")
 #' str(ts)
-#' @export
+#' @export TubeDB
+#' @exportClass TubeDB
 TubeDB <- setClass(
   "TubeDB",
 
@@ -25,6 +26,11 @@ TubeDB <- setClass(
   ),
 )
 
+#' constructor for \link{TubeDB-class}
+#'
+#' This is the constructor.
+#' @name TubeDB
+#' @export TubeDB
 setMethod(
   "initialize",
 
@@ -70,13 +76,33 @@ create_query_url <- function(api_url, method, param_list=NULL) {
   if(is.null(param_list)) {
     return(method_url)
   } else {
-    pl <- param_list[param_list!=""]
+    pl <- logicalToText(param_list)
+    pl <- objectToText(pl)
+    pl[lengths(pl) == 0] <- NULL
     pe <- lapply(pl, function(e) { return(URLencode(e, reserved=TRUE))})
     param_pair_list <- paste(names(pe), pe, sep="=")
     param_text <- paste(param_pair_list,collapse="&")
     query_url <- paste(method_url,param_text,sep="?")
     return(query_url)
   }
+}
+
+logicalToText <- function(q) {
+  lapply(q, function(e) {
+    if(is.logical(e)) {
+      if(e) {
+        return("true")
+      }
+      return("false")
+    }
+    return(e)
+  })
+}
+
+objectToText <- function(q) {
+  lapply(q, function(e) {
+    return(paste(e))
+  })
 }
 
 #' direct TubeDB API request
@@ -168,6 +194,9 @@ region_metadata <- function(tubedb, regionID) {
 #' @param year get data from one year only
 #' @param month get data of one month of one year only, year neads to be specified
 #' @param datetimeFormat character, requested type of timestamps. one of: "character", "POSIXct", "POSIXlt"
+#' @param colYear add numeric year column in resulting data.frame (calendar year)
+#' @param colMonth add numeric month column in resulting data.frame (1 to 12)
+#' @param colDay add numeric day column in resulting data.frame (1 to 31)
 #' @return data.frame time series with datetime column + sensor columns
 #' @author woellauer
 #' @seealso \link{TubeDB} \link{regions} \link{region_metadata} \link{POSIXct} \link{POSIXlt} \link{read_timeseries}
@@ -179,7 +208,7 @@ region_metadata <- function(tubedb, regionID) {
 #' ts <- query_timeseries(tubedb, plot="PLOT1", sensor="Ta_200", datetimeFormat="POSIXlt")
 #' str(ts)
 #' @export
-query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality = "physical", interpolated = FALSE, year = NULL, month = NULL, datetimeFormat = "character") {
+query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality = "physical", interpolated = FALSE, year = NULL, month = NULL, datetimeFormat = "character", colYear = FALSE, colMonth = FALSE, colDay = FALSE) {
   stopifnot(isClass(tubedb, TubeDB))
   args <- list(
     plot = plot,
@@ -193,7 +222,7 @@ query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality
   args <- c(args, sensor)
   r <- apiGet(tubedb, "query_csv", args, FALSE)
   c <- textConnection(rawToChar(r$content))
-  t <- read_timeseries(c, datetimeFormat)
+  t <- read_timeseries(c, datetimeFormat, colYear, colMonth, colDay)
   close(c)
   return(t)
 }
@@ -204,17 +233,29 @@ query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality
 #'
 #' @param file file or textConnection
 #' @param datetimeFormat requested type of timestamps. one of: "character", "POSIXct", "POSIXlt"
+#' @param colYear add numeric year column in resulting data.frame (calendar year)
+#' @param colMonth add numeric month column in resulting data.frame (1 to 12)
+#' @param colDay add numeric day column in resulting data.frame (1 to 31)
 #' @return data.frame time series with datetime column + sensor columns
 #' @author woellauer
 #' @seealso \link{POSIXct} \link{POSIXlt} \link{query_timeseries}
 #' @export
-read_timeseries <- function(file, datetimeFormat = "character") {
+read_timeseries <- function(file, datetimeFormat = "character", colYear = FALSE, colMonth = FALSE, colDay = FALSE) {
   t <- read.table(file, sep = ",", header = TRUE, stringsAsFactors = FALSE, colClasses = c(datetime="character"))
+  if(colYear) {
+    t$year <- getYear(t$datetime)
+  }
+  if(colMonth) {
+    t$month <- getMonth(t$datetime)
+  }
+  if(colDay) {
+    t$day <- getDay(t$datetime)
+  }
   if(datetimeFormat == "character") {
     return(t)
   } else if(datetimeFormat == "POSIXct" || datetimeFormat == "POSIXlt") {
     datetime <- t$datetime
-    if(datetime[1] == 4 || datetime[1] == 7) {
+    if(nchar(datetime[1]) == 4 || nchar(datetime[1]) == 7) {
       datetime <- fillTimestamp(datetime)
     }
     format <- getTimestampFormat(datetime[1])
@@ -227,6 +268,36 @@ read_timeseries <- function(file, datetimeFormat = "character") {
   } else {
     stop("unknown datetimeFormat output format: ", datetimeFormat, "   possible values are: character POSIXct POSIXlt")
   }
+}
+
+getYear <- function(datetime) {
+  if(nchar(datetime[1]) == 4 || nchar(datetime[1]) == 7) {
+    datetime <- fillTimestamp(datetime)
+  }
+  format <- getTimestampFormat(datetime[1])
+  t <- as.POSIXlt(datetime, format = format)
+  year <- 1900 + t$year
+  return(year)
+}
+
+getMonth <- function(datetime) {
+  if(nchar(datetime[1]) == 4 || nchar(datetime[1]) == 7) {
+    datetime <- fillTimestamp(datetime)
+  }
+  format <- getTimestampFormat(datetime[1])
+  t <- as.POSIXlt(datetime, format = format)
+  month <- t$mon + 1
+  return(month)
+}
+
+getDay <- function(datetime) {
+  if(nchar(datetime[1]) == 4 || nchar(datetime[1]) == 7) {
+    datetime <- fillTimestamp(datetime)
+  }
+  format <- getTimestampFormat(datetime[1])
+  t <- as.POSIXlt(datetime, format = format)
+  day <- t$mday
+  return(day)
 }
 
 fillTimestamp <- function(timestamp) {
@@ -257,3 +328,35 @@ getTimestampFormat <- function(timestamp) {
   stop("unknown timestamp format of ", timestamp[1])
 }
 
+#' write time series  to file or textConnection
+#'
+#' Write time series data.frame to file or textConnection in TubeDB CSV-format.
+#'
+#' datetime cloumn need to exist. Resulting CSV-file contains as first row datetime and following columns with sensors.
+#' If sensors parameter is missing all columns are included, exept 'year', 'month', 'day' (maybe created by read_timeseries).
+#'
+#'
+#' @param x time series as data.frame
+#' @param file file or textConnection
+#' @param sensors sensor columns
+#' @author woellauer
+#' @seealso \link{read_timeseries} \link{query_timeseries}
+#' @export
+write_timeseries <- function(x, file, sensors = NULL) {
+  cn <- colnames(x)
+  if(!("datetime" %in% cn)) {
+    stop("missing datetime column")
+  }
+  if(is.null(sensors)) {
+    sensors <- cn[!(cn == "datetime" | cn == "year" | cn == "month" | cn == "day")]
+  }
+  if("datetime" %in% colnames(sensors)) {
+    stop("datetime is no sensor")
+  }
+  if(!(all(sensors %in% cn))) {
+    stop("not all sensor columns are in data.frame ", paste(sensors, ""), " ==> ", paste(cn, ""))
+  }
+  cols <- c("datetime", sensors)
+  data <- x[cols]
+  write.csv(data, file, quote = FALSE, row.names = FALSE)
+}

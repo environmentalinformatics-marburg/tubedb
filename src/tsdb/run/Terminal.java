@@ -16,6 +16,7 @@ import tsdb.run.command.Command;
 import tsdb.run.command.CommandMain;
 import tsdb.run.command.CommandSequence;
 import tsdb.run.command.CommandType;
+import tsdb.run.command.Command_export_csv;
 import tsdb.run.command.CountTsDBValues;
 import tsdb.run.command.DataClear;
 import tsdb.run.command.DataImport;
@@ -124,6 +125,7 @@ public class Terminal {
 		addCommand("compact", "defragment free space", RunCompact::main);
 		addCommand("count", "count values in database", CountTsDBValues::main);
 		addCommand("export_tsa", "export time series - 1 or 2 parameters: output filename and optional region name", Command_export_tsa::main);
+		addCommand("export_csv", "export time series to one CSV file per station in raw format", Command_export_csv::main);
 
 		addCommandSequence("import", "composite of: load - masks - references - compact", "load", "masks", "references", "compact");
 

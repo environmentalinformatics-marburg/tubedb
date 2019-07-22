@@ -4,12 +4,19 @@
 \alias{read_timeseries}
 \title{read time series from file or textConnection}
 \usage{
-read_timeseries(file, datetimeFormat = "character")
+read_timeseries(file, datetimeFormat = "character", colYear = FALSE,
+  colMonth = FALSE, colDay = FALSE)
 }
 \arguments{
 \item{file}{file or textConnection}
 
 \item{datetimeFormat}{requested type of timestamps. one of: "character", "POSIXct", "POSIXlt"}
+
+\item{colYear}{add numeric year column in resulting data.frame (calendar year)}
+
+\item{colMonth}{add numeric month column in resulting data.frame (1 to 12)}
+
+\item{colDay}{add numeric day column in resulting data.frame (1 to 31)}
 }
 \value{
 data.frame time series with datetime column + sensor columns

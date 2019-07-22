@@ -175,7 +175,7 @@ public class ImportGenericCSV {
 	}
 	
 	protected int parseTimestamp(String timestampText) {
-		return (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.parse(timestampText));
+		return TimeUtil.parseStartTimestamp(timestampText);
 	}
 	
 	protected int getDatetimeIndex(Table table) {

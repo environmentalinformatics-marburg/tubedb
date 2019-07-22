@@ -6,7 +6,8 @@
 \usage{
 query_timeseries(tubedb, plot, sensor, aggregation = "hour",
   quality = "physical", interpolated = FALSE, year = NULL,
-  month = NULL, datetimeFormat = "character")
+  month = NULL, datetimeFormat = "character", colYear = FALSE,
+  colMonth = FALSE, colDay = FALSE)
 }
 \arguments{
 \item{tubedb}{instance of TubeDB class}
@@ -26,6 +27,12 @@ query_timeseries(tubedb, plot, sensor, aggregation = "hour",
 \item{month}{get data of one month of one year only, year neads to be specified}
 
 \item{datetimeFormat}{character, requested type of timestamps. one of: "character", "POSIXct", "POSIXlt"}
+
+\item{colYear}{add numeric year column in resulting data.frame (calendar year)}
+
+\item{colMonth}{add numeric month column in resulting data.frame (1 to 12)}
+
+\item{colDay}{add numeric day column in resulting data.frame (1 to 31)}
 }
 \value{
 data.frame time series with datetime column + sensor columns
