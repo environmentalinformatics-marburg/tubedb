@@ -4,8 +4,8 @@ title: "Project Configuration"
 
 Project specific configuration is located in files of one subfolder of `config` per project.
 
-
-### `region.ini`
+---
+### `config/project1/region.ini`
 
 Ini-file sets region name and valid time range of project.
 
@@ -19,8 +19,8 @@ file structure:
  
 `REGION_NAME = [YEAR_MIN, YEAR_MAX]`
 
-
-### `general_stations.ini`
+---
+### `config/project1/general_stations.ini`
 
 Ini-file lists plot groups ("general stations"). One plot is contained in exactly one plot group.
 
@@ -46,7 +46,8 @@ file structure:
 
 ...
 
-### `logger_type_schema.ini`
+---
+### `config/project1/logger_type_schema.ini`
 
 Ini-file lists station logger types and contained sensors.
 
@@ -56,7 +57,8 @@ file structure:
 
 `SENSOR_NAME`
 
-### `plot_inventory.csv`
+---
+### `config/project1/plot_inventory.csv`
 
 Csv-file lists plots and their properties.
 
@@ -74,7 +76,8 @@ columns:
 * `logger` (required if plot is station) logger type name
 * `alternative_id` (optional) alternative plot id for information purposes only 
 
-### `station_inventory.csv` (optional)
+---
+### `config/project1/station_inventory.csv` (optional)
 
 Csv-file lists stations and their properties.
 
@@ -92,7 +95,8 @@ Columns `start` and `end` may be set to `*` to denote open start / open end.
 
 Additional custom columns are inserted into station properties. 
 
-### `sensor_translation.ini` (optional)
+---
+### `config/project1/sensor_translation.ini` (optional)
 
 Ini-file contains sensor name mappings from raw measurement files to database sensor names.
 
@@ -152,8 +156,8 @@ translation process of raw sensor name.
 
 5. (if not found) no insert into database (add entry in log file)
 
-
-### `sensor_name_correction.json` (optional)
+---
+### `config/project1/sensor_name_correction.json` (optional)
 
 Json-file contains sensor name mappings for specific time ranges.
 
@@ -216,7 +220,8 @@ example file-content:
 
 `]`
 
-### `station_properties.yaml` (optional)
+---
+### `config/project1/station_properties.yaml` (optional)
 
 Yaml-file lists custom station properties that are valid for a given interval of time.
 
@@ -226,7 +231,8 @@ file structure:
 
 ...
 
-### `mask.csv` (optional)
+---
+### `config/project1/mask.csv` (optional)
 
 Csv-file lists time-ranges of sensor malfunctions.
 

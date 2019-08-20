@@ -6,6 +6,7 @@
 /build/
 /.gradle/
 /gradle-app.setting
+/h2_storage/
 /javadoc/
 /performance_testing/
 

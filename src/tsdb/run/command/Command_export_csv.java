@@ -10,7 +10,10 @@ import org.apache.logging.log4j.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
+import tsdb.util.AggregationInterval;
 import tsdb.util.Timer;
+import tsdb.util.iterator.CSV;
+import tsdb.util.iterator.CSVTimeType;
 import tsdb.util.iterator.TsIterator;
 
 public class Command_export_csv {
@@ -46,7 +49,7 @@ public class Command_export_csv {
 					if(sensorNames != null) {
 						log.info(stationName + "/" + Arrays.toString(sensorNames));
 						TsIterator it = tsdb.streamStorage.getRawIterator(stationName, sensorNames, null, null);
-						it.writeCSV(path + "/" + stationName + ".csv");
+						CSV.write(it, path + "/" + stationName + ".csv", ",", "", CSVTimeType.DATETIME, AggregationInterval.RAW);
 					}
 				} catch(Exception e) {
 					log.error(e);

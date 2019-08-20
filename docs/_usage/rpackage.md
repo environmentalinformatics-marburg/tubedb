@@ -20,4 +20,7 @@ rs <- regions(tubedb)
 r <- region_metadata(tubedb, "REG1")
 ts <- query_timeseries(tubedb, plot="PLOT1", sensor="Ta_200", datetimeFormat="POSIXlt")
 str(ts)
+
+#show rTubeDB package documentation
+?TubeDB
 ```

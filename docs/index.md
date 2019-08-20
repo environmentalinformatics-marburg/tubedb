@@ -13,7 +13,7 @@ header:
 excerpt: Efficient and easy to use database for climate station observations. Store, check, fill, aggregate, visualize and access your time series data on-demand.
 
 feature_row_intro:
-- excerpt: TubeDB is free, open source under a GPL 3.0 license, and 100% Java.
+- excerpt: TubeDB is free, open source under a GPL 3.0 license,<br> and 100% Java backend + web frontend.
 
 feature_row_main:
 - image_path: "/assets/images/c1.jpg"

@@ -157,7 +157,6 @@ public class InfluxDBDataWriter {
 	public void writeItDB(String dbName, String stationName, String sensorName, StreamIterator it) throws IOException {		
 		BatchPoints batchPoints = BatchPoints
 				.database(dbName)
-				//.tag("async", "true")
 				.retentionPolicy("autogen")
 				.consistency(ConsistencyLevel.ONE)
 				.build();

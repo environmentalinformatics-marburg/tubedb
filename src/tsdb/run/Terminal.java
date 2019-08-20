@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 
+import tsdb.experiment.Experiment;
 import tsdb.run.command.ClearMasks;
 import tsdb.run.command.Command;
 import tsdb.run.command.CommandMain;
@@ -97,6 +98,8 @@ public class Terminal {
 		addInternalCommand("experiment_processing","experiment",ExperimentProcessing::main);
 
 		addInternalCommand("interactive", "prompt for one command", Terminal::command_interactive);
+		
+		addInternalCommand("experiment","performcance comparisons", Experiment::main);
 
 		//helper commands
 

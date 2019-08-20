@@ -18,13 +18,13 @@ Start (web)server. Open a browser and type `http://localhost:8080` (default). Te
 Open desktop GUI for time series and meta data inspection.
 
 #### `./clear_import.sh`
-Clear all time series and import from data files and load masks from config.
+Clear all time series and import from data files (see [configuration/import](../../configuration/import)) and load masks from config (see [configuration/project, mask.csv](../../configuration/project)). 
 
 #### `./import.sh`
-import time series data from files and load masks from config. Does not clear previous time series.
+import time series data from files (see [configuration/import](../../configuration/import)) and load masks from config (see [configuration/project, mask.csv](../../configuration/project)). Does not clear previous time series.
 
 #### `./clear_load_masks.sh`
-Clear all time series masks and load from config. Does not clear time series data.
+Clear all time series masks and load from config (see [configuration/project, mask.csv](../../configuration/project)). Does not clear time series data.
 
 #### `./interactive.sh` (for advanced usage)
 Open TubeDB shell.
@@ -86,13 +86,13 @@ Start (web)server. Open a browser and type `http://localhost:8080` (default). Te
 Open desktop GUI for time series and meta data inspection.
 
 #### `clear_import.cmd`
-Clear all time series and import from data files and load masks from config.
+Clear all time series and import from data files (see [configuration/import](../../configuration/import)) and load masks from config (see [configuration/project, mask.csv](../../configuration/project)).
 
 #### `import.cmd`
-import time series data from files and load masks from config. Does not clear previous time series.
+import time series data from files (see [configuration/import](../../configuration/import)) and load masks from config (see [configuration/project, mask.csv](../../configuration/project)). Does not clear previous time series. 
 
 #### `clear_load_masks.cmd`
-Clear all time series masks and load from config. Does not clear time series data.
+Clear all time series masks and load from config (see [configuration/project, mask.csv](../../configuration/project)). Does not clear time series data.
 
 #### `interactive.cmd` (for advanced usage)
 Open TubeDB shell.

@@ -4,20 +4,21 @@ title: "Import Formats"
 
 TubeDB contains readers for several timeseries data source file formats:
 
-- `CSV` - generic comma-separated values: *text format*
-- `ASC` - specific logger: *text format*
-- `UDBF` - specific logger: *binary  format*
-- `TSA` - TubeDB timeseries archive: *binary format*
 
+| type | description | text/binary |
+|-------|--------|---------|
+| **csv** | CSV - generic comma-separated values | text |
+| **asc** | ASC - specific logger format | text |
+| **toa5** | TOA5 - Campbell Scientific data loggers | text |
+| **udbf_be** | UDBF - Gantner Universal-Data-Bin-File | binary  |
+| **tsa** | TSA - TubeDB timeseries archive | binary |
 
-CSV - Comma Separated Values
 ---
+## CSV - Comma Separated Values
 
 Generic CSV text transfer format of timeseries data. 
 
-Files created by API method `query_csv` are in generic csv format.
-
-This format may be used as intermediate representation of station timeseries data. In a first step the logger specific format (e.g. specific CSV-Format) may be transformed by external tools to generic CSV and then in a next step imported into TubeDB.
+This format may be used as intermediate representation of station timeseries data. First the logger specific format (e.g. specific CSV-Format) may be transformed by external tools (e.g. R-script) to this generic CSV and then imported into TubeDB. Files created by TubeDB API method `query_csv` are in generic csv format.
 
 typical file pattern: `*.csv`
 
@@ -27,24 +28,22 @@ reader class: `tsdb.run.ImportGenericCSV`
 
 #### filename:
 
-Station name of timeseries is extracted from filename. 
+Station name of timeseries is extracted from filename (up to first underscore). 
 
-format: `STATION_TEXT.csv`
+format: `STATIONNAME_SOME_TEXT.csv`
 
-examples: 
-- `HEG01_.csv` -> HEG01 
+station name from file name extraction examples: 
+- `HEG01.csv` -> HEG01 
 - `MyPlot_2010.csv` -> MyPlot 
 - `123_old.csv` -> 123
 
 #### header:
 
-First line of file content is header. 
-
-First columns is date and following columns contain sensor names.
+First line of file content is header. Columns start by datetime followed by sensor name columns.
 
 format: `datetime,SENSOR1,SENSOR2,SENSOR2,...`
 
-examples: 
+examples of header: 
 - `datetime,Ta_200,rH_200,p_QNH,WV,WD,P_RT_NRT_01,Trad,SWDR_300,SWUR_300,LWDR_300,LWUR_300,Rn_300`
 - `datetime,Ta_200,rH_200`
 
@@ -59,44 +58,45 @@ Datetime is in format `yyyy-mm-ddThh:MM` *(ISO 8601)*  e.g. `2014-10-12T09:50`
 
 filename: `aet1_2014__2015_11_05.csv` -> plot: aet1
 
-file content:
+~~~ csv
+datetime,Ta_200,rH_200
+2014-01-01T00:10,-9,86.1
+2014-01-01T00:20,-9.1,86
+2014-01-01T00:30,-9.1,86
+~~~
 
-`datetime,Ta_200,rH_200`
-
-`2014-01-01T00:10,-9,86.1`
-
-`2014-01-01T00:20,-9.1,86`
-
-`2014-01-01T00:30,-9.1,86`
-
-
-ASC
 ---
+## ASC
 
 typical file pattern: `*.asc`
 
 reader class: `tsdb.loader.ki.AscParser`
 
-
-UDBF - Universal-Data-Bin-File
 ---
+## TOA5 - Campbell Scientific data loggers
 
-Files of version 1.07 can be read.
+typical file pattern: `*.dat`
+
+File-format of [Campbell Scientific data loggers](https://www.campbellsci.com/data-loggers). (see [format specification, Appendix B](https://s.campbellsci.com/documents/us/manuals/loggernet.pdf))
+
+
+---
+## UDBF - Universal-Data-Bin-File
+
+Binary file-format of [Gantner](https://www.gantner-instruments.com) loggers. Files of version 1.07 can be read.
 
 typical file pattern: `*.dat`
 
 reader class: `tsdb.loader.be.UniversalDataBinFile`
 
-
-TSA - Time-Series-Archiv
 ---
+## TSA - Time-Series-Archiv
 
 TubeDB binary timeseries archiv format. 
 
-This format can be used to write (parts of) TubeDB to File for archive purposes and later read it into another TubeDB instance.
+This format can be used to write (all or parts of) TubeDB to File for archive purposes and later read it into another TubeDB instance.
 
 This format may be an alternative to CSV. Advantages over CSV are more compact representation (smaller file size, only one file instead of one file per plot), much faster write/read and better integration of metadata (plot names, sensor names).
-
 
 typical file pattern: `*.tsa`
 
@@ -205,4 +205,3 @@ content:
 ...
 
 `TOC_END`
-
