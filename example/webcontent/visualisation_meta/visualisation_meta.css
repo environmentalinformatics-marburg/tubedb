@@ -1,9 +1,9 @@
 body {
 	margin: 0;
 	height: 100%;
-	background-color: rgb(236, 234, 233);
+	background-color: rgb(240, 240, 240);
 	width: 100%;
-	font-family: sans-serif;
+	font-family: Roboto,sans-serif;
 }
 
 .hide {
@@ -25,14 +25,14 @@ body {
 	display: table;
 	margin: 0 auto;
 	font-size: 2.5em;
-	font-family: serif;
-	color: rgb(89, 71, 49);
-	text-shadow: 1px 1px 2px rgb(89, 71, 49), 0 0 1em rgba(255, 162, 0, 0.2), 0 0 0.2em rgba(230, 135, 11, 0.2);
+	/*font-family: serif;*/
+	color: rgb(84, 84, 84);
+	text-shadow: 1px 1px 2px rgb(81, 81, 81), 0 0 1em rgba(255, 255, 255, 0.2), 0 0 0.2em rgba(219, 219, 219, 0.2);
 	transition: 0.5s;
 }
 
 .caption:hover {
-	text-shadow: 1px 1px 2px rgb(89, 71, 49), 0 0 1em rgba(255, 162, 0, 0.6), 0 0 0.2em rgba(230, 135, 11, 0.6);
+	text-shadow: 1px 1px 2px rgba(81, 81, 81, 0.74), 0 0 1em rgba(255, 255, 255, 0.2), 0 0 0.2em rgba(219, 219, 219, 0.2);
 	transition: 0.5s;	
 }
 

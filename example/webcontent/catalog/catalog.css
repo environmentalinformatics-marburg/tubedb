@@ -1,5 +1,5 @@
 body {
-  font-family: Helvetica Neue, Arial, sans-serif;
+  font-family: Roboto,sans-serif;
   font-size: 14px;
   color: #444;
 }
@@ -103,7 +103,7 @@ th.active .arrow {
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all .3s ease;
-  font-family: Helvetica, Arial, sans-serif;
+  /*font-family: Helvetica, Arial, sans-serif;*/
 }
 
 .modal-header h3 {

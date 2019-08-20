@@ -2,7 +2,9 @@
 title: "Build"
 ---
 
-TubeDB can be build on Linux (Ubuntu) or Windows.
+**Note**: You don't need to build TubeDB. A prebuild [example package](../../usage/example) is available.
+
+TubeDB can be build on Linux (Ubuntu) or Windows. 
 
 requirements:
 
@@ -14,9 +16,9 @@ requirements:
 
 - JavaFX 8 or newer: included in (some) Oracle JDKs or OpenJFX
 
-
-Linux (Ubuntu)
 ---
+## Linux (Ubuntu)
+
 
 (optional) install **git**
 
@@ -34,11 +36,13 @@ install **OpenJFX**
 
 `sudo apt-get install openjfx`
 
-(option 1) clone TubeDB source with git
+**(option 1)** clone TubeDB source with git
 
 `git clone https://github.com/environmentalinformatics-marburg/tubedb`
 
-(option 2) download source archive [https://github.com/environmentalinformatics-marburg/tubedb/archive/master.zip](https://github.com/environmentalinformatics-marburg/tubedb/archive/master.zip) and extract it
+**(option 2)** download [latest source archive](https://github.com/environmentalinformatics-marburg/tubedb/archive/master.zip) and extract it
+
+**(option 3)** download [specific source archive](https://github.com/environmentalinformatics-marburg/tubedb/releases) version  and extract it
 
 change to TubeDB source root (there needs to be the file `build.gradle`)
 
@@ -50,7 +54,7 @@ run one of following gradle commands for desired target platform: Linux or Windo
 
 - `gradle _build_package_linux_windows`
 
-the build is distributed in subfolder `package`
+the build is then created in subfolder `package`
 
 `cd package`
 
@@ -60,14 +64,15 @@ for Linux target you may need to mark shell scripts as executable in folder `pac
 
 proceed to [install](../install)
 
-Windows
 ---
+## Windows
+
 
 install [gradle](https://gradle.org/install/)
 
 install [Oracle Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) (JavaFX is included)
 
-download source archive [https://github.com/environmentalinformatics-marburg/tubedb/archive/master.zip](https://github.com/environmentalinformatics-marburg/tubedb/archive/master.zip) and extract it
+download [latest source archive](https://github.com/environmentalinformatics-marburg/tubedb/archive/master.zip) and extract it
 
 on commandline change to TubeDB source root (there needs to be the file `build.gradle`)
 

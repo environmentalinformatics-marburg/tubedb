@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
 <title>Export Climate Data</title>
-<meta name="robots" content="noindex" />
+<meta name="robots" content="noindex, nofollow" />
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="favicon.png" />
+<link rel="stylesheet" href="./fonts/fonts.css" type="text/css">
 <script src="jquery-2.1.1.min.js"></script>
 <script src="export.js"></script>
 
@@ -17,7 +18,7 @@ h1 {
 	margin-bottom: 40px;
 	text-align:center;
 	font-size: 2.5em;
-	font-family: serif;
+	/*font-family: serif;*/
 }
 
 div.bg {
@@ -30,7 +31,7 @@ body {
 	margin: 0px;
 	background-color:#f6f6f6;
 	font-size: 0.9em;
-	font-family: sans-serif;
+	font-family: Roboto,sans-serif;
 }
 
 li { line-height:150%; }
@@ -112,8 +113,8 @@ This the main page to download time series data as zip-file.
 <div id="div_region">
 <h4 style="display:inline-block">Region&nbsp; &nbsp; &nbsp;</h4>
 <div id="region_output" style="display:inline-block"></div>
-<br/>
 </div>
+<div id="region_description_output" style="white-space: pre-line; max-width: 600px; text-align: justify;"></div>
 <h4 style="display:inline-block">Time&nbsp; &nbsp; &nbsp;</h4>
 timespan of &nbsp;&nbsp;
 <b><div id="timespan_output" style="display:inline-block"></div></b>
@@ -122,15 +123,15 @@ with time steps of &nbsp;&nbsp;
 <b><div id="aggregation_output" style="display:inline-block"></div></b>
 <br/>
 <br/>
-<div style="display:inline-block;width:300px;line-height:0;vertical-align:top">
+<div style="display:inline-block;width:300px;/*line-height:0;*/vertical-align:top">
 <h4>Settings</h4>
 <div id="settings_output" style="height:200px"></div>
 </div>
-<div style="display:inline-block;width:200px;line-height:0;vertical-align:top">
+<div style="display:inline-block;width:200px;/*line-height:0;*/vertical-align:top">
 <h4>Plots</h4>
 <div id="plots_output"></div>
 </div>
-<div style="display:inline-block;width:400px;line-height:0;vertical-align:top">
+<div style="display:inline-block;width:400px;/*line-height:0;*/vertical-align:top">
 <h4>Parameters</h4>
 <div id="sensors_output"></div>
 </div>

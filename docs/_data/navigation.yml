@@ -19,6 +19,8 @@ docs:
         url: /usage/install 
       - title: "Run"
         url: /usage/run
+      - title: "Example Package"
+        url: /usage/example         
       - title: "R Package"
         url: /usage/rpackage        
 
@@ -45,8 +47,6 @@ docs:
     children:
       - title: "Import Formats"
         url: /documentation/import_formats 
-      - title: "Example package"
-        url: /documentation/example 
       - title: "Distribution"
         url: /documentation/distribution
       - title: "Project folders and files"

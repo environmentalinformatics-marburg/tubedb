@@ -6,11 +6,13 @@ TubeDB can be run on Linux (Ubuntu) or Windows.
 
 requirements:
 
-- TubeDB distribution package: self [build](../build) or prebuild at [example](../../documentation/example) subfolder in [git repository](https://github.com/environmentalinformatics-marburg/tubedb/tree/master/example)
-
 - Java 8 or newer: Oracle JDK or OpenJDK
 
-- JavaFX 8 or newer: included in (some) Oracle JDKs or OpenJFX
+- (optional, for local desktop GUI) JavaFX 8 or newer: included in (some) Oracle JDKs or OpenJFX
+
+- TubeDB distribution package: 
+  - **example package**: (recommended) includes [example data and example configuration](../../usage/example).
+  - **self build**: [build instructions](../build)
 
 Linux (Ubuntu)
 ---

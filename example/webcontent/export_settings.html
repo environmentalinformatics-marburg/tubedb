@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <title>Export Time Series - settings</title>
-<meta name="robots" content="noindex" />
+<meta name="robots" content="noindex, nofollow" />
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="favicon.png" />
-
+<link rel="stylesheet" href="./fonts/fonts.css" type="text/css">
 <script src="jquery-2.1.1.min.js"></script>
 <script src="export_settings.js"></script>
 
@@ -17,7 +17,7 @@ h1 {
 	margin-bottom: 40px;
 	text-align:center;
 	font-size: 2.5em;
-	font-family: serif;
+	/*font-family: serif;*/
 }
 div.bg {
 	background-image: url(timeseries_bg3.png);
@@ -28,7 +28,7 @@ body {
 	margin: 0px;
 	background-color:#f6f6f6;
 	font-size: 0.9em;
-	font-family: sans-serif;
+	font-family: Roboto,sans-serif;
 }
 
 .horizontal-box {display:flex; flex-flow:row;}
@@ -100,16 +100,16 @@ On this page you can choose some setting of the zip file containing the exported
 <h4>columns in CSV-Files</h4>
 <p><input type="checkbox" id="col_plotid"><label for="col_plotid">include column &quot;<i>plotID</i>&quot;</label></p>
 <p><input type="checkbox" id="col_timestamp"><label for="col_timestamp">include column &quot;<i>timestamp</i>&quot;  (time in minutes since 1899-12-30T00:00 - based on OLE Automation Time)</label></p>
-<p><input type="checkbox" id="col_datetime"><label for="col_datetime">include column &quot;<i>datetime</i>&quot; (according to <a href="https://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations">ISO 8601</a>: {yyyy-mm-ddThh}  [year]-[month]-[day]T[hour]  )</label></p>
+<p><input type="checkbox" id="col_datetime"><label for="col_datetime">include column &quot;<i>datetime</i>&quot; (according to <a href="https://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations" target="_blank">ISO 8601</a>: {yyyy-mm-ddThh}  [year]-[month]-[day]T[hour] e.g. 1999-12-31T23:59 )</label></p>
 <p><input type="checkbox" id="col_qualitycounter"><label for="col_qualitycounter">include column &quot;<i>qualitycounter</i>&quot; (counters of aggregated values: {c[COUNT]i[COUNT]_c[COUNT]i[COUNT]...}
 A count of values refers to hourly values.
 <br>1st example: <i>c99i3_c20</i>  ==>  first parameter with 99 values in aggregate of which 3 are interpolated, second parameter 20 values no interpolation  )
 <br>2nd example: <i>__c744i744</i>  ==> first and second parameter with no value third parameter is aggreate of 774 values, all values are interpolated (all 744 hours of one month with 31 days) )</label></p>
 <h4>additional files in ZIP-archive</h4>
 <p><input type="checkbox" id="desc_sensor"><label for="desc_sensor">parameter (sensor) description</label></p>
-<p><input type="checkbox" id="desc_plot"><label for="desc_plot">plot description with geographic position (<a href="https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84">WGS84</a>)</label></p>
+<p><input type="checkbox" id="desc_plot"><label for="desc_plot">plot description with geographic position (latitude longitude coordinates, <a  target="_blank" href="https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84">WGS84</a>)</label></p>
 <p><input type="checkbox" id="desc_settings"><label for="desc_settings">info about used settings</label></p>
-<p>Text Encoding: <i>Unicode (<a href="https://en.wikipedia.org/wiki/UTF-8">UTF-8</a>)</i> (Select this character encoding in your viewer (e.g. in Excel CSV-import) if you experience wrong characters.)
+<p>Text Encoding: <i>Unicode (<a  target="_blank" href="https://en.wikipedia.org/wiki/UTF-8">UTF-8</a>)</i> (Select this character encoding in your viewer (e.g. in Excel CSV-import) if you experience wrong characters.)
 
 </div> <!--END center-->
 <div class="spacer"></div>
