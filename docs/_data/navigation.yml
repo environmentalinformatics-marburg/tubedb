@@ -27,12 +27,16 @@ docs:
   - title: Configuration
     url: configuration
     children:
-      - title: "sensor configuration"
-        url: /configuration/sensor            
-      - title: "project configuration"
-        url: /configuration/project 
-      - title: "data import configuration"
+      - title: "TubeDB config"
+        url: /configuration/tubedb
+      - title: "accounts list"
+        url: /configuration/accounts       
+      - title: "data import config"
         url: /configuration/import
+      - title: "project config"
+        url: /configuration/project         
+      - title: "sensor config"
+        url: /configuration/sensor
         
   - title: API
     url: api
