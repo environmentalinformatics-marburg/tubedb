@@ -25,7 +25,7 @@ feature_row_main:
   excerpt: "You don't have to be a Java pro. TubeDB comes with an integrated server. Download pre-build package or build from source automatically with Gradle."
 - image_path: "/assets/images/b1.jpg"
   alt: gui
-  url: "/usage"
+  url: "/usage/web"
   btn_label: "More information"
   btn_class: "btn--primary"
   title: Easy to use

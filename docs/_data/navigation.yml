@@ -22,7 +22,9 @@ docs:
       - title: "Example Package"
         url: /usage/example         
       - title: "R Package"
-        url: /usage/rpackage        
+        url: /usage/rpackage
+      - title: "Web Interface"
+        url: /usage/web        
 
   - title: Configuration
     url: configuration

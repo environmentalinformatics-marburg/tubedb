@@ -2,7 +2,7 @@
 title: "Accounts List"
 ---
 
-In `realm.properties`-file at TubeDB root user accounts are listed.
+In `realm.properties`-file at TubeDB root folder user accounts are listed.
 
 ---
 ### `realm.properties` description

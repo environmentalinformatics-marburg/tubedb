@@ -2,7 +2,7 @@
 title: "Project Configuration"
 ---
 
-Project specific configuration is located in files of one subfolder of `config` per project.
+Project specific configuration is located in files of one sub-folder of `config` per project.
 
 ---
 ### `config/project1/region.ini`
