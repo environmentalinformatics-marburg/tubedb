@@ -2,7 +2,7 @@
 title: "Web Interface"
 ---
 
-The main-pages lists specific pages and an information-box. At web interface, on each page, with "?"-Button, usage instructions can be displayed.
+The main-page lists specific pages and an information-box. At web interface, on each page, with "?"-Button, usage instructions can be displayed.
 
 ![(image: Web-interface main-page)](../../assets/images/web_main.png "Web-interface main-page")
 
@@ -39,4 +39,4 @@ In "Infobox" content of file `webFiles/info.html` is displayed.
 
 ![(image: Web-interface supplement)](../../assets/images/web_supplement.png "Web-interface supplement")
 
-Files and folders in folder `webFiles/supplement/` at TubeDB root folder can be viewed and downloaded here.
+Files and folders in `webFiles/supplement/` at TubeDB root folder can be viewed and downloaded here.

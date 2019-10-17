@@ -96,7 +96,11 @@ public class ImportGenericCSV {
 			ArrayList<DataRow> dataRows = new ArrayList<>(table.rows.length);
 
 			int prevTimestamp = -1;
-			for(String[] row:table.rows) {				
+			for(String[] row:table.rows) {
+				if(row[0].isEmpty() || row[0].equals("NA")) {
+					log.warn("skip row with missing timestamp "+row[0]+" "+filePath);
+					continue;
+				}
 				int timestamp = parseTimestamp(row[0]);
 
 				if(timestamp==prevTimestamp) {

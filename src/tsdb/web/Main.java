@@ -3,16 +3,21 @@ package tsdb.web;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.servlet.SessionCookieConfig;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
@@ -23,12 +28,14 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.OptionalSslConnectionFactory;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
+import org.eclipse.jetty.server.HttpConfiguration.Customizer;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.DefaultHandler;
@@ -37,9 +44,11 @@ import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.ShutdownHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
+import org.eclipse.jetty.server.session.DefaultSessionIdManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.yaml.snakeyaml.Yaml;
 
 import tsdb.TsDBFactory;
 import tsdb.remote.RemoteTsDB;
@@ -51,7 +60,7 @@ import tsdb.web.api.IotAPIHandler;
 import tsdb.web.api.SupplementHandler;
 import tsdb.web.api.TsDBAPIHandler;
 import tsdb.web.api.TsDBExportAPIHandler;
-
+import tsdb.util.yaml.YamlMap;
 /**
  * Start Web-Server
  * @author woellauer
@@ -77,6 +86,77 @@ public class Main {
 	private static final String REALM_IP_CSV_FILENAME = "realm_ip.csv";
 	private static final String WEB_SERVER_HTTPS_KEY_STORE_FILENAME = "keystore.jks";
 
+	private static HttpConfiguration createBaseHttpConfiguration() {
+		HttpConfiguration httpConfiguration = new HttpConfiguration();
+		httpConfiguration.setSendServerVersion(false);
+		httpConfiguration.setSendDateHeader(false);
+		httpConfiguration.setSendXPoweredBy(false);
+		return httpConfiguration;
+	}
+
+	private static HttpConfiguration createJwsHttpConfiguration() {
+		HttpConfiguration httpConfiguration = createBaseHttpConfiguration();
+		httpConfiguration.addCustomizer(new Customizer() {			
+			@Override
+			public void customize(Connector connector, HttpConfiguration channelConfig, Request request) {
+				request.setAttribute("JWS", "JWS");				
+			}
+		});
+		return httpConfiguration;
+	}
+
+	private static HttpConfiguration createBaseHttpsConfiguration(int https_port) {
+		HttpConfiguration httpsConfiguration = createBaseHttpConfiguration();
+		httpsConfiguration.setSecureScheme("https");
+		httpsConfiguration.setSecurePort(https_port);
+		httpsConfiguration.setOutputBufferSize(32768);
+		SecureRequestCustomizer src = new SecureRequestCustomizer();
+		src.setStsMaxAge(2000);
+		src.setStsIncludeSubDomains(true);
+		httpsConfiguration.addCustomizer(src);
+		return httpsConfiguration;
+	}
+
+	private static HttpConfiguration createJwsHttpsConfiguration(int https_port) {
+		HttpConfiguration httpsConfiguration = createBaseHttpsConfiguration(https_port);
+		httpsConfiguration.addCustomizer(new Customizer() {			
+			@Override
+			public void customize(Connector connector, HttpConfiguration channelConfig, Request request) {
+				request.setAttribute("JWS", "JWS");				
+			}
+		});
+		return httpsConfiguration;
+	}
+
+	private static ServerConnector createHttpConnector(Server server, int http_port, HttpConfiguration httpConfiguration) {
+		HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfiguration);		
+		ServerConnector httpServerConnector = new ServerConnector(server, httpConnectionFactory);
+		httpServerConnector.setPort(http_port);
+		httpServerConnector.setIdleTimeout(DATA_TRANSFER_TIMEOUT_MILLISECONDS);
+		httpServerConnector.setAcceptQueueSize(0);
+		return httpServerConnector;
+	}
+
+	private static ServerConnector createHttpsConnector(Server server, int https_port, String keystore_password, HttpConfiguration https_config) {
+
+		SslContextFactory sslContextFactory = new SslContextFactory.Server();
+		sslContextFactory.setKeyStorePath(WEB_SERVER_HTTPS_KEY_STORE_FILENAME);
+		sslContextFactory.setKeyStorePassword(keystore_password);
+
+		SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString());
+
+		OptionalSslConnectionFactory optionalSslConnectionFactory = new OptionalSslConnectionFactory(sslConnectionFactory, HttpVersion.HTTP_1_1.asString());
+
+		HttpConnectionFactory httpsConnectionFactory = new HttpConnectionFactory(https_config);
+
+		//ServerConnector httpsServerConnector = new ServerConnector(server, optionalSslConnectionFactory, sslConnectionFactory, httpsConnectionFactory);
+		ServerConnector httpsServerConnector = new ServerConnector(server, optionalSslConnectionFactory, sslConnectionFactory, httpsConnectionFactory);
+		httpsServerConnector.setPort(https_port);
+		httpsServerConnector.setIdleTimeout(DATA_TRANSFER_TIMEOUT_MILLISECONDS);
+		httpsServerConnector.setAcceptQueueSize(0);
+		return httpsServerConnector;
+	}	
+
 	public static void main(String[] args) throws Exception {
 		RemoteTsDB tsdb = new ServerTsDB(TsDBFactory.createDefault());
 		run(tsdb);
@@ -89,36 +169,32 @@ public class Main {
 		createRainbowScale();
 
 		Server server = new Server();
-		HttpConfiguration httpConfiguration = new HttpConfiguration();
 
-		httpConfiguration.setSendServerVersion(false);
-		httpConfiguration.setSendDateHeader(false);
-		httpConfiguration.setSendXPoweredBy(false);
-		httpConfiguration.setSecurePort(TsDBFactory.WEB_SERVER_HTTPS_PORT);
-		httpConfiguration.setSecureScheme("https");
-		httpConfiguration.addCustomizer(new SecureRequestCustomizer());
-
-		HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfiguration);
-		ServerConnector httpServerConnector = new ServerConnector(server,httpConnectionFactory);
-		httpServerConnector.setPort(TsDBFactory.WEB_SERVER_PORT);
-		httpServerConnector.setIdleTimeout(DATA_TRANSFER_TIMEOUT_MILLISECONDS);
-
-		if(use_https) {
-			if(Files.exists(Paths.get(WEB_SERVER_HTTPS_KEY_STORE_FILENAME))) {
-				SslContextFactory sslContextFactory = new SslContextFactory(WEB_SERVER_HTTPS_KEY_STORE_FILENAME);
-				sslContextFactory.setKeyStorePassword(TsDBFactory.WEB_SERVER_HTTPS_KEY_STORE_PASSWORD);
-				sslContextFactory.setKeyManagerPassword(TsDBFactory.WEB_SERVER_HTTPS_KEY_STORE_PASSWORD);
-				SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory,"http/1.1");
-				ServerConnector sslServerConnector = new ServerConnector(server, sslConnectionFactory, httpConnectionFactory);
-				sslServerConnector.setPort(TsDBFactory.WEB_SERVER_HTTPS_PORT);		
-
-				server.setConnectors(new Connector[]{httpServerConnector, sslServerConnector});
+		ServerConnector jwsServerConnector = null;
+		if(TsDBFactory.WEB_SERVER_JWS_PORT > 0) {
+			if(use_https) {
+				jwsServerConnector = createHttpsConnector(server, TsDBFactory.WEB_SERVER_JWS_PORT, TsDBFactory.WEB_SERVER_HTTPS_KEY_STORE_PASSWORD, createJwsHttpsConfiguration(TsDBFactory.WEB_SERVER_JWS_PORT));					
 			} else {
-				use_https = false;
-				log.error("key store file ( " + WEB_SERVER_HTTPS_KEY_STORE_FILENAME + " ) for https not found: HTTPS disabled");
+				jwsServerConnector = createHttpConnector(server, TsDBFactory.WEB_SERVER_JWS_PORT, createJwsHttpConfiguration());				
+			}
+		}
+
+		if(use_https && TsDBFactory.WEB_SERVER_HTTPS_PORT > 0) {
+			ServerConnector httpConnector = createHttpConnector(server, TsDBFactory.WEB_SERVER_PORT, createBaseHttpConfiguration());
+			ServerConnector httpsConnector = createHttpsConnector(server, TsDBFactory.WEB_SERVER_HTTPS_PORT, TsDBFactory.WEB_SERVER_HTTPS_KEY_STORE_PASSWORD, createBaseHttpsConfiguration(TsDBFactory.WEB_SERVER_HTTPS_PORT));
+
+			if(jwsServerConnector != null) {
+				server.setConnectors(new Connector[] {httpConnector, httpsConnector, jwsServerConnector});	
+			} else {
+				server.setConnectors(new Connector[] {httpConnector, httpsConnector});
 			}
 		} else {
-			server.setConnectors(new Connector[]{httpServerConnector});
+			ServerConnector httpConnector = createHttpConnector(server, TsDBFactory.WEB_SERVER_PORT, createBaseHttpConfiguration());
+			if(jwsServerConnector != null) {
+				server.setConnectors(new Connector[] {httpConnector, jwsServerConnector});
+			} else {
+				server.setConnectors(new Connector[] {httpConnector});
+			}
 		}
 
 		ContextHandler contextRedirect = new ContextHandler(TsDBFactory.WEB_SERVER_PREFIX_BASE_URL);
@@ -159,12 +235,23 @@ public class Main {
 			log.trace("*** request   "+request.getRequestURL()+"  "+request.getQueryString());
 		});
 		requestLogHandler.setHandler(gzipHandler);
-
-		HandlerList handerList = new HandlerList();
-		handerList.addHandler(new NoindexHandler());
-		handerList.addHandler(requestLogHandler);
 		
-		server.setHandler(handerList);
+		DefaultSessionIdManager sessionIdManager = new DefaultSessionIdManager(server);
+		sessionIdManager.setWorkerName(null);
+		SessionHandler sessionHandler = new SessionHandler();
+		sessionHandler.setSessionIdManager(sessionIdManager);
+		sessionHandler.setHttpOnly(true);
+		sessionHandler.setSessionCookie("session");
+		SessionCookieConfig sessionCokkieConfig = sessionHandler.getSessionCookieConfig();
+		sessionCokkieConfig.setPath("/");
+
+		HandlerList handlerList = new HandlerList();
+		handlerList.addHandler(new OptionalSecuredRedirectHandler());
+		handlerList.addHandler(sessionHandler);
+		handlerList.addHandler(new NoindexHandler());
+		handlerList.addHandler(requestLogHandler);
+
+		server.setHandler(handlerList);
 
 		server.setStopTimeout(DATA_TRANSFER_TIMEOUT_MILLISECONDS);
 
@@ -247,6 +334,20 @@ public class Main {
 		security.setLoginService(loginService);
 
 		HandlerList handlerList = new HandlerList();
+		if(TsDBFactory.WEB_SERVER_JWS_PORT > 0) {
+			try {
+				InputStream in = new FileInputStream(new File(TsDBFactory.WEB_SERVER_JWS_CONFIG_FILENAME));
+				YamlMap yamlMap = YamlMap.ofObject(new Yaml().load(in));
+				in.close();			
+				ArrayList<JwsConfig> jwsConfigList = new ArrayList<JwsConfig>();
+				JwsConfig e = JwsConfig.ofYAML(yamlMap);
+				jwsConfigList.add(e );
+				JWSAuthentication jwsAuthentication = new JWSAuthentication(jwsConfigList);
+				handlerList.addHandler(jwsAuthentication);
+			} catch(Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
 		handlerList.addHandler(ipAuthentication);
 		handlerList.addHandler(security);
 
@@ -296,17 +397,11 @@ public class Main {
 	private static ContextHandler createContextExport(RemoteTsDB tsdb) {
 		ContextHandler contextExport = new ContextHandler(TsDBFactory.WEB_SERVER_PREFIX_BASE_URL+EXPORT_API_PART_URL);
 		TsDBExportAPIHandler exportHandler = new TsDBExportAPIHandler(tsdb);
-		//exportHandler.setStopTimeout(EXPORT_API_TIMEOUT_MILLISECONDS);
-		//HashSessionManager manager = new HashSessionManager();
-
-
-		//manager.setMaxInactiveInterval(EXPORT_API_SESSION_TIMEOUT_SECONDS);
-		//SessionHandler sessions = new SessionHandler(manager);
-		SessionHandler sessionHandler = new SessionHandler();
-		sessionHandler.setMaxInactiveInterval(EXPORT_API_SESSION_TIMEOUT_SECONDS);
-
-		contextExport.setHandler(sessionHandler);
-		sessionHandler.setHandler(exportHandler);
+		//SessionHandler sessionHandler = new SessionHandler(); // session is obsolete, moved session to root
+		//sessionHandler.setMaxInactiveInterval(EXPORT_API_SESSION_TIMEOUT_SECONDS);
+		//contextExport.setHandler(sessionHandler);
+		//sessionHandler.setHandler(exportHandler);
+		contextExport.setHandler(exportHandler);
 		return contextExport;
 	}
 

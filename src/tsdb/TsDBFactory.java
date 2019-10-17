@@ -53,7 +53,9 @@ public final class TsDBFactory {
 	
 	public static boolean WEB_SERVER_HTTPS = false;
 	public static String WEB_SERVER_HTTPS_KEY_STORE_PASSWORD = "password";
-	public static int WEB_SERVER_HTTPS_PORT = 8443;
+	public static int WEB_SERVER_HTTPS_PORT = 0;
+	public static int WEB_SERVER_JWS_PORT = 0;
+	public static String WEB_SERVER_JWS_CONFIG_FILENAME = "jws.yaml";
 
 	public static String JUST_ONE_REGION = null;
 	//public static String JUST_ONE_REGION = "BE";
@@ -118,6 +120,7 @@ public final class TsDBFactory {
 			WEB_SERVER_HTTPS = getBoolean(pathMap,"WEB_SERVER_HTTPS",WEB_SERVER_HTTPS);
 			WEB_SERVER_HTTPS_KEY_STORE_PASSWORD = getString(pathMap, "WEB_SERVER_HTTPS_KEY_STORE_PASSWORD", WEB_SERVER_HTTPS_KEY_STORE_PASSWORD);
 			WEB_SERVER_HTTPS_PORT = getInt(pathMap, "WEB_SERVER_HTTPS_PORT", WEB_SERVER_HTTPS_PORT);
+			WEB_SERVER_JWS_PORT = getInt(pathMap, "WEB_SERVER_JWS_PORT", WEB_SERVER_JWS_PORT);
 			
 			IOT_API = getBoolean(pathMap, "IOT_API", IOT_API);
 			IOT_API_KEY = getString(pathMap, "IOT_API_KEY", IOT_API_KEY);

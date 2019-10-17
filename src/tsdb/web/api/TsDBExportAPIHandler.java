@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.nio.CharBuffer;
 import java.rmi.RemoteException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -103,12 +104,14 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 		response.setContentType("text/plain;charset=utf-8");
 
 		HttpSession session = request.getSession();
-		if(session.isNew()) {
-			ExportModel model = new ExportModel();
+		log.info("export session id " + session.getId());
+		ExportModel model = (ExportModel) session.getAttribute("ExportModel");
+		if(model == null) {
+			log.info("create new model");
+			model = new ExportModel();
 			session.setAttribute("ExportModel", model);
 			resetModel(model, Web.getUserIdentity(baseRequest));
 		}
-		ExportModel model = (ExportModel) session.getAttribute("ExportModel");
 		boolean ret = false;
 
 		switch(target) {
@@ -122,23 +125,25 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 		}
 		case "/apply_plots": {
 			ArrayList<String> lines = new ArrayList<String>();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
+			BufferedReader reader = request.getReader();
 			String line = reader.readLine();
 			while(line!=null) {
 				lines.add(line);
 				line = reader.readLine();
-			}			
+			}
+			log.info("lines " + lines);
 			ret = apply_plots(response.getWriter(),model,lines);
 			break;
 		}
 		case "/apply_sensors": {
 			ArrayList<String> lines = new ArrayList<String>();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
+			BufferedReader reader = request.getReader();
 			String line = reader.readLine();
 			while(line!=null) {
 				lines.add(line);
 				line = reader.readLine();
-			}			
+			}
+			log.info("lines " + lines);
 			ret = apply_sensors(response.getWriter(),model,lines);
 			break;
 		}
@@ -238,7 +243,6 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 
 	private boolean apply_plots(PrintWriter writer, ExportModel model, ArrayList<String> lines) {		
 		model.plots = lines.toArray(new String[0]);		
-		System.out.println(lines);
 		return true;
 	}
 
