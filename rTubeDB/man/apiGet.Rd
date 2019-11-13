@@ -13,7 +13,7 @@ apiGet(tubedb, method, param_list = NULL, processed = TRUE)
 
 \item{param_list}{list of query parameters}
 
-\item{processed}{response is conerted to appropriate objects or raw respone is returned}
+\item{processed}{response is converted to appropriate objects or raw respone is returned}
 }
 \value{
 response

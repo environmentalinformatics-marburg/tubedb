@@ -25,6 +25,8 @@ possible paramters:
 * `aggregation` 
 * `quality` 
 * `interpolated` 
+* `start` 
+* `end` 
 * `year` 
 * `month`
 
@@ -55,17 +57,15 @@ In the following the parameters are specified (optional parameters are set to de
 * `false` no gap filling (default)
 * `true`  gap filling by interpolation
 
-`year` (optional)
+`start` (optional) start time of time series. Format: yyyy-MM-ddTHH:mm, abbreviations allowed. e.g.  2018-01-01T00:00, 2018-01-01T00, 2018-01-01, 2018-01, 2018.
 
-* if left empty all time series data is queried (default)
+`end` (optional) end time of time series. Format: yyyy-MM-ddTHH:mm, abbreviations allowed (filled to end of that period of time). e.g.  2018-01-31T23:59, 2018-01-31T23, 2018-01-31, 2018-01, 2018.
 
-* the set year of data is queries only
+`year` (optional) One full year of data is queried only. (If `year` parameter is specified, parameters `start` and `end` should not be specified)
 
-`month` (optional) (only used if year is set)
+`month` (optional) (value 1 to 12) One full month of time series data is queried only (parameter `year` needed).
 
-* if left empty whole year of time series data is queried (default)
-
-* the set (value 1 to 12) month of time series data is queried only    
+If no time parameter is specified (`start`, `end`, `year`, `month`) full time series is returned.
 
 example:
 
@@ -94,7 +94,9 @@ possible parameters:
 * `plot` 
 * `sensor` 
 * `quality` 
-* `interpolated` 
+* `interpolated`
+* `start` 
+* `end` 
 * `year` 
 * `month`
 
@@ -130,7 +132,9 @@ possible paramters:
 * `aggregation` 
 * `boxplot` 
 * `quality` 
-* `interpolated` 
+* `interpolated`
+* `start` 
+* `end` 
 * `year` 
 * `month` 
 * `width` 

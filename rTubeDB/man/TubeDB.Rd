@@ -3,7 +3,7 @@
 \docType{methods}
 \name{TubeDB}
 \alias{TubeDB}
-\title{constructor for \link{classA-class}}
+\title{constructor for \link{TubeDB-class}}
 \usage{
 \S4method{initialize}{TubeDB}(.Object, url, user, password)
 }

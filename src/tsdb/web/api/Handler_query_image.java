@@ -271,6 +271,16 @@ public class Handler_query_image extends MethodHandler {
 				return;
 			}
 		}
+		
+		String startText = request.getParameter("start");
+		if(startText != null) {
+			startTime = (long) TimeUtil.parseStartTimestamp(startText);
+		}
+		
+		String endText = request.getParameter("end");
+		if(endText != null) {
+			endTime = (long) TimeUtil.parseEndTimestamp(endText);
+		}
 
 		try {
 			String[] sensorNames = tsdb.supplementSchema(new String[]{sensorName}, tsdb.getSensorNamesOfPlotWithVirtual(plot));

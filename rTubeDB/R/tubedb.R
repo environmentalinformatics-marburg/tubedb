@@ -112,7 +112,7 @@ objectToText <- function(q) {
 #' @param tubedb instance of TubeDB class
 #' @param method API function
 #' @param param_list list of query parameters
-#' @param processed response is conerted to appropriate objects or raw respone is returned
+#' @param processed response is converted to appropriate objects or raw respone is returned
 #' @return response
 #' @author woellauer
 #' @seealso \link{TubeDB} \link{regions} \link{region_metadata} \link{query_timeseries}
@@ -123,11 +123,12 @@ apiGet <- function(tubedb, method, param_list=NULL, processed=TRUE) {
   url <- create_query_url(paste0(tubedb@url, "/tsdb"), method, param_list)
   r <- httr::GET(url, auth)
   sc <- httr::status_code(r)
+  #print(paste("sc", sc))
   if(sc != 200) {
     if(sc == 401) {
       stop("Unauthorized: wrong user/password ?")
     }
-    stop(sc, httr::content(r))
+    stop(sc, r)
   }
   if(processed) {
     return(httr::content(r))
@@ -183,7 +184,24 @@ region_metadata <- function(tubedb, regionID) {
 
 #' query time series
 #'
-#' Query time series from TubeDB server and create timestamps of specified type.
+#' Query time series at one plot of several sensors from TubeDB server and create timestamps of specified type.
+#'
+#' Mandatory parameters: \strong{tubedb}, \strong{plot}, \strong{sensor}
+#'
+#' @section Time span of time series:
+#'
+#' no time parameter -> full avaiable timespan
+#'
+#' \code{year} parameter -> one full year
+#'
+#' \code{year} and \code{month} parameter -> one full month
+#'
+#' \code{start} and \code{end} parameter -> exact time span
+#'
+#' Format of \code{start} and \code{end} parameter: (character) yyyy-MM-ddTHH:mm, abbreviations allowed. e.g.  2018-12-31T23:59, 2018-12-31T23, 2018-12-31, 2018-12, 2018. '\code{end}' abbreviations are filled, e.g. 2018-01 -> 2018-01-31T23:59
+#'
+#'
+#'
 #'
 #' @param tubedb instance of TubeDB class
 #' @param plot character, plot/station
@@ -191,8 +209,10 @@ region_metadata <- function(tubedb, regionID) {
 #' @param aggregation time steps, one of: raw hour day week month year
 #' @param quality quality checks, one of: no, physical, step, empirical
 #' @param interpolated apply interpolation, FALSE or TRUE
-#' @param year get data from one year only
-#' @param month get data of one month of one year only, year neads to be specified
+#' @param start start time of timeseries
+#' @param end end time of timeseries
+#' @param year get data from one full year only (You may use this 'year' parameter OR 'start', 'end' parameters)
+#' @param month get data of one full month of one year only, parameter year neads to be specified (You may use this 'month' parameter OR 'start'/'end' parameters)
 #' @param datetimeFormat character, requested type of timestamps. one of: "character", "POSIXct", "POSIXlt"
 #' @param colYear add numeric year column in resulting data.frame (calendar year)
 #' @param colMonth add numeric month column in resulting data.frame (1 to 12)
@@ -208,13 +228,15 @@ region_metadata <- function(tubedb, regionID) {
 #' ts <- query_timeseries(tubedb, plot="PLOT1", sensor="Ta_200", datetimeFormat="POSIXlt")
 #' str(ts)
 #' @export
-query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality = "physical", interpolated = FALSE, year = NULL, month = NULL, datetimeFormat = "character", colYear = FALSE, colMonth = FALSE, colDay = FALSE) {
+query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality = "physical", interpolated = FALSE, start = NULL, end = NULL, year = NULL, month = NULL, datetimeFormat = "character", colYear = FALSE, colMonth = FALSE, colDay = FALSE) {
   stopifnot(isClass(tubedb, TubeDB))
   args <- list(
     plot = plot,
     aggregation = aggregation,
     quality = quality,
     interpolated = interpolated,
+    start = start,
+    end = end,
     year = year,
     month = month
   )

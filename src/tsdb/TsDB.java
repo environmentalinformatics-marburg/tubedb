@@ -33,7 +33,7 @@ import tsdb.util.Util;
 public class TsDB implements AutoCloseable {
 	private static final Logger log = LogManager.getLogger();
 	
-	public static final String tubedb_version = "1.12.3";
+	public static final String tubedb_version = "1.13.0";
 
 	/**
 	 * map regionName -> Region
@@ -110,7 +110,7 @@ public class TsDB implements AutoCloseable {
 	 * @param configDirectory 
 	 */
 	public TsDB(String databasePath, String cachePath, String streamdbPathPrefix, String configDirectory) {		
-		log.info("open tsdb...");		
+		log.info("start TubeDB v"+ TsDB.tubedb_version +" ...");		
 
 		this.regionMap = new TreeMap<String,Region>();
 

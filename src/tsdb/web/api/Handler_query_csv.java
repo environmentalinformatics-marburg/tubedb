@@ -263,6 +263,16 @@ public class Handler_query_csv extends MethodHandler {
 			}
 		}
 
+		String startText = request.getParameter("start");
+		if(startText != null) {
+			startTime = (long) TimeUtil.parseStartTimestamp(startText);
+		}
+		
+		String endText = request.getParameter("end");
+		if(endText != null) {
+			endTime = (long) TimeUtil.parseEndTimestamp(endText);
+		}
+
 		String nanText = request.getParameter("nan_text") == null ? "NA" : request.getParameter("nan_text");
 
 

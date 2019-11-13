@@ -232,6 +232,16 @@ public class Handler_query_heatmap extends MethodHandler {
 				return;
 			}
 		}
+		
+		String startText = request.getParameter("start");
+		if(startText != null) {
+			startTime = (long) TimeUtil.parseStartTimestamp(startText);
+		}
+		
+		String endText = request.getParameter("end");
+		if(endText != null) {
+			endTime = (long) TimeUtil.parseEndTimestamp(endText);
+		}
 
 		boolean timeScale = request.getParameter("time_scale") == null ? true : !request.getParameter("time_scale").equals("false");
 		boolean byYear = request.getParameter("by_year") == null ? false : request.getParameter("by_year").equals("true");

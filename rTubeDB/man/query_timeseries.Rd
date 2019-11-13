@@ -5,9 +5,10 @@
 \title{query time series}
 \usage{
 query_timeseries(tubedb, plot, sensor, aggregation = "hour",
-  quality = "physical", interpolated = FALSE, year = NULL,
-  month = NULL, datetimeFormat = "character", colYear = FALSE,
-  colMonth = FALSE, colDay = FALSE)
+  quality = "physical", interpolated = FALSE, start = NULL,
+  end = NULL, year = NULL, month = NULL,
+  datetimeFormat = "character", colYear = FALSE, colMonth = FALSE,
+  colDay = FALSE)
 }
 \arguments{
 \item{tubedb}{instance of TubeDB class}
@@ -22,9 +23,13 @@ query_timeseries(tubedb, plot, sensor, aggregation = "hour",
 
 \item{interpolated}{apply interpolation, FALSE or TRUE}
 
-\item{year}{get data from one year only}
+\item{start}{start time of timeseries}
 
-\item{month}{get data of one month of one year only, year neads to be specified}
+\item{end}{end time of timeseries}
+
+\item{year}{get data from one full year only (You may use this 'year' parameter OR 'start', 'end' parameters)}
+
+\item{month}{get data of one full month of one year only, parameter year neads to be specified (You may use this 'month' parameter OR 'start'/'end' parameters)}
 
 \item{datetimeFormat}{character, requested type of timestamps. one of: "character", "POSIXct", "POSIXlt"}
 
@@ -38,8 +43,25 @@ query_timeseries(tubedb, plot, sensor, aggregation = "hour",
 data.frame time series with datetime column + sensor columns
 }
 \description{
-Query time series from TubeDB server and create timestamps of specified type.
+Query time series at one plot of several sensors from TubeDB server and create timestamps of specified type.
 }
+\details{
+Mandatory parameters: \strong{tubedb}, \strong{plot}, \strong{sensor}
+}
+\section{Time span of time series}{
+
+
+no time parameter -> full avaiable timespan
+
+\code{year} parameter -> one full year
+
+\code{year} and \code{month} parameter -> one full month
+
+\code{start} and \code{end} parameter -> exact time span
+
+Format of \code{start} and \code{end} parameter: (character) yyyy-MM-ddTHH:mm, abbreviations allowed. e.g.  2018-12-31T23:59, 2018-12-31T23, 2018-12-31, 2018-12, 2018. '\code{end}' abbreviations are filled, e.g. 2018-01 -> 2018-01-31T23:59
+}
+
 \examples{
 library(rTubeDB)
 tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")

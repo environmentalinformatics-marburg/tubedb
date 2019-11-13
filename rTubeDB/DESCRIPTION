@@ -1,7 +1,7 @@
 Package: rTubeDB
 Type: Package
 Title: R connection to TubeDB server
-Version: 0.1.1
+Version: 1.0.0
 Author: woellauer
 Maintainer: woellauer <email@email>
 Description: rTubeDB package provides functionality to query and process time series from TubeDB server.
