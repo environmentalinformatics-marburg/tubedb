@@ -8,9 +8,9 @@ API identifier: `tsdb`
 
 In the following methods of query API are specified and described: 
 * `query_csv`
+* `query_image`
 * `query_heatmap`
 * `heatmap_scale` 
-* `query_image`
 
 
 ## query_csv
@@ -29,10 +29,15 @@ possible paramters:
 * `end` 
 * `year` 
 * `month`
+* `day`
+* `end_year`
+* `end_month`
+* `end_day`
+* `nan_text`
 
 In the following the parameters are specified (optional parameters are set to default if not used):
 
-`plot` plot identifier. Either `[PLOT]` or `[PLOT:STATION]`. e.g. `plot=AEW02` or `plot=cof1:51021020159`
+`plot` plot identifier. Either `[PLOT]` or `[PLOT:STATION]`. e.g. `plot=AEW02` or `plot=cof1:51021020159`. To query multiple plots into one CSV-file this parameter can be specified multiple times in one query.
 
 `sensor` sensor to query. To query multiple sensors into one CSV-file this parameter can be specified multiple times in one query.
 
@@ -65,7 +70,19 @@ In the following the parameters are specified (optional parameters are set to de
 
 `month` (optional) (value 1 to 12) One full month of time series data is queried only (parameter `year` needed).
 
-If no time parameter is specified (`start`, `end`, `year`, `month`) full time series is returned.
+`day` (optional) (value 1 to 31) One full day of time series data is queried only (parameters `year` and `month` needed).
+
+`end_year` (optional) query up to this year (end). (Should be used together with start parameter `year`)
+
+`end_month` (optional) query up to this month (end). (Should be used together with start parameter `month`, parameter `end_year` needed).
+
+`end_day` (optional) query up to this day (end). (Should be used together with start parameter `day`, parameters `end_year` and `end_month` needed).
+
+If no time parameter is specified (`start`, `end`, `year`, `month`, `day`, `end_year`, `end_month`, `end_day`) full time series is returned.
+
+For time span you should use one of the parameter sets (`start`, `end`) OR (`year`, `month`, `day`) OR (`year`, `month`, `day`, `end_year`, `end_month`, `end_day`).
+
+`nan_text` (optional) set text of NA-values. (default: `NA`)
 
 example:
 
@@ -81,44 +98,6 @@ example of returned data:
 
 `2010-02-02T00:00,87.1,-2.4`
 
-
-## query_heatmap
-
-Get heatmap of one sensor of one timeseries aggregated to timesteps of hour.
-
-Heatmap visualisation transforms each measurement value (one hour) to a colored pixel. The result is a colored area with days in x-direction and hour of day in y-direction.
-
-syntax: `query_heatmap?[PARAMETER1]=[VALUE1]&[PARAMETER2]=[VALUE2]&[PARAMETER3]=[VALUE3] ...`
-
-possible parameters: 
-* `plot` 
-* `sensor` 
-* `quality` 
-* `interpolated`
-* `start` 
-* `end` 
-* `year` 
-* `month`
-
-These parameters are described in `query_csv` and additional:
-
-`sensor` exactly one sensor needs to be specified.
-
-`aggregation` is set to `hour`
-
-example: `http://localhost:8080/tsdb/query_heatmap?plot=AEW02&sensor=Ta_200&quality=empirical&interpolated=true&year=2010`
-
-Retrieves a PNG-image-file.
-
-## heatmap_scale
-
-Get color scale of heatmap of one sensor.
-
-syntax: `heatmap_scale?sensor=[SENSOR]`
-
-example: `http://localhost:8080/tsdb/heatmap_scale?sensor=Ta_200`
-
-Retrieves a PNG-image-file.
 
 ## query_image
 
@@ -137,10 +116,16 @@ possible paramters:
 * `end` 
 * `year` 
 * `month` 
+* `day` 
+* `end_year` 
+* `end_month` 
+* `end_day` 
 * `width` 
 * `height`
 
 These Parameters are described in `query_csv` and additional:
+
+`plot` exactly one plot needs to be specified.
 
 `sensor` exactly one sensor needs to be specified.
 
@@ -157,3 +142,56 @@ These Parameters are described in `query_csv` and additional:
 example: `http://localhost:8080/tsdb/query_image?plot=AEW02&sensor=Ta_200&aggregation=day&quality=empirical&interpolated=true&year=2010&boxplot=true&width=1000&height=200`
 
 Retrieves a PNG-image-file.
+
+
+## query_heatmap
+
+Get heatmap of one sensor of one timeseries aggregated to timesteps of hour.
+
+Heatmap visualisation transforms each measurement value (one hour) to a colored pixel. The result is a colored area with days in x-direction and hour of day in y-direction.
+
+syntax: `query_heatmap?[PARAMETER1]=[VALUE1]&[PARAMETER2]=[VALUE2]&[PARAMETER3]=[VALUE3] ...`
+
+possible parameters: 
+* `plot` 
+* `sensor` 
+* `quality` 
+* `interpolated`
+* `start` 
+* `end` 
+* `year` 
+* `month` 
+* `day` 
+* `end_year` 
+* `end_month` 
+* `end_day`
+* `by_year`
+* `time_scale` 
+
+These parameters are described in `query_csv` and additional:
+
+`plot` exactly one plot needs to be specified.
+
+`sensor` exactly one sensor needs to be specified.
+
+`aggregation` is set to `hour`
+
+`by_year` draw all data in one row or one row per year (default: false, all data in one row)
+
+`time_scale` draw a time scale (default: true)
+
+example: `http://localhost:8080/tsdb/query_heatmap?plot=AEW02&sensor=Ta_200&quality=empirical&interpolated=true&year=2010`
+
+Retrieves a PNG-image-file.
+
+
+## heatmap_scale
+
+Get color scale of heatmap of one sensor.
+
+syntax: `heatmap_scale?sensor=[SENSOR]`
+
+example: `http://localhost:8080/tsdb/heatmap_scale?sensor=Ta_200`
+
+Retrieves a PNG-image-file.
+

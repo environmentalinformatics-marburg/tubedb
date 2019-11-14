@@ -137,54 +137,515 @@ apiGet <- function(tubedb, method, param_list=NULL, processed=TRUE) {
   }
 }
 
-#' regions
+#' convert NULL value to NA value
 #'
-#' Get regions (projects) from TubeDB.
+#' @export
+NULLtoNA <- function(v) {
+  if(is.null(v)) return(NA) else return(v)
+}
+
+#' query regions list
+#'
+#' Get regions (projects) from TubeDB as list of regions
 #'
 #' @param tubedb instance of TubeDB class
 #' @return list of regions
 #' @author woellauer
-#' @seealso \link{TubeDB} \link{region_metadata} \link{query_timeseries}
+#' @seealso \link{TubeDB} \link{query_regions} \link{query_region_metadata} \link{query_timeseries}
 #' @examples
 #' library(rTubeDB)
 #' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
-#' rs <- regions(tubedb)
-#' r <- region_metadata(tubedb, "REG1")
-#' ts <- query_timeseries(tubedb, plot="PLOT1", sensor="Ta_200", datetimeFormat="POSIXlt")
-#' str(ts)
+#' rsl <- query_regions_list(tubedb)
+#' rsdf <- query_regions(tubedb)
+#' rml <- query_region_metadata(tubedb, "BALE")
+#' ril <- query_region_info_list(tubedb, "BALE")
+#' ridf <- query_region_info(tubedb, "BALE")
+#' rgsl <- query_region_general_stations_list(tubedb, "BALE")
+#' rgsdf <- query_region_general_stations(tubedb, "BALE")
+#' rpl <- query_region_plots_list(tubedb, "BALE")
+#' rpdf <- query_region_plots(tubedb, "BALE")
+#' rsrl <- query_region_sensors_list(tubedb, "BALE")
+#' rsrdf <- query_region_sensors(tubedb, "BALE")
+#' rstl <- query_region_stations_list(tubedb, "BALE")
+#' rstdf <- query_region_stations(tubedb, "BALE")
 #' @export
-regions <- function(tubedb) {
+query_regions_list <- function(tubedb) {
   stopifnot(isClass(tubedb, TubeDB))
   r <- apiGet(tubedb, "region.json")
   return(r)
 }
 
-#' region metadata
+#' query regions
 #'
-#' Get metadata of one region from TubeDB.
+#' Get regions (projects) from TubeDB as data.frame of regions
 #'
 #' @param tubedb instance of TubeDB class
-#' @param regionID ID of region
-#' @return metadata as list
+#' @return data.frame of regions
 #' @author woellauer
-#' @seealso \link{TubeDB} \link{regions} \link{query_timeseries}
+#' @seealso \link{TubeDB} \link{query_regions_list} \link{query_region_metadata} \link{query_timeseries}
+#' @examples
+#' library(rTubeDB)
+#' rsl <- query_regions_list(tubedb)
+#' rsdf <- query_regions(tubedb)
+#' rml <- query_region_metadata(tubedb, "BALE")
+#' ril <- query_region_info_list(tubedb, "BALE")
+#' ridf <- query_region_info(tubedb, "BALE")
+#' rgsl <- query_region_general_stations_list(tubedb, "BALE")
+#' rgsdf <- query_region_general_stations(tubedb, "BALE")
+#' rpl <- query_region_plots_list(tubedb, "BALE")
+#' rpdf <- query_region_plots(tubedb, "BALE")
+#' rsrl <- query_region_sensors_list(tubedb, "BALE")
+#' rsrdf <- query_region_sensors(tubedb, "BALE")
+#' rstl <- query_region_stations_list(tubedb, "BALE")
+#' rstdf <- query_region_stations(tubedb, "BALE")
+#' @export
+query_regions <- function(tubedb) {
+  rs <- query_regions_list(tubedb)
+  id <- sapply(rs, function(r) {r$id})
+  name <- sapply(rs, function(r) {r$name})
+  view_year_range_start <- sapply(rs, function(r) {r$view_year_range$start})
+  view_year_range_end <- sapply(rs, function(r) {r$view_year_range$end})
+  df <- data.frame(id=id, name=name, view_year_range_start=view_year_range_start, view_year_range_end=view_year_range_end)
+  return(df)
+}
+
+#' query region metadata
+#'
+#' Get metadata of one region (projects) from TubeDB as list
+#'
+#' @param tubedb instance of TubeDB class
+#' @return list of region metadata
+#' @author woellauer
+#' @seealso \link{TubeDB} \link{query_regions_list} \link{query_regions} \link{query_timeseries}
 #' @examples
 #' library(rTubeDB)
 #' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
-#' rs <- regions(tubedb)
-#' r <- region_metadata(tubedb, "REG1")
-#' ts <- query_timeseries(tubedb, plot="PLOT1", sensor="Ta_200", datetimeFormat="POSIXlt")
-#' str(ts)
+#' rsl <- query_regions_list(tubedb)
+#' rsdf <- query_regions(tubedb)
+#' rml <- query_region_metadata(tubedb, "BALE")
+#' ril <- query_region_info_list(tubedb, "BALE")
+#' ridf <- query_region_info(tubedb, "BALE")
+#' rgsl <- query_region_general_stations_list(tubedb, "BALE")
+#' rgsdf <- query_region_general_stations(tubedb, "BALE")
+#' rpl <- query_region_plots_list(tubedb, "BALE")
+#' rpdf <- query_region_plots(tubedb, "BALE")
+#' rsrl <- query_region_sensors_list(tubedb, "BALE")
+#' rsrdf <- query_region_sensors(tubedb, "BALE")
+#' rstl <- query_region_stations_list(tubedb, "BALE")
+#' rstdf <- query_region_stations(tubedb, "BALE")
 #' @export
-region_metadata <- function(tubedb, regionID) {
+query_region_metadata <- function(tubedb, regionID) {
   stopifnot(isClass(tubedb, TubeDB))
   r <- apiGet(tubedb, "metadata.json", list(region=regionID))
   return(r)
 }
 
+#' query region basic information
+#'
+#' Get basic information of one region (projects) from TubeDB as list
+#'
+#' @param tubedb instance of TubeDB class
+#' @return list of region basic information
+#' @author woellauer
+#' @seealso \link{TubeDB} \link{query_regions_list} \link{query_regions} \link{query_timeseries}
+#' @examples
+#' library(rTubeDB)
+#' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
+#' rsl <- query_regions_list(tubedb)
+#' rsdf <- query_regions(tubedb)
+#' rml <- query_region_metadata(tubedb, "BALE")
+#' ril <- query_region_info_list(tubedb, "BALE")
+#' ridf <- query_region_info(tubedb, "BALE")
+#' rgsl <- query_region_general_stations_list(tubedb, "BALE")
+#' rgsdf <- query_region_general_stations(tubedb, "BALE")
+#' rpl <- query_region_plots_list(tubedb, "BALE")
+#' rpdf <- query_region_plots(tubedb, "BALE")
+#' rsrl <- query_region_sensors_list(tubedb, "BALE")
+#' rsrdf <- query_region_sensors(tubedb, "BALE")
+#' rstl <- query_region_stations_list(tubedb, "BALE")
+#' rstdf <- query_region_stations(tubedb, "BALE")
+#' @export
+query_region_info_list <- function(tubedb, regionID) {
+  rm <- query_region_metadata(tubedb, regionID)
+  r <- rm$region
+  return(r)
+}
+
+#' query region basic information
+#'
+#' Get basic information of one region (projects) from TubeDB as data.frame
+#'
+#' @param tubedb instance of TubeDB class
+#' @return data.frame of region basic information
+#' @author woellauer
+#' @seealso \link{TubeDB} \link{query_regions_list} \link{query_regions} \link{query_timeseries}
+#' @examples
+#' library(rTubeDB)
+#' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
+#' rsl <- query_regions_list(tubedb)
+#' rsdf <- query_regions(tubedb)
+#' rml <- query_region_metadata(tubedb, "BALE")
+#' ril <- query_region_info_list(tubedb, "BALE")
+#' ridf <- query_region_info(tubedb, "BALE")
+#' rgsl <- query_region_general_stations_list(tubedb, "BALE")
+#' rgsdf <- query_region_general_stations(tubedb, "BALE")
+#' rpl <- query_region_plots_list(tubedb, "BALE")
+#' rpdf <- query_region_plots(tubedb, "BALE")
+#' rsrl <- query_region_sensors_list(tubedb, "BALE")
+#' rsrdf <- query_region_sensors(tubedb, "BALE")
+#' rstl <- query_region_stations_list(tubedb, "BALE")
+#' rstdf <- query_region_stations(tubedb, "BALE")
+#' @export
+query_region_info <- function(tubedb, regionID) {
+  r <- query_region_info_list(tubedb, regionID)
+  df <- data.frame(id=r$id, name=r$name, view_year_range_start=r$view_year_range$start, view_year_range_end=r$view_year_range$end, default_general_station=r$default_general_station)
+  return(df)
+}
+
+#' query "general station" (group of plots) information
+#'
+#' Get "general station" (group of plots) information of one region (projects) from TubeDB as list
+#'
+#' @param tubedb instance of TubeDB class
+#' @return list of "general station" information
+#' @author woellauer
+#' @seealso \link{TubeDB} \link{query_regions_list} \link{query_regions} \link{query_timeseries}
+#' @examples
+#' library(rTubeDB)
+#' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
+#' rsl <- query_regions_list(tubedb)
+#' rsdf <- query_regions(tubedb)
+#' rml <- query_region_metadata(tubedb, "BALE")
+#' ril <- query_region_info_list(tubedb, "BALE")
+#' ridf <- query_region_info(tubedb, "BALE")
+#' rgsl <- query_region_general_stations_list(tubedb, "BALE")
+#' rgsdf <- query_region_general_stations(tubedb, "BALE")
+#' rpl <- query_region_plots_list(tubedb, "BALE")
+#' rpdf <- query_region_plots(tubedb, "BALE")
+#' rsrl <- query_region_sensors_list(tubedb, "BALE")
+#' rsrdf <- query_region_sensors(tubedb, "BALE")
+#' rstl <- query_region_stations_list(tubedb, "BALE")
+#' rstdf <- query_region_stations(tubedb, "BALE")
+#' @export
+query_region_general_stations_list <- function(tubedb, regionID) {
+  rm <- query_region_metadata(tubedb, regionID)
+  gsl <- rm$general_stations
+  return(gsl)
+}
+
+#' query "general station" (group of plots) information
+#'
+#' Get "general station" (group of plots) information of one region (projects) from TubeDB as data.frame
+#'
+#' @param tubedb instance of TubeDB class
+#' @return data.frame of "general station" information
+#' @author woellauer
+#' @seealso \link{TubeDB} \link{query_regions_list} \link{query_regions} \link{query_timeseries}
+#' @examples
+#' library(rTubeDB)
+#' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
+#' rsl <- query_regions_list(tubedb)
+#' rsdf <- query_regions(tubedb)
+#' rml <- query_region_metadata(tubedb, "BALE")
+#' ril <- query_region_info_list(tubedb, "BALE")
+#' ridf <- query_region_info(tubedb, "BALE")
+#' rgsl <- query_region_general_stations_list(tubedb, "BALE")
+#' rgsdf <- query_region_general_stations(tubedb, "BALE")
+#' rpl <- query_region_plots_list(tubedb, "BALE")
+#' rpdf <- query_region_plots(tubedb, "BALE")
+#' rsrl <- query_region_sensors_list(tubedb, "BALE")
+#' rsrdf <- query_region_sensors(tubedb, "BALE")
+#' rstl <- query_region_stations_list(tubedb, "BALE")
+#' rstdf <- query_region_stations(tubedb, "BALE")
+#' @export
+query_region_general_stations <- function(tubedb, regionID) {
+  gsl <- query_region_general_stations_list(tubedb, regionID)
+  id <- sapply(gsl, function(r) {r$id})
+  name <- sapply(gsl, function(r) {r$name})
+  view_year_range_start <- sapply(gsl, function(r) {r$view_year_range$start})
+  view_year_range_end <- sapply(gsl, function(r) {r$view_year_range$end})
+  df <- data.frame(id=id, name=name, view_year_range_start=view_year_range_start, view_year_range_end=view_year_range_end)
+  return(df)
+}
+
+#' query plots information
+#'
+#' Get plots information of one region (projects) from TubeDB as list
+#'
+#' @param tubedb instance of TubeDB class
+#' @return list of plots information
+#' @author woellauer
+#' @seealso \link{TubeDB} \link{query_regions_list} \link{query_regions} \link{query_timeseries}
+#' @examples
+#' library(rTubeDB)
+#' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
+#' rsl <- query_regions_list(tubedb)
+#' rsdf <- query_regions(tubedb)
+#' rml <- query_region_metadata(tubedb, "BALE")
+#' ril <- query_region_info_list(tubedb, "BALE")
+#' ridf <- query_region_info(tubedb, "BALE")
+#' rgsl <- query_region_general_stations_list(tubedb, "BALE")
+#' rgsdf <- query_region_general_stations(tubedb, "BALE")
+#' rpl <- query_region_plots_list(tubedb, "BALE")
+#' rpdf <- query_region_plots(tubedb, "BALE")
+#' rsrl <- query_region_sensors_list(tubedb, "BALE")
+#' rsrdf <- query_region_sensors(tubedb, "BALE")
+#' rstl <- query_region_stations_list(tubedb, "BALE")
+#' rstdf <- query_region_stations(tubedb, "BALE")
+#' @export
+query_region_plots_list <- function(tubedb, regionID) {
+  rm <- query_region_metadata(tubedb, regionID)
+  gsl <- rm$plots
+  return(gsl)
+}
+
+#' query plots information
+#'
+#' Get plots information of one region (projects) from TubeDB as data.frame
+#'
+#' @param tubedb instance of TubeDB class
+#' @return data.frame of plots information
+#' @author woellauer
+#' @seealso \link{TubeDB} \link{query_regions_list} \link{query_regions} \link{query_timeseries}
+#' @examples
+#' library(rTubeDB)
+#' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
+#' rsl <- query_regions_list(tubedb)
+#' rsdf <- query_regions(tubedb)
+#' rml <- query_region_metadata(tubedb, "BALE")
+#' ril <- query_region_info_list(tubedb, "BALE")
+#' ridf <- query_region_info(tubedb, "BALE")
+#' rgsl <- query_region_general_stations_list(tubedb, "BALE")
+#' rgsdf <- query_region_general_stations(tubedb, "BALE")
+#' rpl <- query_region_plots_list(tubedb, "BALE")
+#' rpdf <- query_region_plots(tubedb, "BALE")
+#' rsrl <- query_region_sensors_list(tubedb, "BALE")
+#' rsrdf <- query_region_sensors(tubedb, "BALE")
+#' rstl <- query_region_stations_list(tubedb, "BALE")
+#' rstdf <- query_region_stations(tubedb, "BALE")
+#' @export
+query_region_plots <- function(tubedb, regionID) {
+  pl <- query_region_plots_list(tubedb, regionID)
+  id <- sapply(pl, function(p) {p$id})
+  general_station <- sapply(pl, function(p) {NULLtoNA(p$general_station)})
+  logger_type <- sapply(pl, function(p) {NULLtoNA(p$logger_type)})
+  vip <- sapply(pl, function(p) {NULLtoNA(p$vip)})
+  latitude <- sapply(pl, function(p) {NULLtoNA(p$latitude)})
+  longitude <- sapply(pl, function(p) {NULLtoNA(p$longitude)})
+  elevation <- sapply(pl, function(p) {NULLtoNA(p$elevation)})
+  df <- data.frame(id=id, general_station=general_station, logger_type=logger_type, vip=vip, latitude=latitude, longitude=longitude, elevation=elevation)
+  return(df)
+}
+
+#' query sensors information
+#'
+#' Get sensor information of one region (projects) from TubeDB as list
+#'
+#' @param tubedb instance of TubeDB class
+#' @return list of plots information
+#' @author woellauer
+#' @seealso \link{TubeDB} \link{query_regions_list} \link{query_regions} \link{query_timeseries}
+#' @examples
+#' library(rTubeDB)
+#' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
+#' rsl <- query_regions_list(tubedb)
+#' rsdf <- query_regions(tubedb)
+#' rml <- query_region_metadata(tubedb, "BALE")
+#' ril <- query_region_info_list(tubedb, "BALE")
+#' ridf <- query_region_info(tubedb, "BALE")
+#' rgsl <- query_region_general_stations_list(tubedb, "BALE")
+#' rgsdf <- query_region_general_stations(tubedb, "BALE")
+#' rpl <- query_region_plots_list(tubedb, "BALE")
+#' rpdf <- query_region_plots(tubedb, "BALE")
+#' rsrl <- query_region_sensors_list(tubedb, "BALE")
+#' rsrdf <- query_region_sensors(tubedb, "BALE")
+#' rstl <- query_region_stations_list(tubedb, "BALE")
+#' rstdf <- query_region_stations(tubedb, "BALE")
+#' @export
+query_region_sensors_list <- function(tubedb, regionID) {
+  rm <- query_region_metadata(tubedb, regionID)
+  sl <- rm$sensors
+  return(sl)
+}
+
+#' query sensors information
+#'
+#' Get sensor information of one region (projects) from TubeDB as data.frame
+#'
+#' @param tubedb instance of TubeDB class
+#' @return data.frame of plots information
+#' @author woellauer
+#' @seealso \link{TubeDB} \link{query_regions_list} \link{query_regions} \link{query_timeseries}
+#' @examples
+#' library(rTubeDB)
+#' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
+#' rsl <- query_regions_list(tubedb)
+#' rsdf <- query_regions(tubedb)
+#' rml <- query_region_metadata(tubedb, "BALE")
+#' ril <- query_region_info_list(tubedb, "BALE")
+#' ridf <- query_region_info(tubedb, "BALE")
+#' rgsl <- query_region_general_stations_list(tubedb, "BALE")
+#' rgsdf <- query_region_general_stations(tubedb, "BALE")
+#' rpl <- query_region_plots_list(tubedb, "BALE")
+#' rpdf <- query_region_plots(tubedb, "BALE")
+#' rsrl <- query_region_sensors_list(tubedb, "BALE")
+#' rsrdf <- query_region_sensors(tubedb, "BALE")
+#' rstl <- query_region_stations_list(tubedb, "BALE")
+#' rstdf <- query_region_stations(tubedb, "BALE")
+#' @export
+query_region_sensors <- function(tubedb, regionID) {
+  sl <- rTubeDB::query_region_sensors_list(tubedb, regionID)
+  id <- sapply(sl, function(s) {NULLtoNA(s$id)})
+  description <- sapply(sl, function(s) {NULLtoNA(s$description)})
+  unit_description <- sapply(sl, function(s) {NULLtoNA(s$unit_description)})
+  raw <- sapply(sl, function(s) {NULLtoNA(s$raw)})
+  derived <- sapply(sl, function(s) {NULLtoNA(s$derived)})
+  internal <- sapply(sl, function(s) {NULLtoNA(s$internal)})
+  df <- data.frame(id=id, description=description, unit_description=unit_description, raw=raw, derived=derived, internal=internal)
+  return(df)
+}
+
+#' query station information
+#'
+#' Get station information of one region (projects) from TubeDB as list. One plot (a location) may contain several stations.
+#'
+#' @param tubedb instance of TubeDB class
+#' @return list of station information
+#' @author woellauer
+#' @seealso \link{TubeDB} \link{query_regions_list} \link{query_regions} \link{query_timeseries}
+#' @examples
+#' library(rTubeDB)
+#' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
+#' rsl <- query_regions_list(tubedb)
+#' rsdf <- query_regions(tubedb)
+#' rml <- query_region_metadata(tubedb, "BALE")
+#' ril <- query_region_info_list(tubedb, "BALE")
+#' ridf <- query_region_info(tubedb, "BALE")
+#' rgsl <- query_region_general_stations_list(tubedb, "BALE")
+#' rgsdf <- query_region_general_stations(tubedb, "BALE")
+#' rpl <- query_region_plots_list(tubedb, "BALE")
+#' rpdf <- query_region_plots(tubedb, "BALE")
+#' rsrl <- query_region_sensors_list(tubedb, "BALE")
+#' rsrdf <- query_region_sensors(tubedb, "BALE")
+#' rstl <- query_region_stations_list(tubedb, "BALE")
+#' rstdf <- query_region_stations(tubedb, "BALE")
+#' @export
+query_region_stations_list <- function(tubedb, regionID) {
+  rm <- query_region_metadata(tubedb, regionID)
+  sl <- rm$stations
+  return(sl)
+}
+
+#' query station information
+#'
+#' Get station information of one region (projects) from TubeDB as data.frame. One plot (a location) may contain several stations.
+#'
+#' @param tubedb instance of TubeDB class
+#' @return data.frame of station information
+#' @author woellauer
+#' @seealso \link{TubeDB} \link{query_regions_list} \link{query_regions} \link{query_timeseries}
+#' @examples
+#' library(rTubeDB)
+#' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
+#' rsl <- query_regions_list(tubedb)
+#' rsdf <- query_regions(tubedb)
+#' rml <- query_region_metadata(tubedb, "BALE")
+#' ril <- query_region_info_list(tubedb, "BALE")
+#' ridf <- query_region_info(tubedb, "BALE")
+#' rgsl <- query_region_general_stations_list(tubedb, "BALE")
+#' rgsdf <- query_region_general_stations(tubedb, "BALE")
+#' rpl <- query_region_plots_list(tubedb, "BALE")
+#' rpdf <- query_region_plots(tubedb, "BALE")
+#' rsrl <- query_region_sensors_list(tubedb, "BALE")
+#' rsrdf <- query_region_sensors(tubedb, "BALE")
+#' rstl <- query_region_stations_list(tubedb, "BALE")
+#' rstdf <- query_region_stations(tubedb, "BALE")
+#' @export
+query_region_stations <- function(tubedb, regionID) {
+  sl <- rTubeDB::query_region_stations_list(tubedb, regionID)
+  id <- sapply(sl, function(s) {NULLtoNA(s$id)})
+  logger_type <- sapply(sl, function(s) {NULLtoNA(s$logger_type)})
+  df <- data.frame(id=id, logger_type=logger_type)
+  return(df)
+}
+
+
+
 #' query time series
 #'
-#' Query time series at one plot of several sensors from TubeDB server and create timestamps of specified type.
+#' Query time series as data.frame at one plot of several sensors from TubeDB server and create timestamps of specified type.
+#'
+#' Mandatory parameters: \strong{tubedb}, \strong{plot}, \strong{sensor}
+#'
+#' @section Time span of time series:
+#'
+#' no time parameter -> full avaiable timespan
+#'
+#' \code{year} parameter -> one full year
+#'
+#' \code{year} and \code{month} parameter -> one full month
+#'
+#' \code{start} and \code{end} parameter -> exact time span
+#'
+#' Format of \code{start} and \code{end} parameter: (character) yyyy-MM-ddTHH:mm, abbreviations allowed. e.g.  2018-12-31T23:59, 2018-12-31T23, 2018-12-31, 2018-12, 2018. '\code{end}' abbreviations are filled, e.g. 2018-01 -> 2018-01-31T23:59
+#'
+#'
+#'
+#'
+#' @param tubedb instance of TubeDB class
+#' @param plot character or list of character, one plot or list of plots
+#' @param sensor character or list of character, one sensor or list of sensors
+#' @param aggregation time steps, one of: raw hour day week month year
+#' @param quality quality checks, one of: no, physical, step, empirical
+#' @param interpolated apply interpolation, FALSE or TRUE
+#' @param start start time of timeseries
+#' @param end end time of timeseries
+#' @param year get data from one full year only (You may use this 'year' parameter OR 'start', 'end' parameters)
+#' @param month get data of one full month of one year only, parameter year neads to be specified (You may use this 'month' parameter OR 'start'/'end' parameters)
+#' @param day get data of one full day of one month only, parameter month neads to be specified (You may use this 'day' parameter OR 'start'/'end' parameters)
+#' @param datetimeFormat character, requested type of timestamps. one of: "character", "POSIXct", "POSIXlt"
+#' @param colPlot add column with plot name
+#' @param colYear add numeric year column in resulting data.frame (calendar year)
+#' @param colMonth add numeric month column in resulting data.frame (1 to 12)
+#' @param colDay add numeric day column in resulting data.frame (1 to 31)
+#' @param colHour add numeric hour column in resulting data.frame (0 to 23)
+#' @return data.frame time series with datetime column + sensor columns
+#' @author woellauer
+#' @seealso \link{TubeDB} \link{regions} \link{region_metadata} \link{POSIXct} \link{POSIXlt} \link{read_timeseries} \link{query_diagram} \link{query_heatmap}
+#' @examples
+#' library(rTubeDB)
+#' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
+#' rs <- regions(tubedb)
+#' r <- region_metadata(tubedb, "REG1")
+#' ts <- query_timeseries(tubedb, plot="PLOT1", sensor="Ta_200", datetimeFormat="POSIXlt", start="2017", end="2019")
+#' str(ts)
+#' @export
+query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality = "physical", interpolated = FALSE, start = NULL, end = NULL, year = NULL, month = NULL, day = NULL, datetimeFormat = "character", colYear = FALSE, colPlot = TRUE, colMonth = FALSE, colDay = FALSE, colHour = FALSE) {
+  stopifnot(isClass(tubedb, TubeDB))
+  args <- list(
+    aggregation = aggregation,
+    quality = quality,
+    interpolated = interpolated,
+    start = start,
+    end = end,
+    year = year,
+    month = month,
+    day = day,
+    col_plot = colPlot
+  )
+  names(plot) <- rep("plot", length(plot))
+  names(sensor) <- rep("sensor", length(sensor))
+  args <- c(plot, sensor, args)
+  r <- apiGet(tubedb, "query_csv", args, FALSE)
+  c <- textConnection(rawToChar(r$content))
+  t <- read_timeseries(c, datetimeFormat, colYear, colMonth, colDay, colHour)
+  close(c)
+  return(t)
+}
+
+#' query diagram of time series
+#'
+#' Query time series as pixel-image ('nativeRaster') at one plot of several sensors from TubeDB server and create timestamps of specified type.
 #'
 #' Mandatory parameters: \strong{tubedb}, \strong{plot}, \strong{sensor}
 #'
@@ -205,7 +666,7 @@ region_metadata <- function(tubedb, regionID) {
 #'
 #' @param tubedb instance of TubeDB class
 #' @param plot character, plot/station
-#' @param sensor character or list of character, sensor or list of sensors
+#' @param sensor character sensor name
 #' @param aggregation time steps, one of: raw hour day week month year
 #' @param quality quality checks, one of: no, physical, step, empirical
 #' @param interpolated apply interpolation, FALSE or TRUE
@@ -213,22 +674,22 @@ region_metadata <- function(tubedb, regionID) {
 #' @param end end time of timeseries
 #' @param year get data from one full year only (You may use this 'year' parameter OR 'start', 'end' parameters)
 #' @param month get data of one full month of one year only, parameter year neads to be specified (You may use this 'month' parameter OR 'start'/'end' parameters)
-#' @param datetimeFormat character, requested type of timestamps. one of: "character", "POSIXct", "POSIXlt"
-#' @param colYear add numeric year column in resulting data.frame (calendar year)
-#' @param colMonth add numeric month column in resulting data.frame (1 to 12)
-#' @param colDay add numeric day column in resulting data.frame (1 to 31)
-#' @return data.frame time series with datetime column + sensor columns
+#' @param day get data of one full day of one month only, parameter month neads to be specified (You may use this 'day' parameter OR 'start'/'end' parameters)
+#' @param boxplot draw xy-diagram or boxplot
+#' @param width pixel width of resulting image
+#' @param height pixel height of resulting image
+#' @return nativeRaster
 #' @author woellauer
-#' @seealso \link{TubeDB} \link{regions} \link{region_metadata} \link{POSIXct} \link{POSIXlt} \link{read_timeseries}
+#' @seealso \link{TubeDB} \link{regions} \link{region_metadata} \link{query_timeseries} \link{query_heatmap}
 #' @examples
 #' library(rTubeDB)
 #' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
 #' rs <- regions(tubedb)
 #' r <- region_metadata(tubedb, "REG1")
-#' ts <- query_timeseries(tubedb, plot="PLOT1", sensor="Ta_200", datetimeFormat="POSIXlt")
-#' str(ts)
+#' img <- query_diagram(tubedb, plot="PLOT1", sensor="Ta_200", start="2017", end="2019")
+#' grid::grid.raster(img)
 #' @export
-query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality = "physical", interpolated = FALSE, start = NULL, end = NULL, year = NULL, month = NULL, datetimeFormat = "character", colYear = FALSE, colMonth = FALSE, colDay = FALSE) {
+query_diagram <- function(tubedb, plot, sensor, aggregation = "hour", quality = "physical", interpolated = FALSE, start = NULL, end = NULL, year = NULL, month = NULL, day = NULL, boxplot = FALSE, width = 1000, height = 200) {
   stopifnot(isClass(tubedb, TubeDB))
   args <- list(
     plot = plot,
@@ -238,15 +699,87 @@ query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality
     start = start,
     end = end,
     year = year,
-    month = month
+    month = month,
+    day = day,
+    boxplot = boxplot,
+    width = width,
+    height = height
   )
+  names(plot) <- rep("plot", length(plot))
   names(sensor) <- rep("sensor", length(sensor))
-  args <- c(args, sensor)
-  r <- apiGet(tubedb, "query_csv", args, FALSE)
-  c <- textConnection(rawToChar(r$content))
-  t <- read_timeseries(c, datetimeFormat, colYear, colMonth, colDay)
-  close(c)
-  return(t)
+  args <- c(plot, sensor, args)
+  r <- apiGet(tubedb, "query_image", args, FALSE)
+  img <- png::readPNG(r$content, native = TRUE, info = TRUE)
+  return(img)
+}
+
+
+
+
+#' query heatmap of time series
+#'
+#' Query time series as heatmap pixel-image ('nativeRaster') at one plot of several sensors from TubeDB server and create timestamps of specified type.
+#'
+#' Mandatory parameters: \strong{tubedb}, \strong{plot}, \strong{sensor}
+#'
+#' @section Time span of time series:
+#'
+#' no time parameter -> full avaiable timespan
+#'
+#' \code{year} parameter -> one full year
+#'
+#' \code{year} and \code{month} parameter -> one full month
+#'
+#' \code{start} and \code{end} parameter -> exact time span
+#'
+#' Format of \code{start} and \code{end} parameter: (character) yyyy-MM-ddTHH:mm, abbreviations allowed. e.g.  2018-12-31T23:59, 2018-12-31T23, 2018-12-31, 2018-12, 2018. '\code{end}' abbreviations are filled, e.g. 2018-01 -> 2018-01-31T23:59
+#'
+#'
+#'
+#'
+#' @param tubedb instance of TubeDB class
+#' @param plot character, plot/station
+#' @param sensor character sensor name
+#' @param quality quality checks, one of: no, physical, step, empirical
+#' @param interpolated apply interpolation, FALSE or TRUE
+#' @param start start time of timeseries
+#' @param end end time of timeseries
+#' @param year get data from one full year only (You may use this 'year' parameter OR 'start', 'end' parameters)
+#' @param month get data of one full month of one year only, parameter year neads to be specified (You may use this 'month' parameter OR 'start'/'end' parameters)
+#' @param day get data of one full day of one month only, parameter month neads to be specified (You may use this 'day' parameter OR 'start'/'end' parameters)
+#' @param by_year draw all data in one row or draw one row per year
+#' @param time_scale draw a time scale
+#' @return nativeRaster
+#' @author woellauer
+#' @seealso \link{TubeDB} \link{regions} \link{region_metadata} \link{query_timeseries} \link{query_diagram}
+#' @examples
+#' library(rTubeDB)
+#' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
+#' rs <- regions(tubedb)
+#' r <- region_metadata(tubedb, "REG1")
+#' img <- query_heatmap(tubedb, plot="PLOT1", sensor="Ta_200", start="2017", end="2019")
+#' grid::grid.raster(img)
+#' @export
+query_heatmap <- function(tubedb, plot, sensor, quality = "physical", interpolated = FALSE, start = NULL, end = NULL, year = NULL, month = NULL, day = NULL, by_year = TRUE, time_scale = TRUE) {
+  stopifnot(isClass(tubedb, TubeDB))
+  args <- list(
+    plot = plot,
+    quality = quality,
+    interpolated = interpolated,
+    start = start,
+    end = end,
+    year = year,
+    month = month,
+    day = day,
+    by_year = by_year,
+    time_scale = time_scale
+  )
+  names(plot) <- rep("plot", length(plot))
+  names(sensor) <- rep("sensor", length(sensor))
+  args <- c(plot, sensor, args)
+  r <- apiGet(tubedb, "query_heatmap", args, FALSE)
+  img <- png::readPNG(r$content, native = TRUE, info = TRUE)
+  return(img)
 }
 
 #' read time series from file or textConnection
@@ -258,11 +791,12 @@ query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality
 #' @param colYear add numeric year column in resulting data.frame (calendar year)
 #' @param colMonth add numeric month column in resulting data.frame (1 to 12)
 #' @param colDay add numeric day column in resulting data.frame (1 to 31)
+#' @param colHour add numeric hour column in resulting data.frame (0 to 23)
 #' @return data.frame time series with datetime column + sensor columns
 #' @author woellauer
 #' @seealso \link{POSIXct} \link{POSIXlt} \link{query_timeseries}
 #' @export
-read_timeseries <- function(file, datetimeFormat = "character", colYear = FALSE, colMonth = FALSE, colDay = FALSE) {
+read_timeseries <- function(file, datetimeFormat = "character", colYear = FALSE, colMonth = FALSE, colDay = FALSE, colHour = FALSE) {
   t <- read.table(file, sep = ",", header = TRUE, stringsAsFactors = FALSE, colClasses = c(datetime="character"))
   if(colYear) {
     t$year <- getYear(t$datetime)
@@ -272,6 +806,9 @@ read_timeseries <- function(file, datetimeFormat = "character", colYear = FALSE,
   }
   if(colDay) {
     t$day <- getDay(t$datetime)
+  }
+  if(colHour) {
+    t$hour <- getHour(t$datetime)
   }
   if(datetimeFormat == "character") {
     return(t)
@@ -320,6 +857,16 @@ getDay <- function(datetime) {
   t <- as.POSIXlt(datetime, format = format)
   day <- t$mday
   return(day)
+}
+
+getHour <- function(datetime) {
+  if(nchar(datetime[1]) == 4 || nchar(datetime[1]) == 7) {
+    datetime <- fillTimestamp(datetime)
+  }
+  format <- getTimestampFormat(datetime[1])
+  t <- as.POSIXlt(datetime, format = format)
+  hour <- t$hour
+  return(hour)
 }
 
 fillTimestamp <- function(timestamp) {

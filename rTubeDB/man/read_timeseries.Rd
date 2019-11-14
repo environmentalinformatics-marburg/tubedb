@@ -5,7 +5,7 @@
 \title{read time series from file or textConnection}
 \usage{
 read_timeseries(file, datetimeFormat = "character", colYear = FALSE,
-  colMonth = FALSE, colDay = FALSE)
+  colMonth = FALSE, colDay = FALSE, colHour = FALSE)
 }
 \arguments{
 \item{file}{file or textConnection}
@@ -17,6 +17,8 @@ read_timeseries(file, datetimeFormat = "character", colYear = FALSE,
 \item{colMonth}{add numeric month column in resulting data.frame (1 to 12)}
 
 \item{colDay}{add numeric day column in resulting data.frame (1 to 31)}
+
+\item{colHour}{add numeric hour column in resulting data.frame (0 to 23)}
 }
 \value{
 data.frame time series with datetime column + sensor columns
