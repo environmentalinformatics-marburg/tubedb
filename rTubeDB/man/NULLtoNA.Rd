@@ -2,10 +2,10 @@
 % Please edit documentation in R/tubedb.R
 \name{NULLtoNA}
 \alias{NULLtoNA}
-\title{convert NULL value to NA value}
+\title{convert NULL value to NA value (internal)}
 \usage{
 NULLtoNA(v)
 }
 \description{
-convert NULL value to NA value
+convert NULL value to NA value (internal)
 }

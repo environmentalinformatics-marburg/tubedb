@@ -19,15 +19,29 @@ Connecetion is checked at creation time of TubDB instance. So if url, user or pa
 }}
 
 \examples{
+# load package
 library(rTubeDB)
-tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
-rs <- regions(tubedb)
-r <- region_metadata(tubedb, "REG1")
-ts <- query_timeseries(tubedb, plot="PLOT1", sensor="Ta_200", datetimeFormat="POSIXlt")
-str(ts)
+
+# open TubeDB server connection
+tubedb <- rTubeDB::TubeDB(url="http://127.0.0.1:8080", user="user", password="password")
+
+# get regions/projects as data.frame
+regionDF <- rTubeDB::query_regions(tubedb)
+
+# get plots of one region as data.frame
+plotDF <- rTubeDB::query_region_plots(tubedb, "BALE")
+
+# get all sensors of all plots of one region as data.frame
+sensorDF <- rTubeDB::query_region_sensors(tubedb, "BALE")
+
+# get climate time series of two sensors over two plots with default processing at full time span as data.frame
+tsDF <- rTubeDB::query_timeseries(tubedb, plot=c("BALE001", "BALE002"), sensor=c("Ta_200", "rH_200"), datetimeFormat="POSIXlt")
+
+# show time series
+plot(tsDF$datetime, tsDF$Ta_200)
 }
 \seealso{
-\link{regions} \link{region_metadata} \link{query_timeseries} \link{apiGet}
+\link{query_timeseries} \link{query_regions} \link{query_region_plots} \link{query_region_sensors}
 }
 \author{
 woellauer

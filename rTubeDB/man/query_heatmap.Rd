@@ -65,7 +65,7 @@ img <- query_heatmap(tubedb, plot="PLOT1", sensor="Ta_200", start="2017", end="2
 grid::grid.raster(img)
 }
 \seealso{
-\link{TubeDB} \link{regions} \link{region_metadata} \link{query_timeseries} \link{query_diagram}
+\link{TubeDB} \link{TubeDB} \link{query_timeseries} \link{query_regions} \link{query_region_plots} \link{query_region_sensors} \link{query_diagram}
 }
 \author{
 woellauer

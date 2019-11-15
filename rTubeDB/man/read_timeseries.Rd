@@ -27,7 +27,7 @@ data.frame time series with datetime column + sensor columns
 Read time series of TubeDB CSV-format from file or textConnection and create timestamps of specified type.
 }
 \seealso{
-\link{POSIXct} \link{POSIXlt} \link{query_timeseries}
+\link{POSIXct} \link{POSIXlt} \link{query_timeseries} \link{TubeDB} \link{query_regions} \link{query_region_plots} \link{query_region_sensors}
 }
 \author{
 woellauer

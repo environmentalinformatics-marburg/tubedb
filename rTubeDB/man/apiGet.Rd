@@ -2,7 +2,7 @@
 % Please edit documentation in R/tubedb.R
 \name{apiGet}
 \alias{apiGet}
-\title{direct TubeDB API request}
+\title{direct TubeDB API request (internal)}
 \usage{
 apiGet(tubedb, method, param_list = NULL, processed = TRUE)
 }
@@ -22,7 +22,7 @@ response
 Query time series from TubeDB server and create timestamps of specified type. If query could not be processed an error is throwen.
 }
 \seealso{
-\link{TubeDB} \link{regions} \link{region_metadata} \link{query_timeseries}
+\link{TubeDB} \link{query_timeseries} \link{query_regions} \link{query_region_plots} \link{query_region_sensors}
 }
 \author{
 woellauer

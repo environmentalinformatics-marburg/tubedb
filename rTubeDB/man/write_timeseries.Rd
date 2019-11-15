@@ -21,7 +21,7 @@ datetime cloumn need to exist. Resulting CSV-file contains as first row datetime
 If sensors parameter is missing all columns are included, exept 'year', 'month', 'day' (maybe created by read_timeseries).
 }
 \seealso{
-\link{read_timeseries} \link{query_timeseries}
+\link{read_timeseries} \link{query_timeseries} \link{TubeDB} \link{query_regions} \link{query_region_plots} \link{query_region_sensors}
 }
 \author{
 woellauer

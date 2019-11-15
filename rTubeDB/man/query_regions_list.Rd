@@ -33,7 +33,7 @@ rstl <- query_region_stations_list(tubedb, "BALE")
 rstdf <- query_region_stations(tubedb, "BALE")
 }
 \seealso{
-\link{TubeDB} \link{query_regions} \link{query_region_metadata} \link{query_timeseries}
+\link{TubeDB} \link{query_timeseries} \link{query_regions} \link{query_region_metadata}
 }
 \author{
 woellauer
