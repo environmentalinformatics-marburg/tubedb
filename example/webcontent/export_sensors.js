@@ -169,12 +169,21 @@ $(document).ready(function(){
 	//$("#button_apply").button();
 	document.getElementById("button_apply").onclick = function() {	
 		setStateBusy();
-		$.post(url_export_apply_sensors,arrayToText(chosen_sensors))
-		 .done(function() {
+		var postSensors = arrayToText(chosen_sensors);
+		$.ajax({
+		  url: url_export_apply_sensors,
+		  type: "POST",
+		  data: postSensors,
+		  contentType:"text/plain; charset=utf-8",
+		  success: function(){
 			window.location = url_result_page;
 			setStateReady();
-		 })
-		 .fail(function() {alert("error sending data");setStateReady();})		 
+		  },
+		  error: function() {
+			alert("error sending data");
+			setStateReady();
+		  },
+		});		 
 	}
 	
 	getID("choose_selected_button").onclick = on_choose_selected_button;

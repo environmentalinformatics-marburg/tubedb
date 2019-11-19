@@ -135,12 +135,20 @@ $(document).ready(function(){
 		window.location = url_result_page;
 	}
 	
-	document.getElementById("button_apply").onclick = function() {	
-		$.post(url_export_apply_plots,arrayToText(chosen_plots))
-		 .done(function() {
+	document.getElementById("button_apply").onclick = function() {
+		var postPlots = arrayToText(chosen_plots);
+		$.ajax({
+		  url: url_export_apply_plots,
+		  type: "POST",
+		  data: postPlots,
+		  contentType:"text/plain; charset=utf-8",
+		  success: function(){
 			window.location = url_result_page;
-		 })
-		 .fail(function() {alert("error sending data");})		 
+		  },
+		  error: function() {
+			alert("error sending data");
+		  },
+		});	 
 	}
 	
 	getID("choose_selected_button").onclick = on_choose_selected_button;
