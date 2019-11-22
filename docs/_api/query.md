@@ -2,6 +2,8 @@
 title: "Query API"
 ---
 
+**Note**: See [API](../../api) for introduction to API based access.
+
 With methods of query API time series measurement data can be processed and retrieved.
 
 API identifier: `tsdb`

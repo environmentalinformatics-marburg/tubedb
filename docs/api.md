@@ -11,7 +11,9 @@ sidebar:
 
 TubeDB contains API functionality to query meta data, to process timeseries data and to create visualisations.
 
-The API is a RESTful HTTP web service, that is easily accessible by most scripting or programming environments that are capable of retrieving data by HTTP GET-requests (e.g. JavaScript, R, Bash, Java). It is used by the TubeDB web based user-interface and the R package [rTubeDB](../usage/rpackage) provides convenient bindings to R environment.
+The API is a RESTful HTTP web service, that is easily accessible by most scripting or programming environments that are capable of retrieving data by HTTP GET-requests (e.g. JavaScript, R, Bash, Java). It is used by the TubeDB [web interface](../usage/web).
+
+The R package [rTubeDB](../usage/rpackage) provides convenient bindings to R environment.
 
 URLs are composed by base URL, API identifier, method name and query parameters.
 

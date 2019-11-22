@@ -2,7 +2,7 @@
 title: "Build"
 ---
 
-**Note**: You don't need to build TubeDB. A prebuild [example package](../../usage/example) is available.
+**Note**: You don't need to build TubeDB. Prebuild packages are available. (see [install](../install))
 
 TubeDB can be build on Linux (Ubuntu) or Windows. 
 

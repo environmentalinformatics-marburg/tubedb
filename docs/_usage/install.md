@@ -10,38 +10,47 @@ requirements:
 
 - (optional, for local desktop GUI) JavaFX 8 or newer: included in (some) Oracle JDKs or OpenJFX
 
-- TubeDB distribution package: 
-  - **example package**: (recommended) includes [example data and example configuration](../../usage/example).
-  - **self build**: [build instructions](../build)
+- TubeDB package: 
+  - **prebuild package**: (recommended) includes [example data and example configuration](../../usage/example).
+    - [download latest ('package.zip')](https://github.com/environmentalinformatics-marburg/tubedb/releases/latest/download/package.zip) 
+    - [browse releases and download ('package.zip')](https://github.com/environmentalinformatics-marburg/tubedb/releases)
+  - **self build package**: build TubeDB package from source
+    - [build instructions](../build)
 
 Linux (Ubuntu)
 ---
 
-install **OpenJDK**
+- install **OpenJDK**
 
 `sudo apt-get install openjdk-8-jdk`
 
-install **OpenJFX**
+- (optional) install **OpenJFX** (needed for desktop GUI)
 
 `sudo apt-get install openjfx`
 
-(optional) install **ms core fonts** for improved text in visualisation diagrams 
+- (optional) install **ms core fonts** for improved text in visualisation diagrams 
 
 `sudo apt-get install ttf-mscorefonts-installer`
 
-(optional) install **screen** for running TubeDB as background server
+- (optional) install **screen** (needed for running TubeDB as background server)
 
 `sudo apt-get install screen`
 
-you may need to mark shell scripts as executable in root folder of distribution package
+- extract package.zip
+
+`unzip package.zip`
+
+- you may need to mark shell scripts as executable in root folder of package
 
 `chmod +X *.sh`
 
-proceed to [run](../run)
+- proceed to [run](../run)
 
 Windows
 ---
 
-install [Oracle Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) (JavaFX is included)
+- install [Oracle Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) (JavaFX is included) or [other Java runtime](https://adoptopenjdk.net)
 
-proceed to [run](../run)
+- extract package.zip
+
+- proceed to [run](../run)

@@ -2,6 +2,8 @@
 title: "Meta Data API"
 ---
 
+**Note**: See [API](../../api) for introduction to API based access.
+
 With methods of Meta Data API information associated with time series measurement data like contained plots and sensor can be retrieved.
 
 API identifier: `tsdb`

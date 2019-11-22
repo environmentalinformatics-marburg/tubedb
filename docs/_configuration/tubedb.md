@@ -47,11 +47,11 @@ WEB_SERVER_LOGIN = false
 ---
 ### `tsdb_paths.ini` example
 
-Start webserver at port 8081, activate access control and show internal public sensors.
+Start webserver at port 8081, activate access control and show internal sensors (at web interface).
 
 ~~~ ini
 [tsdb_paths]
-WEB_SERVER_PORT = 8080
+WEB_SERVER_PORT = 8081
 WEB_SERVER_LOGIN = true
 HIDE_INTENAL_SENSORS = false
 ~~~
