@@ -3,6 +3,17 @@ plugins {
   id "com.github.ben-manes.versions" version "0.27.0" // update check task: dependencyUpdates  https://github.com/ben-manes/gradle-versions-plugin
 }
 
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = '1.8' // build compatiblity with java 8 and newer
+targetCompatibility = '1.8' // run compatiblity with java 8 and newer
+
+sourceSets.main.java.srcDir 'src'
+//sourceSets.main.java.srcDir 'explorer_src' // optional explorer needs jfx
+sourceSets.main.java.srcDir 'dsl/src_generated'
+
+
 // check for updates:
 //gradle dependencyUpdates
 
@@ -16,11 +27,6 @@ dependencyUpdates {
   }
 }
 
-apply plugin: 'java'
-
-sourceCompatibility = '1.8' // build compatiblity with java 8 and newer
-targetCompatibility = '1.8' // run compatiblity with java 8 and newer
-
 repositories {
     jcenter()
 }
@@ -28,6 +34,7 @@ repositories {
 dependencies {
   	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.13.0'
   	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.0'
+  	compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.13.0' // needed for jetty logger
   	
   	compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.7.2'
   	compile group: 'org.javassist', name: 'javassist', version: '3.26.0-GA'
@@ -63,11 +70,8 @@ dependencies {
 
 dependencies {
     //compile fileTree('lib') // include local libraries
-    compileOnly files('/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/jfxrt.jar') //optional dependency for openjfx on ubuntu (openjdk does not include openjfx), correct path for at least OpenJDK 10
+    //compileOnly files('/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/jfxrt.jar') //optional explorer needs jfx - dependency openjfx on ubuntu (openjdk does not include openjfx), correct path for at least OpenJDK 10
 }
-
-sourceSets.main.java.srcDir 'src'
-sourceSets.main.java.srcDir 'dsl/src_generated'
 
 jar {
 	from file('src/log4j2.xml')

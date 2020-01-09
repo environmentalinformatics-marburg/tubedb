@@ -113,7 +113,7 @@ public class Terminal {
 		addInternalCommand("server_rmi", "start web and rmi server", Terminal::command_interactive);
 
 		try {
-			addCommand("explorer", "run TubeDB desktop application", tsdb.explorer.Explorer::main);
+			//addCommand("explorer", "run TubeDB desktop application", tsdb.explorer.Explorer::main);
 		} catch (NoClassDefFoundError e) {
 			log.info("JavaFX not available");
 		}

@@ -62,12 +62,4 @@ public class Pair<A,B> {
 	public static <A,B> B projB(Pair<A, B> p) {
 		return p.b;
 	}
-
-	public ConstValue<A> observableA() {
-		return ()->a;
-	}
-	
-	public ConstValue<B> observableB() {
-		return ()->b;
-	}
 }
