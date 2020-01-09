@@ -34,7 +34,7 @@ public class TestingClassGeneration {
 		CtClass evalClass = pool.makeClass("Eval",  pool.get(AbstractEvaluator.class.getName()));
 		evalClass.addMethod(CtNewMethod.make("public double eval (double x) { return x*42; }",evalClass));
 		@SuppressWarnings("unchecked")
-		Class<? extends AbstractEvaluator> clazz = evalClass.toClass();
+		Class<? extends AbstractEvaluator> clazz = (Class<? extends AbstractEvaluator>) evalClass.toClass();
 		AbstractEvaluator obj = clazz.newInstance();
 		log.info(obj.eval(100));
 

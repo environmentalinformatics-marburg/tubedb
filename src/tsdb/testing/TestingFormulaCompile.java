@@ -127,7 +127,7 @@ public class TestingFormulaCompile {
 		evalAClass.addConstructor(ctConstructor);
 
 		@SuppressWarnings("unchecked")
-		Class<? extends Computation> clazzA = evalAClass.toClass();
+		Class<? extends Computation> clazzA = (Class<? extends Computation>) evalAClass.toClass();
 
 		Computation objA = (Computation) clazzA.getConstructors()[0].newInstance(formulaJavaVisitor.computations);
 		log.info(objA.toString());
@@ -177,7 +177,7 @@ public class TestingFormulaCompile {
 		mutatorAClass.addConstructor(ctConstructor);
 
 		@SuppressWarnings("unchecked")
-		Class<? extends Computation> clazzA = mutatorAClass.toClass();
+		Class<? extends Computation> clazzA = (Class<? extends Computation>) mutatorAClass.toClass();
 
 		Mutator objA = (Mutator) clazzA.getConstructors()[0].newInstance(formulaJavaVisitor.computations);
 		log.info(objA.toString());

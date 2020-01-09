@@ -6,7 +6,7 @@
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="favicon.png" />
 <link rel="stylesheet" href="./fonts/fonts.css" type="text/css">
-<script src="jquery-2.1.1.min.js"></script>
+<script src="jquery.min.js"></script>
 <script src="export_sensors.js"></script>
 
 
@@ -72,7 +72,7 @@ body {
 </div>
 <div id="top_line_right">
 <a href="index.html">main-page</a>
-<button onclick="var h=$('#div_help')[0].style;h.display=(h.display=='none')?'inline':'none'">?</button>
+<button onclick="var h=document.querySelector('#div_help').style;h.display=(h.display=='none')?'inline':'none'">?</button>
 </div> 
 </div>
 

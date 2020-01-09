@@ -1,10 +1,68 @@
+plugins {
+  id "org.kordamp.markdown.convert" version "1.2.0" // https://github.com/aalmiray/markdown-gradle-plugin
+  id "com.github.ben-manes.versions" version "0.27.0" // update check task: dependencyUpdates  https://github.com/ben-manes/gradle-versions-plugin
+}
+
+// check for updates:
+//gradle dependencyUpdates
+
+def isNonStable = { String version ->
+  return version.contains('alpha') || version.contains('beta') 
+}
+
+dependencyUpdates {
+  rejectVersionIf {  // reject all non stable versions
+    isNonStable(it.candidate.version)
+  }
+}
+
 apply plugin: 'java'
 
 sourceCompatibility = '1.8' // build compatiblity with java 8 and newer
 targetCompatibility = '1.8' // run compatiblity with java 8 and newer
 
+repositories {
+    jcenter()
+}
+
 dependencies {
-    compile fileTree('lib') // include local libraries
+  	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.13.0'
+  	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.0'
+  	
+  	compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.7.2'
+  	compile group: 'org.javassist', name: 'javassist', version: '3.26.0-GA'
+  	
+  	compile group: 'org.mapdb', name: 'mapdb', version: '1.0.9' // warning: newer versions v2 do break storage layout
+  	
+  	compile group: 'org.xerial.snappy', name: 'snappy-java', version: '1.1.7.3' // caution: newer versions may break storage layout
+  	
+  	compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+  	
+  	compile group: 'org.json', name: 'json', version: '20190722'
+  	compile group: 'org.yaml', name: 'snakeyaml', version: '1.25'
+  	compile group: 'com.opencsv', name: 'opencsv', version: '4.6' // warning: API at v5.0 breaks
+  	compile group: 'org.ini4j', name: 'ini4j', version: '0.5.4' 
+  	compile group: 'ar.com.hjg', name: 'pngj', version: '2.1.0'
+  	compile group: 'com.github.luben', name: 'zstd-jni', version: '1.4.4-3' // caution: newer versions may break storage layout
+  	compile group: 'me.lemire.integercompression', name: 'JavaFastPFOR', version: '0.1.12' // caution: newer versions may break strorage layout
+  	
+  	compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.25.v20191220'
+  	compile group: 'org.eclipse.jetty', name: 'jetty-security', version: '9.4.25.v20191220'
+  	
+  	compile group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.10.7'
+	runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.10.7'
+	runtime group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.10.7'
+	
+	compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+	
+	compile group: 'org.gdal', name: 'gdal', version: '2.2.0' // caution: newer versions may break compatibility
+  	
+  	compile group: 'org.influxdb', name: 'influxdb-java', version: '2.17'
+  	compile group: 'com.h2database', name: 'h2', version: '1.4.200'
+}
+
+dependencies {
+    //compile fileTree('lib') // include local libraries
     compileOnly files('/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/jfxrt.jar') //optional dependency for openjfx on ubuntu (openjdk does not include openjfx), correct path for at least OpenJDK 10
 }
 
