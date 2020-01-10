@@ -6,8 +6,9 @@
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
 </listAttribute>
+<booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.buildship.core.classpathprovider"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="tsdb.run.Terminal"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="interactive"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="server"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="tubedb"/>
 </launchConfiguration>

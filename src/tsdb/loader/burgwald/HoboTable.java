@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,8 +64,16 @@ public class HoboTable extends Table {
 			}
 			//log.info(Arrays.toString(names));			
 			this.updateNames(names);
-			List<String[]> rows = reader.readAll();			
-			this.rows = rows.toArray(new String[0][]);
+			
+			//List<String[]> rows = reader.readAll();  // very slow because of linkedlist for indexed access			
+			ArrayList<String[]> dataRowList = new ArrayList<String[]>();
+			String[] curRow = reader.readNext();
+			while(curRow != null){
+				dataRowList.add(curRow);
+				curRow = reader.readNext();
+			}				
+			String[][] tabeRows = dataRowList.toArray(new String[0][]);			
+			this.rows = tabeRows;
 		}
 	}
 	

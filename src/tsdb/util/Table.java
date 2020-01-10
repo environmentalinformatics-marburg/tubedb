@@ -15,7 +15,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
@@ -386,32 +388,35 @@ public class Table {
 	public static Table readCSV(String filename, char separator) {
 		return readCSV(new File(filename), separator);
 	}
-	
+
 	public static Table readCSV(Reader r, char separator) throws IOException {
+		Table table = new Table();
+		CSVReader reader = new CSVReader(r,separator);
 
-			CSVReader reader = new CSVReader(r,separator);
-
-			List<String[]> list = reader.readAll();
-
-			reader.close();
-
-			String[] columnsNames = list.get(0);
+		//List<String[]> list = reader.readAll(); // very slow because of linkedlist for indexed access
+		
+		String[] curRow = reader.readNext();
+		if(curRow != null) {
+			String[] columnsNames = curRow;
 			if(columnsNames.length>0) { // filter UTF8 BOM
 				if(columnsNames[0].startsWith(UTF8_BOM)) {
 					columnsNames[0] = columnsNames[0].substring(1, columnsNames[0].length());
 				}
-			}
+			}			
+			table.updateNames(columnsNames);
+			//log.info("names: "+Arrays.toString(table.names)+"   in "+filename);
 			
-			Table table = new Table();			
-			table.updateNames(columnsNames);			
-
-			table.rows = new String[list.size()-1][];
-
-			for(int i=1;i<list.size();i++) {
-				table.rows[i-1] = list.get(i);
-			}
-
-			return table;		 	
+			ArrayList<String[]> dataRowList = new ArrayList<String[]>();
+			curRow = reader.readNext();
+			while(curRow != null){
+				dataRowList.add(curRow);
+				curRow = reader.readNext();
+			}				
+			String[][] tabeRows = dataRowList.toArray(new String[0][]);
+			table.rows = tabeRows;
+		}			
+		reader.close();
+		return table;	 	
 	}
 
 	/**
@@ -427,26 +432,29 @@ public class Table {
 			InputStreamReader in = new InputStreamReader(new FileInputStream(file),UTF8);
 			CSVReader reader = new CSVReader(in,separator);
 
-			List<String[]> list = reader.readAll();
-
-			reader.close();
-
-			String[] columnsNames = list.get(0);
-			if(columnsNames.length>0) { // filter UTF8 BOM
-				if(columnsNames[0].startsWith(UTF8_BOM)) {
-					columnsNames[0] = columnsNames[0].substring(1, columnsNames[0].length());
-				}
+			//List<String[]> list = reader.readAll(); // very slow because of linkedlist for indexed access
+			
+			String[] curRow = reader.readNext();
+			if(curRow != null) {
+				String[] columnsNames = curRow;
+				if(columnsNames.length>0) { // filter UTF8 BOM
+					if(columnsNames[0].startsWith(UTF8_BOM)) {
+						columnsNames[0] = columnsNames[0].substring(1, columnsNames[0].length());
+					}
+				}			
+				table.updateNames(columnsNames);
+				//log.info("names: "+Arrays.toString(table.names)+"   in "+filename);
+				
+				ArrayList<String[]> dataRowList = new ArrayList<String[]>();
+				curRow = reader.readNext();
+				while(curRow != null){
+					dataRowList.add(curRow);
+					curRow = reader.readNext();
+				}				
+				String[][] tabeRows = dataRowList.toArray(new String[0][]);
+				table.rows = tabeRows;
 			}			
-			table.updateNames(columnsNames);			
-
-			//log.info("names: "+Arrays.toString(table.names)+"   in "+filename);
-
-			table.rows = new String[list.size()-1][];
-
-			for(int i=1;i<list.size();i++) {
-				table.rows[i-1] = list.get(i);
-			}
-
+			reader.close();
 			return table;
 		} catch(Exception e) {
 			log.error(e);

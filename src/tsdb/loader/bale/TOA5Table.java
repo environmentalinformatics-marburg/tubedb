@@ -3,6 +3,7 @@ package tsdb.loader.bale;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.opencsv.CSVReader;
@@ -41,8 +42,16 @@ public class TOA5Table extends Table {
 			//log.info("aggregations ("+aggregationsHeader.length+") "+Arrays.toString(aggregationsHeader));
 			
 			this.updateNames(columnsHeader);
-			List<String[]> rows = reader.readAll();			
-			this.rows = rows.toArray(new String[0][]);
+			
+			//List<String[]> rows = reader.readAll();  // very slow because of linkedlist for indexed access			
+			ArrayList<String[]> dataRowList = new ArrayList<String[]>();
+			String[] curRow = reader.readNext();
+			while(curRow != null){
+				dataRowList.add(curRow);
+				curRow = reader.readNext();
+			}				
+			String[][] tabeRows = dataRowList.toArray(new String[0][]);			
+			this.rows = tabeRows;
 		}
 	}
 	

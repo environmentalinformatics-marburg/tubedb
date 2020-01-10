@@ -126,10 +126,15 @@ public class ImportGenericCSV {
 						}
 					}
 				}
-				dataRows.add(new DataRow(data, timestamp));
+				
+				DataRow dataRow = new DataRow(data, timestamp);
+				//log.info(dataRow);
+				dataRows.add(dataRow);
 
 				prevTimestamp = timestamp;
 			}
+			
+			//log.info("read done.");
 
 			if(!dataRows.isEmpty()) {
 				String[] sensorNames = Arrays.copyOfRange(table.names, 1, sensors + 1);

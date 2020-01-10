@@ -27,6 +27,7 @@ import org.eclipse.jetty.security.authentication.DigestAuthenticator;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConfiguration.Customizer;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.OptionalSslConnectionFactory;
 import org.eclipse.jetty.server.Request;
@@ -35,7 +36,6 @@ import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.server.HttpConfiguration.Customizer;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.DefaultHandler;
@@ -43,7 +43,6 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.ShutdownHandler;
-import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.server.session.DefaultSessionIdManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.security.Constraint;
@@ -56,11 +55,11 @@ import tsdb.remote.ServerTsDB;
 import tsdb.util.Table;
 import tsdb.util.Table.ColumnReaderString;
 import tsdb.util.gui.TimeSeriesPainterGraphics2D;
+import tsdb.util.yaml.YamlMap;
 import tsdb.web.api.IotAPIHandler;
 import tsdb.web.api.SupplementHandler;
 import tsdb.web.api.TsDBAPIHandler;
 import tsdb.web.api.TsDBExportAPIHandler;
-import tsdb.util.yaml.YamlMap;
 /**
  * Start Web-Server
  * @author woellauer
@@ -69,8 +68,6 @@ import tsdb.util.yaml.YamlMap;
 public class Main {
 	private static final Logger log = LogManager.getLogger();
 
-
-	private static final int EXPORT_API_SESSION_TIMEOUT_SECONDS = 2*60*60; // set timeout to 2 hours
 	private static final long DATA_TRANSFER_TIMEOUT_MILLISECONDS = 2*60*60*1000; // set timeout to 2 hours
 
 	private static final String WEBCONTENT_PART_URL = "/content";
@@ -219,8 +216,8 @@ public class Main {
 		ContextHandlerCollection contextCollection = new ContextHandlerCollection();
 		contextCollection.setStopTimeout(DATA_TRANSFER_TIMEOUT_MILLISECONDS);
 		contextCollection.setHandlers(contexts);
-		GzipHandler gzipHandler = new GzipHandler();
-		gzipHandler.setHandler(contextCollection);
+		//GzipHandler gzipHandler = new GzipHandler(); // GzipHandler (of new Jetty version?) breaks network text output
+		//gzipHandler.setHandler(contextCollection);
 		/*HandlerWrapper mod = new HandlerWrapper() {
 			@Override
 			public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -234,7 +231,8 @@ public class Main {
 		requestLogHandler.setRequestLog((Request request, Response response)->{
 			log.trace("*** request   "+request.getRequestURL()+"  "+request.getQueryString());
 		});
-		requestLogHandler.setHandler(gzipHandler);
+		//requestLogHandler.setHandler(gzipHandler); // GzipHandler (of new Jetty version?) breaks network text output
+		requestLogHandler.setHandler(contextCollection);
 		
 		DefaultSessionIdManager sessionIdManager = new DefaultSessionIdManager(server);
 		sessionIdManager.setWorkerName(null);
