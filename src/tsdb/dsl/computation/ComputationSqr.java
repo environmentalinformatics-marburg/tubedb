@@ -2,9 +2,9 @@ package tsdb.dsl.computation;
 
 import tsdb.util.Computation;
 
-public class ComputationSquare extends Computation {
+public class ComputationSqr extends Computation {
 	public final Computation a;
-	public ComputationSquare(Computation a) {
+	public ComputationSqr(Computation a) {
 		this.a = a;
 	}
 	@Override

@@ -1590,4 +1590,252 @@ precipitation_radolan_rain_days:
 illuminance:
   description: illuminance
   unit: lx (Lux)
+  aggregation: average
+
+#added 2020-05-25 TreeTalker
+
+ttraw_air_temperature:
+  description: Raw air temperature (temperature * 10)
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+tt_air_temperature:
+  description: Air temperature
+  unit: °C (degree Celcius)
+  dependency: ttraw_air_temperature
+  post_hour_func: "ttraw_air_temperature * 0.1"  
+  aggregation: average  
+  category: temperature
+  derived: false
+
+tt_air_relative_humidity:
+  description: Relative air humidity
+  unit: '% (percentage of relative humidity)'
+  aggregation: average
+  
+ttraw_AS7263_610:
+  description: Raw spectral band 610 nm ± 10 nm
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttraw_AS7263_680:
+  description: Raw spectral band 680 nm ± 10 nm
+  unit: raw
+  aggregation: average
+  visibility: internal 
+
+ttraw_AS7263_730:
+  description: Raw spectral band 730 nm ± 10 nm
+  unit: raw
+  aggregation: average
+  visibility: internal 
+
+ttraw_AS7263_760:
+  description: Raw spectral band 760 nm ± 10 nm
+  unit: raw
+  aggregation: average
+  visibility: internal 
+
+ttraw_AS7263_810:
+  description: Raw spectral band 810 nm ± 10 nm
+  unit: raw
+  aggregation: average
+  visibility: internal 
+
+ttraw_AS7263_860:
+  description: Raw spectral band 860 nm ± 10 nm
+  unit: raw
+  aggregation: average
+  visibility: internal 
+
+ttraw_AS7262_450:
+  description: Raw spectral band 450 nm ± 20 nm
+  unit: raw
+  aggregation: average
+  visibility: internal 
+  
+ttraw_AS7262_500:
+  description: Raw spectral band 500 nm ± 20 nm
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttraw_AS7262_550:
+  description: Raw spectral band 550 nm ± 20 nm
+  unit: raw
+  aggregation: average
+  visibility: internal
+  
+ttraw_AS7262_570:
+  description: Raw spectral band 450 nm ± 20 nm
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttraw_AS7262_600:
+  description: Raw spectral band 450 nm ± 20 nm
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttraw_AS7262_650:
+  description: Raw spectral band 450 nm ± 20 nm
+  unit: raw
+  aggregation: average
+  visibility: internal
+  
+
+tt_AS7263_610:
+  description: Spectral band 610 nm ± 10 nm
+  unit: canopy light transmission
+  dependency: ttraw_AS7263_610
+  post_hour_func: "-312.45 + (1.6699 * ttraw_AS7263_610)"  
+  aggregation: average
+  derived: false
+  
+tt_AS7263_680:
+  description: Spectral band 680 nm ± 10 nm
+  unit: canopy light transmission
+  dependency: ttraw_AS7263_680
+  post_hour_func: "-561.56 + (1.5199 * ttraw_AS7263_680)"  
+  aggregation: average
+  derived: false
+  
+tt_AS7263_730:
+  description: Spectral band 730 nm ± 10 nm
+  unit: canopy light transmission
+  dependency: ttraw_AS7263_730
+  post_hour_func: "-1511.2 + (1.6209 * ttraw_AS7263_730)"  
+  aggregation: average
+  derived: false
+
+tt_AS7263_760:
+  description: Spectral band 760 nm ± 10 nm
+  unit: canopy light transmission
+  dependency: ttraw_AS7263_760
+  post_hour_func: "-1012.5 + (1.4549 * ttraw_AS7263_760)"  
+  aggregation: average
+  derived: false
+
+tt_AS7263_810:
+  description: Spectral band 810 nm ± 10 nm
+  unit: canopy light transmission
+  dependency: ttraw_AS7263_810
+  post_hour_func: "91.58 + (0.8414 * ttraw_AS7263_810)"  
+  aggregation: average
+  derived: false
+
+tt_AS7263_860:
+  description: Spectral band 860 nm ± 10 nm
+  unit: canopy light transmission
+  dependency: ttraw_AS7263_860
+  post_hour_func: "334.88 + (0.531 * ttraw_AS7263_860)"  
+  aggregation: average
+  derived: false
+
+tt_AS7263_450:
+  description: Spectral band 450 nm ± 20 nm
+  unit: canopy light transmission
+  dependency: ttraw_AS7262_450
+  post_hour_func: "-212.62 + (0.4562 * ttraw_AS7262_450)"  
+  aggregation: average
+  derived: false  
+  
+tt_AS7263_500:
+  description: Spectral band 500 nm ± 20 nm
+  unit: canopy light transmission
+  dependency: ttraw_AS7262_500
+  post_hour_func: "-232.13 + (0.6257 * ttraw_AS7262_500)"  
+  aggregation: average
+  derived: false
+
+tt_AS7263_550:
+  description: Spectral band 550 nm ± 20 nm
+  unit: canopy light transmission
+  dependency: ttraw_AS7262_550
+  post_hour_func: "-842.1+(1.0546 *ttraw_AS7262_550)"  
+  aggregation: average
+  derived: false
+
+tt_AS7263_570:
+  description: Spectral band 450 nm ± 20 nm
+  unit: canopy light transmission
+  dependency: ttraw_AS7262_570
+  post_hour_func: "-666.72+(1.0462 *ttraw_AS7262_570)"  
+  aggregation: average
+  derived: false
+
+tt_AS7263_600:
+  description: Spectral band 450 nm ± 20 nm
+  unit: canopy light transmission
+  dependency: ttraw_AS7262_600
+  post_hour_func: "-328.08+(0.8654 *ttraw_AS7262_600)"  
+  aggregation: average
+  derived: false
+
+tt_AS7263_650:
+  description: Spectral band 450 nm ± 20 nm
+  unit: canopy light transmission
+  dependency: ttraw_AS7262_650
+  post_hour_func: "202.77 + (0.7829 * ttraw_AS7262_650)"  
+  aggregation: average
+  derived: false
+
+ttraw_g_x:
+  description: Acceleration on the X axis
+  unit: raw acceleration (4096 corresponds to 1g)
+  aggregation: average
+
+ttraw_g_y:
+  description: Acceleration on the Y axis
+  unit: raw acceleration (4096 corresponds to 1g)
+  aggregation: average
+
+ttraw_g_z:
+  description: Acceleration on the Z axis
+  unit: raw acceleration (4096 corresponds to 1g)
+  aggregation: average
+
+ttraw_g_x_std:
+  description: standard deviation of acceleration on the X axis
+  unit: raw acceleration (4096 corresponds to 1g)
+  aggregation: average
+
+ttraw_g_y_std:
+  description: standard deviation of acceleration on the Y axis
+  unit: raw acceleration (4096 corresponds to 1g)
   aggregation: average 
+
+ttraw_g_z_std:
+  description: standard deviation of acceleration on the Z axis
+  unit: raw acceleration (4096 corresponds to 1g)
+  aggregation: average
+
+tt_oscillation_direction: 
+  description: Oscillation direction (angle between the gravity vector and the z-axis)
+  unit: rad (radiant)
+  dependency: [ttraw_g_x, ttraw_g_y, ttraw_g_z]
+  post_hour_func: "arctan(sqrt(sqr(ttraw_g_x) + sqr(ttraw_g_y)) / ttraw_g_z)"  
+  aggregation: average
+
+ttraw_StWC:
+  description: Raw stem water Content
+  unit: raw
+  aggregation: average
+
+ttraw_Tref:
+  description: Raw reference probe transmit stem temperature
+  unit: raw
+  aggregation: average
+  
+ttraw_Theat:
+  description: Raw heating probe transmit stem temperature
+  unit: raw
+  aggregation: average
+
+ttraw_growth:
+  description: Raw stem radial growth
+  unit: raw
+  aggregation: average   

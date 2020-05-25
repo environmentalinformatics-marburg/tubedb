@@ -24,6 +24,8 @@ import tsdb.dsl.computation.ComputationAddNum;
 import tsdb.dsl.computation.ComputationAddVar;
 import tsdb.dsl.computation.ComputationAddVarNum;
 import tsdb.dsl.computation.ComputationAddVarVar;
+import tsdb.dsl.computation.ComputationArctan;
+import tsdb.dsl.computation.ComputationArctanNeg;
 import tsdb.dsl.computation.ComputationConditional;
 import tsdb.dsl.computation.ComputationConditionalOneZero;
 import tsdb.dsl.computation.ComputationCumsumByYear;
@@ -47,7 +49,10 @@ import tsdb.dsl.computation.ComputationNum;
 import tsdb.dsl.computation.ComputationOfTime;
 import tsdb.dsl.computation.ComputationPow;
 import tsdb.dsl.computation.ComputationPowNum;
-import tsdb.dsl.computation.ComputationSquare;
+import tsdb.dsl.computation.ComputationSqr;
+import tsdb.dsl.computation.ComputationSqrNeg;
+import tsdb.dsl.computation.ComputationSqrt;
+import tsdb.dsl.computation.ComputationSqrtNeg;
 import tsdb.dsl.computation.ComputationSquareVar;
 import tsdb.dsl.computation.ComputationSub;
 import tsdb.dsl.computation.ComputationSubNum;
@@ -422,7 +427,7 @@ public class FormulaCompileVisitor implements FormulaVisitor1<Computation>, Bool
 					int aPos = env.getSensorIndex(((FormulaVar)formulaPow.a).name);
 					return new ComputationSquareVar(aPos);
 				}
-				return new ComputationSquare(formulaPow.a.accept(this));
+				return new ComputationSqr(formulaPow.a.accept(this));
 			}
 			return new ComputationPowNum(formulaPow.a.accept(this), b.value);
 		}
@@ -433,12 +438,18 @@ public class FormulaCompileVisitor implements FormulaVisitor1<Computation>, Bool
 	public Computation visitFunc(FormulaFunc formulaFunc) {
 		Computation parameter = formulaFunc.parameter.accept(this);		
 		switch(formulaFunc.name) {
+		case "arctan":
+			return formulaFunc.positive ? new ComputationArctan(parameter) : new ComputationArctanNeg(parameter);		
 		case "exp":
 			return formulaFunc.positive ? new ComputationExp(parameter) : new ComputationExpNeg(parameter);
 		case "ln":
 			return formulaFunc.positive ? new ComputationLn(parameter) : new ComputationLnNeg(parameter);
 		case "cumsum_by_year":
-			return formulaFunc.positive ? new ComputationCumsumByYear(parameter) : new ComputationCumsumByYearNeg(parameter);		
+			return formulaFunc.positive ? new ComputationCumsumByYear(parameter) : new ComputationCumsumByYearNeg(parameter);
+		case "sqr":
+			return formulaFunc.positive ? new ComputationSqr(parameter) : new ComputationSqrNeg(parameter);
+		case "sqrt":
+			return formulaFunc.positive ? new ComputationSqrt(parameter) : new ComputationSqrtNeg(parameter);			
 		default:
 			throw new RuntimeException("function not found: "+formulaFunc.name);
 		}		

@@ -193,7 +193,7 @@ computed: {
 				Object.keys(map).forEach(function(sensorName) {
 					//console.log(sensorName+" ?");
 					var sen = self.sensorMap[sensorName];
-					if(sen != undefined) {
+					if(sen !== undefined) {
 						//console.log(sen.id);
 						s.push(sen);
 					}
@@ -308,7 +308,7 @@ computed: {
 			console.log(o);
 			var s = self.sensorMap[o];
 			console.log(s);
-			if(s.raw) {
+			if(s !== undefined && s.raw) {
 				result = true;
 			}
 		});
@@ -410,7 +410,7 @@ computed: {
 		} else {
 			this.sensorIDs.forEach(function(o){
 				var s = self.sensorMap[o];
-				if( !s.raw || (s.raw && self.aggregation === 'raw')) {
+				if( s !== undefined && (!s.raw || (s.raw && self.aggregation === 'raw'))) {
 					sensors.push(s);
 				}
 			});

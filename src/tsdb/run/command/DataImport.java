@@ -28,6 +28,7 @@ import tsdb.loader.ki.TimeSeriesLoaderKiLi_manual_tfi;
 import tsdb.loader.mm.ImportGenericASC;
 import tsdb.loader.sa_own.ImportSaOwn;
 import tsdb.loader.sa_own.RemoveSouthAfricaStationBeginings;
+import tsdb.loader.treetalker.Loader_TreeTalker;
 import tsdb.loader.tsa.TsaImport;
 import tsdb.util.Interval;
 import tsdb.util.TimeUtil;
@@ -134,6 +135,10 @@ public class DataImport {
 			}
 			case "mof": {
 				new MofLoader(tsdb).load(rootDirectory);
+				break;
+			}
+			case "treetalker": {
+				new Loader_TreeTalker(tsdb).loadDirectoryRecursive(rootDirectory);
 				break;
 			}
 			default:
