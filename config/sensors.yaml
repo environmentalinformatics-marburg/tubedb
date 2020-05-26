@@ -1615,169 +1615,169 @@ tt_air_relative_humidity:
   aggregation: average
   
 ttraw_AS7263_610:
-  description: Raw spectral band 610 nm ± 10 nm
+  description: Raw spectral band near infrared (orange) 610 nm ± 10 nm
   unit: raw
   aggregation: average
   visibility: internal
 
 ttraw_AS7263_680:
-  description: Raw spectral band 680 nm ± 10 nm
+  description: Raw spectral band near infrared (red) 680 nm ± 10 nm
   unit: raw
   aggregation: average
   visibility: internal 
 
 ttraw_AS7263_730:
-  description: Raw spectral band 730 nm ± 10 nm
+  description: Raw spectral band near infrared (far red) 730 nm ± 10 nm
   unit: raw
   aggregation: average
   visibility: internal 
 
 ttraw_AS7263_760:
-  description: Raw spectral band 760 nm ± 10 nm
+  description: Raw spectral band near infrared (invisible) 760 nm ± 10 nm
   unit: raw
   aggregation: average
   visibility: internal 
 
 ttraw_AS7263_810:
-  description: Raw spectral band 810 nm ± 10 nm
+  description: Raw spectral band near infrared (invisible) 810 nm ± 10 nm
   unit: raw
   aggregation: average
   visibility: internal 
 
 ttraw_AS7263_860:
-  description: Raw spectral band 860 nm ± 10 nm
+  description: Raw spectral band near infrared (invisible) 860 nm ± 10 nm
   unit: raw
   aggregation: average
   visibility: internal 
 
 ttraw_AS7262_450:
-  description: Raw spectral band 450 nm ± 20 nm
+  description: Raw spectral band visible light (blue) 450 nm ± 20 nm
   unit: raw
   aggregation: average
   visibility: internal 
   
 ttraw_AS7262_500:
-  description: Raw spectral band 500 nm ± 20 nm
+  description: Raw spectral band visible light (cyan) 500 nm ± 20 nm
   unit: raw
   aggregation: average
   visibility: internal
 
 ttraw_AS7262_550:
-  description: Raw spectral band 550 nm ± 20 nm
+  description: Raw spectral band visible light (green) 550 nm ± 20 nm
   unit: raw
   aggregation: average
   visibility: internal
   
 ttraw_AS7262_570:
-  description: Raw spectral band 450 nm ± 20 nm
+  description: Raw spectral band visible light (yellow) 570 nm ± 20 nm
   unit: raw
   aggregation: average
   visibility: internal
 
 ttraw_AS7262_600:
-  description: Raw spectral band 450 nm ± 20 nm
+  description: Raw spectral band visible light (orange) 600 nm ± 20 nm
   unit: raw
   aggregation: average
   visibility: internal
 
 ttraw_AS7262_650:
-  description: Raw spectral band 450 nm ± 20 nm
+  description: Raw spectral band visible light (red) 650 nm ± 20 nm
   unit: raw
   aggregation: average
   visibility: internal
   
 
 tt_AS7263_610:
-  description: Spectral band 610 nm ± 10 nm
-  unit: canopy light transmission
+  description: Spectral band near infrared (orange) 610 nm ± 10 nm
+  unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7263_610
   post_hour_func: "-312.45 + (1.6699 * ttraw_AS7263_610)"  
   aggregation: average
   derived: false
   
 tt_AS7263_680:
-  description: Spectral band 680 nm ± 10 nm
-  unit: canopy light transmission
+  description: Spectral band near infrared (red) 680 nm ± 10 nm
+  unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7263_680
   post_hour_func: "-561.56 + (1.5199 * ttraw_AS7263_680)"  
   aggregation: average
   derived: false
   
 tt_AS7263_730:
-  description: Spectral band 730 nm ± 10 nm
-  unit: canopy light transmission
+  description: Spectral band near infrared (far red) 730 nm ± 10 nm
+  unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7263_730
   post_hour_func: "-1511.2 + (1.6209 * ttraw_AS7263_730)"  
   aggregation: average
   derived: false
 
 tt_AS7263_760:
-  description: Spectral band 760 nm ± 10 nm
-  unit: canopy light transmission
+  description: Spectral band near infrared (invisible) 760 nm ± 10 nm
+  unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7263_760
   post_hour_func: "-1012.5 + (1.4549 * ttraw_AS7263_760)"  
   aggregation: average
   derived: false
 
 tt_AS7263_810:
-  description: Spectral band 810 nm ± 10 nm
-  unit: canopy light transmission
+  description: Spectral band near infrared (invisible) 810 nm ± 10 nm
+  unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7263_810
   post_hour_func: "91.58 + (0.8414 * ttraw_AS7263_810)"  
   aggregation: average
   derived: false
 
 tt_AS7263_860:
-  description: Spectral band 860 nm ± 10 nm
-  unit: canopy light transmission
+  description: Spectral band near infrared (invisible) 860 nm ± 10 nm
+  unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7263_860
   post_hour_func: "334.88 + (0.531 * ttraw_AS7263_860)"  
   aggregation: average
   derived: false
 
-tt_AS7263_450:
-  description: Spectral band 450 nm ± 20 nm
-  unit: canopy light transmission
+tt_AS7262_450:
+  description: Spectral band visible light (blue) 450 nm ± 20 nm
+  unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7262_450
   post_hour_func: "-212.62 + (0.4562 * ttraw_AS7262_450)"  
   aggregation: average
   derived: false  
   
-tt_AS7263_500:
-  description: Spectral band 500 nm ± 20 nm
-  unit: canopy light transmission
+tt_AS7262_500:
+  description: Spectral band visible light (cyan) 500 nm ± 20 nm
+  unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7262_500
   post_hour_func: "-232.13 + (0.6257 * ttraw_AS7262_500)"  
   aggregation: average
   derived: false
 
-tt_AS7263_550:
-  description: Spectral band 550 nm ± 20 nm
-  unit: canopy light transmission
+tt_AS7262_550:
+  description: Spectral band visible light (green) 550 nm ± 20 nm
+  unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7262_550
   post_hour_func: "-842.1+(1.0546 *ttraw_AS7262_550)"  
   aggregation: average
   derived: false
 
-tt_AS7263_570:
-  description: Spectral band 450 nm ± 20 nm
-  unit: canopy light transmission
+tt_AS7262_570:
+  description: Spectral band visible light (yellow) 570 nm ± 20 nm
+  unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7262_570
   post_hour_func: "-666.72+(1.0462 *ttraw_AS7262_570)"  
   aggregation: average
   derived: false
 
-tt_AS7263_600:
-  description: Spectral band 450 nm ± 20 nm
-  unit: canopy light transmission
+tt_AS7262_600:
+  description: Spectral band visible light (orange) 600 nm ± 20 nm
+  unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7262_600
   post_hour_func: "-328.08+(0.8654 *ttraw_AS7262_600)"  
   aggregation: average
   derived: false
 
-tt_AS7263_650:
-  description: Spectral band 450 nm ± 20 nm
-  unit: canopy light transmission
+tt_AS7262_650:
+  description: Spectral band visible light (red) 650 nm ± 20 nm
+  unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7262_650
   post_hour_func: "202.77 + (0.7829 * ttraw_AS7262_650)"  
   aggregation: average
@@ -1787,55 +1787,200 @@ ttraw_g_x:
   description: Acceleration on the X axis
   unit: raw acceleration (4096 corresponds to 1g)
   aggregation: average
-
+  visibility: internal
+  
 ttraw_g_y:
   description: Acceleration on the Y axis
   unit: raw acceleration (4096 corresponds to 1g)
   aggregation: average
-
+  visibility: internal
+  
 ttraw_g_z:
   description: Acceleration on the Z axis
   unit: raw acceleration (4096 corresponds to 1g)
   aggregation: average
-
+  visibility: internal
+  
 ttraw_g_x_std:
-  description: standard deviation of acceleration on the X axis
+  description: Standard deviation of acceleration on the X axis
   unit: raw acceleration (4096 corresponds to 1g)
   aggregation: average
-
+  visibility: internal
+  
 ttraw_g_y_std:
-  description: standard deviation of acceleration on the Y axis
+  description: Standard deviation of acceleration on the Y axis
   unit: raw acceleration (4096 corresponds to 1g)
   aggregation: average 
-
+  visibility: internal
+  
 ttraw_g_z_std:
-  description: standard deviation of acceleration on the Z axis
+  description: Standard deviation of acceleration on the Z axis
   unit: raw acceleration (4096 corresponds to 1g)
   aggregation: average
+  visibility: internal
+  
+tt_g_x: 
+  description: Acceleration on the X axis
+  unit: g (relative to earth gravity 9.81 m/s^2)
+  dependency: ttraw_g_x
+  post_hour_func: "ttraw_g_x / 4096"  
+  aggregation: average
+  derived: false
+  
+tt_g_y: 
+  description: Acceleration on the Y axis
+  unit: g (relative to earth gravity 9.81 m/s^2)
+  dependency: ttraw_g_y
+  post_hour_func: "ttraw_g_y / 4096"  
+  aggregation: average
+  derived: false
 
-tt_oscillation_direction: 
-  description: Oscillation direction (angle between the gravity vector and the z-axis)
-  unit: rad (radiant)
+tt_g_z: 
+  description: Acceleration on the Z axis
+  unit: g (relative to earth gravity 9.81 m/s^2)
+  dependency: ttraw_g_z
+  post_hour_func: "ttraw_g_z / 4096"  
+  aggregation: average
+  derived: false
+
+tt_g_x_std: 
+  description: Standard deviation of acceleration on the X axis
+  unit: g (relative to earth gravity 9.81 m/s^2)
+  dependency: ttraw_g_x_std
+  post_hour_func: "ttraw_g_x_std / 4096"  
+  aggregation: average
+  derived: false
+  visibility: internal
+  
+tt_g_y_std: 
+  description: Standard deviation of acceleration on the Y axis
+  unit: g (relative to earth gravity 9.81 m/s^2)
+  dependency: ttraw_g_y_std
+  post_hour_func: "ttraw_g_y_std / 4096"  
+  aggregation: average
+  derived: false
+  visibility: internal
+  
+tt_g_z_std: 
+  description: Standard deviation of acceleration on the Z axis
+  unit: g (relative to earth gravity 9.81 m/s^2)
+  dependency: ttraw_g_z_std
+  post_hour_func: "ttraw_g_z_std / 4096"  
+  aggregation: average
+  derived: false  
+  visibility: internal
+ 
+tt_inclination: 
+  description: Inclination (angle between the gravity vector and the Z axis)
+  unit: ° (degree of arc -90 to +90)
   dependency: [ttraw_g_x, ttraw_g_y, ttraw_g_z]
-  post_hour_func: "arctan(sqrt(sqr(ttraw_g_x) + sqr(ttraw_g_y)) / ttraw_g_z)"  
+  post_hour_func: "arctan_deg(sqrt(sqr(ttraw_g_x) + sqr(ttraw_g_y)) / ttraw_g_z)"  
   aggregation: average
-
+  
 ttraw_StWC:
-  description: Raw stem water Content
-  unit: raw
+  description: Raw stem water Content (frequency domain measurement)
+  unit: raw Hz (hertz)
   aggregation: average
+  visibility: internal
+  
+ttraw_StWC_Tref: 
+  description: Raw stem water Content, temperature corrected (frequency domain measurement)
+  unit: raw Hz (hertz)
+  dependency: [ttraw_StWC, tt_air_temperature]
+  post_hour_func: "ttraw_StWC - 73.4 * (tt_air_temperature - 29)"  
+  aggregation: average
+  visibility: internal
+  
+tt_StWC_fagus_sylvatica: 
+  description: Stem water Content for Fagus sylvatica L. (European beech, representative of broad-leaved trees)
+  unit: "% (percentage of stem water content)"
+  dependency: ttraw_StWC
+  post_hour_func: "-0.0034 * ttraw_StWC + 54.897"  
+  aggregation: average 
+
+tt_StWC_pinus_sylvestris: 
+  description: Stem water Content for Pinus sylvestris L. (Scots pine, representative of narrow-leaved trees)
+  unit: "% (percentage of stem water content)"
+  dependency: ttraw_StWC
+  post_hour_func: "(ttraw_StWC < 14500 ? -0.0008 * ttraw_StWC + 30.023 : -0.01 * ttraw_StWC + 173.53)"  
+  aggregation: average   
 
 ttraw_Tref:
   description: Raw reference probe transmit stem temperature
   unit: raw
   aggregation: average
+  visibility: internal
   
 ttraw_Theat:
   description: Raw heating probe transmit stem temperature
   unit: raw
   aggregation: average
+  visibility: internal
+  
+tt_Tref: 
+  description: Reference probe transmit stem temperature
+  unit: °C (degree Celcius)
+  dependency: ttraw_Tref
+  post_hour_func: "127.6 - 0.006045 * ttraw_Tref + 1.26E-07 * ttraw_Tref ^ 2 - 1.15E-12 * ttraw_Tref ^ 3"  
+  aggregation: average
+
+tt_Theat: 
+  description: Heating probe transmit stem temperature
+  unit: °C (degree Celcius)
+  dependency: ttraw_Theat
+  post_hour_func: "127.6 - 0.006045 * ttraw_Theat + 1.26E-07 * ttraw_Theat ^ 2 - 1.15E-12 * ttraw_Theat ^ 3"  
+  aggregation: average   
 
 ttraw_growth:
   description: Raw stem radial growth
   unit: raw
-  aggregation: average   
+  aggregation: average
+  visibility: internal
+  
+tt_growth_0_8: 
+  description: Stem radial growth (for sensor distance 0-0.8 cm)
+  unit: cm (centimeter)
+  dependency: ttraw_growth
+  post_hour_func: "0.1817 * ttraw_growth / (109108.5561 - ttraw_growth)"  
+  aggregation: average
+  
+tt_growth_15_90: 
+  description: Stem radial growth (for sensor distance 1.5-9 cm)
+  unit: cm (centimeter)
+  dependency: ttraw_growth
+  post_hour_func: "-1.5242 + (111.3154 * 2373.2628) / (2373.2628 + ttraw_growth)"  
+  aggregation: average
+
+tt_growth_15_50: 
+  description: Stem radial growth (for sensor distance 1.5-5 cm)
+  unit: cm (centimeter)
+  dependency: ttraw_growth
+  post_hour_func: "18.2823 + -0.0006 * ttraw_growth + 6.9143E-009 * ttraw_growth ^ 2 + -3.0237E-014 * ttraw_growth ^ 3"  
+  aggregation: average  
+
+ttraw_adc_bandgap:
+  description: adc bandgap
+  unit: raw
+  aggregation: average
+  visibility: internal 
+  aggregation: average 
+  
+ttraw_adc_Vbat:
+  description: adc Vbat
+  unit: raw
+  aggregation: average
+  visibility: internal 
+  aggregation: average
+
+tt_battery_voltage:
+  description: Battery voltage
+  unit: mV (millivolt)
+  dependency: [ttraw_adc_bandgap, ttraw_adc_Vbat]
+  post_hour_func: "2 * 1100 * (ttraw_adc_Vbat / ttraw_adc_bandgap)"  
+  aggregation: average  
+
+
+
+
+
+  

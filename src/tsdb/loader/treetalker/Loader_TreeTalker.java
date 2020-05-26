@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -33,7 +32,8 @@ public class Loader_TreeTalker {
 
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 	private static final char SEPARATOR = ';';
-	private static final LocalDateTime TIME_START = LocalDateTime.of(1970,1,1,0,0);
+	private static final LocalDateTime UNIX_EPOCH = LocalDateTime.of(1970,1,1,0,0);
+	private static final int UNIX_EPOCH_OLE_AUTOMATION_TIME_DIFFERENCE_MINUTES = (int) Duration.between(TimeUtil.OLE_AUTOMATION_TIME_START, UNIX_EPOCH).toMinutes();
 
 	private final TsDB tsdb;
 
@@ -77,17 +77,14 @@ public class Loader_TreeTalker {
 
 	static LocalDateTime toDateTime(String timestampText) {
 		long timeStampSeconds = Long.parseLong(timestampText);
-		LocalDateTime datetime = TIME_START.plusSeconds(timeStampSeconds);
+		LocalDateTime datetime = UNIX_EPOCH.plusSeconds(timeStampSeconds);
 
 		return datetime;
 	}
 
 	static int toTimestamp(String timestampText) {
-		int diff = (int) Duration.between(TimeUtil.OLE_AUTOMATION_TIME_START, TIME_START).toMinutes();
-		//log.info("diff" + diff);		
-
 		long timeStampSeconds = Long.parseLong(timestampText);
-		int timestamp = diff + (int)(timeStampSeconds / 60); 
+		int timestamp = UNIX_EPOCH_OLE_AUTOMATION_TIME_DIFFERENCE_MINUTES + (int)(timeStampSeconds / 60); 
 		return timestamp;
 	}
 
@@ -371,7 +368,7 @@ public class Loader_TreeTalker {
 				String tt_ID = e.getKey();
 				ArrayList<DataRow> dataRows = e.getValue();
 				//log.info("insert in " + tt_ID + "  " + dataRows.size());
-				log.info(dataRows.toString());
+				//log.info(dataRows.toString());
 				dataRows.sort(new Comparator<DataRow>() {
 					@Override
 					public int compare(DataRow o1, DataRow o2) {

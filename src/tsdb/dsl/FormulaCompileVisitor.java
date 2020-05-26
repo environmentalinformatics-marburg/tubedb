@@ -25,6 +25,8 @@ import tsdb.dsl.computation.ComputationAddVar;
 import tsdb.dsl.computation.ComputationAddVarNum;
 import tsdb.dsl.computation.ComputationAddVarVar;
 import tsdb.dsl.computation.ComputationArctan;
+import tsdb.dsl.computation.ComputationArctanDeg;
+import tsdb.dsl.computation.ComputationArctanDegNeg;
 import tsdb.dsl.computation.ComputationArctanNeg;
 import tsdb.dsl.computation.ComputationConditional;
 import tsdb.dsl.computation.ComputationConditionalOneZero;
@@ -439,7 +441,9 @@ public class FormulaCompileVisitor implements FormulaVisitor1<Computation>, Bool
 		Computation parameter = formulaFunc.parameter.accept(this);		
 		switch(formulaFunc.name) {
 		case "arctan":
-			return formulaFunc.positive ? new ComputationArctan(parameter) : new ComputationArctanNeg(parameter);		
+			return formulaFunc.positive ? new ComputationArctan(parameter) : new ComputationArctanNeg(parameter);	
+		case "arctan_deg":
+			return formulaFunc.positive ? new ComputationArctanDeg(parameter) : new ComputationArctanDegNeg(parameter);					
 		case "exp":
 			return formulaFunc.positive ? new ComputationExp(parameter) : new ComputationExpNeg(parameter);
 		case "ln":
