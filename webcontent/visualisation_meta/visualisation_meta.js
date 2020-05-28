@@ -846,7 +846,7 @@ template: '#help-template',
 data: function () {
 	return {
 
-	visible: false,
+	visible: undefined,
 
 	};
 },
@@ -856,14 +856,14 @@ mounted: function() {
 	window.addEventListener('keyup', function (e) {
 		if (e.keyCode == 27) {
 			console.log(e);
-			self.visible = false;
+			self.visible = undefined;
 		}
 	});
 },
 
 methods: {
-	show() {
-		this.visible = true;
+	show(language) {
+		this.visible = language;
 	}
 },
 

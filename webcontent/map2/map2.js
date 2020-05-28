@@ -32,7 +32,8 @@ var app = new Vue({
 el: '#app',
 
 data: {
-	message: "init ...",	
+	message: "init ...",
+	map: undefined,	
 	clusterLayer: undefined,
 	features: [],
 	hoveredPlots: [],
@@ -41,7 +42,7 @@ data: {
 	showPlotDialog: false,
 	selectedPlot: undefined,
 	featureSource: undefined,
-	visibleHelp: false,
+	visibleHelp: undefined,
 },
 
 mounted: function () {
@@ -86,6 +87,7 @@ watch: {
 			source: this.featureSource
 		});		
 		this.clusterLayer.setSource(clusterSource);
+		this.map.getView().fit(this.featureSource.getExtent(), this.map.getSize());
 	}
 },
 
@@ -160,7 +162,7 @@ methods: {
 			source: new ol.source.OSM()
 		});
 
-		var map = new ol.Map({
+		self.map = new ol.Map({
 			layers: [raster, this.clusterLayer],
 			target: 'map',
 			view: new ol.View({
@@ -199,7 +201,7 @@ methods: {
 				self.hoveredPlots.push('...');
 			}
 		});
-		map.addInteraction(selectHover);
+		self.map.addInteraction(selectHover);
 		
 		var selectSingleClick = new ol.interaction.Select({
 			style: this.createStyleFunction(true),
@@ -209,12 +211,12 @@ methods: {
 			selectSingleClick.getFeatures().clear();
 			self.viewSelectedPlots();
 		});
-		map.addInteraction(selectSingleClick);
+		self.map.addInteraction(selectSingleClick);
 
 		var dragBox = new ol.interaction.DragBox({
 			condition: ol.events.condition.platformModifierKeyOnly
 		});
-		map.addInteraction(dragBox);
+		self.map.addInteraction(dragBox);
 		dragBox.on('boxstart', function() {
 			self.selectedPlots = [];			
 		});
@@ -262,8 +264,12 @@ methods: {
 		console.log(plot);
 	},
 
-	toggleHelp() {
-		this.visibleHelp = ! this.visibleHelp;
+	toggleHelp(language) {
+		if(this.visibleHelp === language) {
+			this.visibleHelp = undefined;
+		} else {
+			this.visibleHelp = language;
+		}
 	},
 }, // end of methods
 

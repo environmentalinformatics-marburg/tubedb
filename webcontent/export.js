@@ -1,4 +1,13 @@
+/* *** settings that may need to be changed at different runtime environments *** */
 var url_base = "../";
+var url_region_page = "export_region.html";
+var url_plots_page = "export_plots.html";
+var url_sensors_page = "export_sensors.html";
+var url_time_page = "export_time.html";
+var url_create_page = "export_create.html";
+var url_settings_page = "export_settings.html";
+/* ***   *** */
+
 
 var url_region_list = url_base + "tsdb/region_list";
 var url_export_reset = url_base + "export/reset";
@@ -84,10 +93,14 @@ clear_println(timespan_output,"query data...");
 clear_println(plots_output,"query data...");
 incTask();
 $.get(url_export_plots).done(function(data) {
-		clear(plots_output);
+		clear(plots_output);		
 		var rows = splitData(data);
-		for(i in rows) {
-			println(plots_output, rows[i]);
+		if(rows === undefined || rows.length == 0) {
+			println(plots_output, "(no plots chosen)");
+		} else {
+			for(i in rows) {
+				println(plots_output, rows[i]);
+			}
 		}
 		decTask();		
 	}).fail(function() {clear_println(plots_output,"error getting data");decTask();});
@@ -97,8 +110,12 @@ incTask();
 $.get(url_export_sensors).done(function(data) {
 		clear(sensors_output);
 		var rows = splitData(data);
-		for(i in rows) {
-			println(sensors_output, rows[i]);
+		if(rows === undefined || rows.length == 0) {
+			println(sensors_output, "(no parameters chosen)");
+		} else {
+			for(i in rows) {
+				println(sensors_output, rows[i]);
+			}
 		}
 		decTask();
 	}).fail(function() {clear_println(sensors_output,"error getting data");decTask();});
@@ -166,21 +183,38 @@ $.getJSON(url_export_settings).done(function( data ) {
 	})
 	.fail(function(data) {clear_println(settings_output,"error getting data");decTask();});	
 
-document.getElementById("choose_region").onclick = function() {
-	window.location = "export_region.html";
-}	
-	
-document.getElementById("choose_sensors").onclick = function() {
-	window.location = "export_sensors.html";
-}		
-	
-document.getElementById("choose_plots").onclick = function() {
-	window.location = "export_plots.html";
+document.getElementById("button_reset").onclick = function() {
+	incTask();
+	$.post(url_export_reset)
+			.done(function() {
+			document.location.reload();
+			decTask();
+			})
+			.fail(function(jqXHR, textStatus, errorThrown) {
+			alert("error sending reset: "+textStatus+"  "+errorThrown);
+			decTask();
+	});
 }
 
-document.getElementById("choose_time").onclick = function() {
-	window.location = "export_time.html";
+document.getElementById("choose_region").onclick = function() {
+	window.location = url_region_page;
 }
+
+document.getElementById("choose_plots").onclick = function() {
+	window.location = url_plots_page;
+}
+	
+document.getElementById("choose_sensors").onclick = function() {
+	window.location = url_sensors_page;
+}		
+
+document.getElementById("choose_time").onclick = function() {
+	window.location = url_time_page;
+}
+
+document.getElementById("button_settings").onclick = function() {
+	window.location = url_settings_page;
+};	
 
 //$("#download").button();
 /*document.getElementById("download").onclick = function() {
@@ -190,25 +224,9 @@ document.getElementById("choose_time").onclick = function() {
 }*/
 
 document.getElementById("create").onclick = function() {
-	window.location = "export_create.html";
+	window.location = url_create_page;
 }
 
-document.getElementById("button_reset").onclick = function() {
-	incTask();
-	$.post(url_export_reset)
-		 .done(function() {
-			document.location.reload();
-			decTask();
-		 })
-		 .fail(function(jqXHR, textStatus, errorThrown) {
-			alert("error sending reset: "+textStatus+"  "+errorThrown);
-			decTask();
-	});
-}
-
-
-
-document.getElementById("button_settings").onclick = function() {window.location = "export_settings.html";};	
 decTask();
 
 //incTask();	

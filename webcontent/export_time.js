@@ -1,9 +1,12 @@
+/* *** settings that may need to be changed at different runtime environments *** */
 var url_base = "../";
+var url_result_page = "export.html";
+var url_go_page = "export_settings.html";
+/* ***   *** */
 
 var url_export_settings = url_base + "export/settings";
 var url_export_apply_settings = url_base + "export/apply_settings";
 var url_export_timespan = url_base + "export/timespan";
-var url_result_page = "export.html";
 var url_region_json = url_base + "tsdb/region.json";
 
 var tasks = 0;
@@ -82,6 +85,33 @@ function on_apply() {
 		.fail(function(jqXHR, textStatus, errorThrown) {alert("error sending settings data: "+textStatus+"  "+errorThrown);decTask();});
 }
 
+function on_apply_go() {
+	incTask();
+	json_settings.timestep = document.getElementById("choose_aggregation").value;
+	
+	if(document.getElementById("radio_all").checked) {
+		json_settings.timespan_type = "all";
+	} else if(document.getElementById("radio_year").checked) {
+		json_settings.timespan_type = "year";
+		json_settings.timespan_year = time_select_year.val();
+	} else if(document.getElementById("radio_years").checked) {
+		json_settings.timespan_type = "years";
+		json_settings.timespan_years_from = time_select_years_from.val();
+		json_settings.timespan_years_to = time_select_years_to.val();
+	} else if(document.getElementById("radio_dates").checked) {
+		json_settings.timespan_type = "dates";
+		json_settings.timespan_dates_from = time_text_dates_from.val();
+		json_settings.timespan_dates_to = time_text_dates_to.val();		
+	}	
+	
+	$.postJSON(url_export_apply_settings,json_settings)
+		.done(function() {
+			window.location = url_go_page;
+			decTask();
+		 })
+		.fail(function(jqXHR, textStatus, errorThrown) {alert("error sending settings data: "+textStatus+"  "+errorThrown);decTask();});
+}
+
 function on_radio_change() {
 	var type = "all";
 	if(document.getElementById("radio_year").checked) type="year";
@@ -147,6 +177,7 @@ $(document).ready(function(){
 	
 	document.getElementById("button_cancel").onclick = on_cancel;
 	document.getElementById("button_apply").onclick = on_apply;
+	document.getElementById("button_apply_go").onclick = on_apply_go;
 	
 	document.getElementById("radio_all").onchange = on_radio_change;
 	document.getElementById("radio_year").onchange = on_radio_change;

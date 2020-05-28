@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Export Time Series - choose parameters</title>
+<title>(2) Export Climate Data - parameters</title>
 <meta name="robots" content="noindex, nofollow" />
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="favicon.png" />
@@ -71,18 +71,24 @@ body {
 <div id="busy" style="display:inline-block;text-align:right;visibility:hidden">busy...</div>
 </div>
 <div id="top_line_right">
-<a href="index.html">main-page</a>
-<button onclick="var h=document.querySelector('#div_help').style;h.display=(h.display=='none')?'inline':'none'">?</button>
+	<button onclick="var hE=document.querySelector('#div_help_English').style;var hD=document.querySelector('#div_help_Deutsch').style;var vE=(hE.display=='none');hE.display=vE?'inline':'none';hD.display='none';">
+		<b>[i]</b> (English)
+	</button>
+	<button onclick="var hD=document.querySelector('#div_help_Deutsch').style;var hE=document.querySelector('#div_help_English').style;hD.display=(hD.display=='none')?'inline':'none';hE.display='none';">
+		<b>[i]</b> (Deutsch)
+	</button>
+	<a href="index.html">-->main-page</a>
 </div> 
 </div>
 
-<h1 style="text-align:center">Export Time Series - choose parameters</h1>
+<h1 style="text-align:center">(2) Export Climate Data - parameters</h1>
 
 <div class="horizontal-box">
 <div class="spacer"></div>
 <div class="center">
-<button id="button_cancel">cancel</button>
-<button id="button_apply">apply chosen parameters</button>
+<button id="button_cancel">[X] discard</button>
+<button id="button_apply">[OK] save</button>
+<button id="button_apply_go">[OK] save --> go to (3)</button>
 </div> <!--END center-->
 <div class="spacer"></div>
 </div> <!--END horizontal-box-->
@@ -90,18 +96,58 @@ body {
 <hr/>
 </div>
 
-<div id="div_help" style="display:none">
-<h3>Help</h3>
-On this page you can choose the parameters of which the data from the selected plots should be exported. click on "cancel" to discard changed. click on "apply parameters" to confirm changes.
-<br>
-<br>
-Double-click on one parameter in the box of "Available Parameters" to add it to your chosen parameter in the box "Chosen Parameters" and vice versa.
-<hr/>
+<div id="div_help_English" style="display:none">
+	<h3>Help</h3>
+	On this page you can choose the climate parameters for your data request.
+	<br>
+	<br>On the <b>left box</b> chosen climate parameters for your data request are listed.
+	<br>On the <b>right box</b> available climate parameters are listed, that are not chosen for your data request.
+	<br><br>Interactions:
+	<ul>
+		<li><b>Double-click</b> at a climate parameter on the right box to move it to the left box.</li>
+		<li><b>Double-click</b> at a climate parameter on the left box to move it to the right box.</li>
+		<li>Select climate parameters on the right box and click <b>"&lt;"</b>-button to move it to the left box. (Multiple climate parameters can be selected at once by holding crtl-key or shift-key while clicking.)</li>
+		<li>Select climate parameters on the left box and click <b>"&gt;"</b>-button to move it to the right box. (Multiple climate parameters can be selected at once by holding crtl-key or shift-key while clicking.)</li>
+		<li>Click on <b>"&lt;&lt;"</b>-button moves all shown climate parameters on the right box to the left box.</li>
+		<li>Click on <b>"&gt;&gt;"</b>-button moves all shown climate parameters on the left box to the right box.</li>
+	</ul>
+
+	<br>Click on "<b>[X] discard</b>" to discard changed. 
+	<br>Click on "<b>[OK] save</b>" to confirm changes. 
+	<br>Click on "<b>[OK] save --> go to (3)</b>" confirms the changes and switches to the next page with time settings.
+	<hr/>
 </div>
+
+<div id="div_help_Deutsch" style="display:none">
+	<h3>Anleitung</h3>
+	Auf dieser Seite können Sie die Klimaparameter für Ihre Datenanforderung auswählen.
+	<br>
+	<br>In der <b>linken Box</b> werden die ausgewählten Klimaparameter für Ihre Datenanfrage aufgelistet.
+	<br>In der <b>rechten Box</b> werden die verfügbaren Klimaparameter aufgelistet, die nicht für Ihre Datenanfrage ausgewählt sind.
+	<br><br>Interaktionen:
+	<ul>
+		<li><b>Doppelklick</b> auf einen Klimaparameter in der rechten Box verschiebt den Klimaparameter in die linke Box.</li>
+		<li><b>Doppelklick</b> auf einen Klimaparameter in der linken Box verschiebt den Klimaparameter in die rechte Box.</li>
+		<li>Ausgewählte Klimaparameter in der rechten Box können mit Klick auf <b>"&lt;"</b> in die linke Box verschoben werden. (Mehrere Klimaparameter können gleichzeitig ausgewählt werden, indem Sie die Strg-Taste oder die Umschalt-Taste gedrückt halten, während Sie klicken.)</li>
+		<li>Ausgewählte Klimaparameter in der rechten Box können mit Klick auf <b>"&gt;"</b> in die linke Box verschoben werden. (Mehrere Klimaparameter können gleichzeitig ausgewählt werden, indem Sie die Strg-Taste oder die Umschalt-Taste gedrückt halten, während Sie klicken.)</li>
+		<li>Ein Klick auf <b>"&lt;&lt;"</b> verschiebt alle in der rechten Box angezeigte Klimaparameter in den linke Box.</li>
+		<li>Ein Klick auf <b>"&gt;&gt;"</b> verschiebt alle in der linken Box angezeigte Klimaparameter in die rechte Box.</li>		
+	</ul>
+
+	<br>Ein Klick auf "<b>[X] discard</b>" verwirft die Änderungen. 
+	<br>Ein Klick auf "<b>[OK] save</b>" bestätigt die Änderungen.
+	<br>Ein Klick auf "<b>[OK] save --> go to (3)</b>" bestätigt die Änderungen und wechselt zur nächsten Seite mit Auswahl der Zeit.
+
+	<hr/>
+</div>
+
+
+
 
 <div class="horizontal-box">
 <div class="spacer"></div>
 <div class="center main">
+<i>Specify the parameters your data request.</i>
 <h3>Select Parameters</h3>
 
 <p>
@@ -125,7 +171,7 @@ Double-click on one parameter in the box of "Available Parameters" to add it to 
 </div>
 
 </p>
-Parameters may not be available on every plot.
+Some parameters may not be available on every plot.
 </div> <!--END center-->
 
 <div class="spacer"></div>

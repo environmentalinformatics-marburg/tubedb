@@ -105,16 +105,17 @@
 		<plot-dialog v-if="showPlotDialog" @close="showPlotDialog = false" :plot="selectedPlot">
 		</plot-dialog>
     <div class="main_page_link_and_help">
-    <a href="../index.html">main-page</a>
-    <button @click="toggleHelp">?</button>
+    <button @click="toggleHelp('English')"><b>[i]</b> (English)</button>
+    <button @click="toggleHelp('Deutsch')"><b>[i]</b> (Deutsch)</button>
+    <a href="../index.html">-->main-page</a>
     </div>
 
 
-    <div id="help" v-if="visibleHelp">
+    
+    <div id="help" v-if="visibleHelp === 'English'">
+      <button @click="toggleHelp()" style="position: absolute; right: 10px;"><b>[x]</b> Close</button>
       <h1>Instructions</h1>
       <hr>
-      (Press ?-button again to hide this help-box.)
-      <br><br>
       The map-page shows measurement plots on a world-map.
       <br>
       <br>
@@ -125,6 +126,22 @@
       <br> Click on a plot-name to show infos about the plot.
       <br><br> If you click on a circle with plot-name, the box with plot infos opens.
     </div>
+    
+    <div id="help" v-if="visibleHelp === 'Deutsch'">
+      <button @click="toggleHelp()" style="position: absolute; right: 10px;"><b>[x]</b> Schließen</button>
+      <h1>Anleitung</h1>
+      <hr>
+      Diese Kartenseite zeigt Klimastationen (Plots) auf einer Weltkarte.
+      <br>
+      <br>
+      Ein Kreis mit Zahl stellt die Anzahl der Plots an dieser Position dar.
+      <br>
+      Beim hineinzoomen (mit dem Mausrad) erscheinen Kreise mit Plotnamen.
+      <br><br> Mit Klick auf einen Kreis mit Zahlen, öffnet sich eine Box mit den enthaltenen Plot-Namen.
+      <br> Mit Klick auf einen Plot-Namen werden Informationen über den Plot angezeigt.
+      <br><br> Mit Klick auf einen Kreis mit Plot-Namen öffnet sich eine Box mit Plot-Infos.
+    </div>
+
 	</div>
   </body>
 </html>

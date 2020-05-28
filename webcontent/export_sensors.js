@@ -1,10 +1,13 @@
+/* *** settings that may need to be changed at different runtime environments *** */
 var url_base = "../";
+var url_result_page = "export.html";
+var url_go_page = "export_time.html";
+/* ***   *** */
 
 var url_sensor_list = url_base + "tsdb/sensor_list";
 var url_export_region = url_base + "export/region";
 var url_export_sensors = url_base + "export/sensors";
 var url_export_apply_sensors = url_base + "export/apply_sensors";
-var url_result_page = "export.html";
 
 var chosen_select;
 var available_select;
@@ -177,6 +180,25 @@ $(document).ready(function(){
 		  contentType:"text/plain; charset=utf-8",
 		  success: function(){
 			window.location = url_result_page;
+			setStateReady();
+		  },
+		  error: function() {
+			alert("error sending data");
+			setStateReady();
+		  },
+		});		 
+	}
+
+	document.getElementById("button_apply_go").onclick = function() {	
+		setStateBusy();
+		var postSensors = arrayToText(chosen_sensors);
+		$.ajax({
+		  url: url_export_apply_sensors,
+		  type: "POST",
+		  data: postSensors,
+		  contentType:"text/plain; charset=utf-8",
+		  success: function(){
+			window.location = url_go_page;
 			setStateReady();
 		  },
 		  error: function() {

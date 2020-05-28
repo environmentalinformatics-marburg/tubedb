@@ -202,17 +202,22 @@ mounted: function () {
 </div>
 
 <div class="bg">
-<div style="text-align:right">instructions => <button id="button_instructions" onclick="show_instructions()">?</button></div>
+<div style="text-align:right">
+	<button onclick="show_instructions_English()"><b>[i]</b> (English)</button>
+	<button onclick="show_instructions_Deutsch()"><b>[i]</b> (Deutsch)</button>
+</div>
 <h1 style="text-align:center">TubeDB</h1>
 <hr/>
 </div>
-<div id="div_instructions" style="display:none">
+<div id="div_instructions_English" style="display:none">
 <script type="text/javascript">
-function show_instructions() {
-	if(document.getElementById("div_instructions").style.display==="none") {
-		document.getElementById("div_instructions").style.display = "inline";
+function show_instructions_English() {
+	if(document.getElementById("div_instructions_English").style.display==="none") {
+		document.getElementById("div_instructions_English").style.display = "inline";
+		document.getElementById("div_instructions_Deutsch").style.display = "none";
 	} else {
-		document.getElementById("div_instructions").style.display = "none";
+		document.getElementById("div_instructions_English").style.display = "none";
+		document.getElementById("div_instructions_Deutsch").style.display = "none";
 	}
 }
 </script>
@@ -220,10 +225,31 @@ function show_instructions() {
 This is the central start-page of TubeDB Web Interface.
 <br>
 <br>You can navigate to a desired view by clicking on one of the buttons below.
-<br>Each sub-page contains a link "main-page" at top-right position to navigate back to this start-page and a "?"-button to toggle help.
+<br>Each sub-page contains a link "main-page" at top-right position to navigate back to this start-page and a [i]-button to toggle help.
 <br>
 <br>The "Infobox" below shows some update information about the contained data.
+<hr/>
+</div>
 
+<div id="div_instructions_Deutsch" style="display:none">
+<script type="text/javascript">
+function show_instructions_Deutsch() {
+	if(document.getElementById("div_instructions_Deutsch").style.display==="none") {
+		document.getElementById("div_instructions_Deutsch").style.display = "inline";
+		document.getElementById("div_instructions_English").style.display = "none";
+	} else {
+		document.getElementById("div_instructions_Deutsch").style.display = "none";
+		document.getElementById("div_instructions_English").style.display = "none";
+	}
+}
+</script>
+<h2>Anleitung</h2>
+Dies ist die Startseite des TubeDB Web Interface.
+<br>
+<br>Sie können zu einer gewünschten Ansicht navigieren, indem Sie auf eine der Schaltflächen unten klicken.
+<br>Jede Unterseite enthält oben rechts einen Link zurück zur Startseite und eine [i]-Schaltfläche, um eine Anleitung aufzurufen.
+<br>
+<br>Die "Infobox" unten zeigt einige Aktualisierungsinformationen der enthaltenen Daten.
 <hr/>
 </div>
 

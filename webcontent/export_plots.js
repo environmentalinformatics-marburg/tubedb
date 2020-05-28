@@ -1,4 +1,9 @@
+/* *** settings that may need to be changed at different runtime environments *** */
 var url_base = "../";
+var url_result_page = "export.html";
+var url_go_page = "export_sensors.html";
+/* ***   *** */
+
 
 var url_generalstation_list = url_base + "tsdb/generalstation_list";
 var url_plot_list = url_base + "tsdb/plot_list";
@@ -6,7 +11,6 @@ var url_region_plot_list = url_base + "tsdb/region_plot_list";
 var url_export_region = url_base + "export/region";
 var url_export_plots = url_base + "export/plots";
 var url_export_apply_plots = url_base + "export/apply_plots";
-var url_result_page = "export.html";
 
 var chosen_select;
 var available_select;
@@ -144,6 +148,22 @@ $(document).ready(function(){
 		  contentType:"text/plain; charset=utf-8",
 		  success: function(){
 			window.location = url_result_page;
+		  },
+		  error: function() {
+			alert("error sending data");
+		  },
+		});	 
+	}
+
+	document.getElementById("button_apply_go").onclick = function() {
+		var postPlots = arrayToText(chosen_plots);
+		$.ajax({
+		  url: url_export_apply_plots,
+		  type: "POST",
+		  data: postPlots,
+		  contentType:"text/plain; charset=utf-8",
+		  success: function(){
+			window.location = url_go_page;
 		  },
 		  error: function() {
 			alert("error sending data");

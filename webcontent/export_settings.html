@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Export Time Series - settings</title>
+<title>(4) Export Climate Data - settings</title>
 <meta name="robots" content="noindex, nofollow" />
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="favicon.png" />
@@ -48,33 +48,72 @@ body {
 <div id="status" style="display:inline-block">init...</div>
 </div>
 <div id="top_line_right">
-<a href="index.html">main-page</a>
-<button onclick="var h=document.querySelector('#div_help').style;h.display=(h.display=='none')?'inline':'none'">?</button>
+	<button onclick="var hE=document.querySelector('#div_help_English').style;var hD=document.querySelector('#div_help_Deutsch').style;var vE=(hE.display=='none');hE.display=vE?'inline':'none';hD.display='none';">
+		<b>[i]</b> (English)
+	</button>
+	<button onclick="var hD=document.querySelector('#div_help_Deutsch').style;var hE=document.querySelector('#div_help_English').style;hD.display=(hD.display=='none')?'inline':'none';hE.display='none';">
+		<b>[i]</b> (Deutsch)
+	</button>
+	<a href="index.html">-->main-page</a>
 </div> 
 </div>
-<h1>Export Time Series - settings</h1>
+<h1>(4) Export Climate Data - settings</h1>
 
 <div class="horizontal-box">
 <div class="spacer"></div>
 <div class="center">
-<button id="button_cancel">cancel</button>
-<button id="button_apply">apply settings</button>
+<button id="button_cancel">[X] discard</button>
+<button id="button_apply">[OK] save</button>
 </div> <!--END center-->
 <div class="spacer"></div>
 </div> <!--END horizontal-box-->
 
 <hr/>
 </div>
-<div id="div_help" style="display:none">
+<div id="div_help_English" style="display:none">
 <h3>Help</h3>
-On this page you can choose some setting of the zip file containing the exported data. Click on "cancel" to discard changed. Click on "apply settings" to confirm changes.
+On this page you can specify general setting of the time series generating process and of the zip file containing the exported data.
+
+<br><br><b>Quality checks</b>
+<ul>
+	<li><b>"0: no quality check"</b>: No quality check will be applied.</li>
+	<li><b>"1: just physical range check"</b>: Parameter specific range of values will be checked.</li>
+	<li><b>"2: physical range + step range check"</b>: (additional) Parameter specific value change in time will be checked.</li>
+	<li><b>"3: physical range + step + empirical check"</b>: (additional) Value will be checked in comparison to mean value of the station group.</li>
+</ul>
+
+<b>Interpolation</b>
+<br>Set check at "try to interpolate missing data" to fill gaps in time series if possible and plausible.
+
+<br><br>Click on "<b>[X] discard</b>" to discard changed. 
+<br>Click on "<b>[OK] save</b>" to confirm changes and go back to overview-page to review your specified settings. There you can start the download by the "create ZIP-file"-button.
 <hr/>
+</div>
+
+<div id="div_help_Deutsch" style="display:none">
+	<h3>Anleitung</h3>
+	Auf dieser Seite können Sie allgemeine Einstellungen für den Prozess der Zeitreihenerzeugung und für die Zip-Datei mit den exportierten Daten vornehmen.
+
+	<br><br><b>Qualitätsprüfungen</b>
+	<ul>
+		<li><b>"0: no quality check"</b>: Es wird keine Qualitätsprüfung durchgeführt.</li>
+		<li><b>"1: just physical range check"</b>: Parameterspezifischer Wertebereich wird geprüft.</li>
+		<li><b>"2: physical range + step range check"</b>: (zusätzlich) Parameterspezifische Wertänderung in der Zeit wird geprüft.</li>
+		<li><b>"3: physical range + step + empirical check"</b>: (zusätzlich) Wert wird im Vergleich zum Mittelwert der Stationsgruppe überprüft.</li>
+	</ul>
+
+	<b>Interpolation</b>
+	<br>Kreuzen sie "try to interpolate missing data" an, um Lücken in Zeitreihen zu füllen, falls möglich und plausibel.
+	
+	<br><br>Ein Klick auf "<b>[X] discard</b>" verwirft die Änderungen. 
+	<br>Ein Klick auf "<b>[OK] save</b>" bestätigt die Änderungen und führt zurück zur Übersichtsseite, um Ihre angegebenen Einstellungen zu überprüfen. Dort können Sie den Download über den "create ZIP-file"-Button starten.
+	<hr/>
 </div>
 
 <div class="horizontal-box">
 <div class="spacer"></div>
 <div class="center main">
-
+<i>Specify settings for your data request.</i>
 <h3>Settings</h3>
 
 <p>

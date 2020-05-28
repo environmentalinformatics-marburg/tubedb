@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Export Time Series - choose region</title>
+<title>(0) Export Climate Data - region</title>
 <meta name="robots" content="noindex, nofollow" />
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="favicon.png" />
@@ -51,33 +51,53 @@ body {
 <div id="status" style="display:inline-block">init...</div>
 </div>
 <div id="top_line_right">
-<a href="index.html">main-page</a>
-<button onclick="var h=document.querySelector('#div_help').style;h.display=(h.display=='none')?'inline':'none'">?</button>
+	<button onclick="var hE=document.querySelector('#div_help_English').style;var hD=document.querySelector('#div_help_Deutsch').style;var vE=(hE.display=='none');hE.display=vE?'inline':'none';hD.display='none';">
+		<b>[i]</b> (English)
+	</button>
+	<button onclick="var hD=document.querySelector('#div_help_Deutsch').style;var hE=document.querySelector('#div_help_English').style;hD.display=(hD.display=='none')?'inline':'none';hE.display='none';">
+		<b>[i]</b> (Deutsch)
+	</button>
+	<a href="index.html">-->main-page</a>
 </div> 
 </div>
 
-<h1>Export Time Series - choose region</h1>
+<h1>(0) Export Climate Data - region</h1>
 
 <div class="horizontal-box">
 <div class="spacer"></div>
 <div class="center">
-<button id="button_cancel">cancel</button>
-<button id="button_apply">apply region</button>
+<button id="button_cancel">[X] discard</button>
+<button id="button_apply">[OK] save</button>
+<button id="button_apply_go">[OK] save --> go to (1)</button>
 </div> <!--END center-->
 <div class="spacer"></div>
 </div> <!--END horizontal-box-->
 
 <hr/>
 </div>
-<div id="div_help" style="display:none">
-<h3>Help</h3>
-On this page you can change the region of plots you are interested in. click on "cancel" to discard changed. click on "apply region" to confirm changes.
-<hr/>
+
+<div id="div_help_English" style="display:none">
+	<h3>Help</h3>
+	On this page you can change the region (project) of plots you are interested in. 
+	<br><br>Click on "<b>[X] discard</b>" to discard changed. 
+	<br>Click on "<b>[OK] save</b>" to confirm changes. 
+	<br>Click on "<b>[OK] save --> go to (1)</b>" confirms the changes and switches to the next page with plot selections.
+	<hr/>
+</div>
+
+<div id="div_help_Deutsch" style="display:none">
+	<h3>Anleitung</h3>
+	Auf dieser Seite können Sie die Region (Projekt) der auswählbaren Plots ändern. 
+	<br><br>Ein Klick auf "<b>[X] discard</b>" verwirft die Änderungen. 
+	<br>Ein Klick auf "<b>[OK] save</b>" bestätigt die Änderungen. 
+	<br>Ein Klick auf "<b>[OK] save --> go to (1)</b>" bestätigt die Änderungen und wechselt zur nächsten Seite mit der Plotauswahl.
+	<hr/>
 </div>
 
 <div class="horizontal-box">
 <div class="spacer"></div>
 <div class="center main">
+<i>Specify the region (project) for your data request.</i>
 <h3>Region</h3>
 <div id="region_div" style="display:inline-block"></div>
 </div> <!--END center-->

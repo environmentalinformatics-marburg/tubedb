@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Export Time Series</title>
+<title>(5) Export Climate Data - create ZIP-file</title>
 <meta name="robots" content="noindex, nofollow" />
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="favicon.png" />
@@ -47,24 +47,47 @@ body {
 <div id="status" style="display:inline-block">init...</div>
 </div>
 <div id="top_line_right">
-<a href="index.html">main-page</a>
-<button onclick="var h=document.querySelector('#div_help').style;h.display=(h.display=='none')?'inline':'none'">?</button>
+	<button onclick="var hE=document.querySelector('#div_help_English').style;var hD=document.querySelector('#div_help_Deutsch').style;var vE=(hE.display=='none');hE.display=vE?'inline':'none';hD.display='none';">
+		<b>[i]</b> (English)
+	</button>
+	<button onclick="var hD=document.querySelector('#div_help_Deutsch').style;var hE=document.querySelector('#div_help_English').style;hD.display=(hD.display=='none')?'inline':'none';hE.display='none';">
+		<b>[i]</b> (Deutsch)
+	</button>
+	<a href="index.html">-->main-page</a>
 </div> 
 </div>
-<h1>Export Time Series - create zip-file</h1>
+<h1>(5) Export Climate Data - create ZIP-file</h1>
+<div class="horizontal-box">
+<div class="spacer"></div>
+<div class="center">
+<button id="button_cancel">[X] cancel</button>
+</div> <!--END center-->
+<div class="spacer"></div>
+</div> <!--END horizontal-box-->
 <hr>
 </div>
-<div id="div_help" style="display:none">
+<div id="div_help_English" style="display:none">
 <h3>Help</h3>
-On this page you can view the progress of processing the chosen plots. 
+On this page you can view the progress of processing your data request. 
 <br><br>Wait until it's done. 
 <br><br>Then you get a link to download the resulting zip file.
+<br><br>Click on "<b>[X] cancel</b>" to go back to overview-page. 
 <hr/>
+</div>
+
+<div id="div_help_Deutsch" style="display:none">
+	<h3>Anleitung</h3>
+	Auf dieser Seite können Sie den Fortschritt der Bearbeitung Ihrer Datenanfrage verfolgen. 
+	<br><br>Warten Sie, bis die Bearbeitung abgeschlossen ist. 
+	<br><br>Dann erhalten Sie einen Link zum Herunterladen der resultierenden Zip-Datei.
+	<br><br>Ein Klick auf "<b>[X] cancel</b>" führt zurück zur Übersichtsseite. 	
+	<hr/>
 </div>
 
 <div class="horizontal-box">
 <div class="spacer"></div>
 <div class="center main">
+<i>When your data request has been processed you can download the ZIP-file.</i>
 <p>
 <progress id="progress" style="width:700px"></progress>&nbsp;&nbsp;&nbsp;<span id="progressLabel"></span>
 </p>
