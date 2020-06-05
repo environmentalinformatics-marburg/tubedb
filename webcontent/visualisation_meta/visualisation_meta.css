@@ -109,8 +109,8 @@ option {
 
 .processing {
 	position: fixed;
-	top: 20px;
-	right: 120px;
+	top: 0px;
+	left: 400px;
 	background-color: rgba(140, 135, 130, 0.4);
 	border-radius: 5px;
 	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
@@ -138,7 +138,7 @@ progress {
 
 .message_box {
 	position: absolute;
-	top: 28px;
+	top: 50px;
 	right: 0px;
 	background-color: rgba(225, 218, 212, 0.7);
 	/*border-radius: 5px;*/

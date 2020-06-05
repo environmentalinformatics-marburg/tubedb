@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,10 +23,12 @@ import org.apache.logging.log4j.Logger;
 import com.opencsv.CSVReader;
 
 import tsdb.TsDB;
+import tsdb.component.SourceEntry;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataEntry;
 import tsdb.util.DataRow;
 import tsdb.util.TimeUtil;
+import tsdb.util.TsSchema;
 
 public class Loader_TreeTalker {
 	private static final Logger log = LogManager.getLogger();
@@ -41,8 +44,8 @@ public class Loader_TreeTalker {
 		AssumptionCheck.throwNull(tsdb);
 		this.tsdb = tsdb;
 	}
-	
-	
+
+
 	public void loadDirectoryRecursive(Path path) {
 		log.info("TreeTalker import Directory "+path);
 		try(DirectoryStream<Path> rootStream = Files.newDirectoryStream(path)) {
@@ -63,7 +66,7 @@ public class Loader_TreeTalker {
 			log.error(e);
 		}		
 	}
-	
+
 
 	public void loadFile(Path filename) {
 		log.info("TreeTalker import File "+ filename);
@@ -330,30 +333,31 @@ public class Loader_TreeTalker {
 					"ttraw_adc_Vbat"
 			};
 
-			
+
 			TreeSet<String> missingStationsCollector = new TreeSet<String>();
-			
+
 			try {
-				insert(tsdb, tt49_dataMap, tt49_sensors, missingStationsCollector);
+				insert(tsdb, tt49_dataMap, tt49_sensors, missingStationsCollector, file.toPath());
 			}catch(Exception e) {
 				log.warn("at tt49 " + e.getMessage());
 			}
 			try {
-				insert(tsdb, tt4B_dataMap, tt4B_sensors, missingStationsCollector);
+				insert(tsdb, tt4B_dataMap, tt4B_sensors, missingStationsCollector, file.toPath());
 			}catch(Exception e) {
 				log.warn("at tt4B " + e.getMessage());
 			}
 			try {
-				insert(tsdb, tt4C_dataMap, tt4C_sensors, missingStationsCollector);
+				insert(tsdb, tt4C_dataMap, tt4C_sensors, missingStationsCollector, file.toPath());
 			}catch(Exception e) {
+				e.printStackTrace();
 				log.warn("at tt4C " + e.getMessage());
 			}
 			try {
-				insert(tsdb, tt4D_dataMap, tt4D_sensors, missingStationsCollector);
+				insert(tsdb, tt4D_dataMap, tt4D_sensors, missingStationsCollector, file.toPath());
 			}catch(Exception e) {
 				log.warn("at tt4D " + e.getMessage());
 			}
-			
+
 			if(!missingStationsCollector.isEmpty()) {
 				String s = "missing stations";
 				for(String station:missingStationsCollector) {
@@ -363,7 +367,7 @@ public class Loader_TreeTalker {
 			}
 		}
 
-		void insert(TsDB tsdb, HashMap<String, ArrayList<DataRow>> ttx_dataMap, String[] ttx_sensors, TreeSet<String> missingStationsCollector) {			
+		void insert(TsDB tsdb, HashMap<String, ArrayList<DataRow>> ttx_dataMap, String[] ttx_sensors, TreeSet<String> missingStationsCollector, Path filename) {			
 			for(Entry<String, ArrayList<DataRow>> e:ttx_dataMap.entrySet()) {
 				String tt_ID = e.getKey();
 				ArrayList<DataRow> dataRows = e.getValue();
@@ -399,6 +403,7 @@ public class Loader_TreeTalker {
 					DataEntry[] dataEntries = dataEntryList.toArray(new DataEntry[0]);
 					tsdb.streamStorage.insertDataEntryArray(tt_ID, ttx_sensors[i], dataEntries);
 				}
+				tsdb.sourceCatalog.insert(SourceEntry.of(tt_ID, ttx_sensors, dataRows, filename.resolve(tt_ID)));
 			}			
 		}
 

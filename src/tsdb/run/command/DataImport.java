@@ -129,8 +129,12 @@ public class DataImport {
 				break;
 			}
 			case "influx": {
-				InfluxLoaderConfig config = new InfluxLoaderConfig(rootDirectory);
-				new InfluxLoader(tsdb).load(config);
+				try {
+					InfluxLoaderConfig config = new InfluxLoaderConfig(rootDirectory);
+					new InfluxLoader(tsdb).load(config);
+				} catch (Exception e) {
+					log.warn(e);
+				}
 				break;
 			}
 			case "mof": {

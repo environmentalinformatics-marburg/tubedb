@@ -91,5 +91,5 @@ public class SourceEntry implements Serializable {
 			}			
 			return Util.arrayToStringNullable(translation);
 		}		
-	}
+	}	
 }
