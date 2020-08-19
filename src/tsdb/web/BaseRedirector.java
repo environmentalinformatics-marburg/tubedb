@@ -10,6 +10,7 @@ import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
+
 public class BaseRedirector extends AbstractHandler
 {
 	private final String redirect_target;

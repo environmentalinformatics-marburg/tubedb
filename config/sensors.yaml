@@ -1911,6 +1911,12 @@ ttraw_Tref:
   aggregation: average
   visibility: internal
   
+ttraw_Tref_1:
+  description: Raw reference probe transmit stem temperature
+  unit: raw
+  aggregation: average
+  visibility: internal  
+  
 ttraw_Theat:
   description: Raw heating probe transmit stem temperature
   unit: raw
@@ -1979,8 +1985,73 @@ tt_battery_voltage:
   post_hour_func: "2 * 1100 * (ttraw_adc_Vbat / ttraw_adc_bandgap)"  
   aggregation: average  
 
+tt_Ts_20_exploratories: 
+  description: Ts_20 from Tref_1 (exploratories only)
+  unit: °C (degree Celcius)
+  dependency: ttraw_Tref_1
+  post_hour_func: "127.6 - 0.006045 * ttraw_Tref_1 + 1.26E-07 * ttraw_Tref_1 ^ 2 - 1.15E-12 * ttraw_Tref_1 ^ 3"  
+  aggregation: average
 
+ttraw_StWC_Tref_exploratories: 
+  description: Raw stem water Content, temperature corrected (frequency domain measurement) (exploratories only)
+  unit: raw Hz (hertz)
+  dependency: [ttraw_StWC, tt_air_temperature]
+  post_hour_func: "ttraw_StWC + 16.97 * (tt_air_temperature - 29)"  
+  aggregation: average
+  visibility: internal
 
-
-
+tt_StWC_exploratories: 
+  description: Stem water Content for exploratories
+  unit: "% (percentage of stem water content)"
+  dependency: ttraw_StWC_Tref_exploratories
+  post_hour_func: "(ttraw_StWC_Tref_exploratories < 2211.79 ? 1.061 * (94.2281 - 0.0343127 * ttraw_StWC_Tref_exploratories) - 1.8054 : 1.061 * (-9E-13 * ttraw_StWC_Tref_exploratories ^ 3 + 6E-08 * ttraw_StWC_Tref_exploratories ^ 2 - 0.0013 * ttraw_StWC_Tref_exploratories + 22.494) - 1.8054)"  
+  aggregation: average
   
+tt_air_temperature_min:
+  description: Minimum value of tt_air_temperature
+  unit: °C (degree Celcius)
+  raw_source: ttraw_air_temperature
+  dependency: tt_air_temperature_min
+  post_hour_func: "tt_air_temperature_min * 0.1" 
+  aggregation: minimum  
+  category: temperature
+  derived: false
+
+tt_air_temperature_max:
+  description: Maximum value of tt_air_temperature
+  unit: °C (degree Celcius)
+  raw_source: ttraw_air_temperature
+  dependency: tt_air_temperature_max
+  post_hour_func: "tt_air_temperature_max * 0.1" 
+  aggregation: maximum  
+  category: temperature
+  derived: false    
+
+tt_air_temperature_DTR:  
+  description: DTR (Diurnal Temperature Range) of tt_air_temperature
+  unit: °K (degree Kelvin)
+  dependency: [tt_air_temperature_min, tt_air_temperature_max]
+  post_day_func: "tt_air_temperature_max - tt_air_temperature_min"
+  aggregation: average
+  category: temperature
+  
+tt_air_relative_humidity_min:
+  description: Minimum value of tt_air_relative_humidity
+  unit: '% (percentage of relative humidity)'
+  raw_source: tt_air_relative_humidity
+  aggregation: minimum  
+  derived: false
+  
+tt_air_relative_humidity_max:
+  description: Maximum value of tt_air_relative_humidity
+  unit: '% (percentage of relative humidity)'
+  raw_source: tt_air_relative_humidity
+  aggregation: maximum  
+  derived: false  
+
+tt_air_relative_humidity_DMR:  
+  description: DMR (Diurnal Moisture Range) of tt_air_relative_humidity
+  unit: pp (percentage point)
+  dependency: [tt_air_relative_humidity_min, tt_air_relative_humidity_max]
+  post_day_func: "tt_air_relative_humidity_max - tt_air_relative_humidity_min"
+  aggregation: average  
