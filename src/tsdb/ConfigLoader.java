@@ -530,6 +530,7 @@ public class ConfigLoader {
 
 			return region;
 		} catch (IOException e) {
+			log.warn("error at read region " + configFile + "   " + e);
 			e.printStackTrace();
 			return null;
 		}
@@ -573,6 +574,7 @@ public class ConfigLoader {
 				LoggerType loggerType = tsdb.getLoggerType(loggerTypeName);
 				if(loggerType==null) {
 					log.error("logger type not found: "+loggerTypeName+"  at "+plotID);
+					log.info(tsdb.getLoggerTypes());
 					continue;
 				}
 				Map<String, String> propertyMap = new TreeMap<String, String>();

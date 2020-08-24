@@ -7,7 +7,9 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -78,95 +80,33 @@ public class ImportGenericCSV {
 	public void loadFile(Path filePath) {
 		try {
 			log.info("load file "+filePath);			
-			Table table = Table.readCSV(filePath,',');		
-			int datetimeIndex = getDatetimeIndex(table);
-			if(datetimeIndex!=0) {
+			Table table = Table.readCSV(filePath,',');
+
+			int stationIndex = getStationIndex(table);
+			if(stationIndex > 0) {
 				throw new RuntimeException("wrong format");
 			}
-
-			String stationName = parseStationName(filePath);
-			log.trace("station "+stationName);
-			Station station = tsdb.getStation(stationName);
-			if(station==null) {
-				throw new RuntimeException("station not found: "+stationName+"   in "+filePath);
-			}
-
-			final int sensors = table.names.length-1;
-
-			ArrayList<DataRow> dataRows = new ArrayList<>(table.rows.length);
-
-			int prevTimestamp = -1;
-			for(String[] row:table.rows) {
-				if(row[0].isEmpty() || row[0].equals("NA")) {
-					log.warn("skip row with missing timestamp "+row[0]+" "+filePath);
-					continue;
+			if(stationIndex == 0) {
+				int datetimeIndex = getDatetimeIndex(table);
+				if(datetimeIndex != 1) {
+					throw new RuntimeException("wrong format");
 				}
-				int timestamp = parseTimestamp(row[0]);
-
-				if(timestamp==prevTimestamp) {
-					log.warn("skip duplicate timestamp "+row[0]+" "+filePath);
-					continue;
+				loadMultiStationFile(table, filePath);
+			} else {
+				int datetimeIndex = getDatetimeIndex(table);
+				if(datetimeIndex != 0) {
+					throw new RuntimeException("wrong format");
 				}
-
-				float[] data = new float[sensors];
-				for(int i=0;i<sensors;i++) {
-					String text = row[i+1];
-					if(text.isEmpty() || text.equals("NA")) {
-						data[i] = Float.NaN;
-					} else {
-						try {
-							float value = Float.parseFloat(text);
-							if( Float.isFinite(value) && value!= -9999 ) {
-								data[i] = value;
-							} else {
-								data[i] = Float.NaN;
-							}
-						} catch(Exception e) {
-							data[i] = Float.NaN;
-						}
-					}
-				}
-				
-				DataRow dataRow = new DataRow(data, timestamp);
-				//log.info(dataRow);
-				dataRows.add(dataRow);
-
-				prevTimestamp = timestamp;
-			}
-			
-			//log.info("read done.");
-
-			if(!dataRows.isEmpty()) {
-				String[] sensorNames = Arrays.copyOfRange(table.names, 1, sensors + 1);
-				long firstTimestamp = dataRows.get(0).timestamp;
-				long lastTimestamp = dataRows.get(dataRows.size()-1).timestamp;
-
-				List<LabeledProperty> computationList = station.labeledProperties.query("computation", (int)firstTimestamp, (int)lastTimestamp);
-				if(computationList.size()>0) {
-					log.trace("LabeledProperty computations");
-					for(LabeledProperty prop:computationList) {					
-						try {
-							PropertyComputation computation = ((PropertyComputation)prop.content);
-							if(Util.containsString(sensorNames, computation.target)) {
-								log.trace("LabeledProperty computation "+computation.target);
-								computation.calculate(dataRows, sensorNames, firstTimestamp, lastTimestamp);
-							}
-						} catch(Exception e) {
-							e.printStackTrace();
-							log.warn(e);
-						}
-					}
-				}
-
-				tsdb.streamStorage.insertDataRows(stationName, sensorNames, dataRows);
-				tsdb.sourceCatalog.insert(SourceEntry.of(stationName, sensorNames, dataRows, filePath));
+				loadSingleStationFile(table, filePath);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error(e+"   "+filePath);
 		}
+
+
 	}
-	
+
 	protected String parseStationName(Path filePath) {
 		String filename = filePath.getFileName().toString();
 
@@ -182,12 +122,245 @@ public class ImportGenericCSV {
 
 		return filename.substring(0, postFixIndex);		
 	}
-	
+
 	protected int parseTimestamp(String timestampText) {
 		return TimeUtil.parseStartTimestamp(timestampText);
 	}
-	
+
 	protected int getDatetimeIndex(Table table) {
 		return table.getColumnIndex("datetime");
+	}
+
+	protected int getStationIndex(Table table) {
+		return table.getColumnIndex("plotID", false);
+	}
+
+	private void loadSingleStationFile(Table table, Path filePath) {
+		String stationName = parseStationName(filePath);
+		log.trace("station "+stationName);
+		Station station = tsdb.getStation(stationName);
+		if(station==null) {
+			throw new RuntimeException("station not found: "+stationName+"   in "+filePath);
+		}
+
+		final int sensors = table.names.length-1;
+
+		ArrayList<DataRow> dataRows = new ArrayList<>(table.rows.length);
+
+		int prevTimestamp = -1;
+		for(String[] row:table.rows) {
+			if(row[0].isEmpty() || row[0].equals("NA")) {
+				log.warn("skip row with missing timestamp "+row[0]+" "+filePath);
+				continue;
+			}
+			int timestamp = parseTimestamp(row[0]);
+
+			if(timestamp==prevTimestamp) {
+				log.warn("skip duplicate timestamp "+row[0]+" "+filePath);
+				continue;
+			}
+
+			float[] data = new float[sensors];
+			for(int i=0;i<sensors;i++) {
+				String text = row[i+1];
+				if(text.isEmpty() || text.equals("NA")) {
+					data[i] = Float.NaN;
+				} else {
+					try {
+						float value = Float.parseFloat(text);
+						if( Float.isFinite(value) && value!= -9999 ) {
+							data[i] = value;
+						} else {
+							data[i] = Float.NaN;
+						}
+					} catch(Exception e) {
+						data[i] = Float.NaN;
+					}
+				}
+			}
+
+			DataRow dataRow = new DataRow(data, timestamp);
+			//log.info(dataRow);
+			dataRows.add(dataRow);
+
+			prevTimestamp = timestamp;
+		}
+
+		//log.info("read done.");
+
+		if(!dataRows.isEmpty()) {
+			String[] sensorNames = Arrays.copyOfRange(table.names, 1, sensors + 1);
+			long firstTimestamp = dataRows.get(0).timestamp;
+			long lastTimestamp = dataRows.get(dataRows.size()-1).timestamp;
+
+			List<LabeledProperty> computationList = station.labeledProperties.query("computation", (int)firstTimestamp, (int)lastTimestamp);
+			if(computationList.size()>0) {
+				log.trace("LabeledProperty computations");
+				for(LabeledProperty prop:computationList) {					
+					try {
+						PropertyComputation computation = ((PropertyComputation)prop.content);
+						if(Util.containsString(sensorNames, computation.target)) {
+							log.trace("LabeledProperty computation "+computation.target);
+							computation.calculate(dataRows, sensorNames, firstTimestamp, lastTimestamp);
+						}
+					} catch(Exception e) {
+						e.printStackTrace();
+						log.warn(e);
+					}
+				}
+			}
+
+			tsdb.streamStorage.insertDataRows(stationName, sensorNames, dataRows);
+			tsdb.sourceCatalog.insert(SourceEntry.of(stationName, sensorNames, dataRows, filePath));
+		}
+	}
+
+	private void loadMultiStationFile(Table table, Path filePath) {
+		final int sensors = table.names.length - 2;
+
+		HashMap<String, ArrayList<DataRow>> dataRowsMap = new HashMap<String, ArrayList<DataRow>>();
+		//ArrayList<DataRow> dataRows = new ArrayList<>(table.rows.length);
+
+		String cacheStationName = "";
+		ArrayList<DataRow> cacheDataRows = null;
+
+		for(String[] row:table.rows) {
+			if(row.length < 3) {
+				log.warn("skip row with missing columns  " + filePath);
+				continue;
+			}
+			String stationName = row[0];
+			if(stationName.isEmpty() || stationName.equals("NA")) {
+				log.warn("skip row with missing plotID " + stationName + " " + filePath);
+				continue;
+			}
+			String timestampText = row[1];
+			if(timestampText.isEmpty() || timestampText.equals("NA")) {
+				log.warn("skip row with missing timestamp " + timestampText + " " + filePath);
+				continue;
+			}
+
+			int timestamp = parseTimestamp(timestampText);
+
+			float[] data = new float[sensors];
+			int sensorsLen = Math.min(row.length - 2, sensors);
+			for(int i=0; i < sensorsLen; i++) {
+				String text = row[i + 2];
+				if(text.isEmpty() || text.equals("NA")) {
+					data[i] = Float.NaN;
+				} else {
+					try {
+						float value = Float.parseFloat(text);
+						if( Float.isFinite(value) && value!= -9999 ) {
+							data[i] = value;
+						} else {
+							data[i] = Float.NaN;
+						}
+					} catch(Exception e) {
+						data[i] = Float.NaN;
+					}
+				}
+			}
+
+			DataRow dataRow = new DataRow(data, timestamp);
+
+			if(!cacheStationName.equals(stationName)) {
+				cacheDataRows = dataRowsMap.get(stationName);
+				if(cacheDataRows == null) {
+					cacheDataRows = new ArrayList<>();
+					dataRowsMap.put(stationName, cacheDataRows);
+				}
+			}
+			cacheDataRows.add(dataRow);
+		}
+
+		for(Entry<String, ArrayList<DataRow>> entry:dataRowsMap.entrySet()) {
+			String stationName = entry.getKey();
+			log.trace("station "+stationName);
+			Station station = tsdb.getStation(stationName);
+			if(station==null) {
+				log.warn("station not found: "+stationName+"   in "+filePath);
+				continue;
+			}
+			ArrayList<DataRow> dataRows = entry.getValue();
+			dataRows = sortAndRemoveDuplicates(dataRows);
+
+			if(!dataRows.isEmpty()) {
+
+				String[] sensorNames = Arrays.copyOfRange(table.names, 2, sensors + 2);
+				long firstTimestamp = dataRows.get(0).timestamp;
+				long lastTimestamp = dataRows.get(dataRows.size() - 1).timestamp;
+
+				List<LabeledProperty> computationList = station.labeledProperties.query("computation", (int)firstTimestamp, (int)lastTimestamp);
+				if(computationList.size() > 0) {
+					log.trace("LabeledProperty computations");
+					for(LabeledProperty prop:computationList) {					
+						try {
+							PropertyComputation computation = ((PropertyComputation)prop.content);
+							if(Util.containsString(sensorNames, computation.target)) {
+								log.trace("LabeledProperty computation "+computation.target);
+								computation.calculate(dataRows, sensorNames, firstTimestamp, lastTimestamp);
+							}
+						} catch(Exception e) {
+							e.printStackTrace();
+							log.warn(e);
+						}
+					}
+				}
+
+				log.info("insert " + stationName + "  with rows: " + dataRows.size() + "  " + TimeUtil.oleMinutesToText(firstTimestamp) + "  " + TimeUtil.oleMinutesToText(lastTimestamp) + "   " + dataRows.get(0));
+				tsdb.streamStorage.insertDataRows(stationName, sensorNames, dataRows);
+				tsdb.sourceCatalog.insert(SourceEntry.of(stationName, sensorNames, dataRows, filePath));
+			}
+		}
+	}
+
+	private ArrayList<DataRow> sortAndRemoveDuplicates(ArrayList<DataRow> dataRows) {
+		boolean duplicates = false;
+		boolean unsorted = false;
+		{
+			long prevTimestamp = -1;
+			for(DataRow dataRow : dataRows) {
+				long timestamp = dataRow.timestamp;
+				if(prevTimestamp == timestamp) {
+					duplicates = true;
+				} else if(prevTimestamp > timestamp) {
+					unsorted = true;
+					break;
+				}
+				prevTimestamp = timestamp;
+			}			
+		}
+		if(unsorted) {
+			dataRows.sort(DataRow.TIMESTAMP_COMPARATOR);
+			duplicates = false;
+			long prevTimestamp = -1;
+			for(DataRow dataRow : dataRows) {
+				long timestamp = dataRow.timestamp;
+				if(prevTimestamp == timestamp) {
+					duplicates = true;
+					break;
+				}
+				prevTimestamp = timestamp;
+			}	
+		}
+		if(duplicates) {
+			int duplicatesCnt = 0;
+			ArrayList<DataRow> cleanDataRows = new ArrayList<DataRow>(dataRows.size());
+			long prevTimestamp = -1;
+			for(DataRow dataRow : dataRows) {
+				long timestamp = dataRow.timestamp;
+				if(prevTimestamp == timestamp) {
+					duplicatesCnt++;
+				} else {
+					prevTimestamp = timestamp;
+					cleanDataRows.add(dataRow);
+				}
+			}
+			log.warn("duplicates skipped " + duplicatesCnt);
+			return cleanDataRows;
+		} else {
+			return dataRows;
+		}
 	}
 }

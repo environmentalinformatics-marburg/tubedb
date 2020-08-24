@@ -43,7 +43,6 @@ public class InfluxLoaderConfig {
 		try {
 			InputStream in = new FileInputStream(path.toFile());
 			YamlMap configMap = YamlMap.ofObject(new Yaml().load(in));
-			log.info(configMap == null);
 			url = configMap.getString("url");
 			user = configMap.getString("user");
 			password = configMap.getString("password");

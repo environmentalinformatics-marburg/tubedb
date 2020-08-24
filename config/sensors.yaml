@@ -2054,4 +2054,57 @@ tt_air_relative_humidity_DMR:
   unit: pp (percentage point)
   dependency: [tt_air_relative_humidity_min, tt_air_relative_humidity_max]
   post_day_func: "tt_air_relative_humidity_max - tt_air_relative_humidity_min"
-  aggregation: average  
+  aggregation: average
+
+#added 2020-08_24 Nature 4.0 Audio 
+
+ndsi_left:  
+  aggregation: average
+
+biophony_left:  
+  aggregation: average
+  
+anthrophony_left:  
+  aggregation: average
+
+ADI_0.1000.Hz:  
+  aggregation: average
+
+ADI_1000.2000.Hz:  
+  aggregation: average
+
+ADI_2000.3000.Hz:  
+  aggregation: average
+
+ADI_3000.4000.Hz:  
+  aggregation: average
+
+ADI_4000.5000.Hz:  
+  aggregation: average
+
+ADI_5000.6000.Hz:  
+  aggregation: average
+
+ADI_6000.7000.Hz:  
+  aggregation: average
+
+ADI_7000.8000.Hz:  
+  aggregation: average
+
+ADI_8000.9000.Hz:  
+  aggregation: average
+
+ADI_9000.10000.Hz:  
+  aggregation: average
+
+ADI:  
+  aggregation: average
+
+bioacoustic_index:  
+  aggregation: average
+
+acoustic_evenness:  
+  aggregation: average
+
+acoustic_complexity:  
+  aggregation: average
