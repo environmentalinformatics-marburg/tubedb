@@ -1604,7 +1604,7 @@ tt_air_temperature:
   description: Air temperature
   unit: °C (degree Celcius)
   dependency: ttraw_air_temperature
-  post_hour_func: "ttraw_air_temperature * 0.1"  
+  raw_func: "ttraw_air_temperature * 0.1"  
   aggregation: average  
   category: temperature
   derived: false

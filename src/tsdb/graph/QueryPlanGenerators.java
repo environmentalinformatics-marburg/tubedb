@@ -34,6 +34,7 @@ import tsdb.graph.processing.ElementRawCopy;
 import tsdb.graph.processing.EmpiricalFiltered_NEW;
 import tsdb.graph.processing.Evaporation;
 import tsdb.graph.processing.Mask;
+import tsdb.graph.processing.MutatorNode;
 import tsdb.graph.processing.NocCheck;
 import tsdb.graph.processing.PeakSmoothed;
 import tsdb.graph.processing.RangeStepFiltered;
@@ -80,7 +81,11 @@ public final class QueryPlanGenerators {
 		};
 	}
 
-	public static Node rawProcessing(TsDB tsdb, Node rawSource, String[] schema, DataQuality dataQuality) {
+	public static Node rawProcessing(TsDB tsdb, Node rawSource, String[] schema, DataQuality dataQuality) {		
+		Mutator rawMutators = QueryPlanGenerators.getRawMutators(tsdb, rawSource.getSourcePlot(), schema);
+		if(rawMutators != null) {
+			rawSource = MutatorNode.of(tsdb, rawSource, rawMutators);
+		}		
 		if(DataQuality.Na!=dataQuality) {
 			if(DataQuality.NO!=dataQuality) {
 				rawSource = Mask.of(tsdb, rawSource);
@@ -243,6 +248,22 @@ public final class QueryPlanGenerators {
 			return null;
 		}
 	}
+	
+	public static Mutator getRawMutators(TsDB tsdb, Plot plot, String[] schema) {		
+		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
+		ArrayList<String> funcs = new ArrayList<String>();
+		for(Sensor sensor : tsdb.order_by_dependency(schema)) {
+			String func = sensor.raw_func;
+			if(sensor != null &&  func != null) {
+				sensors.add(sensor);
+				funcs.add(func);
+			}
+		}
+		if(sensors.isEmpty()) {
+			return null;
+		}
+		return getMutators(sensors, funcs, plot, schema);
+	}
 
 	public static Mutator getPostHourMutators(TsDB tsdb, Plot plot, String[] schema) {		
 		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
@@ -287,7 +308,7 @@ public final class QueryPlanGenerators {
 				mutators.add(mutator);
 			}
 		}
-		log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "+mutators.size()+"     "+funcs.toString());
+		log.info("funcs "+mutators.size()+"     "+funcs.toString());
 		return Mutators.bundle(mutators);
 	}
 }
