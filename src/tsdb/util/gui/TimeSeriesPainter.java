@@ -1,5 +1,8 @@
 package tsdb.util.gui;
 
+import java.util.List;
+
+import tsdb.util.gui.TimeSeriesDiagram.RawPoint;
 
 public interface TimeSeriesPainter {
 	
@@ -13,6 +16,8 @@ public interface TimeSeriesPainter {
 	void setColor(int r, int g, int b);
 	void setColorTransparent();	
 	void drawLine(float x0, float y0, float x1, float y1);
+	void drawPointsAsLineString(List<RawPoint> points);
+	void drawPointsAsCurve(List<RawPoint> points);
 	void fillCircle(float cx, float cy, float r);
 	void setColorAxisLine();
 	void setColorZeroLine();

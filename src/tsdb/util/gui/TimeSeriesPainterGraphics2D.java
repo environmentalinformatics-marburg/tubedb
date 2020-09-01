@@ -7,13 +7,20 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.Path2D;
+import java.awt.geom.Path2D.Float;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import tsdb.util.gui.TimeSeriesDiagram.RawPoint;
 
 public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 	private static final Logger log = LogManager.getLogger("tsdb");
@@ -28,10 +35,10 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 	Color color_black = new Color(0,0,0);
 	Color color_grey = new Color(190,190,190);
 	Color color_light_blue = new Color(220,220,255);
-	
+
 	Font fontDefault;
 	Font fontSmall;
-	
+
 	/*static {
 		GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
 	    Font[] fonts = e.getAllFonts();
@@ -57,7 +64,7 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 		this.minY = minY;
 		this.maxX = maxX;
 		this.maxY = maxY;
-		
+
 		//GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		//fontDefault = gc.getFont();
 		//install font "Arial" for Ubuntu: "sudo apt-get install ttf-mscorefonts-installer" 
@@ -67,13 +74,13 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 		setFontDefault();
 		this.indexedColors = firstIndexedColors;
 	}
-	
+
 	@Override
 	public void setFontDefault() {
 		gc.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 		gc.setFont(fontDefault);
 	}
-	
+
 	@Override
 	public void setFontSmall() {
 		gc.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -105,20 +112,20 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 		gc.setColor(new Color(r,g,b));
 
 	}
-	
+
 	@Override
 	public void setColorTransparent() {
 		gc.setColor(new Color(255,255,255,255));
-		
+
 	}
-	
+
 	@Override
 	public void setLineStyleDotted() {
 		final float pattern[] = { 2.0f,2.0f };
 		BasicStroke stroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, pattern, 0.0f);
 		gc.setStroke(stroke);
 	}
-	
+
 	@Override
 	public void setLineStyleSolid() {
 		BasicStroke stroke = new BasicStroke(1.0f);
@@ -127,13 +134,13 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 
 	@Override
 	public void drawLine(float x0, float y0, float x1, float y1) {
-		gc.drawLine((int)x0, (int)y0, (int)x1, (int)y1);		
+		gc.drawLine((int)x0, (int)y0, (int)x1, (int)y1);
 	}
-	
+
 	@Override
 	public void fillCircle(float cx, float cy, float r) {
 		gc.fillOval((int)(cx-r), (int)(cy-r), (int)(r*2), (int)(r*2));
-		
+
 	}
 
 	@Override
@@ -247,29 +254,29 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 	}
 
 	//***************** XScale text
-	
+
 	@Override
 	public void setColorXScaleYearText() {
 		gc.setColor(new Color(0,0,0));		
 	}
-	
+
 	@Override
 	public void setColorXScaleMonthText() {
 		gc.setColor(new Color(100,100,100));
 	}
-	
+
 	@Override
 	public void setColorXScaleDayText() {
 		gc.setColor(new Color(150,150,150));		
 	}
-	
+
 	@Override
 	public void setColorXScaleHourText() {
 		gc.setColor(new Color(180,180,180));		
 	}
-	
+
 	//***************** XScale line
-	
+
 	@Override
 	public void setColorXScaleYearLine() {
 		//gc.setColor(new Color(120,120,170));
@@ -281,24 +288,24 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 		//gc.setColor(new Color(190,190,220));
 		gc.setColor(new Color(190,190,255));
 	}
-	
+
 	@Override
 	public void setColorXScaleDayLine() {
 		//gc.setColor(new Color(220,220,255));
 		gc.setColor(new Color(220,220,255));
 	}	
-	
+
 	@Override
 	public void setColorXScaleHourLine() {
 		//gc.setColor(new Color(240,240,255));
 		gc.setColor(new Color(235,235,255));
 	}
-	
-	
-	
+
+
+
 	private static Map<String,Color[]> colorScaleMap = new ConcurrentHashMap<String,Color[]>();
 
-	
+
 
 	private float minValue = -10f;
 	private float maxValue = 30f;
@@ -307,29 +314,29 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 	static {
 		firstIndexedColors = new Color[6*256];
 		for(int i=0;i<firstIndexedColors.length;i++) {
-			
+
 			float v = ((float)i)/((float)(firstIndexedColors.length-1));
-			
+
 			firstIndexedColors[i] = getSpectraColor(v);
-			
+
 		}
 		colorScaleMap.put("default", firstIndexedColors);
 	}
-	
+
 	public static void setIndexedColors(String name, Color[] indexedColors) {		
 		colorScaleMap.put(name, indexedColors);		
 		firstIndexedColors = indexedColors;
-		
+
 		/*Color[] c = new Color[indexedColors.length*2];
 		for(int i=0;i<indexedColors.length;i++) {
 			c[i] = indexedColors[i];
 			c[c.length-1-i] = indexedColors[i];
 		}
-		
+
 		colorScaleMap.put("round_rainbow", c);*/
 
 	}
-	
+
 	@Override
 	public void setColorScale(String name) {
 		Color[] c = colorScaleMap.get(name);
@@ -342,10 +349,10 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 	}
 
 	private static Color getSpectraColor(float value) {
-		
+
 		//float x = 380f+(value*(780f-380f));
 		float x = 380f+(value*(645f-380f));
-		
+
 		float r=0f;
 		float g=0f;
 		float b=0f;
@@ -389,7 +396,7 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 			if(value<maxValue) {
 				float f = (value-minValue)/(maxValue-minValue);
 				gc.setColor(indexedColors[(int) (f*(indexedColors.length-1f))]);
-				
+
 			} else {
 				gc.setColor(indexedColors[indexedColors.length-1]);
 			}
@@ -397,20 +404,69 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 			gc.setColor(indexedColors[0]);
 		}
 	}
-	
+
 	@Override
 	public void setIndexedColorRange(float min, float max) {
 		minValue = min;
 		maxValue = max;
 	}
-	
+
 	@Override
 	public float[] getIndexColorRange() {
 		return new float[]{minValue,maxValue};
 	}
 
-	
+	@Override
+	public void drawPointsAsCurve(List<RawPoint> points) {
+		/*Path2D path = new Path2D.Float();
+		PolyBezierPathUtil.computePath2DThroughKnots(points, path);
+		gc.draw(path);*/
+		if(points.size() < 2) {
+			return;
+		}
+		Iterator<RawPoint> pIt = points.iterator();
+		RawPoint p0 = null;
+		RawPoint p2 = pIt.next();
+		RawPoint p3 = pIt.next();
+		RawPoint p1 = p2.scale(2f).minus(p3);
+		while(pIt.hasNext()) {
+			p0 = p1;
+			p1 = p2;
+			p2 = p3;
+			p3 = pIt.next();
 
+			/*ArrayList<RawPoint> points = Spline.catmulRom(p0, p1, p2, p3, 100);
+			Path2D path = new Path2D.Float();
+			Iterator<RawPoint> it = points.iterator();
+			if(it.hasNext()) {
+				RawPoint p = it.next();
+				path.moveTo(p.x, p.y);
+			}
+			while(it.hasNext()) {
+				RawPoint p = it.next();
+				path.lineTo(p.x, p.y);
+			}
+			gc.draw(path);*/
+			Float path = Spline.catmulRom(p0, p1, p2, p3);
+			gc.draw(path);
+		}
+		Float path = Spline.catmulRom(p1, p2, p3, p2.scale(2f).minus(p3));
+		gc.draw(path);
+	}
 
+	@Override
+	public void drawPointsAsLineString(List<RawPoint> points) {
+		Path2D path = new Path2D.Float();
+		Iterator<RawPoint> it = points.iterator();
+		if(it.hasNext()) {
+			RawPoint p = it.next();
+			path.moveTo(p.x, p.y);
+		}
+		while(it.hasNext()) {
+			RawPoint p = it.next();
+			path.lineTo(p.x, p.y);
+		}
+		gc.draw(path);
+	}
 
 }

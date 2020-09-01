@@ -600,6 +600,36 @@
 								
 							</div>
 						</div>
+						<div v-show="viewType === 'diagram'">
+							<hr>
+							<div>
+								Value
+								<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="diagramValueType">
+									<option v-for="diagramValueType in diagramValueTypes">{{diagramValueType}}</option>
+								</select>
+							</div>							
+							<div>
+								Value connection
+								<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="diagramConnectionType">
+									<option v-for="diagramConnectionType in diagramConnectionTypes">{{diagramConnectionType}}</option>
+								</select>
+							</div>						
+						</div>
+						<div v-show="viewType === 'diagram'">
+							<hr>
+							<div>
+								Raw value
+								<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="diagramRawValueType">
+									<option v-for="diagramRawValueType in diagramRawValueTypes">{{diagramRawValueType}}</option>
+								</select>
+							</div>							
+							<div>
+								Raw value connection
+								<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="diagramRawConnectionType">
+									<option v-for="diagramRawConnectionType in diagramRawConnectionTypes">{{diagramRawConnectionType}}</option>
+								</select>
+							</div>							
+						</div>							
 						<div v-show="viewType === 'heatmap'">
 							<input type="checkbox" id="byYear" v-model="byYear">
 							<label for="byYear">by year</label>

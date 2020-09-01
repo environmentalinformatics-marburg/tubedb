@@ -15,6 +15,10 @@ import tsdb.util.AggregationInterval;
 import tsdb.util.DataQuality;
 import tsdb.util.gui.TimeSeriesDiagram;
 import tsdb.util.gui.TimeSeriesPainterGraphics2D;
+import tsdb.util.gui.TimeSeriesDiagram.AggregatedConnectionType;
+import tsdb.util.gui.TimeSeriesDiagram.AggregatedValueType;
+import tsdb.util.gui.TimeSeriesDiagram.RawConnectionType;
+import tsdb.util.gui.TimeSeriesDiagram.RawValueType;
 import tsdb.util.iterator.TimestampSeries;
 
 public class ImageCreation {
@@ -37,7 +41,7 @@ public class ImageCreation {
 		System.out.println("size: "+timestampseries.entryList.size());
 		
 		SensorCategory diagramType = SensorCategory.TEMPERATURE;
-		TimeSeriesDiagram tsd = new TimeSeriesDiagram(timestampseries, aggregationInterval, diagramType, false);
+		TimeSeriesDiagram tsd = new TimeSeriesDiagram(timestampseries, aggregationInterval, diagramType, false, AggregatedConnectionType.STEP, RawConnectionType.LINE, AggregatedValueType.LINE, RawValueType.POINT);
 		
 		
 		//BufferedImage bufferedImage = new BufferedImage(6000,600,java.awt.image.BufferedImage.TYPE_INT_RGB);
