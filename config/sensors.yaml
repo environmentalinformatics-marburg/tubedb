@@ -1276,7 +1276,7 @@ Ta_200_heat_index:
   unit: °C (degree Celcius)
   dependency: [Ta_200, rH_200]
   # reference https://de.wikipedia.org/wiki/Hitzeindex
-  post_hour_func: "(26.7 <= Ta_200 && 40 <= rH_200 ? -8.784695 +1.61139411*Ta_200 +2.338549*rH_200 -0.14611605*Ta_200*rH_200 -1.2308094e-2*Ta_200^2 -1.6424828e-2*rH_200^2 +2.211732e-3*Ta_200^2*rH_200 +7.2546e-4*Ta_200*rH_200^2 -3.582e-6*Ta_200^2*rH_200^2 : Ta_200)"
+  raw_func: "(26.7 <= Ta_200 && 40 <= rH_200 ? -8.784695 +1.61139411*Ta_200 +2.338549*rH_200 -0.14611605*Ta_200*rH_200 -1.2308094e-2*Ta_200^2 -1.6424828e-2*rH_200^2 +2.211732e-3*Ta_200^2*rH_200 +7.2546e-4*Ta_200*rH_200^2 -3.582e-6*Ta_200^2*rH_200^2 : Ta_200)"
   # reference http://myscope.net/hitzeindex-gefuehle-temperatur/
   #post_hour_func: "(26.7 <= Ta_200 && 40 <= rH_200 ? -8.784695 + 1.61139411*Ta_200 + 2.338549*rH_200 - 0.14611605*Ta_200*rH_200 - 0.012308094*Ta_200*Ta_200 - 0.016424828*rH_200*rH_200 + 0.002211732*Ta_200*Ta_200*rH_200 + 0.00072546*Ta_200*rH_200*rH_200 - 0.000003582*Ta_200*Ta_200*rH_200*rH_200 : Ta_200)"
   aggregation: average
@@ -1287,7 +1287,7 @@ Ta_200_humidex:
   unit: °C (degree Celcius)
   dependency: [Ta_200, rH_200]
   # reference http://myscope.net/hitzeindex-gefuehle-temperatur/
-  post_hour_func: "Ta_200 + 5/9 * (6.112 * 10 ^ (7.5 * Ta_200 / (237.7+Ta_200)) * rH_200 / 100 - 10)"
+  raw_func: "Ta_200 + 5/9 * (6.112 * 10 ^ (7.5 * Ta_200 / (237.7+Ta_200)) * rH_200 / 100 - 10)"
   aggregation: average 
   category: temperature
   
@@ -1296,7 +1296,7 @@ Ta_200_SSI:
   unit: °C (degree Celcius)
   dependency: [Ta_200, rH_200]
   # reference http://myscope.net/hitzeindex-gefuehle-temperatur/
-  post_hour_func: "(1.98 * (Ta_200 * 1.8 + 32 - (0.55 - 0.0055 * rH_200) * (Ta_200 * 1.8 + 32 - 58)) - 56.83 - 32) * 5/9"
+  raw_func: "(1.98 * (Ta_200 * 1.8 + 32 - (0.55 - 0.0055 * rH_200) * (Ta_200 * 1.8 + 32 - 58)) - 56.83 - 32) * 5/9"
   aggregation: average 
   category: temperature
 
@@ -1305,7 +1305,7 @@ Ta_200_vapour_pressure:
   unit: hPa (hectopascal)
   dependency: Ta_200
   # reference https://en.wikipedia.org/wiki/Arden_Buck_equation
-  post_hour_func: "(  0 < Ta_200 ? 6.1121 * exp( (18.678 - Ta_200/234.5) * (Ta_200/(257.14+Ta_200)) ) : 6.1115 * exp( (23.036 - Ta_200/333.7) * (Ta_200/(279.82+Ta_200)) )  )"
+  raw_func: "(  0 < Ta_200 ? 6.1121 * exp( (18.678 - Ta_200/234.5) * (Ta_200/(257.14+Ta_200)) ) : 6.1115 * exp( (23.036 - Ta_200/333.7) * (Ta_200/(279.82+Ta_200)) )  )"
   aggregation: average
 
 Ta_200_dew_point_approx:  
@@ -1313,7 +1313,7 @@ Ta_200_dew_point_approx:
   unit: °C (degree Celcius)
   dependency: [Ta_200, rH_200]
   # reference https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
-  post_hour_func: "Ta_200 - ((100 - rH_200) / 5)"
+  raw_func: "Ta_200 - ((100 - rH_200) / 5)"
   aggregation: average
   category: temperature
 
@@ -1323,7 +1323,7 @@ Ta_200_dew_point:
   dependency: [Ta_200, rH_200]
   # reference https://de.wikipedia.org/wiki/Taupunkt
   # formula K3 * ( ((K2*t)/(K3+t) + ln(r)) / ((K2*K3)/(K3+t) - ln(r)) )
-  post_hour_func: "272.62 * ( ((22.46*Ta_200)/(272.62+Ta_200) + ln(rH_200/100)) / ((22.46*272.62)/(272.62+Ta_200) - ln(rH_200/100)) )"
+  raw_func: "272.62 * ( ((22.46*Ta_200)/(272.62+Ta_200) + ln(rH_200/100)) / ((22.46*272.62)/(272.62+Ta_200) - ln(rH_200/100)) )"
   aggregation: average
   category: temperature
 
@@ -1332,7 +1332,7 @@ Ta_200_windchill:
   unit: °C (degree Celcius)
   dependency: [Ta_200, WV]
   # reference https://de.wikipedia.org/wiki/Windchill
-  post_hour_func: "(5/3.6 < WV ? 13.12 + 0.6215 * Ta_200 + (0.3965 * Ta_200 - 11.37) * (WV * 3.6) ^ 0.16 : Ta_200)"
+  raw_func: "(5/3.6 < WV ? 13.12 + 0.6215 * Ta_200 + (0.3965 * Ta_200 - 11.37) * (WV * 3.6) ^ 0.16 : Ta_200)"
   aggregation: average
   
 Ta_200_gruenlandtemperatur:  
@@ -1463,7 +1463,7 @@ Albedo_300:
   step_range: [0.0, 1000.0]
   empirical_diff: 0.31  
   dependency: [SWUR_300, SWDR_300]
-  post_hour_func: "(SWDR_300 > 0.01 && SWUR_300 < SWDR_300 * 0.9 ? SWUR_300 / SWDR_300 : NA)"
+  raw_func: "(SWDR_300 > 0.01 && SWUR_300 < SWDR_300 * 0.9 ? SWUR_300 / SWDR_300 : NA)"
 
 Albedo_3700:
   description: Albedo (SWUR_3700/SWDR_3700)
@@ -1473,7 +1473,7 @@ Albedo_3700:
   step_range: [0.0, 1000.0]
   empirical_diff: 0.31  
   dependency: [SWUR_3700, SWDR_3700]
-  post_hour_func: "(SWDR_3700 > 0.01 && SWUR_3700 < SWDR_3700 * 0.9 ? SWUR_3700 / SWDR_3700 : NA)"
+  raw_func: "(SWDR_3700 > 0.01 && SWUR_3700 < SWDR_3700 * 0.9 ? SWUR_3700 / SWDR_3700 : NA)"
   
 Albedo_4400:
   description: Albedo (SWUR_4400/SWDR_4400)
@@ -1494,7 +1494,7 @@ Rn_300:
   empirical_diff: 112.19
   interpolation_mse: 10000
   dependency: [SWDR_300, SWUR_300, LWDR_300, LWUR_300]
-  post_hour_func: "SWDR_300 - SWUR_300 + LWDR_300 - LWUR_300"
+  raw_func: "SWDR_300 - SWUR_300 + LWDR_300 - LWUR_300"
   
 Rn_3700:
   description: Net radiation at 37 meters height
@@ -1505,7 +1505,7 @@ Rn_3700:
   empirical_diff: 112.19
   interpolation_mse: 10000
   dependency: [SWDR_3700, SWUR_3700, LWDR_3700, LWUR_3700]
-  post_hour_func: "SWDR_3700 - SWUR_3700 + LWDR_3700 - LWUR_3700"
+  raw_func: "SWDR_3700 - SWUR_3700 + LWDR_3700 - LWUR_3700"
 
 Rn_4400:
   description: Net radiation at 44 meters height
@@ -1516,7 +1516,7 @@ Rn_4400:
   empirical_diff: 112.19
   interpolation_mse: 10000
   dependency: [SWDR_4400, SWUR_4400, LWDR_4400, LWUR_4400]
-  post_hour_func: "SWDR_4400 - SWUR_4400 + LWDR_4400 - LWUR_4400"
+  raw_func: "SWDR_4400 - SWUR_4400 + LWDR_4400 - LWUR_4400"
 
 Tsky:
   description: Sky temperature
@@ -1691,7 +1691,7 @@ tt_AS7263_610:
   description: Spectral band near infrared (orange) 610 nm ± 10 nm
   unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7263_610
-  post_hour_func: "-312.45 + (1.6699 * ttraw_AS7263_610)"  
+  raw_func: "-312.45 + (1.6699 * ttraw_AS7263_610)"  
   aggregation: average
   derived: false
   
@@ -1699,7 +1699,7 @@ tt_AS7263_680:
   description: Spectral band near infrared (red) 680 nm ± 10 nm
   unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7263_680
-  post_hour_func: "-561.56 + (1.5199 * ttraw_AS7263_680)"  
+  raw_func: "-561.56 + (1.5199 * ttraw_AS7263_680)"  
   aggregation: average
   derived: false
   
@@ -1707,7 +1707,7 @@ tt_AS7263_730:
   description: Spectral band near infrared (far red) 730 nm ± 10 nm
   unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7263_730
-  post_hour_func: "-1511.2 + (1.6209 * ttraw_AS7263_730)"  
+  raw_func: "-1511.2 + (1.6209 * ttraw_AS7263_730)"  
   aggregation: average
   derived: false
 
@@ -1715,7 +1715,7 @@ tt_AS7263_760:
   description: Spectral band near infrared (invisible) 760 nm ± 10 nm
   unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7263_760
-  post_hour_func: "-1012.5 + (1.4549 * ttraw_AS7263_760)"  
+  raw_func: "-1012.5 + (1.4549 * ttraw_AS7263_760)"  
   aggregation: average
   derived: false
 
@@ -1723,7 +1723,7 @@ tt_AS7263_810:
   description: Spectral band near infrared (invisible) 810 nm ± 10 nm
   unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7263_810
-  post_hour_func: "91.58 + (0.8414 * ttraw_AS7263_810)"  
+  raw_func: "91.58 + (0.8414 * ttraw_AS7263_810)"  
   aggregation: average
   derived: false
 
@@ -1731,7 +1731,7 @@ tt_AS7263_860:
   description: Spectral band near infrared (invisible) 860 nm ± 10 nm
   unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7263_860
-  post_hour_func: "334.88 + (0.531 * ttraw_AS7263_860)"  
+  raw_func: "334.88 + (0.531 * ttraw_AS7263_860)"  
   aggregation: average
   derived: false
 
@@ -1739,7 +1739,7 @@ tt_AS7262_450:
   description: Spectral band visible light (blue) 450 nm ± 20 nm
   unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7262_450
-  post_hour_func: "-212.62 + (0.4562 * ttraw_AS7262_450)"  
+  raw_func: "-212.62 + (0.4562 * ttraw_AS7262_450)"  
   aggregation: average
   derived: false  
   
@@ -1747,7 +1747,7 @@ tt_AS7262_500:
   description: Spectral band visible light (cyan) 500 nm ± 20 nm
   unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7262_500
-  post_hour_func: "-232.13 + (0.6257 * ttraw_AS7262_500)"  
+  raw_func: "-232.13 + (0.6257 * ttraw_AS7262_500)"  
   aggregation: average
   derived: false
 
@@ -1755,7 +1755,7 @@ tt_AS7262_550:
   description: Spectral band visible light (green) 550 nm ± 20 nm
   unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7262_550
-  post_hour_func: "-842.1+(1.0546 *ttraw_AS7262_550)"  
+  raw_func: "-842.1+(1.0546 *ttraw_AS7262_550)"  
   aggregation: average
   derived: false
 
@@ -1763,7 +1763,7 @@ tt_AS7262_570:
   description: Spectral band visible light (yellow) 570 nm ± 20 nm
   unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7262_570
-  post_hour_func: "-666.72+(1.0462 *ttraw_AS7262_570)"  
+  raw_func: "-666.72+(1.0462 *ttraw_AS7262_570)"  
   aggregation: average
   derived: false
 
@@ -1771,7 +1771,7 @@ tt_AS7262_600:
   description: Spectral band visible light (orange) 600 nm ± 20 nm
   unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7262_600
-  post_hour_func: "-328.08+(0.8654 *ttraw_AS7262_600)"  
+  raw_func: "-328.08+(0.8654 *ttraw_AS7262_600)"  
   aggregation: average
   derived: false
 
@@ -1779,7 +1779,7 @@ tt_AS7262_650:
   description: Spectral band visible light (red) 650 nm ± 20 nm
   unit: μW/cm^2 (microwatts per square centimeter)
   dependency: ttraw_AS7262_650
-  post_hour_func: "202.77 + (0.7829 * ttraw_AS7262_650)"  
+  raw_func: "202.77 + (0.7829 * ttraw_AS7262_650)"  
   aggregation: average
   derived: false
 
@@ -1823,7 +1823,7 @@ tt_g_x:
   description: Acceleration on the X axis
   unit: g (relative to earth gravity 9.81 m/s^2)
   dependency: ttraw_g_x
-  post_hour_func: "ttraw_g_x / 4096"  
+  raw_func: "ttraw_g_x / 4096"  
   aggregation: average
   derived: false
   
@@ -1831,7 +1831,7 @@ tt_g_y:
   description: Acceleration on the Y axis
   unit: g (relative to earth gravity 9.81 m/s^2)
   dependency: ttraw_g_y
-  post_hour_func: "ttraw_g_y / 4096"  
+  raw_func: "ttraw_g_y / 4096"  
   aggregation: average
   derived: false
 
@@ -1839,7 +1839,7 @@ tt_g_z:
   description: Acceleration on the Z axis
   unit: g (relative to earth gravity 9.81 m/s^2)
   dependency: ttraw_g_z
-  post_hour_func: "ttraw_g_z / 4096"  
+  raw_func: "ttraw_g_z / 4096"  
   aggregation: average
   derived: false
 
@@ -1847,7 +1847,7 @@ tt_g_x_std:
   description: Standard deviation of acceleration on the X axis
   unit: g (relative to earth gravity 9.81 m/s^2)
   dependency: ttraw_g_x_std
-  post_hour_func: "ttraw_g_x_std / 4096"  
+  raw_func: "ttraw_g_x_std / 4096"  
   aggregation: average
   derived: false
   visibility: internal
@@ -1856,7 +1856,7 @@ tt_g_y_std:
   description: Standard deviation of acceleration on the Y axis
   unit: g (relative to earth gravity 9.81 m/s^2)
   dependency: ttraw_g_y_std
-  post_hour_func: "ttraw_g_y_std / 4096"  
+  raw_func: "ttraw_g_y_std / 4096"  
   aggregation: average
   derived: false
   visibility: internal
@@ -1865,7 +1865,7 @@ tt_g_z_std:
   description: Standard deviation of acceleration on the Z axis
   unit: g (relative to earth gravity 9.81 m/s^2)
   dependency: ttraw_g_z_std
-  post_hour_func: "ttraw_g_z_std / 4096"  
+  raw_func: "ttraw_g_z_std / 4096"  
   aggregation: average
   derived: false  
   visibility: internal
@@ -1874,7 +1874,7 @@ tt_inclination:
   description: Inclination (angle between the gravity vector and the Z axis)
   unit: ° (degree of arc -90 to +90)
   dependency: [ttraw_g_x, ttraw_g_y, ttraw_g_z]
-  post_hour_func: "arctan_deg(sqrt(sqr(ttraw_g_x) + sqr(ttraw_g_y)) / ttraw_g_z)"  
+  raw_func: "arctan_deg(sqrt(sqr(ttraw_g_x) + sqr(ttraw_g_y)) / ttraw_g_z)"  
   aggregation: average
   
 ttraw_StWC:
@@ -1887,7 +1887,7 @@ ttraw_StWC_Tref:
   description: Raw stem water Content, temperature corrected (frequency domain measurement)
   unit: raw Hz (hertz)
   dependency: [ttraw_StWC, tt_air_temperature]
-  post_hour_func: "ttraw_StWC - 73.4 * (tt_air_temperature - 29)"  
+  raw_func: "ttraw_StWC - 73.4 * (tt_air_temperature - 29)"  
   aggregation: average
   visibility: internal
   
@@ -1895,14 +1895,14 @@ tt_StWC_fagus_sylvatica:
   description: Stem water Content for Fagus sylvatica L. (European beech, representative of broad-leaved trees)
   unit: "% (percentage of stem water content)"
   dependency: ttraw_StWC
-  post_hour_func: "-0.0034 * ttraw_StWC + 54.897"  
+  raw_func: "-0.0034 * ttraw_StWC + 54.897"  
   aggregation: average 
 
 tt_StWC_pinus_sylvestris: 
   description: Stem water Content for Pinus sylvestris L. (Scots pine, representative of narrow-leaved trees)
   unit: "% (percentage of stem water content)"
   dependency: ttraw_StWC
-  post_hour_func: "(ttraw_StWC < 14500 ? -0.0008 * ttraw_StWC + 30.023 : -0.01 * ttraw_StWC + 173.53)"  
+  raw_func: "(ttraw_StWC < 14500 ? -0.0008 * ttraw_StWC + 30.023 : -0.01 * ttraw_StWC + 173.53)"  
   aggregation: average   
 
 ttraw_Tref:
@@ -1927,14 +1927,14 @@ tt_Tref:
   description: Reference probe transmit stem temperature
   unit: °C (degree Celcius)
   dependency: ttraw_Tref
-  post_hour_func: "127.6 - 0.006045 * ttraw_Tref + 1.26E-07 * ttraw_Tref ^ 2 - 1.15E-12 * ttraw_Tref ^ 3"  
+  raw_func: "127.6 - 0.006045 * ttraw_Tref + 1.26E-07 * ttraw_Tref ^ 2 - 1.15E-12 * ttraw_Tref ^ 3"  
   aggregation: average
 
 tt_Theat: 
   description: Heating probe transmit stem temperature
   unit: °C (degree Celcius)
   dependency: ttraw_Theat
-  post_hour_func: "127.6 - 0.006045 * ttraw_Theat + 1.26E-07 * ttraw_Theat ^ 2 - 1.15E-12 * ttraw_Theat ^ 3"  
+  raw_func: "127.6 - 0.006045 * ttraw_Theat + 1.26E-07 * ttraw_Theat ^ 2 - 1.15E-12 * ttraw_Theat ^ 3"  
   aggregation: average   
 
 ttraw_growth:
@@ -1947,21 +1947,21 @@ tt_growth_0_8:
   description: Stem radial growth (for sensor distance 0-0.8 cm)
   unit: cm (centimeter)
   dependency: ttraw_growth
-  post_hour_func: "0.1817 * ttraw_growth / (109108.5561 - ttraw_growth)"  
+  raw_func: "0.1817 * ttraw_growth / (109108.5561 - ttraw_growth)"  
   aggregation: average
   
 tt_growth_15_90: 
   description: Stem radial growth (for sensor distance 1.5-9 cm)
   unit: cm (centimeter)
   dependency: ttraw_growth
-  post_hour_func: "-1.5242 + (111.3154 * 2373.2628) / (2373.2628 + ttraw_growth)"  
+  raw_func: "-1.5242 + (111.3154 * 2373.2628) / (2373.2628 + ttraw_growth)"  
   aggregation: average
 
 tt_growth_15_50: 
   description: Stem radial growth (for sensor distance 1.5-5 cm)
   unit: cm (centimeter)
   dependency: ttraw_growth
-  post_hour_func: "18.2823 + -0.0006 * ttraw_growth + 6.9143E-009 * ttraw_growth ^ 2 + -3.0237E-014 * ttraw_growth ^ 3"  
+  raw_func: "18.2823 + -0.0006 * ttraw_growth + 6.9143E-009 * ttraw_growth ^ 2 + -3.0237E-014 * ttraw_growth ^ 3"  
   aggregation: average  
 
 ttraw_adc_bandgap:
@@ -1982,21 +1982,21 @@ tt_battery_voltage:
   description: Battery voltage
   unit: mV (millivolt)
   dependency: [ttraw_adc_bandgap, ttraw_adc_Vbat]
-  post_hour_func: "2 * 1100 * (ttraw_adc_Vbat / ttraw_adc_bandgap)"  
+  raw_func: "2 * 1100 * (ttraw_adc_Vbat / ttraw_adc_bandgap)"  
   aggregation: average  
 
 tt_Ts_20_exploratories: 
   description: Ts_20 from Tref_1 (exploratories only)
   unit: °C (degree Celcius)
   dependency: ttraw_Tref_1
-  post_hour_func: "127.6 - 0.006045 * ttraw_Tref_1 + 1.26E-07 * ttraw_Tref_1 ^ 2 - 1.15E-12 * ttraw_Tref_1 ^ 3"  
+  raw_func: "127.6 - 0.006045 * ttraw_Tref_1 + 1.26E-07 * ttraw_Tref_1 ^ 2 - 1.15E-12 * ttraw_Tref_1 ^ 3"  
   aggregation: average
 
 ttraw_StWC_Tref_exploratories: 
   description: Raw stem water Content, temperature corrected (frequency domain measurement) (exploratories only)
   unit: raw Hz (hertz)
   dependency: [ttraw_StWC, tt_air_temperature]
-  post_hour_func: "ttraw_StWC + 16.97 * (tt_air_temperature - 29)"  
+  raw_func: "ttraw_StWC + 16.97 * (tt_air_temperature - 29)"  
   aggregation: average
   visibility: internal
 
@@ -2004,15 +2004,14 @@ tt_StWC_exploratories:
   description: Stem water Content for exploratories
   unit: "% (percentage of stem water content)"
   dependency: ttraw_StWC_Tref_exploratories
-  post_hour_func: "(ttraw_StWC_Tref_exploratories < 2211.79 ? 1.061 * (94.2281 - 0.0343127 * ttraw_StWC_Tref_exploratories) - 1.8054 : 1.061 * (-9E-13 * ttraw_StWC_Tref_exploratories ^ 3 + 6E-08 * ttraw_StWC_Tref_exploratories ^ 2 - 0.0013 * ttraw_StWC_Tref_exploratories + 22.494) - 1.8054)"  
+  raw_func: "(ttraw_StWC_Tref_exploratories < 2211.79 ? 1.061 * (94.2281 - 0.0343127 * ttraw_StWC_Tref_exploratories) - 1.8054 : 1.061 * (-9E-13 * ttraw_StWC_Tref_exploratories ^ 3 + 6E-08 * ttraw_StWC_Tref_exploratories ^ 2 - 0.0013 * ttraw_StWC_Tref_exploratories + 22.494) - 1.8054)"  
   aggregation: average
   
 tt_air_temperature_min:
   description: Minimum value of tt_air_temperature
   unit: °C (degree Celcius)
-  raw_source: ttraw_air_temperature
-  dependency: tt_air_temperature_min
-  post_hour_func: "tt_air_temperature_min * 0.1" 
+  dependency: tt_air_temperature
+  raw_func: "tt_air_temperature" 
   aggregation: minimum  
   category: temperature
   derived: false
@@ -2020,9 +2019,8 @@ tt_air_temperature_min:
 tt_air_temperature_max:
   description: Maximum value of tt_air_temperature
   unit: °C (degree Celcius)
-  raw_source: ttraw_air_temperature
-  dependency: tt_air_temperature_max
-  post_hour_func: "tt_air_temperature_max * 0.1" 
+  dependency: tt_air_temperature
+  raw_func: "tt_air_temperature" 
   aggregation: maximum  
   category: temperature
   derived: false    

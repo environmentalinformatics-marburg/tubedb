@@ -600,7 +600,7 @@
 								
 							</div>
 						</div>
-						<div v-show="viewType === 'diagram'">
+						<div v-show="viewType === 'diagram' && aggregation !== 'raw'">
 							<hr>
 							<div>
 								Value
@@ -615,7 +615,7 @@
 								</select>
 							</div>						
 						</div>
-						<div v-show="viewType === 'diagram'">
+						<div v-show="viewType === 'diagram' && aggregation === 'raw'">
 							<hr>
 							<div>
 								Raw value

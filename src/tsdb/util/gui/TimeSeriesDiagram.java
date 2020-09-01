@@ -76,14 +76,14 @@ public class TimeSeriesDiagram {
 	private double diagramValueFactor;
 
 	private boolean scale_right = true;
-	
+
 	private final AggregatedConnectionType aggregatedConnectionType;
 	private final RawConnectionType rawConnectionType;
 	private final AggregatedValueType aggregatedValue;
 	private final RawValueType rawValue;
 
 	public TimeSeriesDiagram(TimestampSeries timestampseries, AggregationInterval aggregationInterval, SensorCategory diagramType, boolean boxplot, AggregatedConnectionType aggregatedConnectionType, RawConnectionType rawConnectionType, AggregatedValueType aggregatedValue, RawValueType rawValue) {
-		
+
 		this.aggregatedConnectionType = aggregatedConnectionType;
 		this.rawConnectionType = rawConnectionType;
 		this.aggregatedValue = aggregatedValue;
@@ -377,8 +377,8 @@ public class TimeSeriesDiagram {
 		timescale.draw(tsp, diagramMinX, diagramMaxX, diagramMaxY+1, diagramTimestampFactor,diagramMinY,diagramMaxY+3);
 		tsp.setLineStyleSolid();
 		drawAxis(tsp);
-		
-		
+
+
 
 		if(boxplot) {
 			drawBoxplot(tsp);
@@ -633,7 +633,7 @@ public class TimeSeriesDiagram {
 			List<ValueLine> valueLineList = new ArrayList<ValueLine>(ts.entryList.size());
 			List<ConnectLine> connectLineList = new ArrayList<ConnectLine>(ts.entryList.size());
 			List<List<RawPoint>> curveList = new ArrayList<List<RawPoint>>();
-			
+
 			List<RawPoint> currentCurve = new ArrayList<RawPoint>();
 
 			for(TsEntry entry:ts) {
@@ -745,7 +745,7 @@ public class TimeSeriesDiagram {
 		STEP,
 		LINE,
 		CURVE;
-		
+
 		public static AggregatedConnectionType parse(String text) {
 			if(text==null) {
 				log.warn("aggregation connection type text null");
@@ -766,12 +766,12 @@ public class TimeSeriesDiagram {
 			}		
 		}
 	}
-	
+
 	public static enum RawConnectionType {
 		NONE,
 		LINE,
 		CURVE;
-		
+
 		public static RawConnectionType parse(String text) {
 			if(text==null) {
 				log.warn("raw connection type text null");
@@ -790,12 +790,12 @@ public class TimeSeriesDiagram {
 			}		
 		}
 	}
-	
+
 	public static enum AggregatedValueType {
 		NONE,
 		POINT,
 		LINE;
-		
+
 		public static AggregatedValueType parse(String text) {
 			if(text==null) {
 				log.warn("aggregation value type text null");
@@ -814,11 +814,11 @@ public class TimeSeriesDiagram {
 			}		
 		}
 	}
-	
+
 	public static enum RawValueType {
 		NONE,
 		POINT;
-		
+
 		public static RawValueType parse(String text) {
 			if(text==null) {
 				log.warn("raw value type text null");
@@ -861,8 +861,8 @@ public class TimeSeriesDiagram {
 				tsp.drawPointsAsCurve(curve);
 			}
 			break;
-			default:
-				throw new RuntimeException("unknown connection type: " + connectionType);
+		default:
+			throw new RuntimeException("unknown connection type: " + connectionType);
 		}
 
 		if(isPrimary) {
@@ -870,7 +870,7 @@ public class TimeSeriesDiagram {
 		} else {
 			tsp.setColorValueLineTemperatureSecondary();	
 		}
-		
+
 		switch(aggregatedValue) {
 		case NONE:
 			// nothing
@@ -927,8 +927,8 @@ public class TimeSeriesDiagram {
 				tsp.drawPointsAsCurve(curve);
 			}
 			break;
-			default:
-				throw new RuntimeException("unknown connection type: " + connectionType);
+		default:
+			throw new RuntimeException("unknown connection type: " + connectionType);
 		}
 
 		if(isPrimary) {
@@ -936,11 +936,17 @@ public class TimeSeriesDiagram {
 		} else {
 			tsp.setColorValueLineUnknownSecondary();	
 		}
-		
+
 		switch(aggregatedValue) {
 		case NONE:
 			// nothing
 			break;
+		case POINT:
+			for(ValueLine valueLine : valueLineList) {
+				float x = (valueLine.x0 + valueLine.x1) / 2;
+				tsp.drawLine(x, valueLine.y, x, valueLine.y);
+			}
+			break;			
 		case LINE:
 			for(ValueLine valueLine:valueLineList) {
 				tsp.drawLine(valueLine.x0,valueLine.y,valueLine.x1,valueLine.y);
@@ -957,7 +963,7 @@ public class TimeSeriesDiagram {
 		} else {
 			tsp.setColorConnectLineUnknownSecondary();	
 		}
-		
+
 		switch(connectionType) {
 		case NONE:
 			// nothing
@@ -970,8 +976,8 @@ public class TimeSeriesDiagram {
 		case CURVE:
 			tsp.drawPointsAsCurve(pointList);
 			break;
-			default:
-				throw new RuntimeException("unknown connection type: " + connectionType);
+		default:
+			throw new RuntimeException("unknown connection type: " + connectionType);
 		}
 
 		if(isPrimary) {
@@ -979,7 +985,7 @@ public class TimeSeriesDiagram {
 		} else {
 			tsp.setColorValueLineUnknownSecondary();	
 		}
-		
+
 		switch(rawValue) {
 		case NONE:
 			// nothing
