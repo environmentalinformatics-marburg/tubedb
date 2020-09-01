@@ -126,7 +126,15 @@ data: function () {
 		widthTextMap: {"large": 4096, "maximum": 65535},
 		widthText: "auto",
 		widthCustom: 1000,
-		heightTexts: ["small", "medium", "large", "custom"],
+		diagramConnectionTypes: ['none', 'step', 'line', 'curve'],
+		diagramConnectionType: 'step',
+		diagramRawConnectionTypes: ['none', 'line', 'curve'],
+		diagramRawConnectionType: 'curve',		
+		diagramValueTypes: ['none', 'point', 'line'],
+		diagramValueType: 'line',
+		diagramRawValueTypes: ['none', 'point'],
+		diagramRawValueType: 'point',		
+		heightTexts: ["small", "medium", "large", "custom"],		
 		heightTextMap: {"small": 100, "medium": 400, "large": 800},
 		heightText: "small",
 		heightCustom: 100,
@@ -465,8 +473,6 @@ methods: {
 		
 		var plotstations = self.plotstations.filter(function(o){return o.selected;});
 		
-		/*var container = document.getElementById("container");
-		var width = container == null ? 100 : (container.clientWidth - 30 < 100 ? 100 : container.clientWidth - 30);*/
 		var width = this.widthValue;
 		var height = this.heightValue;
 		
@@ -482,18 +488,28 @@ methods: {
 			if(innerStationMap === undefined) {
 				innerStationMap = {};
 			}
-			/*plots.forEach(function(plot){
-				if(innerMap[plot.id]) {
-					var view = {status: "init", url: "no", type: self.viewType, plot: plot.id, sensor: sensor.id, aggregation: self.aggregation, quality: self.quality, interpolated: self.interpolation, width: width, height: 100};
-					view.by_year = true;
-					Object.assign(view, self.timeParameters);
-					views.push(view);
-				}
-			});*/
+
 			plotstations.forEach(function(plotstation){
 				if(plotstation.full_plot ? innerPlotMap[plotstation.plot] : innerStationMap[plotstation.station] ) {
 					var plotStationName = plotstation.full_plot ? plotstation.plot : plotstation.plot + ':' + plotstation.station;
-					var view = {status: "init", url: "no", type: self.viewType, plot: plotStationName, sensor: sensor.id, aggregation: self.aggregation, quality: self.quality, interpolated: self.interpolation, width: width, height: height, byYear: self.byYear};
+					var view = {
+						status: "init", 
+						url: "no", 
+						type: 
+						self.viewType, 
+						plot: plotStationName, 
+						sensor: sensor.id, 
+						aggregation: self.aggregation, 
+						quality: self.quality, 
+						interpolated: self.interpolation, 
+						width: width, 
+						height: height, 
+						byYear: self.byYear,
+						connection: self.diagramConnectionType,
+						raw_connection: self.diagramRawConnectionType,
+						value: self.diagramValueType,
+						raw_value: self.diagramRawValueType,
+					};
 					view.by_year = true;
 					Object.assign(view, self.timeParameters);
 					if(self.viewType == 'table' || self.viewType == 'csv-file') {
@@ -545,6 +561,10 @@ methods: {
 		if(a.quality !== b.quality) return false;
 		if(a.interpolated !== b.interpolated) return false;
 		if(a.byYear !== b.byYear) return false;
+		if(a.connection !== b.connection) return false;
+		if(a.raw_connection !== b.raw_connection) return false;
+		if(a.value !== b.value) return false;
+		if(a.raw_value !== b.raw_value) return false;		
 		return true;
 	},
 	compareViews: function(va, vb) {
@@ -579,7 +599,21 @@ methods: {
 		view.status = "running";
 		//console.log(view);
 		
-		var params = {plot: view.plot, sensor: view.sensor, aggregation: view.aggregation, interpolated: "false", quality: view.quality, interpolated: view.interpolated, width: view.width, height: view.height, by_year: view.byYear};		
+		var params = {
+			plot: view.plot, 
+			sensor: view.sensor, 
+			aggregation: view.aggregation, 
+			interpolated: "false", 
+			quality: view.quality, 
+			interpolated: view.interpolated, 
+			width: view.width, 
+			height: view.height, 
+			by_year: view.byYear,
+			connection: view.connection,
+			raw_connection: view.raw_connection,			
+			value: view.value,
+			raw_value: view.raw_value,			
+		};		
 		if(view.hasOwnProperty('year')) {
 			params.year = view.year;
 		}
@@ -816,6 +850,18 @@ watch: {
 	byYear: function() {
 		this.updateViews();
 	},
+	diagramConnectionType: function() {
+		this.updateViews();
+	},
+	diagramRawConnectionType: function() {
+		this.updateViews();
+	},
+	diagramValueType: function() {
+		this.updateViews();
+	},
+	diagramRawValueType: function() {
+		this.updateViews();
+	},	
 	groupViewYearRange: function() {
 		if(this.groupViewYearRange != undefined) {
 			var startYear = this.groupViewYearRange.start;

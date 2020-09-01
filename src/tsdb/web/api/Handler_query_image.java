@@ -24,6 +24,10 @@ import tsdb.util.DataQuality;
 import tsdb.util.TimeUtil;
 import tsdb.util.gui.ImageRGBA;
 import tsdb.util.gui.TimeSeriesDiagram;
+import tsdb.util.gui.TimeSeriesDiagram.AggregatedConnectionType;
+import tsdb.util.gui.TimeSeriesDiagram.AggregatedValueType;
+import tsdb.util.gui.TimeSeriesDiagram.RawConnectionType;
+import tsdb.util.gui.TimeSeriesDiagram.RawValueType;
 import tsdb.util.gui.TimeSeriesPainterGraphics2D;
 import tsdb.util.iterator.TimestampSeries;
 
@@ -92,6 +96,58 @@ public class Handler_query_image extends MethodHandler {
 				agg = AggregationInterval.parse(aggregation);
 				if(agg==null) {
 					agg = AggregationInterval.HOUR;
+				}
+			} catch (Exception e) {
+				log.warn(e);
+			}
+		}
+		
+		String connectionText = request.getParameter("connection");
+		AggregatedConnectionType aggregatedConnection = AggregatedConnectionType.STEP;
+		if(connectionText != null) {
+			try {
+				AggregatedConnectionType ac = AggregatedConnectionType.parse(connectionText);
+				if(ac != null) {
+					aggregatedConnection = ac;
+				}
+			} catch (Exception e) {
+				log.warn(e);
+			}
+		}
+		
+		String rawConnectionText = request.getParameter("raw_connection");
+		RawConnectionType rawConnection = RawConnectionType.CURVE;
+		if(rawConnectionText != null) {
+			try {
+				RawConnectionType rc = RawConnectionType.parse(rawConnectionText);
+				if(rc != null) {
+					rawConnection = rc;
+				}
+			} catch (Exception e) {
+				log.warn(e);
+			}
+		}
+		
+		String aggregatedValueText = request.getParameter("value");
+		AggregatedValueType aggregatedValue = AggregatedValueType.LINE;
+		if(aggregatedValueText != null) {
+			try {
+				AggregatedValueType av = AggregatedValueType.parse(aggregatedValueText);
+				if(av != null) {
+					aggregatedValue = av;
+				}
+			} catch (Exception e) {
+				log.warn(e);
+			}
+		}
+		
+		String rawValueText = request.getParameter("raw_value");
+		RawValueType rawValue = RawValueType.POINT;
+		if(rawValueText != null) {
+			try {
+				RawValueType rv = RawValueType.parse(rawValueText);
+				if(rv != null) {
+					rawValue = rv;
 				}
 			} catch (Exception e) {
 				log.warn(e);
@@ -355,9 +411,9 @@ public class Handler_query_image extends MethodHandler {
 				log.warn(e);
 			}
 
-			TimeSeriesDiagram tsd = new TimeSeriesDiagram(ts, agg, diagramType, boxplot);
+			TimeSeriesDiagram tsd = new TimeSeriesDiagram(ts, agg, diagramType, boxplot, aggregatedConnection, rawConnection, aggregatedValue, rawValue);
 
-			if(agg!=null&&startTime!=null&&endTime!=null&&agg==AggregationInterval.RAW) {
+			if(agg != null && startTime != null && endTime !=null && agg == AggregationInterval.RAW) {
 				tsd.setDiagramTimestampRange(startTime, endTime);
 			}
 			tsd.draw(new TimeSeriesPainterGraphics2D(bufferedImage),compareTs);

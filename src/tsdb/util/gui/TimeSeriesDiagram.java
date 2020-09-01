@@ -74,16 +74,25 @@ public class TimeSeriesDiagram {
 	private double diagramValueRange;
 	private double diagramTimestampFactor;
 	private double diagramValueFactor;
-	
+
 	private boolean scale_right = true;
 	
+	private final AggregatedConnectionType aggregatedConnectionType;
+	private final RawConnectionType rawConnectionType;
+	private final AggregatedValueType aggregatedValue;
+	private final RawValueType rawValue;
 
-	public TimeSeriesDiagram(TimestampSeries timestampseries, AggregationInterval aggregationInterval, SensorCategory diagramType, boolean boxplot) {
+	public TimeSeriesDiagram(TimestampSeries timestampseries, AggregationInterval aggregationInterval, SensorCategory diagramType, boolean boxplot, AggregatedConnectionType aggregatedConnectionType, RawConnectionType rawConnectionType, AggregatedValueType aggregatedValue, RawValueType rawValue) {
 		
+		this.aggregatedConnectionType = aggregatedConnectionType;
+		this.rawConnectionType = rawConnectionType;
+		this.aggregatedValue = aggregatedValue;
+		this.rawValue = rawValue;
+
 		if(scale_right) {
 			borderRight = 50;
 		}
-		
+
 		throwNulls(timestampseries,aggregationInterval);
 		this.boxplot = boxplot;
 		this.timestampseries = timestampseries;
@@ -274,12 +283,32 @@ public class TimeSeriesDiagram {
 		}
 	}
 
-	private static class RawPoint {
+	public static class RawPoint {
 		public final float x;
 		public final float y;
 		public RawPoint(float x, float y) {
 			this.x = x;
 			this.y = y;
+		}
+
+		public RawPoint scale(float factor) {
+			return new RawPoint(factor * x, factor * y);
+		}
+
+		public RawPoint plus(RawPoint point) {
+			return new RawPoint(x + point.x, y + point.y);
+		}
+
+		public RawPoint plus(float factor, RawPoint point) {
+			return new RawPoint(x + factor * point.x, y + factor * point.y);
+		}
+
+		public RawPoint minus(RawPoint point) {
+			return new RawPoint(x - point.x, y - point.y);
+		}
+
+		public RawPoint minus(float factor, RawPoint point) {
+			return new RawPoint(x - factor * point.x, y - factor * point.y);
 		}
 	}
 
@@ -348,14 +377,16 @@ public class TimeSeriesDiagram {
 		timescale.draw(tsp, diagramMinX, diagramMaxX, diagramMaxY+1, diagramTimestampFactor,diagramMinY,diagramMaxY+3);
 		tsp.setLineStyleSolid();
 		drawAxis(tsp);
+		
+		
 
 		if(boxplot) {
 			drawBoxplot(tsp);
 		} else {
 			if(compareTs!=null) {
-				drawGraph(tsp,compareTs,false);
+				drawGraph(tsp,compareTs,false, aggregatedConnectionType, rawConnectionType);
 			}
-			drawGraph(tsp,timestampseries,true);
+			drawGraph(tsp,timestampseries,true, aggregatedConnectionType, rawConnectionType);
 		}
 
 
@@ -594,16 +625,16 @@ public class TimeSeriesDiagram {
 	}
 
 
-	private void drawGraph(TimeSeriesPainter tsp, TimestampSeries ts, boolean isPrimary) {
+	private void drawGraph(TimeSeriesPainter tsp, TimestampSeries ts, boolean isPrimary, AggregatedConnectionType aggregatedConnectionType, RawConnectionType rawConnectionType) {
 
-		if(aggregationInterval!=AggregationInterval.RAW) { // aggregated
-
-
-
+		if(aggregationInterval != AggregationInterval.RAW) { // aggregated
 			boolean hasPrev = false;
 			float prevY = 0;
 			List<ValueLine> valueLineList = new ArrayList<ValueLine>(ts.entryList.size());
 			List<ConnectLine> connectLineList = new ArrayList<ConnectLine>(ts.entryList.size());
+			List<List<RawPoint>> curveList = new ArrayList<List<RawPoint>>();
+			
+			List<RawPoint> currentCurve = new ArrayList<RawPoint>();
 
 			for(TsEntry entry:ts) {
 				if(entry.timestamp<diagramMinTimestamp) {
@@ -614,9 +645,17 @@ public class TimeSeriesDiagram {
 				float value = entry.data[0];
 				if(Float.isNaN(value)) {
 					hasPrev = false;
+					if(currentCurve.size() == 0) {
+						// nothing
+					} else if (currentCurve.size() == 1) {
+						currentCurve.clear();
+					} else {
+						curveList.add(currentCurve);
+						currentCurve = new ArrayList<RawPoint>();
+					}
 				} else {
 					int x0 = calcDiagramX(timestamp);
-					int x1 = calcDiagramX(timestamp+aggregationTimeInterval);
+					int x1 = calcDiagramX(timestamp + aggregationTimeInterval);
 					int y = calcDiagramY(value);
 					valueLineList.add(new ValueLine(x0, x1, y));
 					if(hasPrev) {
@@ -624,6 +663,10 @@ public class TimeSeriesDiagram {
 					}
 					prevY = y;
 					hasPrev = true;
+					if(currentCurve == null) {
+						currentCurve = new ArrayList<RawPoint>();
+					}
+					currentCurve.add(new RawPoint((x0 + x1) / 2, y));
 				}
 
 				if(entry.timestamp>diagramMaxTimestamp) {
@@ -631,10 +674,13 @@ public class TimeSeriesDiagram {
 				}
 
 			}
+			if(currentCurve.size() > 1) {
+				curveList.add(currentCurve);
+			}
 
 			switch(diagramType) {
 			case TEMPERATURE:
-				drawDiagramTemperature(tsp, valueLineList, connectLineList, isPrimary);
+				drawDiagramTemperature(tsp, valueLineList, connectLineList, isPrimary, curveList, aggregatedConnectionType);
 				break;
 			case WATER:
 				drawDiagramWater(tsp, valueLineList, connectLineList, isPrimary);
@@ -643,7 +689,7 @@ public class TimeSeriesDiagram {
 				//if(aggregationInterval==AggregationInterval.RAW) {
 
 				//} else {
-				drawDiagramUnknown(tsp, valueLineList, connectLineList, isPrimary);
+				drawDiagramUnknown(tsp, valueLineList, connectLineList, isPrimary, curveList, aggregatedConnectionType);
 				//}
 				break;
 			default:
@@ -690,18 +736,133 @@ public class TimeSeriesDiagram {
 					break;
 				}
 			}			
-			drawDiagramRaw(tsp, pointList, connectList, isPrimary);
+			drawDiagramRaw(tsp, pointList, connectList, isPrimary, rawConnectionType);
 		}
 	}
 
-	private void drawDiagramTemperature(TimeSeriesPainter tsp, List<ValueLine> valueLineList, List<ConnectLine> connectLineList, boolean isPrimary) {
+	public static enum AggregatedConnectionType {
+		NONE,
+		STEP,
+		LINE,
+		CURVE;
+		
+		public static AggregatedConnectionType parse(String text) {
+			if(text==null) {
+				log.warn("aggregation connection type text null");
+				return null;
+			}
+			switch(text.trim().toLowerCase()) {
+			case "none":
+				return NONE;
+			case "step":
+				return STEP;
+			case "line":
+				return LINE;
+			case "curve":
+				return CURVE;
+			default:
+				log.warn("aggregation connection type unknown: "+text);
+				return null;
+			}		
+		}
+	}
+	
+	public static enum RawConnectionType {
+		NONE,
+		LINE,
+		CURVE;
+		
+		public static RawConnectionType parse(String text) {
+			if(text==null) {
+				log.warn("raw connection type text null");
+				return null;
+			}
+			switch(text.trim().toLowerCase()) {
+			case "none":
+				return NONE;
+			case "line":
+				return LINE;
+			case "curve":
+				return CURVE;
+			default:
+				log.warn("raw connection type unknown: "+text);
+				return null;
+			}		
+		}
+	}
+	
+	public static enum AggregatedValueType {
+		NONE,
+		POINT,
+		LINE;
+		
+		public static AggregatedValueType parse(String text) {
+			if(text==null) {
+				log.warn("aggregation value type text null");
+				return null;
+			}
+			switch(text.trim().toLowerCase()) {
+			case "none":
+				return NONE;
+			case "point":
+				return POINT;				
+			case "line":
+				return LINE;
+			default:
+				log.warn("aggregation value type unknown: "+text);
+				return null;
+			}		
+		}
+	}
+	
+	public static enum RawValueType {
+		NONE,
+		POINT;
+		
+		public static RawValueType parse(String text) {
+			if(text==null) {
+				log.warn("raw value type text null");
+				return null;
+			}
+			switch(text.trim().toLowerCase()) {
+			case "none":
+				return NONE;
+			case "point":
+				return POINT;
+			default:
+				log.warn("raw value type unknown: "+text);
+				return null;
+			}		
+		}
+	}
+
+	private void drawDiagramTemperature(TimeSeriesPainter tsp, List<ValueLine> valueLineList, List<ConnectLine> connectLineList, boolean isPrimary, List<List<RawPoint>> curveList, AggregatedConnectionType connectionType) {
 		if(isPrimary) {
 			tsp.setColorConnectLineTemperature();
 		} else {
 			tsp.setColorConnectLineTemperatureSecondary();	
 		}
-		for(ConnectLine connectLine:connectLineList) {
-			tsp.drawLine(connectLine.x, connectLine.y0, connectLine.x, connectLine.y1);
+		switch(connectionType) {
+		case NONE:
+			// nothing
+			break;
+		case STEP:
+			for(ConnectLine connectLine:connectLineList) {
+				tsp.drawLine(connectLine.x, connectLine.y0, connectLine.x, connectLine.y1);
+			}
+			break;
+		case LINE:
+			for(List<RawPoint> curve : curveList) {
+				tsp.drawPointsAsLineString(curve);
+			}
+			break;
+		case CURVE:
+			for(List<RawPoint> curve : curveList) {
+				tsp.drawPointsAsCurve(curve);
+			}
+			break;
+			default:
+				throw new RuntimeException("unknown connection type: " + connectionType);
 		}
 
 		if(isPrimary) {
@@ -709,8 +870,24 @@ public class TimeSeriesDiagram {
 		} else {
 			tsp.setColorValueLineTemperatureSecondary();	
 		}
-		for(ValueLine valueLine:valueLineList) {
-			tsp.drawLine(valueLine.x0,valueLine.y,valueLine.x1,valueLine.y);
+		
+		switch(aggregatedValue) {
+		case NONE:
+			// nothing
+			break;
+		case POINT:
+			for(ValueLine valueLine : valueLineList) {
+				float x = (valueLine.x0 + valueLine.x1) / 2;
+				tsp.drawLine(x, valueLine.y, x, valueLine.y);
+			}
+			break;			
+		case LINE:
+			for(ValueLine valueLine : valueLineList) {
+				tsp.drawLine(valueLine.x0, valueLine.y, valueLine.x1, valueLine.y);
+			}
+			break;
+		default:
+			throw new RuntimeException("unknown aggregated value type: " + aggregatedValue);
 		}
 	}
 
@@ -725,14 +902,33 @@ public class TimeSeriesDiagram {
 		}
 	}
 
-	private void drawDiagramUnknown(TimeSeriesPainter tsp, List<ValueLine> valueLineList, List<ConnectLine> connectLineList, boolean isPrimary) {
+	private void drawDiagramUnknown(TimeSeriesPainter tsp, List<ValueLine> valueLineList, List<ConnectLine> connectLineList, boolean isPrimary, List<List<RawPoint>> curveList, AggregatedConnectionType connectionType) {
 		if(isPrimary) {
 			tsp.setColorConnectLineUnknown();
 		} else {
 			tsp.setColorConnectLineUnknownSecondary();	
 		}
-		for(ConnectLine connectLine:connectLineList) {
-			tsp.drawLine(connectLine.x, connectLine.y0, connectLine.x, connectLine.y1);
+		switch(connectionType) {
+		case NONE:
+			// nothing
+			break;
+		case STEP:
+			for(ConnectLine connectLine:connectLineList) {
+				tsp.drawLine(connectLine.x, connectLine.y0, connectLine.x, connectLine.y1);
+			}
+			break;
+		case LINE:
+			for(List<RawPoint> curve : curveList) {
+				tsp.drawPointsAsLineString(curve);
+			}
+			break;
+		case CURVE:
+			for(List<RawPoint> curve : curveList) {
+				tsp.drawPointsAsCurve(curve);
+			}
+			break;
+			default:
+				throw new RuntimeException("unknown connection type: " + connectionType);
 		}
 
 		if(isPrimary) {
@@ -740,19 +936,42 @@ public class TimeSeriesDiagram {
 		} else {
 			tsp.setColorValueLineUnknownSecondary();	
 		}
-		for(ValueLine valueLine:valueLineList) {
-			tsp.drawLine(valueLine.x0,valueLine.y,valueLine.x1,valueLine.y);
+		
+		switch(aggregatedValue) {
+		case NONE:
+			// nothing
+			break;
+		case LINE:
+			for(ValueLine valueLine:valueLineList) {
+				tsp.drawLine(valueLine.x0,valueLine.y,valueLine.x1,valueLine.y);
+			}
+			break;
+		default:
+			throw new RuntimeException("unknown aggregated value type: " + aggregatedValue);
 		}
 	}
 
-	private void drawDiagramRaw(TimeSeriesPainter tsp, ArrayList<RawPoint> pointList, ArrayList<RawConnect> connectList, boolean isPrimary) {
+	private void drawDiagramRaw(TimeSeriesPainter tsp, ArrayList<RawPoint> pointList, ArrayList<RawConnect> connectList, boolean isPrimary, RawConnectionType connectionType) {
 		if(isPrimary) {
 			tsp.setColorConnectLineUnknown();
 		} else {
 			tsp.setColorConnectLineUnknownSecondary();	
 		}
-		for(RawConnect r:connectList) {
-			tsp.drawLine(r.x0, r.y0, r.x1, r.y1);
+		
+		switch(connectionType) {
+		case NONE:
+			// nothing
+			break;
+		case LINE:
+			for(RawConnect r:connectList) {
+				tsp.drawLine(r.x0, r.y0, r.x1, r.y1);
+			}
+			break;
+		case CURVE:
+			tsp.drawPointsAsCurve(pointList);
+			break;
+			default:
+				throw new RuntimeException("unknown connection type: " + connectionType);
 		}
 
 		if(isPrimary) {
@@ -760,8 +979,18 @@ public class TimeSeriesDiagram {
 		} else {
 			tsp.setColorValueLineUnknownSecondary();	
 		}
-		for(RawPoint p:pointList) {
-			tsp.drawLine(p.x,p.y,p.x,p.y);
+		
+		switch(rawValue) {
+		case NONE:
+			// nothing
+			break;
+		case POINT:
+			for(RawPoint p:pointList) {
+				tsp.drawLine(p.x,p.y,p.x,p.y);
+			}
+			break;
+		default:
+			throw new RuntimeException("unknown raw value type: " + rawValue);
 		}
 	}
 
