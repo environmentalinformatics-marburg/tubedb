@@ -4,9 +4,20 @@
 \alias{query_heatmap}
 \title{query heatmap of time series}
 \usage{
-query_heatmap(tubedb, plot, sensor, quality = "physical",
-  interpolated = FALSE, start = NULL, end = NULL, year = NULL,
-  month = NULL, day = NULL, by_year = TRUE, time_scale = TRUE)
+query_heatmap(
+  tubedb,
+  plot,
+  sensor,
+  quality = "physical",
+  interpolated = FALSE,
+  start = NULL,
+  end = NULL,
+  year = NULL,
+  month = NULL,
+  day = NULL,
+  by_year = TRUE,
+  time_scale = TRUE
+)
 }
 \arguments{
 \item{tubedb}{instance of TubeDB class}

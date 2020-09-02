@@ -4,8 +4,14 @@
 \alias{read_timeseries}
 \title{read time series from file or textConnection}
 \usage{
-read_timeseries(file, datetimeFormat = "character", colYear = FALSE,
-  colMonth = FALSE, colDay = FALSE, colHour = FALSE)
+read_timeseries(
+  file,
+  datetimeFormat = "character",
+  colYear = FALSE,
+  colMonth = FALSE,
+  colDay = FALSE,
+  colHour = FALSE
+)
 }
 \arguments{
 \item{file}{file or textConnection}

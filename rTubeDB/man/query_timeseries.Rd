@@ -4,11 +4,25 @@
 \alias{query_timeseries}
 \title{query time series}
 \usage{
-query_timeseries(tubedb, plot, sensor, aggregation = "hour",
-  quality = "physical", interpolated = FALSE, start = NULL,
-  end = NULL, year = NULL, month = NULL, day = NULL,
-  datetimeFormat = "character", colYear = FALSE, colPlot = TRUE,
-  colMonth = FALSE, colDay = FALSE, colHour = FALSE)
+query_timeseries(
+  tubedb,
+  plot,
+  sensor,
+  aggregation = "hour",
+  quality = "physical",
+  interpolated = FALSE,
+  start = NULL,
+  end = NULL,
+  year = NULL,
+  month = NULL,
+  day = NULL,
+  datetimeFormat = "character",
+  colYear = FALSE,
+  colPlot = TRUE,
+  colMonth = FALSE,
+  colDay = FALSE,
+  colHour = FALSE
+)
 }
 \arguments{
 \item{tubedb}{instance of TubeDB class}

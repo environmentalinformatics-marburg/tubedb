@@ -4,10 +4,22 @@
 \alias{query_diagram}
 \title{query diagram of time series}
 \usage{
-query_diagram(tubedb, plot, sensor, aggregation = "hour",
-  quality = "physical", interpolated = FALSE, start = NULL,
-  end = NULL, year = NULL, month = NULL, day = NULL,
-  boxplot = FALSE, width = 1000, height = 200)
+query_diagram(
+  tubedb,
+  plot,
+  sensor,
+  aggregation = "hour",
+  quality = "physical",
+  interpolated = FALSE,
+  start = NULL,
+  end = NULL,
+  year = NULL,
+  month = NULL,
+  day = NULL,
+  boxplot = FALSE,
+  width = 1000,
+  height = 200
+)
 }
 \arguments{
 \item{tubedb}{instance of TubeDB class}

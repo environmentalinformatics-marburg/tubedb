@@ -270,7 +270,7 @@ public class Handler_query_csv extends MethodHandler {
 		
 		String endText = request.getParameter("end");
 		if(endText != null) {
-			endTime = (long) TimeUtil.parseEndTimestamp(endText);
+			endTime = (long) TimeUtil.parseEndTimestamp(endText, agg);
 		}
 
 		String nanText = request.getParameter("nan_text") == null ? "NA" : request.getParameter("nan_text");

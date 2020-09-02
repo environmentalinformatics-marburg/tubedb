@@ -251,6 +251,20 @@ query_regions <- function(tubedb) {
 query_region_metadata <- function(tubedb, regionID) {
   stopifnot(isClass(tubedb, TubeDB))
   r <- apiGet(tubedb, "metadata.json", list(region=regionID))
+
+  if(!is.null(r$general_stations)) {
+    names(r$general_stations) <- sapply(r$general_stations, function(general_station) {return(general_station$id)})
+  }
+  if(!is.null(r$plots)) {
+    names(r$plots) <- sapply(r$plots, function(plot) {return(plot$id)})
+  }
+  if(!is.null(r$sensors)) {
+    names(r$sensors) <- sapply(r$sensors, function(sensor) {return(sensor$id)})
+  }
+  if(!is.null(r$stations)) {
+    names(r$stations) <- sapply(r$stations, function(station) {return(station$id)})
+  }
+
   return(r)
 }
 
@@ -314,7 +328,8 @@ query_region_info <- function(tubedb, regionID) {
   r <- query_region_info_list(tubedb, regionID)
   vyrs <- if(is.null(r$view_year_range)) NA else NULLtoNA(r$view_year_range$start)
   vyre <- if(is.null(r$view_year_range)) NA else NULLtoNA(r$view_year_range$end)
-  df <- data.frame(id=r$id, name=r$name, view_year_range_start=vyrs, view_year_range_end=vyre, default_general_station=r$default_general_station)
+  dgs <- if(is.null(r$default_general_station)) NA else NULLtoNA(r$default_general_station)
+  df <- data.frame(id = r$id, name = r$name, view_year_range_start = vyrs, view_year_range_end = vyre, default_general_station = dgs)
   return(df)
 }
 
@@ -451,6 +466,53 @@ query_region_plots <- function(tubedb, regionID) {
   elevation <- sapply(pl, function(p) {NULLtoNA(p$elevation)})
   df <- data.frame(id=id, general_station=general_station, logger_type=logger_type, vip=vip, latitude=latitude, longitude=longitude, elevation=elevation)
   return(df)
+}
+
+#' query metadata of one plot
+#'
+#' Get metadata of one plot of one region (project) from TubeDB as list
+#'
+#' @param tubedb instance of TubeDB class
+#' @return list
+#' @author woellauer
+#' @seealso \link{TubeDB} \link{query_timeseries} \link{query_regions_list} \link{query_regions}
+#' @examples
+#' library(rTubeDB)
+#' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
+#' rsdf <- query_regions(tubedb)
+#' rpdf <- query_region_plots(tubedb, "BALE")
+#' rsrdf <- query_region_sensors(tubedb, "BALE")
+#' rpmdf <- query_region_plot_metadata(tubedb, "BALE", "BALE001")
+#' rpsdf <- query_region_plot_sensors(tubedb, "BALE", "BALE001")
+#' @export
+query_region_plot_metadata <- function(tubedb, regionID, plotID) {
+  rm <- query_region_metadata(tubedb, regionID)
+  pm <- rm$plots[[plotID]]
+  return(pm)
+}
+
+#' query sensor names of one plot
+#'
+#' Get sensor names of one plot of one region (project) from TubeDB as vector
+#'
+#' @param tubedb instance of TubeDB class
+#' @return vector
+#' @author woellauer
+#' @seealso \link{TubeDB} \link{query_timeseries} \link{query_regions_list} \link{query_regions}
+#' @examples
+#' library(rTubeDB)
+#' tubedb <- TubeDB(url="http://localhost:8080", user="user", password="password")
+#' rsdf <- query_regions(tubedb)
+#' rpdf <- query_region_plots(tubedb, "BALE")
+#' rsrdf <- query_region_sensors(tubedb, "BALE")
+#' rpmdf <- query_region_plot_metadata(tubedb, "BALE", "BALE001")
+#' rpsdf <- query_region_plot_sensors(tubedb, "BALE", "BALE001")
+#' @export
+query_region_plot_sensors <- function(tubedb, regionID, plotID) {
+  rm <- query_region_metadata(tubedb, regionID)
+  pm <- rm$plots[[plotID]]
+  s <- unlist(pm$sensor_names)
+  return(s)
 }
 
 #' query sensors information

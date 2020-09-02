@@ -116,7 +116,7 @@ public final class TimeUtil implements Serializable {
 	private static final DateTimeFormatter DATE_TIME_FORMATER_SPACE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 	public static final DateTimeFormatter DATE_TIME_FORMATER_SPACE_SECONDS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	public static final DateTimeFormatter DATE_TIME_FORMATER_MOF = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HHmmss");
-	
+
 	/**
 	 * format: yyyy/MM/dd HH:mm
 	 * example: 2010/08/25 00:05
@@ -140,7 +140,7 @@ public final class TimeUtil implements Serializable {
 		LocalDateTime dt = LocalDateTime.parse(datetimeminutes, DATE_TIME_FORMATER_SPACE);
 		return TimeUtil.dateTimeToOleMinutes(dt);
 	}
-	
+
 	/**
 	 * example: 05.21.16 10:10:00 AM 
 	 * @param dateTimeText
@@ -150,7 +150,7 @@ public final class TimeUtil implements Serializable {
 		LocalDateTime dt = LocalDateTime.parse(dateTimeText, DATE_TIME_FORMATER_MONTH_FIRST_AM_PM);
 		return TimeUtil.dateTimeToOleMinutes(dt);
 	}
-	
+
 	/**
 	 * example: 07.12.2016 22:10
 	 * @param dateTimeText
@@ -160,11 +160,11 @@ public final class TimeUtil implements Serializable {
 		LocalDateTime dt = LocalDateTime.parse(dateTimeText, DATE_TIME_FORMATER_MONTH_FIRST);
 		return TimeUtil.dateTimeToOleMinutes(dt);
 	}
-	
+
 	private static final DateTimeFormatter DATE_TIME_FORMATER_MONTH_FIRST_AM_PM = DateTimeFormatter.ofPattern("MM.dd.yy hh:mm:ss a");
 	private static final DateTimeFormatter DATE_TIME_FORMATER_MONTH_FIRST = DateTimeFormatter.ofPattern("MM.dd.yyyy HH:mm");
-	
-	
+
+
 
 	private static final DateTimeFormatter DATE_TIME_FORMATER_MONTH_NAME_ONE_HOUR_DIGIT =  DateTimeFormatter.ofPattern("dd-MMM-yyyy   H:mm").withLocale(Locale.ENGLISH);
 	private static final DateTimeFormatter DATE_TIME_FORMATER_MONTH_NAME_TWO_HOUR_DIGITS = DateTimeFormatter.ofPattern("dd-MMM-yyyy  HH:mm").withLocale(Locale.ENGLISH);
@@ -259,7 +259,7 @@ public final class TimeUtil implements Serializable {
 		LocalDateTime datetime = oleMinutesToLocalDateTime(timestamp);
 		return (int) dateTimeToOleMinutes(LocalDateTime.of(datetime.getYear(),1,1,0,0));
 	}
-	
+
 	public static int roundLowerMonth(int timestamp) {
 		LocalDateTime datetime = oleMinutesToLocalDateTime(timestamp);
 		return (int) dateTimeToOleMinutes(LocalDateTime.of(datetime.getYear(),datetime.getMonthValue(),1,0,0));
@@ -274,7 +274,7 @@ public final class TimeUtil implements Serializable {
 		LocalDateTime datetime = oleMinutesToLocalDateTime(timestamp);
 		return (int) dateTimeToOleMinutes(LocalDateTime.of(datetime.getYear()+1,1,1,0,0));
 	}
-	
+
 	public static int roundNextMonth(int timestamp) {
 		LocalDateTime datetime = oleMinutesToLocalDateTime(timestamp);
 		int m = datetime.getMonthValue();
@@ -473,10 +473,219 @@ public final class TimeUtil implements Serializable {
 		}
 	}
 
+	/**
+	 * parses an ISO 8601 date.
+	 * full format:  YYYY-MM-DDThh:mm eg. 2009-12-31T14:09
+	 * completes shortened dates to end of period
+	 * eg. 2009 leads to 2009-12-31T23:59 for aggregation 'raw'
+	 * eg. 2009 leads to 2009-12-31T23:00 for aggregation 'hour'
+	 * eg. 2009 leads to 2009-12-01T00:00 for aggregation 'month'
+	 * text "*" as unspecified date returns Integer.MAX_VALUE
+	 * @param text
+	 * @param agg
+	 * @return timestamp in minutes
+	 */
+	public static long parseEndTimestamp(String text, AggregationInterval agg) {
+		text = text.trim();
+
+		switch(text.length()) {
+		case 1: {
+			if(text.charAt(0)=='*') {
+				return Integer.MAX_VALUE;
+			} else {
+				throw new RuntimeException("unknown timestamp "+text);
+			}
+		}
+		case 4: { // YYYY
+			switch(agg) {
+			case RAW:
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-12-31T23:59"));
+			case HOUR:
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-12-31T23:00"));
+			case DAY:
+				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-12-31T00:00"));
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-12-31T23:00"));
+			case WEEK:
+				throw new RuntimeException("week aggregation can not be applied to shortened end date");
+			case MONTH:
+				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-12-01T00:00"));
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-12-31T23:00"));
+			case YEAR:
+				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-01-01T00:00"));
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-12-31T23:00"));
+			default:
+				throw new RuntimeException("unknown aggregation");
+			}			
+		}
+		case 7: { // YYYY-MM			
+			switch(agg) {
+			case RAW:
+				try {
+					return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-31T23:59"));
+				} catch (DateTimeParseException e) {
+					try {
+						return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-30T23:59"));
+					} catch (DateTimeParseException e1) {
+						try {
+							return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-29T23:59"));
+						} catch (DateTimeParseException e2) {
+							return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-28T23:59"));
+						}
+					}
+				}
+			case HOUR:
+				try {
+					return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-31T23:00"));
+				} catch (DateTimeParseException e) {
+					try {
+						return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-30T23:00"));
+					} catch (DateTimeParseException e1) {
+						try {
+							return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-29T23:00"));
+						} catch (DateTimeParseException e2) {
+							return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-28T23:00"));
+						}
+					}
+				}
+			case DAY:
+				/*try {
+					return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-31T00:00"));
+				} catch (DateTimeParseException e) {
+					try {
+						return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-30T00:00"));
+					} catch (DateTimeParseException e1) {
+						try {
+							return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-29T00:00"));
+						} catch (DateTimeParseException e2) {
+							return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-28T00:00"));
+						}
+					}
+				}*/
+				try {
+					return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-31T23:00"));
+				} catch (DateTimeParseException e) {
+					try {
+						return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-30T23:00"));
+					} catch (DateTimeParseException e1) {
+						try {
+							return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-29T23:00"));
+						} catch (DateTimeParseException e2) {
+							return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-28T23:00"));
+						}
+					}
+				}
+			case WEEK:
+				throw new RuntimeException("week aggregation can not be applied to shortened end date");
+			case MONTH:
+				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-01T00:00"));
+				try {
+					return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-31T23:00"));
+				} catch (DateTimeParseException e) {
+					try {
+						return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-30T23:00"));
+					} catch (DateTimeParseException e1) {
+						try {
+							return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-29T23:00"));
+						} catch (DateTimeParseException e2) {
+							return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-28T23:00"));
+						}
+					}
+				}
+			case YEAR:
+				log.warn("correct month for end date not checked");
+				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-01T00:00"));
+				try {
+					return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-31T23:00"));
+				} catch (DateTimeParseException e) {
+					try {
+						return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-30T23:00"));
+					} catch (DateTimeParseException e1) {
+						try {
+							return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-29T23:00"));
+						} catch (DateTimeParseException e2) {
+							return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-28T23:00"));
+						}
+					}
+				}
+			default:
+				throw new RuntimeException("unknown aggregation");
+			}
+		}
+		case 10: { // YYYY-MM-DD
+			switch(agg) {
+			case RAW:
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T23:59"));
+			case HOUR:
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T23:00"));
+			case DAY:
+				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T00:00"));
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T23:00"));
+			case WEEK:
+				throw new RuntimeException("week aggregation can not be applied to shortened end date");
+			case MONTH:
+				log.warn("correct day for end date not checked");
+				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T00:00"));
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T23:00"));
+			case YEAR:
+				log.warn("correct month and day for end date not checked");
+				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T00:00"));
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T23:00"));
+			default:
+				throw new RuntimeException("unknown aggregation");
+			}			
+		}
+		case 13: { // YYYY-MM-DDThh
+			switch(agg) {
+			case RAW:
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+":59"));
+			case HOUR:
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+":00"));
+			case DAY:
+				log.warn("correct hour for end date not checked");
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+":00"));
+			case WEEK:
+				throw new RuntimeException("week aggregation can not be applied to shortened end date");
+			case MONTH:
+				log.warn("correct day and hour for end date not checked");
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+":00"));
+			case YEAR:
+				log.warn("correct month, day and hour for end date not checked");
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+":00"));
+			default:
+				throw new RuntimeException("unknown aggregation");
+			}			
+		}
+		case 16: { // YYYY-MM-DDThh:mm			
+			switch(agg) {
+			case RAW:
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text));
+			case HOUR:
+				log.warn("correct minute for end date not checked");
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text));
+			case DAY:
+				log.warn("correct hour and minute for end date not checked");
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text));
+			case WEEK:
+				throw new RuntimeException("week aggregation can not be applied to shortened end date");
+			case MONTH:
+				log.warn("correct day, hour and minute for end date not checked");
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text));
+			case YEAR:
+				log.warn("correct month, day, hour and minute for end date not checked");
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text));
+			default:
+				throw new RuntimeException("unknown aggregation");
+			}		
+		}
+		default:
+			throw new RuntimeException("unknown timestamp "+text);
+		}
+	}
+
 	public static char[] fastTimestampWrite(long timestamp, AggregationInterval datetimeFormat) {
 		return fastTimestampWrite(TimeUtil.oleMinutesToLocalDateTime(timestamp), datetimeFormat);		
 	}
-	
+
 	public static char[] fastTimestampWrite_custom(long timestamp, AggregationInterval datetimeFormat) {
 		return fastTimestampWrite_custom(TimeUtil.oleMinutesToLocalDateTime(timestamp), datetimeFormat);		
 	}
@@ -497,7 +706,7 @@ public final class TimeUtil implements Serializable {
 			return TimeUtil.fastDateTimeWrite(datetime);	
 		}				
 	}
-	
+
 	public static char[] fastTimestampWrite_custom(LocalDateTime datetime, AggregationInterval datetimeFormat) {
 		switch(datetimeFormat) {
 		case YEAR:
@@ -615,7 +824,7 @@ public final class TimeUtil implements Serializable {
 
 		return c;		
 	}
-	
+
 	public static char[] fastDateTimeWrite_custom(LocalDateTime localDateTime) {
 		char[] c = new char[16];
 
@@ -671,7 +880,7 @@ public final class TimeUtil implements Serializable {
 
 		return c;		
 	}
-	
+
 	public static char[] fastDateTimeWriteHours_custom(LocalDateTime localDateTime) {
 		char[] c = new char[13];
 
@@ -697,12 +906,10 @@ public final class TimeUtil implements Serializable {
 
 		return c;		
 	}
-	
+
 	public static LocalDateTime unixTimeToLocalDateTime(long unixTime) {
 		Instant instant = Instant.ofEpochSecond(unixTime);
 		LocalDateTime datetime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
 		return datetime;
 	}
-
-
 }
