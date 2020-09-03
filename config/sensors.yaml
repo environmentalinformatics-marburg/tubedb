@@ -1157,14 +1157,6 @@ evaporation:
   raw_source: P_container_NRT
   aggregation: average
   
-Ta_200_DTR:  
-  description: DTR (Diurnal Temperature Range) of Ta_200
-  unit: °K (degree Kelvin)
-  dependency: [Ta_200_min, Ta_200_max]
-  post_day_func: "Ta_200_max - Ta_200_min"
-  aggregation: average
-  category: temperature
-
 rH_200_DMR:  
   description: DMR (Diurnal Moisture Range) of rH_200
   unit: pp (percentage point)
@@ -1172,62 +1164,84 @@ rH_200_DMR:
   post_day_func: "rH_200_max - rH_200_min"
   aggregation: average
 
-Ta_200_ice_days:  
-  description: ice days Tmax < 0°C of Ta_200
-  unit: d (day)
-  dependency: Ta_200_max
-  post_day_func: "(Ta_200_max < 0 ? 1 : 0)"
-  aggregation: sum
-  
 Ta_200_cold_days:  
-  description: cold days Tmin < 0°C of Ta_200
+  description: FD (Frost days) (Tmin < 0°C of Ta_200)
   unit: d (day)
   dependency: Ta_200_min
   post_day_func: "(Ta_200_min < 0 ? 1 : 0)"
   aggregation: sum
   
+Ta_200_extremely_cold_days:  
+  description: TN-10LT (Extremely cold days) (Tmin < -10°C of Ta_200)
+  unit: d (day)
+  dependency: Ta_200_min
+  post_day_func: "(Ta_200_min < -10 ? 1 : 0)"
+  aggregation: sum
+
+Ta_200_ice_days:  
+  description: TX0LT (Winter days) (Tmax < 0°C of Ta_200)
+  unit: d (day)
+  dependency: Ta_200_max
+  post_day_func: "(Ta_200_max < 0 ? 1 : 0)"
+  aggregation: sum
+  
+Ta_200_tropical_nights:  
+  description: TN20GT (Tropical nights) (Tmin > 20°C of Ta_200)
+  unit: d (day)
+  dependency: Ta_200_min
+  post_day_func: "(Ta_200_min > 20 ? 1 : 0)"
+  aggregation: sum 
+
+Ta_200_summer_days:  
+  description: SU (Summer days) (Tmax > 25°C of Ta_200)
+  unit: d (day)
+  dependency: Ta_200_max
+  post_day_func: "(Ta_200_max > 25 ? 1 : 0)"
+  aggregation: sum
+
+Ta_200_tropical_days:  
+  description: TX30GE (Hot days) (Tmax >= 30°C of Ta_200)
+  unit: d (day)
+  dependency: Ta_200_max
+  post_day_func: "(Ta_200_max >= 30 ? 1 : 0)"
+  aggregation: sum
+
+Ta_200_extremely hot days:  
+  description: TX35GE (Extremely hot days) (Tmax >= 35°C of Ta_200)
+  unit: d (day)
+  dependency: Ta_200_max
+  post_day_func: "(Ta_200_max >= 35 ? 1 : 0)"
+  aggregation: sum
+
+Ta_200_DTR:  
+  description: DTR (Diurnal temperature range) of Ta_200
+  unit: °K (degree Kelvin)
+  dependency: [Ta_200_min, Ta_200_max]
+  post_day_func: "Ta_200_max - Ta_200_min"
+  aggregation: average
+  category: temperature
+  
 Ta_200_cool_days:  
-  description: cool days Tmax < 10°C of Ta_200
+  description: cool days (Tmax < 10°C of Ta_200)
   unit: d (day)
   dependency: Ta_200_max
   post_day_func: "(Ta_200_max < 10 ? 1 : 0)"
   aggregation: sum
 
 Ta_200_warm_days:  
-  description: warm days Tmax >= 20°C of Ta_200
+  description: warm days (Tmax >= 20°C of Ta_200)
   unit: d (day)
   dependency: Ta_200_max
   post_day_func: "(Ta_200_max >= 20 ? 1 : 0)"
   aggregation: sum
-  
-Ta_200_tropical_nights:  
-  description: tropical nights Tmin >= 20°C of Ta_200
-  unit: d (day)
-  dependency: Ta_200_min
-  post_day_func: "(Ta_200_min >= 20 ? 1 : 0)"
-  aggregation: sum  
-  
-Ta_200_summer_days:  
-  description: summer days Tmax >= 25°C of Ta_200
-  unit: d (day)
-  dependency: Ta_200_max
-  post_day_func: "(Ta_200_max >= 25 ? 1 : 0)"
-  aggregation: sum  
-
-Ta_200_tropical_days:  
-  description: tropical days Tmax >= 30°C of Ta_200
-  unit: d (day)
-  dependency: Ta_200_max
-  post_day_func: "(Ta_200_max >= 30 ? 1 : 0)"
-  aggregation: sum
-  
+   
 P_RT_NRT_rain_days:  
-  description: rain days as P_RT_NRT >= 0.1 mm per day
+  description: RR0.1 (Rain days) (P_RT_NRT >= 0.1 mm per day)
   unit: d (day)
   dependency: P_RT_NRT
   post_day_func: "(P_RT_NRT >= 0.1 ? 1 : 0)"
   aggregation: sum
-  category: water
+  category: other
   
 Ta_200_cold_sum:  
   description: sum of mean day Ta_200 with < 0 °C
@@ -1580,12 +1594,44 @@ Ta_200_ref_diff:
   visibility: internal
 
 precipitation_radolan_rain_days:  
-  description: rain days as precipitation_radolan >= 0.1 mm per day
+  description: (RR0.1) (Rain days) (precipitation_radolan >= 0.1 mm per day)
   unit: d (day)
   dependency: precipitation_radolan
   post_day_func: "(precipitation_radolan >= 0.1 ? 1 : 0)"
   aggregation: sum
-  category: water
+  category: other
+  
+precipitation_radolan_rain_days_RR1:  
+  description: (RR1) (Rain days) (precipitation_radolan >= 1 mm per day)
+  unit: d (day)
+  dependency: precipitation_radolan
+  post_day_func: "(precipitation_radolan >= 1 ? 1 : 0)"
+  aggregation: sum
+  category: other
+
+precipitation_radolan_rain_days_RR5:  
+  description: (RR5) (Strong rain days) (precipitation_radolan >= 5 mm per day)
+  unit: d (day)
+  dependency: precipitation_radolan
+  post_day_func: "(precipitation_radolan >= 5 ? 1 : 0)"
+  aggregation: sum
+  category: other
+
+precipitation_radolan_rain_days_RR10:  
+  description: (RR10) (Heavy rain days) (precipitation_radolan >= 10 mm per day)
+  unit: d (day)
+  dependency: precipitation_radolan
+  post_day_func: "(precipitation_radolan >= 10 ? 1 : 0)"
+  aggregation: sum
+  category: other
+
+precipitation_radolan_rain_days_RR20:  
+  description: (RR20) (Extremely heavy rain days) (precipitation_radolan >= 20 mm per day)
+  unit: d (day)
+  dependency: precipitation_radolan
+  post_day_func: "(precipitation_radolan >= 20 ? 1 : 0)"
+  aggregation: sum
+  category: other   
 
 illuminance:
   description: illuminance
