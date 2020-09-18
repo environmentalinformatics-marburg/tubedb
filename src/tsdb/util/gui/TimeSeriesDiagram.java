@@ -82,7 +82,19 @@ public class TimeSeriesDiagram {
 	private final AggregatedValueType aggregatedValue;
 	private final RawValueType rawValue;
 
-	public TimeSeriesDiagram(TimestampSeries timestampseries, AggregationInterval aggregationInterval, SensorCategory diagramType, boolean boxplot, AggregatedConnectionType aggregatedConnectionType, RawConnectionType rawConnectionType, AggregatedValueType aggregatedValue, RawValueType rawValue) {
+	/**
+	 * 
+	 * @param timestampseries
+	 * @param aggregationInterval
+	 * @param diagramType
+	 * @param boxplot
+	 * @param aggregatedConnectionType
+	 * @param rawConnectionType
+	 * @param aggregatedValue
+	 * @param rawValue
+	 * @param valueRange  null or min and max value for diagram y-axis
+	 */
+	public TimeSeriesDiagram(TimestampSeries timestampseries, AggregationInterval aggregationInterval, SensorCategory diagramType, boolean boxplot, AggregatedConnectionType aggregatedConnectionType, RawConnectionType rawConnectionType, AggregatedValueType aggregatedValue, RawValueType rawValue, float[] valueRange) {
 
 		this.aggregatedConnectionType = aggregatedConnectionType;
 		this.rawConnectionType = rawConnectionType;
@@ -153,15 +165,15 @@ public class TimeSeriesDiagram {
 			for(TsEntry entry:timestampseries) {
 				float valueMin = entry.data[ELEMENT_INDEX_MIN];
 				if(!Float.isNaN(valueMin)) {
-					if(valueMin<dataMinValue) {
+					if(valueMin < dataMinValue) {
 						dataMinValue = valueMin;						
 					}
 					float valueMax = entry.data[ELEMENT_INDEX_MAX];
-					if(valueMax>dataMaxValue) {
+					if(valueMax > dataMaxValue) {
 						dataMaxValue = valueMax;						
 					}
 					long diff = entry.timestamp-prev;
-					if(aggregationInterval==AggregationInterval.RAW && diff>0&&diff<aggregationTimeInterval) {
+					if(aggregationInterval == AggregationInterval.RAW && diff > 0&& diff < aggregationTimeInterval) {
 						aggregationTimeInterval = diff;
 					}
 					prev = entry.timestamp;
@@ -209,15 +221,20 @@ public class TimeSeriesDiagram {
 				}
 			}*/
 		}
+		
+		if(valueRange != null) {
+			dataMinValue = Math.min(valueRange[0], valueRange[1]);
+			dataMaxValue = Math.max(valueRange[0], valueRange[1]);
+		}
 
-		dataValueRange = dataMaxValue-dataMinValue;
+		dataValueRange = dataMaxValue - dataMinValue;
 
-		if(dataValueRange>MIN_VALUE_RANGE) {
+		if(dataValueRange > MIN_VALUE_RANGE) {
 			diagramMinValue = dataMinValue;
 			diagramMaxValue = dataMaxValue;			
 		} else {
-			diagramMinValue = dataMinValue-(dataMinValue%MIN_VALUE_RANGE)-MIN_VALUE_RANGE;
-			diagramMaxValue = diagramMinValue + 3*MIN_VALUE_RANGE;
+			diagramMinValue = dataMinValue - (dataMinValue % MIN_VALUE_RANGE) - MIN_VALUE_RANGE;
+			diagramMaxValue = diagramMinValue + 3 * MIN_VALUE_RANGE;
 		}
 
 

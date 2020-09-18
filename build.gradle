@@ -112,7 +112,7 @@ task clean_package(type: Delete) {
 
 task copy_lib(type: Copy) {
 	description 'copy folder lib to package'
-	from files(configurations.runtime)
+	from files(configurations.runtimeClasspath)
     into 'package/lib'
 }
 

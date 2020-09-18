@@ -57,6 +57,18 @@ var paramsSerializer = function(params) {
 	return Qs.stringify(params, {arrayFormat: 'repeat'})
 };
 
+function isNumber(v) {
+	if(v === undefined || v === null) {
+		return false;
+	}
+	if(typeof v == 'string') {
+		if(v.trim() === '') {
+			return false;
+		}
+	}
+	return !isNaN(v);
+}
+
 function init() {
 	
 Vue.component('visualisation-interface', {
@@ -139,6 +151,9 @@ data: function () {
 		heightText: "small",
 		heightCustom: 100,
 		byYear: true,
+		yAxisValueRange: false,
+		yAxisValueRangeMin: undefined,
+		yAxisValueRangeMax: undefined,
 		
 		views: [],
 		viewsDone: 0,
@@ -355,6 +370,12 @@ computed: {
 	validHeightCustom: function() {
 		return this.heightCustom > 0 && this.heightCustom < 2059;
 	},
+	validYAxisValueRangeMin: function() {
+		return isNumber(this.yAxisValueRangeMin);
+	},
+	validYAxisValueRangeMax: function() {
+		return isNumber(this.yAxisValueRangeMax);
+	},
 	widthValue: function() {
 		if(this.widthText === "custom" && this.validWidthCustom) {
 			return this.widthCustom; 
@@ -518,6 +539,10 @@ methods: {
 					if(self.viewType == 'csv-file') {
 						view.plot = plotStationNames;
 					}
+					if((self.viewType == 'diagram' || self.viewType == 'boxplot') && self.yAxisValueRange && self.validYAxisValueRangeMin && self.validYAxisValueRangeMax) {
+						view.value_min = self.yAxisValueRangeMin;
+						view.value_max = self.yAxisValueRangeMax;
+					}
 					views.push(view);
 				}
 			});
@@ -565,6 +590,8 @@ methods: {
 		if(a.raw_connection !== b.raw_connection) return false;
 		if(a.value !== b.value) return false;
 		if(a.raw_value !== b.raw_value) return false;		
+		if(a.value_min !== b.value_min) return false;
+		if(a.value_max !== b.value_max) return false;
 		return true;
 	},
 	compareViews: function(va, vb) {
@@ -625,6 +652,12 @@ methods: {
 		}
 		if(view.hasOwnProperty('day')) {
 			params.day = view.day;
+		}
+		if(view.hasOwnProperty('value_min')) {
+			params.value_min = view.value_min;
+		}
+		if(view.hasOwnProperty('value_max')) {
+			params.value_max = view.value_max;
 		}
 		
 		var url= 'unknown';
@@ -860,6 +893,15 @@ watch: {
 		this.updateViews();
 	},
 	diagramRawValueType: function() {
+		this.updateViews();
+	},
+	yAxisValueRange: function() {
+		this.updateViews();
+	},
+	yAxisValueRangeMin: function() {
+		this.updateViews();
+	},
+	yAxisValueRangeMax: function() {
 		this.updateViews();
 	},	
 	groupViewYearRange: function() {

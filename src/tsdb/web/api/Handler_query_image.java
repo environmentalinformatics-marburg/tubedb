@@ -410,8 +410,17 @@ public class Handler_query_image extends MethodHandler {
 			} catch(Exception e) {
 				log.warn(e);
 			}
+			
+			float[] valueRange = null;
+			String valueMinText = request.getParameter("value_min");
+			String valueMaxText = request.getParameter("value_max");
+			if(valueMinText != null && valueMaxText != null) {
+				float valueMin = Float.parseFloat(valueMinText);
+				float valueMax = Float.parseFloat(valueMaxText);
+				valueRange = new float[] {valueMin, valueMax};
+			}
 
-			TimeSeriesDiagram tsd = new TimeSeriesDiagram(ts, agg, diagramType, boxplot, aggregatedConnection, rawConnection, aggregatedValue, rawValue);
+			TimeSeriesDiagram tsd = new TimeSeriesDiagram(ts, agg, diagramType, boxplot, aggregatedConnection, rawConnection, aggregatedValue, rawValue, valueRange);
 
 			if(agg != null && startTime != null && endTime !=null && agg == AggregationInterval.RAW) {
 				tsd.setDiagramTimestampRange(startTime, endTime);

@@ -629,6 +629,17 @@
 									<option v-for="diagramRawConnectionType in diagramRawConnectionTypes">{{diagramRawConnectionType}}</option>
 								</select>
 							</div>							
+						</div>
+						<div v-show="viewType === 'diagram' || viewType === 'boxplot'">
+							<hr>
+							<div>
+								<input type="checkbox" v-model="yAxisValueRange"> y-axis value range
+								<div v-show="yAxisValueRange">
+								min <input v-model="yAxisValueRangeMin" @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" placeholder="min y value" size="4" v-bind:class="{ invalid: !validYAxisValueRangeMin }">
+								max <input v-model="yAxisValueRangeMax" @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" placeholder="max y value" size="4" v-bind:class="{ invalid: !validYAxisValueRangeMax }">
+								</div>
+							</div>
+							<hr>						
 						</div>							
 						<div v-show="viewType === 'heatmap'">
 							<input type="checkbox" id="byYear" v-model="byYear">
@@ -825,7 +836,7 @@
 
 					</div>
 				</div>
-				<div v-show="projects.length == 1">
+				<div v-show="projects.length == 1" class="projects">
 					Project: {{projectMap[projectID].name}}
 				</div>
 
