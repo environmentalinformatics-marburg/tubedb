@@ -24,6 +24,6 @@ example: `http://localhost:8080/tsdb/sensor_list?plot=AEW09`
 APIs
 ---
 
-[Meta Data API](meta)
+[Meta Data API](./api/meta)
 
-[Query API](query)
+[Query API](./api/query)

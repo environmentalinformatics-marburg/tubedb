@@ -13,12 +13,12 @@ TubeDB meta data is described by configuration files.
 
 Meta data is updated at TubeDB start.
 
-[TubeDB configuration](tubedb)
+[TubeDB configuration](./configuration/tubedb)
 
-[accounts list](accounts)
+[accounts list](./configuration/accounts)
 
-[sensor configuration](sensor)
+[sensor configuration](./configuration/sensor)
 
-[project configuration](project)
+[project configuration](./configuration/project)
 
-[data import configuration](import)
+[data import configuration](./configuration/import)
