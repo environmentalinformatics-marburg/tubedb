@@ -1936,14 +1936,30 @@ ttraw_StWC_Tref:
   raw_func: "ttraw_StWC - 73.4 * (tt_air_temperature - 29)"  
   aggregation: average
   visibility: internal
+ ttraw_delta_StWC_broadleaved: 
+  description: Raw stem water Content, temperature corrected (frequency domain measurement)
+  unit: raw Hz (hertz)
+  dependency: [ttraw_StWC, tt_Tref]
+  raw_func: "ttraw_StWC - (74.15 * tt_Tref - MIN(ttraw_StWC)"  
+  aggregation: average
+  visibility: internal
+ttraw_StWC_dimensionless_broadleaved: 
+  description: Min-max normalization to calculate the dimensionless ECf
+  unit: raw Hz (hertz)
+  dependency: [ttraw_delta_StWC_broadleaved]
+  raw_func: "(ttraw_delta_StWC_broadleaved - MIN(ttraw_delta_StWC_broadleaved)) / (MAX(ttraw_delta_StWC_broadleaved)-MIN(ttraw_delta_StWC_broadleaved))"  
+  aggregation: average
+  visibility: internal
+  
   
 tt_StWC_fagus_sylvatica: 
   description: Stem water Content for Fagus sylvatica L. (European beech, representative of broad-leaved trees)
   unit: "% (percentage of stem water content)"
-  dependency: ttraw_StWC
-  raw_func: "-0.0034 * ttraw_StWC + 54.897"  
+  dependency: ttraw_StWC_dimensionless_broadleaved
+  raw_func: "-0.3193 * ttraw_StWC_dimensionless_broadleaved + 0.426"  
   aggregation: average 
 
+tt_StWC_fagus_sylvatica_:
 tt_StWC_pinus_sylvestris: 
   description: Stem water Content for Pinus sylvestris L. (Scots pine, representative of narrow-leaved trees)
   unit: "% (percentage of stem water content)"
