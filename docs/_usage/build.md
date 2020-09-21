@@ -19,6 +19,13 @@ requirements:
 ---
 ## Linux (Ubuntu)
 
+update Ubuntu package list
+
+`sudo apt-get update`
+
+update all installed packages
+
+`sudo apt-get upgrade`
 
 (optional) install **git**
 
@@ -32,27 +39,39 @@ install **OpenJDK**
 
 `sudo apt-get install openjdk-8-jdk`
 
+check correct installation of JDK
+
+`javac --version`
+
 install **OpenJFX**
 
 `sudo apt-get install openjfx`
 
 **(option 1)** clone TubeDB source with git
 
-`git clone https://github.com/environmentalinformatics-marburg/tubedb`
+`git clone --depth 1  https://github.com/environmentalinformatics-marburg/tubedb`
 
 **(option 2)** download [latest source archive](https://github.com/environmentalinformatics-marburg/tubedb/archive/master.zip) and extract it
 
 **(option 3)** download [specific source archive](https://github.com/environmentalinformatics-marburg/tubedb/releases) version  and extract it
 
-change to TubeDB source root (there needs to be the file `build.gradle`)
+change to TubeDB source root (**there needs to be the file `build.gradle`**)
 
-run one of following gradle commands for desired target platform: Linux or Windows or both
+`cd tubedb`
 
-- `gradle _build_package`
+install current Gradle wrapper (you may need to mark shell scripts as executable `chmod +X *.sh`)
 
-- `gradle _build_package_windows`
+`./gradlew`
 
-- `gradle _build_package_linux_windows`
+Note: To ensure correct Gralde version you need to use `./gradlew` and not '*gradle*' for your Gradle commands.
+
+run one of following Gradle commands for desired target platform: Linux or Windows or both
+
+- `./gradlew _build_package`
+
+- `./gradlew _build_package_windows`
+
+- `./gradlew _build_package_linux_windows`
 
 the build is then created in subfolder `package`
 
@@ -74,7 +93,7 @@ install [Oracle Java 8](http://www.oracle.com/technetwork/java/javase/downloads/
 
 download [latest source archive](https://github.com/environmentalinformatics-marburg/tubedb/archive/master.zip) and extract it
 
-on commandline change to TubeDB source root (there needs to be the file `build.gradle`)
+on command line change to TubeDB source root (there needs to be the file `build.gradle`)
 
 run one of following gradle commands for desired target platform: Linux or Windows or both
 

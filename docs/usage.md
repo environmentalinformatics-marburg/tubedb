@@ -9,7 +9,7 @@ sidebar:
   nav: "docs" 
 ---
 
-### 1. [Build](build) (optional)
+### 1. [Build](./build) (optional)
 
 Build TubeDB from source.
 
