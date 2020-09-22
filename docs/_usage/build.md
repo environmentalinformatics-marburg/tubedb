@@ -63,7 +63,9 @@ install current Gradle wrapper (you may need to mark shell scripts as executable
 
 `./gradlew`
 
-Note: To ensure correct Gralde version you need to use `./gradlew` and not '*gradle*' for your Gradle commands.
+**Note**: To ensure correct Gralde version you need to use `./gradlew` and not '*gradle*' for your Gradle commands.
+
+**Troubleshooting**: If Gradle prints the error "*unable to create native thread: possibly out of memory or process/resource limits reached*" try to run with `--no-daemon`  e.g.  `./gradlew --no-daemon _build_package_linux_windows`
 
 run one of following Gradle commands for desired target platform: Linux or Windows or both
 
