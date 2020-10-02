@@ -112,12 +112,37 @@
           {{backgroundMap.title}}
           </option>
         </select>
-        <div v-if="backgroundMap !== undefined">
+        <div v-if="backgroundMap !== undefined && backgroundMapPropMap[backgroundMap].type === 'XYZ'">
           <span class="key">Type: </span>
           <span class="value">{{backgroundMapPropMap[backgroundMap].type}}</span> 
           <span class="key">URL:</span> 
           <span class="value" v-show="backgroundMap !== 'CustomXYZ'">{{backgroundMapPropMap[backgroundMap].url}}</span>
           <input v-model="customXYZUrl" placeholder="XYZ source URL"  v-show="backgroundMap === 'CustomXYZ'" size="100">
+        </div>
+        <div v-if="backgroundMap !== undefined && backgroundMapPropMap[backgroundMap].type === 'WMS'">
+          <span class="key">Type: </span>
+          <span class="value">{{backgroundMapPropMap[backgroundMap].type}}</span> 
+          <span class="key">URL:</span> 
+          <span class="value" v-show="backgroundMap !== 'CustomWMS'">{{backgroundMapPropMap[backgroundMap].url}}</span>
+          <input v-model="customWMSUrl" placeholder="WMS Capabilities URL"  v-show="backgroundMap === 'CustomWMS'" size="100">
+          <div v-show="WMSMessage !== undefined">
+            {{WMSMessage}}
+          </div>
+          <div v-if="WMSCapabilities !== undefined">
+            <div v-if="WMSCapabilities.Service !== undefined">
+              <div v-if="WMSCapabilities.Service.Title !== undefined"><span>Title: </span><span>{{WMSCapabilities.Service.Title}}</span></div>
+              <div v-if="WMSCapabilities.Service.AccessConstraints !== undefined"><span style="font-size: smaller;">AccessConstraints: </span><span style="color: grey; font-size: smaller;">{{WMSCapabilities.Service.AccessConstraints}}</span></div>              
+            </div>
+            <div v-if="WMSCapabilities.Capability !== undefined">
+              <span class="key">Layer: </span>
+              <select v-model="WMSLayer">
+                <option v-for="layer in WMSLayers" :value="layer.Name" :key="layer.Name">
+                {{layer.Title}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <!--<input v-model="customXYZUrl" placeholder="XYZ source URL"  v-show="backgroundMap === 'CustomXYZ'" size="100">-->
         </div>
       </div>
     </div>

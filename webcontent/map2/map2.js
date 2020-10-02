@@ -8,6 +8,18 @@ var comparator = function (a, b) {
     return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
 };
 
+var layersCollector = function(layers, collector) {
+	if(layers === undefined) {
+		return;
+	}
+	layers.forEach(function(layer) {
+		if(layer.Name !== undefined) {
+			collector.push(layer);
+		}
+		layersCollector(layer.Layer, collector);
+	})
+}
+
 function init() {
 	
 Vue.component('plot-dialog', {
@@ -48,16 +60,28 @@ data: {
 					 {id: "OTM", title: "OpenTopoMap"},
 					 {id: "StamenTerrain", title: "Stamen Terrain"},
 					 {id: "StamenToner", title: "Stamen Toner"},
-					 {id: "CustomXYZ", title: "Custom XYZ"}
+					 {id: "osm-wms", title: "WORLD OSM WMS"},
+					 {id: "terrestris-wms", title: "terrestris OSM-WMS"},
+					 {id: "WMS-TH-DOP", title: "Thüringen WMS für Digitale Orthophotos"},
+					 {id: "CustomWMS", title: "Custom WMS"},
+					 {id: "CustomXYZ", title: "Custom XYZ"},
 					],
 	backgroundMap: undefined,
 	backgroundMapPropMap: { "OSM": {type: 'XYZ', url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png', attributions: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.'},
 							"OTM": {type: 'XYZ', url: 'https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png', attributions: 'Kartendaten: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende, SRTM | Kartendarstellung: © <a href="http://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'},
 							"StamenTerrain": {type: 'XYZ', url: 'http://tile.stamen.com/terrain/{z}/{x}/{y}.jpg', attributions: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'},
 							"StamenToner": {type: 'XYZ', url: 'http://tile.stamen.com/toner/{z}/{x}/{y}.png', attributions: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'},
+							"osm-wms": {type: 'WMS', url: 'http://maps.heigit.org/osm-wms/service?REQUEST=GetCapabilities&SERVICE=WMS', attributions: 'Custom WMS source'},
+							"terrestris-wms": {type: 'WMS', url: 'https://ows.terrestris.de/osm/service?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities', attributions: 'Custom WMS source'},
+							"WMS-TH-DOP": {type: 'WMS', url: 'http://www.geoproxy.geoportal-th.de/geoproxy/services/DOP?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.1.1', attributions: 'Custom WMS source'},
+							"CustomWMS": {type: 'WMS', url: '', attributions: 'Custom WMS source'},							
 							"CustomXYZ": {type: 'XYZ', url: '', attributions: 'Custom XYZ source'},
 						},
+	customWMSUrl: '',
 	customXYZUrl: '',
+	WMSMessage: undefined,
+	WMSCapabilities: undefined,
+	WMSLayer: undefined,
 },
 
 mounted: function () {
@@ -65,7 +89,7 @@ mounted: function () {
 	self.message = "init map ...";
 	this.backgroundMap = 'StamenTerrain';
 	self.createMap();
-	this.refreshLayers();
+	this.refreshBackgroundMap();
 	self.message = "query plots ...";
 	axios.get(url_plot_info)
 	.then(function(r) {
@@ -109,9 +133,15 @@ watch: {
 		this.map.getView().fit(this.featureSource.getExtent(), this.map.getSize());
 	},
 	backgroundMap: function() {
-		this.refreshLayers();
+		this.refreshBackgroundMap();
 	},
 	customXYZUrl: function() {
+		this.refreshBackgroundMap();
+	},
+	customWMSUrl: function() {
+		this.refreshBackgroundMap();
+	},
+	WMSLayer: function() {
 		this.refreshLayers();
 	},
 },
@@ -174,6 +204,38 @@ methods: {
 				}
 			}
 	},
+	refreshBackgroundMap: function() {
+		var backgroundMapId = this.backgroundMap === undefined ? this.backgroundMaps[0].id : this.backgroundMap;
+		var backgroundMapProps = this.backgroundMapPropMap[backgroundMapId];
+
+		if(backgroundMapProps.type === 'XYZ') {
+			this.refreshLayers();
+		}
+		if(backgroundMapProps.type === 'WMS') {
+			var url = backgroundMapProps.url;
+			if(backgroundMapId === 'CustomWMS') {
+				url = this.customWMSUrl;
+			}
+			this.WMSMessage = "loading WMS metadata";
+			this.WMSCapabilities = undefined;
+			this.refreshLayers();
+			axios.get(url)
+			.then(r => {
+				this.WMSMessage = "parsing WMS metadata";
+				var parser = new ol.format.WMSCapabilities();
+				console.log(parser);
+				var cap = parser.read(r.data);
+				console.log(JSON.parse(JSON.stringify(cap)));
+				this.WMSCapabilities = cap;
+				this.WMSMessage = undefined;
+				this.refreshLayers();
+			})
+			.catch(e => {
+				this.WMSMessage = "ERROR loading WMS metadata";
+				this.refreshLayers();
+			});
+		}
+	},
 
 	refreshLayers: function() {
 		var backgroundLayer = undefined;
@@ -194,6 +256,29 @@ methods: {
 			backgroundLayer = new ol.layer.Tile({
 				source: source,
 			});
+		}
+
+		if(backgroundMapProps.type === 'WMS' && this.WMSCapabilities != undefined) {
+			var url = this.WMSCapabilities.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource;
+			var WMSOptions = {};
+			WMSOptions.url = url;
+			if(this.WMSLayer !== undefined) {
+				WMSOptions.params = {'LAYERS': this.WMSLayer};
+			}
+			if(this.WMSCapabilities.Service !== undefined && this.WMSCapabilities.Service.AccessConstraints !== undefined) {
+				WMSOptions.attributions = this.WMSCapabilities.Service.AccessConstraints;
+			}
+			var source = new ol.source.ImageWMS(WMSOptions/*{
+				attributions: '© <a href="http://www.geo.admin.ch/internet/geoportal/' +
+					'en/home.html">National parks / geo.admin.ch</a>',
+				crossOrigin: 'anonymous',
+				params: {'LAYERS': 'ch.bafu.schutzgebiete-paerke_nationaler_bedeutung'},
+				serverType: 'mapserver',
+				url: 'https://wms.geo.admin.ch/'
+			  }*/);
+			backgroundLayer = new ol.layer.Image({
+				source:	source,
+			});		  			
 		}
 
 		var layers = this.map.getLayers();
@@ -324,6 +409,17 @@ methods: {
 		}
 	},
 }, // end of methods
+
+computed: {
+	WMSLayers() {
+		if(this.WMSCapabilities === undefined || this.WMSCapabilities.Capability === undefined || this.WMSCapabilities.Capability.Layer === undefined || this.WMSCapabilities.Capability.Layer.Layer === undefined) {
+			return [];
+		}
+		var collector = [];
+		layersCollector(this.WMSCapabilities.Capability.Layer.Layer, collector);
+		return collector;
+	}
+}, 
 
 }); // end of app
 
