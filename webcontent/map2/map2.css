@@ -16,6 +16,23 @@ body {
 	width: 100%;
 }
 
+.control_panel {
+  position: absolute;
+  top: 0;
+  left: 50px;
+  padding: 3px;
+  background-color: #fdfdfd;
+  border-radius: 6px;
+  border-width: 4px;
+  border-style: ridge;
+  border-color: #dfdfdf;
+  cursor: pointer;
+}
+
+.control_panel_content {
+  cursor: auto;
+}
+
 .main_page_link_and_help {
 	position: absolute;
 	top: 0;
@@ -142,4 +159,15 @@ body {
   background-color: rgb(197, 197, 197);
   padding: 10px;
   border: solid;  
+}
+
+.key {
+  color: #3e3e3e;
+}
+
+.value {
+  background-color: aliceblue;
+  font-family: monospace;
+  border: 1px solid #e0e8ee;
+  padding: 2px;
 }

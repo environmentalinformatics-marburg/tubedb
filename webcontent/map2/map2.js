@@ -43,12 +43,29 @@ data: {
 	selectedPlot: undefined,
 	featureSource: undefined,
 	visibleHelp: undefined,
+	control_panel_show_content: false,
+	backgroundMaps: [{id: "OSM", title: "OpenStreetMap"},
+					 {id: "OTM", title: "OpenTopoMap"},
+					 {id: "StamenTerrain", title: "Stamen Terrain"},
+					 {id: "StamenToner", title: "Stamen Toner"},
+					 {id: "CustomXYZ", title: "Custom XYZ"}
+					],
+	backgroundMap: undefined,
+	backgroundMapPropMap: { "OSM": {type: 'XYZ', url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png', attributions: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.'},
+							"OTM": {type: 'XYZ', url: 'https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png', attributions: 'Kartendaten: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende, SRTM | Kartendarstellung: © <a href="http://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'},
+							"StamenTerrain": {type: 'XYZ', url: 'http://tile.stamen.com/terrain/{z}/{x}/{y}.jpg', attributions: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'},
+							"StamenToner": {type: 'XYZ', url: 'http://tile.stamen.com/toner/{z}/{x}/{y}.png', attributions: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'},
+							"CustomXYZ": {type: 'XYZ', url: '', attributions: 'Custom XYZ source'},
+						},
+	customXYZUrl: '',
 },
 
 mounted: function () {
 	var self = this;
 	self.message = "init map ...";
+	this.backgroundMap = 'StamenTerrain';
 	self.createMap();
+	this.refreshLayers();
 	self.message = "query plots ...";
 	axios.get(url_plot_info)
 	.then(function(r) {
@@ -80,15 +97,23 @@ mounted: function () {
 watch: {
 	features: function(features) {
 		this.featureSource = new ol.source.Vector({
-			features: features
+			features: features,
+			wrapX: false,
 		});
 		var clusterSource = new ol.source.Cluster({
 			distance: 30,
-			source: this.featureSource
+			source: this.featureSource,
+			wrapX: false,
 		});		
 		this.clusterLayer.setSource(clusterSource);
 		this.map.getView().fit(this.featureSource.getExtent(), this.map.getSize());
-	}
+	},
+	backgroundMap: function() {
+		this.refreshLayers();
+	},
+	customXYZUrl: function() {
+		this.refreshLayers();
+	},
 },
 
 methods: {
@@ -149,6 +174,37 @@ methods: {
 				}
 			}
 	},
+
+	refreshLayers: function() {
+		var backgroundLayer = undefined;
+
+		var backgroundMapId = this.backgroundMap === undefined ? this.backgroundMaps[0].id : this.backgroundMap;
+		var backgroundMapProps = this.backgroundMapPropMap[backgroundMapId];
+		
+		if(backgroundMapProps.type === 'XYZ') {
+			var url = backgroundMapProps.url;
+			if(backgroundMapId === 'CustomXYZ') {
+				url = this.customXYZUrl;
+			}
+			var source = new ol.source.XYZ({
+				url: url,
+				attributions: backgroundMapProps.attributions,
+				wrapX: false,
+			});
+			backgroundLayer = new ol.layer.Tile({
+				source: source,
+			});
+		}
+
+		var layers = this.map.getLayers();
+		layers.clear();
+		if(backgroundLayer !== undefined) {
+			layers.push(backgroundLayer);
+			console.log(backgroundLayer);
+		}
+		layers.push(this.clusterLayer);
+		this.map.changed();
+	},
 	
 	createMap: function() {
 		var self = this;
@@ -156,14 +212,10 @@ methods: {
 		this.clusterLayer = new ol.layer.Vector({
 			/*source: clusterSource,*/
 			style: this.createStyleFunction(false),
-		});
-
-		var raster = new ol.layer.Tile({
-			source: new ol.source.OSM()
-		});
+		});		
 
 		self.map = new ol.Map({
-			layers: [raster, this.clusterLayer],
+			layers: [this.clusterLayer],
 			target: 'map',
 			view: new ol.View({
 				center: [0, 0],

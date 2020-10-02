@@ -103,11 +103,28 @@
 		<plots-dialog v-if="showPlotsDialog" @close="showPlotsDialog = false" :plots="selectedPlots" @plot="viewPlot($event);">
 		</plots-dialog>
 		<plot-dialog v-if="showPlotDialog" @close="showPlotDialog = false" :plot="selectedPlot">
-		</plot-dialog>
+    </plot-dialog>
+    <div class="control_panel" @click="control_panel_show_content = !control_panel_show_content">
+      <div style="background-color: #e8e8e8;">Background map <span v-show="!control_panel_show_content">[&oline;]</span> <span v-show="control_panel_show_content">[X]</span></div>
+      <div v-show="control_panel_show_content" @click.stop class="control_panel_content">
+        <select v-model="backgroundMap">
+          <option v-for="backgroundMap in backgroundMaps" :value="backgroundMap.id" :key="backgroundMap.id">
+          {{backgroundMap.title}}
+          </option>
+        </select>
+        <div v-if="backgroundMap !== undefined">
+          <span class="key">Type: </span>
+          <span class="value">{{backgroundMapPropMap[backgroundMap].type}}</span> 
+          <span class="key">URL:</span> 
+          <span class="value" v-show="backgroundMap !== 'CustomXYZ'">{{backgroundMapPropMap[backgroundMap].url}}</span>
+          <input v-model="customXYZUrl" placeholder="XYZ source URL"  v-show="backgroundMap === 'CustomXYZ'" size="100">
+        </div>
+      </div>
+    </div>
     <div class="main_page_link_and_help">
-    <button @click="toggleHelp('English')"><b>[i]</b> (English)</button>
-    <button @click="toggleHelp('Deutsch')"><b>[i]</b> (Deutsch)</button>
-    <a href="../index.html">-->main-page</a>
+      <button @click="toggleHelp('English')"><b>[i]</b> (English)</button>
+      <button @click="toggleHelp('Deutsch')"><b>[i]</b> (Deutsch)</button>
+      <a href="../index.html">-->main-page</a>
     </div>
 
 
