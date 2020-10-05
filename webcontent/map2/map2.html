@@ -142,8 +142,25 @@
               </select>
             </div>
           </div>
-          <!--<input v-model="customXYZUrl" placeholder="XYZ source URL"  v-show="backgroundMap === 'CustomXYZ'" size="100">-->
         </div>
+        <div v-if="backgroundMap !== undefined && backgroundMapPropMap[backgroundMap].type === 'WMTS'">
+          <span class="key">Type: </span>
+          <span class="value">{{backgroundMapPropMap[backgroundMap].type}}</span> 
+          <span class="key">URL:</span> 
+          <span class="value" v-show="backgroundMap !== 'CustomWMTS'">{{backgroundMapPropMap[backgroundMap].url}}</span>
+          <input v-model="customWMTSUrl" placeholder="WMTS Capabilities URL"  v-show="backgroundMap === 'CustomWMTS'" size="100">
+          <div v-show="WMTSMessage !== undefined">
+            {{WMTSMessage}}
+          </div>
+          <div v-if="WMTSCapabilities !== undefined && WMTSCapabilities.Contents !== undefined && WMTSCapabilities.Contents.Layer !== undefined">
+            <span class="key">Layer: </span>
+            <select v-model="WMTSLayer">
+              <option v-for="layer in WMTSCapabilities.Contents.Layer" :value="layer.Identifier" :key="layer.Identifier">
+              {{layer.Title}}
+              </option>
+            </select>
+          </div>
+         </div>
       </div>
     </div>
     <div class="main_page_link_and_help">

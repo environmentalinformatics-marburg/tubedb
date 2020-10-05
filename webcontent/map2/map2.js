@@ -63,7 +63,9 @@ data: {
 					 {id: "osm-wms", title: "WORLD OSM WMS"},
 					 {id: "terrestris-wms", title: "terrestris OSM-WMS"},
 					 {id: "WMS-TH-DOP", title: "Thüringen WMS für Digitale Orthophotos"},
+					 {id: "landsat-wmts", title: "NASA's Global Imagery Browse Services (GIBS)"},
 					 {id: "CustomWMS", title: "Custom WMS"},
+					 {id: "CustomWMTS", title: "Custom WMTS"},
 					 {id: "CustomXYZ", title: "Custom XYZ"},
 					],
 	backgroundMap: undefined,
@@ -74,14 +76,20 @@ data: {
 							"osm-wms": {type: 'WMS', url: 'http://maps.heigit.org/osm-wms/service?REQUEST=GetCapabilities&SERVICE=WMS', attributions: 'Custom WMS source'},
 							"terrestris-wms": {type: 'WMS', url: 'https://ows.terrestris.de/osm/service?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities', attributions: 'Custom WMS source'},
 							"WMS-TH-DOP": {type: 'WMS', url: 'http://www.geoproxy.geoportal-th.de/geoproxy/services/DOP?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.1.1', attributions: 'Custom WMS source'},
+							"landsat-wmts": {type: 'WMTS', url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/WMTSCapabilities.xml', attributions: 'NASA Global Imagery Browse Services for EOSDIS'},
 							"CustomWMS": {type: 'WMS', url: '', attributions: 'Custom WMS source'},							
+							"CustomWMTS": {type: 'WMTS', url: '', attributions: 'Custom WMTS source'},	
 							"CustomXYZ": {type: 'XYZ', url: '', attributions: 'Custom XYZ source'},
 						},
 	customWMSUrl: '',
+	customWMTSUrl: '',
 	customXYZUrl: '',
 	WMSMessage: undefined,
 	WMSCapabilities: undefined,
 	WMSLayer: undefined,
+	WMTSMessage: undefined,
+	WMTSCapabilities: undefined,
+	WMTSLayer: undefined,
 },
 
 mounted: function () {
@@ -142,6 +150,12 @@ watch: {
 		this.refreshBackgroundMap();
 	},
 	WMSLayer: function() {
+		this.refreshLayers();
+	},
+	customWMTSUrl: function() {
+		this.refreshBackgroundMap();
+	},
+	WMTSLayer: function() {
 		this.refreshLayers();
 	},
 },
@@ -235,6 +249,30 @@ methods: {
 				this.refreshLayers();
 			});
 		}
+		if(backgroundMapProps.type === 'WMTS') {
+			var url = backgroundMapProps.url;
+			if(backgroundMapId === 'CustomWMTS') {
+				url = this.customWMTSUrl;
+			}
+			this.WMTSMessage = "loading WMTS metadata";
+			this.WMTSCapabilities = undefined;
+			this.refreshLayers();
+			axios.get(url)
+			.then(r => {
+				this.WMTSMessage = "parsing WMTS metadata";
+				var parser = new ol.format.WMTSCapabilities();
+				console.log(parser);
+				var cap = parser.read(r.data);
+				console.log(JSON.parse(JSON.stringify(cap)));
+				this.WMTSCapabilities = cap;
+				this.WMTSMessage = undefined;
+				this.refreshLayers();
+			})
+			.catch(e => {
+				this.WMTSMessage = "ERROR loading WMTS metadata";
+				this.refreshLayers();
+			});
+		}
 	},
 
 	refreshLayers: function() {
@@ -279,6 +317,15 @@ methods: {
 			backgroundLayer = new ol.layer.Image({
 				source:	source,
 			});		  			
+		}
+
+		if(backgroundMapProps.type === 'WMTS' && this.WMTSCapabilities !== undefined && this.WMTSLayer !== undefined) {
+			var options = ol.source.WMTS.optionsFromCapabilities(this.WMTSCapabilities, {layer: this.WMTSLayer});
+			console.log(options);
+			var source =  new ol.source.WMTS(options);
+			backgroundLayer = new ol.layer.Tile({
+				source:	source,
+			})		  			
 		}
 
 		var layers = this.map.getLayers();
