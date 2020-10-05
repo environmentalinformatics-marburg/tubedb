@@ -114,12 +114,15 @@ data: function () {
 		timeHover: false,
 		timeHoverStay: false,
 		timeYear: "*",
+		timeYearEnd: "",
 		timeYears: [2000],
 		timeMonths: ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"],
 		timeMonthsNumber: {"*":0, "jan":1, "feb":2, "mar":3, "apr":4, "may":5, "jun":6, "jul":7, "aug":8, "sep":9, "oct":10 ,"nov":11, "dec":12},
 		timeMonth: "*",
+		timeMonthEnd: "",
 		timeDays: ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"],
 		timeDay: "*",
+		timeDayEnd: "",
 		
 		qualityHover: false,
 		qualityHoverStay: false,
@@ -284,22 +287,64 @@ computed: {
 		}
 		return s;
 	},
-	timeParameters: function() {		
+	timeParameters: function() {
+		var params = {};
 		if(this.timeYear === '*') {
-			if(this.groupViewYearRange === undefined) {
-				return {};
+			if(this.groupViewYearRange !== undefined) {
+				params.year = this.groupViewYearRange.start;
+			}
+			if(this.timeYearEnd === '') {
+				if(this.groupViewYearRange !== undefined) {
+					params.end_year = this.groupViewYearRange.end;
+				}
 			} else {
-				return {year: this.groupViewYearRange.start, end_year: this.groupViewYearRange.end};
+				params.end_year = this.timeYearEnd;
+				if(this.timeMonthEnd !== '') {
+					params.end_month = this.timeMonthsNumber[this.timeMonthEnd];
+					if(this.timeDayEnd !== '') {
+						params.end_day = this.timeDayEnd;
+					}
+				}
+			}
+		} else {
+			params.year = this.timeYear;
+			if(this.timeMonth === '*') {
+				if(this.timeYearEnd !== '') {
+					params.end_year = this.timeYearEnd;
+					if(this.timeMonthEnd !== '') {
+						params.end_month = this.timeMonthsNumber[this.timeMonthEnd];
+						if(this.timeDayEnd !== '') {
+							params.end_day = this.timeDayEnd;
+						}
+					} 
+				}
+			} else {
+				params.month = this.timeMonthsNumber[this.timeMonth];
+				if(this.timeDay === '*') {
+					if(this.timeYearEnd !== '') {
+						params.end_year = this.timeYearEnd;
+						if(this.timeMonthEnd !== '') {
+							params.end_month = this.timeMonthsNumber[this.timeMonthEnd];
+							if(this.timeDayEnd !== '') {
+								params.end_day = this.timeDayEnd;
+							}
+						}
+					}
+				} else {
+					params.day = this.timeDay;
+					if(this.timeYearEnd !== '') {
+						params.end_year = this.timeYearEnd;
+						if(this.timeMonthEnd !== '') {
+							params.end_month = this.timeMonthsNumber[this.timeMonthEnd];
+							if(this.timeDayEnd !== '') {
+								params.end_day = this.timeDayEnd;
+							}
+						}
+					}
+				}
 			}
 		}
-		if(this.timeMonth === '*') {
-			return {year: this.timeYear};
-		}
-		if(this.timeDay === '*') {
-			return {year: this.timeYear, month: this.timeMonthsNumber[this.timeMonth]};
-		}
-		console.log("day "+this.timeDay);
-		return {year: this.timeYear, month: this.timeMonthsNumber[this.timeMonth], day: this.timeDay};
+		return params;
 	},
 	groupViewYearRange: function() {
 		if(this.groupID === '*') {
@@ -446,6 +491,27 @@ computed: {
 		}
 		return sensors;
 	},
+	timeYearEnds: function() {
+		if(this.timeYear === '*') {
+			return this.timeYears;
+		}
+		return this.timeYears.filter(y => y >= this.timeYear);
+	},
+	timeMonthEnds: function() {
+		if(this.timeYearEnd === '') {
+			return this.timeMonths;
+		}
+		if(this.timeYear === '*') {
+			return this.timeMonths;
+		}
+		if(this.timeYear !== this.timeYearEnd) {
+			return this.timeMonths;
+		}
+		if(this.timeMonth === '*') {
+			return this.timeMonths;
+		}
+		return this.timeMonths.filter(m => this.timeMonthsNumber[m] >= this.timeMonthsNumber[this.timeMonth]);
+	},
 }, //end computed
 
 mounted: function () {
@@ -582,7 +648,9 @@ methods: {
 		if(a.year !== b.year) return false;
 		if(a.end_year !== b.end_year) return false;
 		if(a.month !== b.month) return false;
+		if(a.end_month !== b.end_month) return false;
 		if(a.day !== b.day) return false;
+		if(a.end_day !== b.end_day) return false;
 		if(a.quality !== b.quality) return false;
 		if(a.interpolated !== b.interpolated) return false;
 		if(a.byYear !== b.byYear) return false;
@@ -650,8 +718,14 @@ methods: {
 		if(view.hasOwnProperty('month')) {
 			params.month = view.month;
 		}
+		if(view.hasOwnProperty('end_month')) {
+			params.end_month = view.end_month;
+		}
 		if(view.hasOwnProperty('day')) {
 			params.day = view.day;
+		}
+		if(view.hasOwnProperty('end_day')) {
+			params.end_day = view.end_day;
 		}
 		if(view.hasOwnProperty('value_min')) {
 			params.value_min = view.value_min;

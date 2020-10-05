@@ -468,9 +468,66 @@
 				
 					<div :class="[ { just_hide: (timeHover || timeHoverStay)}]" class="state">{{timeText}}</div>
 
+					<div v-show="(timeHover || timeHoverStay)" style="position: absolute; top: 20px; left: 0px;" class="overlay_settings">
+<table class="time-box-table">
+	<thead>
+		<tr>
+			<th></th>
+			<th>Year</th>
+			<th>Month</th>
+			<th>Day</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr id="time-from-row">
+			<td>From</td>
+			<td>
+				<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeYear">
+					<option>*</option>
+					<option v-for="y in timeYears">{{y}}</option>
+				</select>
+			</td>
+			<td>
+				<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeMonth" :class="[ { just_hide: timeYear === '*'}]">
+					<option>*</option>
+					<option v-for="m in timeMonths">{{m}}</option>
+				</select>
+			</td>
+			<td>
+				<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeDay" :class="[ { just_hide: timeYear === '*' || timeMonth === '*'}]">
+					<option>*</option>
+					<option v-for="d in timeDays">{{d}}</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>To</td>
+			<td>
+				<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeYearEnd">
+					<option></option>
+					<option v-for="y in timeYearEnds">{{y}}</option>
+				</select>
+			</td>
+			<td>
+				<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeMonthEnd" :class="[ { just_hide: timeYearEnd === ''}]">
+					<option></option>
+					<option v-for="m in timeMonthEnds">{{m}}</option>
+				</select>
+			</td>
+			<td>
+				<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeDayEnd" :class="[ { just_hide: timeYearEnd === '' || timeMonthEnd === ''}]">
+					<option></option>
+					<option v-for="d in timeDays">{{d}}</option>
+				</select>
+			</td>			
+		</tr>
+	</tbody>
+</table>
+					</div>
 					
-					<div v-show="(timeHover || timeHoverStay)" style="position: absolute; top: 20px; left: 0px; white-space: nowrap;" class="overlay_settings">
+					<!--<div v-show="(timeHover || timeHoverStay)" style="position: absolute; top: 20px; left: 0px; white-space: nowrap;" class="overlay_settings">
 						<div style="display: inline-block;">
+						<b>from</b>
 						<div class="centered title">year</div>
 						<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeYear">
 							<option>*</option>
@@ -493,7 +550,31 @@
 							<option v-for="d in timeDays">{{d}}</option>
 						</select>
 						</div>
-					</div>
+						<br><b>to</b><br>
+						<div style="display: inline-block;">
+							<div class="centered title">year</div>
+							<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeYear">
+								<option>*</option>
+								<option v-for="y in timeYears">{{y}}</option>
+							</select>
+							</div>
+							-
+							<div style="display: inline-block;">
+							<div class="centered title">month</div>
+							<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeMonth" :class="[ { just_hide: timeYear === '*'}]">
+								<option>*</option>
+								<option v-for="m in timeMonths">{{m}}</option>
+							</select>
+							</div>
+							-
+							<div style="display: inline-block;">
+							<div class="centered title">day</div>
+							<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeDay" :class="[ { just_hide: timeYear === '*' || timeMonth === '*'}]">
+								<option>*</option>
+								<option v-for="d in timeDays">{{d}}</option>
+							</select>
+							</div>
+					</div>-->
 				</div>
 				
 			</div>

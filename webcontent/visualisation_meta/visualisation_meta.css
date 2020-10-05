@@ -256,3 +256,26 @@ tr:nth-child(even){background-color: rgba(132, 104, 76, 0.1);}
 	top: 2px;
 	right: 2px;
 }
+
+.time-box-table {
+	border-spacing: 0px;
+	border-collapse: collapse;
+
+}
+.time-box-table tr {
+	background-color: rgba(0, 0, 0, 0);
+}
+
+.time-box-table thead tr th {
+	text-decoration: underline;
+	font-weight: normal;
+}
+
+.time-box-table tbody tr td {
+	font-weight: normal;
+	text-align: center;
+}
+
+#time-from-row td:not(:first-child) {
+    border-bottom:1px solid black;
+}
