@@ -517,7 +517,7 @@
 			<td>
 				<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeDayEnd" :class="[ { just_hide: timeYearEnd === '' || timeMonthEnd === ''}]">
 					<option></option>
-					<option v-for="d in timeDays">{{d}}</option>
+					<option v-for="d in timeDayEnds">{{d}}</option>
 				</select>
 			</td>			
 		</tr>

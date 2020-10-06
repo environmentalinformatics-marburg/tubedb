@@ -512,6 +512,21 @@ computed: {
 		}
 		return this.timeMonths.filter(m => this.timeMonthsNumber[m] >= this.timeMonthsNumber[this.timeMonth]);
 	},
+	timeDayEnds: function() {
+		if(this.timeMonthEnd === '') {
+			return this.timeDays;
+		}
+		if(this.timeMonth === '*') {
+			return this.timeDays;
+		}
+		if(this.timeMonth !== this.timeMonthEnd) {
+			return this.timeDays;
+		}
+		if(this.timeDay === '*') {
+			return this.timeDays;
+		}
+		return this.timeDays.filter(d => +d >= +this.timeDay);
+	},	
 }, //end computed
 
 mounted: function () {
@@ -994,6 +1009,21 @@ watch: {
 			if(!validYear) {
 				this.timeYear = '*';
 			}
+		}
+	},
+	timeYearEnds: function() {
+		if(this.timeYearEnds.every(y => y != this.timeYearEnd)) {
+			this.timeYearEnd = '';
+		}
+	},
+	timeMonthEnds: function() {
+		if(this.timeMonthEnds.every(m => m != this.timeMonthEnd)) {
+			this.timeMonthEnd = '';
+		}
+	},
+	timeDayEnds: function() {
+		if(this.timeDayEnds.every(m => m != this.timeDayEnd)) {
+			this.timeDayEnd = '';
 		}
 	},
 }, //end watch
