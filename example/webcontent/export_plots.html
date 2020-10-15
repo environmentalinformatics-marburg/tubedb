@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Export Time Series - choose plots</title>
+<title>(1) Export Climate Data - plots</title>
 <meta name="robots" content="noindex, nofollow" />
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="favicon.png" />
 <link rel="stylesheet" href="./fonts/fonts.css" type="text/css">
-<script src="jquery-2.1.1.min.js"></script>
+<script src="jquery.min.js"></script>
 <script src="export_plots.js"></script>
 
 <style type="text/css">
@@ -61,17 +61,23 @@ body {
 <div id="status" style="display:inline-block">init...</div>
 </div>
 <div id="top_line_right">
-<a href="index.html">main-page</a>
-<button onclick="var h=$('#div_help')[0].style;h.display=(h.display=='none')?'inline':'none'">?</button>
-</div> 
+	<button onclick="var hE=document.querySelector('#div_help_English').style;var hD=document.querySelector('#div_help_Deutsch').style;var vE=(hE.display=='none');hE.display=vE?'inline':'none';hD.display='none';">
+		<b>[i]</b> (English)
+	</button>
+	<button onclick="var hD=document.querySelector('#div_help_Deutsch').style;var hE=document.querySelector('#div_help_English').style;hD.display=(hD.display=='none')?'inline':'none';hE.display='none';">
+		<b>[i]</b> (Deutsch)
+	</button>
+	<a href="index.html">-->main-page</a>
+</div>  
 </div>
-<h1>Export Time Series - choose plots</h1>
+<h1>(1) Export Climate Data - plots</h1>
 
 <div class="horizontal-box">
 <div class="spacer"></div>
 <div class="center">
-<button id="button_cancel">cancel</button>
-<button id="button_apply">apply chosen plots</button>
+<button id="button_cancel">[X] discard</button>
+<button id="button_apply">[OK] save</button>
+<button id="button_apply_go">[OK] save --> go to (2)</button>
 </div> <!--END center-->
 <div class="spacer"></div>
 </div> <!--END horizontal-box-->
@@ -79,18 +85,57 @@ body {
 <hr/>
 </div>
 
-<div id="div_help" style="display:none">
-<h3>Help</h3>
-On this page you can choose the plots of which some data should be exported. Click on "cancel" to discard changed. Click on "apply plots" to confirm changes.
-<br>
-<br>
-Double-click on one plot in the box of "Available Plots" to add it to your chosen plots in the box "Chosen Plots" and vice versa. You can use the "filter by" field to just list the plots of some sub-region to find specific plots more easily.
-<hr/>
+<div id="div_help_English" style="display:none">
+	<h3>Help</h3>
+	On this page you can choose the plots for your data request.
+	<br>
+	<br>On the <b>left box</b> chosen plots for your data request are listed.
+	<br>On the <b>right box</b> available plots are listed, that are not chosen for your data request.
+	<br><br>Interactions:
+	<ul>
+		<li>At the control below "<b>filter by</b>" you can restrict shown available plots to some group of plots.</li>
+		<li><b>Double-click</b> at a plot on the right box to move it to the left box.</li>
+		<li><b>Double-click</b> at a plot on the left box to move it to the right box.</li>
+		<li>Select plots on the right box and click <b>"&lt;"</b>-button to move it to the left box. (Multiple plots can be selected at once by holding crtl-key or shift-key while clicking.)</li>
+		<li>Select plots on the left box and click <b>"&gt;"</b>-button to move it to the right box. (Multiple plots can be selected at once by holding crtl-key or shift-key while clicking.)</li>
+		<li>Click on <b>"&lt;&lt;"</b>-button moves all shown plots on the right box to the left box.</li>
+		<li>Click on <b>"&gt;&gt;"</b>-button moves all shown plots on the left box to the right box.</li>
+	</ul>
+
+	<br>Click on "<b>[X] discard</b>" to discard changed. 
+	<br>Click on "<b>[OK] save</b>" to confirm changes. 
+	<br>Click on "<b>[OK] save --> go to (2)</b>" confirms the changes and switches to the next page with climate parameter selections.
+	<hr/>
+</div>
+
+<div id="div_help_Deutsch" style="display:none">
+	<h3>Anleitung</h3>
+	Auf dieser Seite können Sie die Plots für Ihre Datenanforderung auswählen.
+	<br>
+	<br>In der <b>linken Box</b> werden die ausgewählten Plots für Ihre Datenanfrage aufgelistet.
+	<br>In der <b>rechten Box</b> werden die verfügbaren Plots aufgelistet, die nicht für Ihre Datenanfrage ausgewählt sind.
+	<br><br>Interaktionen:
+	<ul>
+		<li>Bei dem Bedienelement unter "<b>filter by</b>" können Sie die angezeigten verfügbaren Plots auf eine Gruppe von Plots beschränken.</li>
+		<li><b>Doppelklick</b> auf einen Plot in der rechten Box verschiebt den Plot in die linke Box.</li>
+		<li><b>Doppelklick</b> auf einen Plot in der linken Box verschiebt den Plot in die rechte Box.</li>
+		<li>Ausgewählte Plots in der rechten Box können mit Klick auf <b>"&lt;"</b> in die linke Box verschoben werden. (Mehrere Plots können gleichzeitig ausgewählt werden, indem Sie die Strg-Taste oder die Umschalt-Taste gedrückt halten, während Sie klicken.)</li>
+		<li>Ausgewählte Plots in der rechten Box können mit Klick auf <b>"&gt;"</b> in die linke Box verschoben werden. (Mehrere Plots können gleichzeitig ausgewählt werden, indem Sie die Strg-Taste oder die Umschalt-Taste gedrückt halten, während Sie klicken.)</li>
+		<li>Ein Klick auf <b>"&lt;&lt;"</b> verschiebt alle in der rechten Box angezeigte Plots in die linke Box.</li>
+		<li>Ein Klick auf <b>"&gt;&gt;"</b> verschiebt alle in der linken Box angezeigte Plots in die rechte Box.</li>		
+	</ul>
+
+	<br>Ein Klick auf "<b>[X] discard</b>" verwirft die Änderungen. 
+	<br>Ein Klick auf "<b>[OK] save</b>" bestätigt die Änderungen.
+	<br>Ein Klick auf "<b>[OK] save --> go to (2)</b>" bestätigt die Änderungen und wechselt zur nächsten Seite mit der Auswahl der Klimaparameter.
+
+	<hr/>
 </div>
 
 <div class="horizontal-box">
 <div class="spacer"></div>
 <div class="center main">
+<i>Specify the plots for your data request.</i>
 <h3>Select Plots</h3>
 
 <p>

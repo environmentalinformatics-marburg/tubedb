@@ -8,6 +8,18 @@ var comparator = function (a, b) {
     return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
 };
 
+var layersCollector = function(layers, collector) {
+	if(layers === undefined) {
+		return;
+	}
+	layers.forEach(function(layer) {
+		if(layer.Name !== undefined) {
+			collector.push(layer);
+		}
+		layersCollector(layer.Layer, collector);
+	})
+}
+
 function init() {
 	
 Vue.component('plot-dialog', {
@@ -32,7 +44,8 @@ var app = new Vue({
 el: '#app',
 
 data: {
-	message: "init ...",	
+	message: "init ...",
+	map: undefined,	
 	clusterLayer: undefined,
 	features: [],
 	hoveredPlots: [],
@@ -41,13 +54,50 @@ data: {
 	showPlotDialog: false,
 	selectedPlot: undefined,
 	featureSource: undefined,
-	visibleHelp: false,
+	visibleHelp: undefined,
+	control_panel_show_content: false,
+	backgroundMaps: [{id: "OSM", title: "OpenStreetMap"},
+					 {id: "OTM", title: "OpenTopoMap"},
+					 {id: "StamenTerrain", title: "Stamen Terrain"},
+					 {id: "StamenToner", title: "Stamen Toner"},
+					 {id: "osm-wms", title: "WORLD OSM WMS"},
+					 {id: "terrestris-wms", title: "terrestris OSM-WMS"},
+					 {id: "WMS-TH-DOP", title: "Thüringen WMS für Digitale Orthophotos"},
+					 {id: "landsat-wmts", title: "NASA's Global Imagery Browse Services (GIBS)"},
+					 {id: "CustomWMS", title: "Custom WMS"},
+					 {id: "CustomWMTS", title: "Custom WMTS"},
+					 {id: "CustomXYZ", title: "Custom XYZ"},
+					],
+	backgroundMap: undefined,
+	backgroundMapPropMap: { "OSM": {type: 'XYZ', url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png', attributions: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.'},
+							"OTM": {type: 'XYZ', url: 'https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png', attributions: 'Kartendaten: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende, SRTM | Kartendarstellung: © <a href="http://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'},
+							"StamenTerrain": {type: 'XYZ', url: 'http://tile.stamen.com/terrain/{z}/{x}/{y}.jpg', attributions: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'},
+							"StamenToner": {type: 'XYZ', url: 'http://tile.stamen.com/toner/{z}/{x}/{y}.png', attributions: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'},
+							"osm-wms": {type: 'WMS', url: 'http://maps.heigit.org/osm-wms/service?REQUEST=GetCapabilities&SERVICE=WMS', attributions: 'Custom WMS source'},
+							"terrestris-wms": {type: 'WMS', url: 'https://ows.terrestris.de/osm/service?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities', attributions: 'Custom WMS source'},
+							"WMS-TH-DOP": {type: 'WMS', url: 'http://www.geoproxy.geoportal-th.de/geoproxy/services/DOP?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.1.1', attributions: 'Custom WMS source'},
+							"landsat-wmts": {type: 'WMTS', url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/WMTSCapabilities.xml', attributions: 'NASA Global Imagery Browse Services for EOSDIS'},
+							"CustomWMS": {type: 'WMS', url: '', attributions: 'Custom WMS source'},							
+							"CustomWMTS": {type: 'WMTS', url: '', attributions: 'Custom WMTS source'},	
+							"CustomXYZ": {type: 'XYZ', url: '', attributions: 'Custom XYZ source'},
+						},
+	customWMSUrl: '',
+	customWMTSUrl: '',
+	customXYZUrl: '',
+	WMSMessage: undefined,
+	WMSCapabilities: undefined,
+	WMSLayer: undefined,
+	WMTSMessage: undefined,
+	WMTSCapabilities: undefined,
+	WMTSLayer: undefined,
 },
 
 mounted: function () {
 	var self = this;
 	self.message = "init map ...";
+	this.backgroundMap = 'StamenTerrain';
 	self.createMap();
+	this.refreshBackgroundMap();
 	self.message = "query plots ...";
 	axios.get(url_plot_info)
 	.then(function(r) {
@@ -79,14 +129,35 @@ mounted: function () {
 watch: {
 	features: function(features) {
 		this.featureSource = new ol.source.Vector({
-			features: features
+			features: features,
+			wrapX: false,
 		});
 		var clusterSource = new ol.source.Cluster({
 			distance: 30,
-			source: this.featureSource
+			source: this.featureSource,
+			wrapX: false,
 		});		
 		this.clusterLayer.setSource(clusterSource);
-	}
+		this.map.getView().fit(this.featureSource.getExtent(), this.map.getSize());
+	},
+	backgroundMap: function() {
+		this.refreshBackgroundMap();
+	},
+	customXYZUrl: function() {
+		this.refreshBackgroundMap();
+	},
+	customWMSUrl: function() {
+		this.refreshBackgroundMap();
+	},
+	WMSLayer: function() {
+		this.refreshLayers();
+	},
+	customWMTSUrl: function() {
+		this.refreshBackgroundMap();
+	},
+	WMTSLayer: function() {
+		this.refreshLayers();
+	},
 },
 
 methods: {
@@ -147,6 +218,125 @@ methods: {
 				}
 			}
 	},
+	refreshBackgroundMap: function() {
+		var backgroundMapId = this.backgroundMap === undefined ? this.backgroundMaps[0].id : this.backgroundMap;
+		var backgroundMapProps = this.backgroundMapPropMap[backgroundMapId];
+
+		if(backgroundMapProps.type === 'XYZ') {
+			this.refreshLayers();
+		}
+		if(backgroundMapProps.type === 'WMS') {
+			var url = backgroundMapProps.url;
+			if(backgroundMapId === 'CustomWMS') {
+				url = this.customWMSUrl;
+			}
+			this.WMSMessage = "loading WMS metadata";
+			this.WMSCapabilities = undefined;
+			this.refreshLayers();
+			axios.get(url)
+			.then(r => {
+				this.WMSMessage = "parsing WMS metadata";
+				var parser = new ol.format.WMSCapabilities();
+				console.log(parser);
+				var cap = parser.read(r.data);
+				console.log(JSON.parse(JSON.stringify(cap)));
+				this.WMSCapabilities = cap;
+				this.WMSMessage = undefined;
+				this.refreshLayers();
+			})
+			.catch(e => {
+				this.WMSMessage = "ERROR loading WMS metadata";
+				this.refreshLayers();
+			});
+		}
+		if(backgroundMapProps.type === 'WMTS') {
+			var url = backgroundMapProps.url;
+			if(backgroundMapId === 'CustomWMTS') {
+				url = this.customWMTSUrl;
+			}
+			this.WMTSMessage = "loading WMTS metadata";
+			this.WMTSCapabilities = undefined;
+			this.refreshLayers();
+			axios.get(url)
+			.then(r => {
+				this.WMTSMessage = "parsing WMTS metadata";
+				var parser = new ol.format.WMTSCapabilities();
+				console.log(parser);
+				var cap = parser.read(r.data);
+				console.log(JSON.parse(JSON.stringify(cap)));
+				this.WMTSCapabilities = cap;
+				this.WMTSMessage = undefined;
+				this.refreshLayers();
+			})
+			.catch(e => {
+				this.WMTSMessage = "ERROR loading WMTS metadata";
+				this.refreshLayers();
+			});
+		}
+	},
+
+	refreshLayers: function() {
+		var backgroundLayer = undefined;
+
+		var backgroundMapId = this.backgroundMap === undefined ? this.backgroundMaps[0].id : this.backgroundMap;
+		var backgroundMapProps = this.backgroundMapPropMap[backgroundMapId];
+		
+		if(backgroundMapProps.type === 'XYZ') {
+			var url = backgroundMapProps.url;
+			if(backgroundMapId === 'CustomXYZ') {
+				url = this.customXYZUrl;
+			}
+			var source = new ol.source.XYZ({
+				url: url,
+				attributions: backgroundMapProps.attributions,
+				wrapX: false,
+			});
+			backgroundLayer = new ol.layer.Tile({
+				source: source,
+			});
+		}
+
+		if(backgroundMapProps.type === 'WMS' && this.WMSCapabilities != undefined) {
+			var url = this.WMSCapabilities.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource;
+			var WMSOptions = {};
+			WMSOptions.url = url;
+			if(this.WMSLayer !== undefined) {
+				WMSOptions.params = {'LAYERS': this.WMSLayer};
+			}
+			if(this.WMSCapabilities.Service !== undefined && this.WMSCapabilities.Service.AccessConstraints !== undefined) {
+				WMSOptions.attributions = this.WMSCapabilities.Service.AccessConstraints;
+			}
+			var source = new ol.source.ImageWMS(WMSOptions/*{
+				attributions: '© <a href="http://www.geo.admin.ch/internet/geoportal/' +
+					'en/home.html">National parks / geo.admin.ch</a>',
+				crossOrigin: 'anonymous',
+				params: {'LAYERS': 'ch.bafu.schutzgebiete-paerke_nationaler_bedeutung'},
+				serverType: 'mapserver',
+				url: 'https://wms.geo.admin.ch/'
+			  }*/);
+			backgroundLayer = new ol.layer.Image({
+				source:	source,
+			});		  			
+		}
+
+		if(backgroundMapProps.type === 'WMTS' && this.WMTSCapabilities !== undefined && this.WMTSLayer !== undefined) {
+			var options = ol.source.WMTS.optionsFromCapabilities(this.WMTSCapabilities, {layer: this.WMTSLayer});
+			console.log(options);
+			var source =  new ol.source.WMTS(options);
+			backgroundLayer = new ol.layer.Tile({
+				source:	source,
+			})		  			
+		}
+
+		var layers = this.map.getLayers();
+		layers.clear();
+		if(backgroundLayer !== undefined) {
+			layers.push(backgroundLayer);
+			console.log(backgroundLayer);
+		}
+		layers.push(this.clusterLayer);
+		this.map.changed();
+	},
 	
 	createMap: function() {
 		var self = this;
@@ -154,14 +344,10 @@ methods: {
 		this.clusterLayer = new ol.layer.Vector({
 			/*source: clusterSource,*/
 			style: this.createStyleFunction(false),
-		});
+		});		
 
-		var raster = new ol.layer.Tile({
-			source: new ol.source.OSM()
-		});
-
-		var map = new ol.Map({
-			layers: [raster, this.clusterLayer],
+		self.map = new ol.Map({
+			layers: [this.clusterLayer],
 			target: 'map',
 			view: new ol.View({
 				center: [0, 0],
@@ -199,7 +385,7 @@ methods: {
 				self.hoveredPlots.push('...');
 			}
 		});
-		map.addInteraction(selectHover);
+		self.map.addInteraction(selectHover);
 		
 		var selectSingleClick = new ol.interaction.Select({
 			style: this.createStyleFunction(true),
@@ -209,12 +395,12 @@ methods: {
 			selectSingleClick.getFeatures().clear();
 			self.viewSelectedPlots();
 		});
-		map.addInteraction(selectSingleClick);
+		self.map.addInteraction(selectSingleClick);
 
 		var dragBox = new ol.interaction.DragBox({
 			condition: ol.events.condition.platformModifierKeyOnly
 		});
-		map.addInteraction(dragBox);
+		self.map.addInteraction(dragBox);
 		dragBox.on('boxstart', function() {
 			self.selectedPlots = [];			
 		});
@@ -262,10 +448,25 @@ methods: {
 		console.log(plot);
 	},
 
-	toggleHelp() {
-		this.visibleHelp = ! this.visibleHelp;
+	toggleHelp(language) {
+		if(this.visibleHelp === language) {
+			this.visibleHelp = undefined;
+		} else {
+			this.visibleHelp = language;
+		}
 	},
 }, // end of methods
+
+computed: {
+	WMSLayers() {
+		if(this.WMSCapabilities === undefined || this.WMSCapabilities.Capability === undefined || this.WMSCapabilities.Capability.Layer === undefined || this.WMSCapabilities.Capability.Layer.Layer === undefined) {
+			return [];
+		}
+		var collector = [];
+		layersCollector(this.WMSCapabilities.Capability.Layer.Layer, collector);
+		return collector;
+	}
+}, 
 
 }); // end of app
 

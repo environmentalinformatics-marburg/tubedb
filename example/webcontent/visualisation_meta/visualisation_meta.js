@@ -57,6 +57,18 @@ var paramsSerializer = function(params) {
 	return Qs.stringify(params, {arrayFormat: 'repeat'})
 };
 
+function isNumber(v) {
+	if(v === undefined || v === null) {
+		return false;
+	}
+	if(typeof v == 'string') {
+		if(v.trim() === '') {
+			return false;
+		}
+	}
+	return !isNaN(v);
+}
+
 function init() {
 	
 Vue.component('visualisation-interface', {
@@ -102,12 +114,15 @@ data: function () {
 		timeHover: false,
 		timeHoverStay: false,
 		timeYear: "*",
+		timeYearEnd: "",
 		timeYears: [2000],
 		timeMonths: ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"],
 		timeMonthsNumber: {"*":0, "jan":1, "feb":2, "mar":3, "apr":4, "may":5, "jun":6, "jul":7, "aug":8, "sep":9, "oct":10 ,"nov":11, "dec":12},
 		timeMonth: "*",
+		timeMonthEnd: "",
 		timeDays: ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"],
 		timeDay: "*",
+		timeDayEnd: "",
 		
 		qualityHover: false,
 		qualityHoverStay: false,
@@ -126,11 +141,22 @@ data: function () {
 		widthTextMap: {"large": 4096, "maximum": 65535},
 		widthText: "auto",
 		widthCustom: 1000,
-		heightTexts: ["small", "medium", "large", "custom"],
+		diagramConnectionTypes: ['none', 'step', 'line', 'curve'],
+		diagramConnectionType: 'step',
+		diagramRawConnectionTypes: ['none', 'line', 'curve'],
+		diagramRawConnectionType: 'curve',		
+		diagramValueTypes: ['none', 'point', 'line'],
+		diagramValueType: 'line',
+		diagramRawValueTypes: ['none', 'point'],
+		diagramRawValueType: 'point',		
+		heightTexts: ["small", "medium", "large", "custom"],		
 		heightTextMap: {"small": 100, "medium": 400, "large": 800},
 		heightText: "small",
 		heightCustom: 100,
 		byYear: true,
+		yAxisValueRange: false,
+		yAxisValueRangeMin: undefined,
+		yAxisValueRangeMax: undefined,
 		
 		views: [],
 		viewsDone: 0,
@@ -193,7 +219,7 @@ computed: {
 				Object.keys(map).forEach(function(sensorName) {
 					//console.log(sensorName+" ?");
 					var sen = self.sensorMap[sensorName];
-					if(sen != undefined) {
+					if(sen !== undefined) {
 						//console.log(sen.id);
 						s.push(sen);
 					}
@@ -261,22 +287,64 @@ computed: {
 		}
 		return s;
 	},
-	timeParameters: function() {		
+	timeParameters: function() {
+		var params = {};
 		if(this.timeYear === '*') {
-			if(this.groupViewYearRange === undefined) {
-				return {};
+			if(this.groupViewYearRange !== undefined) {
+				params.year = this.groupViewYearRange.start;
+			}
+			if(this.timeYearEnd === '') {
+				if(this.groupViewYearRange !== undefined) {
+					params.end_year = this.groupViewYearRange.end;
+				}
 			} else {
-				return {year: this.groupViewYearRange.start, end_year: this.groupViewYearRange.end};
+				params.end_year = this.timeYearEnd;
+				if(this.timeMonthEnd !== '') {
+					params.end_month = this.timeMonthsNumber[this.timeMonthEnd];
+					if(this.timeDayEnd !== '') {
+						params.end_day = this.timeDayEnd;
+					}
+				}
+			}
+		} else {
+			params.year = this.timeYear;
+			if(this.timeMonth === '*') {
+				if(this.timeYearEnd !== '') {
+					params.end_year = this.timeYearEnd;
+					if(this.timeMonthEnd !== '') {
+						params.end_month = this.timeMonthsNumber[this.timeMonthEnd];
+						if(this.timeDayEnd !== '') {
+							params.end_day = this.timeDayEnd;
+						}
+					} 
+				}
+			} else {
+				params.month = this.timeMonthsNumber[this.timeMonth];
+				if(this.timeDay === '*') {
+					if(this.timeYearEnd !== '') {
+						params.end_year = this.timeYearEnd;
+						if(this.timeMonthEnd !== '') {
+							params.end_month = this.timeMonthsNumber[this.timeMonthEnd];
+							if(this.timeDayEnd !== '') {
+								params.end_day = this.timeDayEnd;
+							}
+						}
+					}
+				} else {
+					params.day = this.timeDay;
+					if(this.timeYearEnd !== '') {
+						params.end_year = this.timeYearEnd;
+						if(this.timeMonthEnd !== '') {
+							params.end_month = this.timeMonthsNumber[this.timeMonthEnd];
+							if(this.timeDayEnd !== '') {
+								params.end_day = this.timeDayEnd;
+							}
+						}
+					}
+				}
 			}
 		}
-		if(this.timeMonth === '*') {
-			return {year: this.timeYear};
-		}
-		if(this.timeDay === '*') {
-			return {year: this.timeYear, month: this.timeMonthsNumber[this.timeMonth]};
-		}
-		console.log("day "+this.timeDay);
-		return {year: this.timeYear, month: this.timeMonthsNumber[this.timeMonth], day: this.timeDay};
+		return params;
 	},
 	groupViewYearRange: function() {
 		if(this.groupID === '*') {
@@ -308,7 +376,7 @@ computed: {
 			console.log(o);
 			var s = self.sensorMap[o];
 			console.log(s);
-			if(s.raw) {
+			if(s !== undefined && s.raw) {
 				result = true;
 			}
 		});
@@ -346,6 +414,12 @@ computed: {
 	},
 	validHeightCustom: function() {
 		return this.heightCustom > 0 && this.heightCustom < 2059;
+	},
+	validYAxisValueRangeMin: function() {
+		return isNumber(this.yAxisValueRangeMin);
+	},
+	validYAxisValueRangeMax: function() {
+		return isNumber(this.yAxisValueRangeMax);
 	},
 	widthValue: function() {
 		if(this.widthText === "custom" && this.validWidthCustom) {
@@ -410,13 +484,49 @@ computed: {
 		} else {
 			this.sensorIDs.forEach(function(o){
 				var s = self.sensorMap[o];
-				if( !s.raw || (s.raw && self.aggregation === 'raw')) {
+				if( s !== undefined && (!s.raw || (s.raw && self.aggregation === 'raw'))) {
 					sensors.push(s);
 				}
 			});
 		}
 		return sensors;
 	},
+	timeYearEnds: function() {
+		if(this.timeYear === '*') {
+			return this.timeYears;
+		}
+		return this.timeYears.filter(y => y >= this.timeYear);
+	},
+	timeMonthEnds: function() {
+		if(this.timeYearEnd === '') {
+			return this.timeMonths;
+		}
+		if(this.timeYear === '*') {
+			return this.timeMonths;
+		}
+		if(this.timeYear !== this.timeYearEnd) {
+			return this.timeMonths;
+		}
+		if(this.timeMonth === '*') {
+			return this.timeMonths;
+		}
+		return this.timeMonths.filter(m => this.timeMonthsNumber[m] >= this.timeMonthsNumber[this.timeMonth]);
+	},
+	timeDayEnds: function() {
+		if(this.timeMonthEnd === '') {
+			return this.timeDays;
+		}
+		if(this.timeMonth === '*') {
+			return this.timeDays;
+		}
+		if(this.timeMonth !== this.timeMonthEnd) {
+			return this.timeDays;
+		}
+		if(this.timeDay === '*') {
+			return this.timeDays;
+		}
+		return this.timeDays.filter(d => +d >= +this.timeDay);
+	},	
 }, //end computed
 
 mounted: function () {
@@ -465,8 +575,6 @@ methods: {
 		
 		var plotstations = self.plotstations.filter(function(o){return o.selected;});
 		
-		/*var container = document.getElementById("container");
-		var width = container == null ? 100 : (container.clientWidth - 30 < 100 ? 100 : container.clientWidth - 30);*/
 		var width = this.widthValue;
 		var height = this.heightValue;
 		
@@ -482,18 +590,28 @@ methods: {
 			if(innerStationMap === undefined) {
 				innerStationMap = {};
 			}
-			/*plots.forEach(function(plot){
-				if(innerMap[plot.id]) {
-					var view = {status: "init", url: "no", type: self.viewType, plot: plot.id, sensor: sensor.id, aggregation: self.aggregation, quality: self.quality, interpolated: self.interpolation, width: width, height: 100};
-					view.by_year = true;
-					Object.assign(view, self.timeParameters);
-					views.push(view);
-				}
-			});*/
+
 			plotstations.forEach(function(plotstation){
 				if(plotstation.full_plot ? innerPlotMap[plotstation.plot] : innerStationMap[plotstation.station] ) {
 					var plotStationName = plotstation.full_plot ? plotstation.plot : plotstation.plot + ':' + plotstation.station;
-					var view = {status: "init", url: "no", type: self.viewType, plot: plotStationName, sensor: sensor.id, aggregation: self.aggregation, quality: self.quality, interpolated: self.interpolation, width: width, height: height, byYear: self.byYear};
+					var view = {
+						status: "init", 
+						url: "no", 
+						type: 
+						self.viewType, 
+						plot: plotStationName, 
+						sensor: sensor.id, 
+						aggregation: self.aggregation, 
+						quality: self.quality, 
+						interpolated: self.interpolation, 
+						width: width, 
+						height: height, 
+						byYear: self.byYear,
+						connection: self.diagramConnectionType,
+						raw_connection: self.diagramRawConnectionType,
+						value: self.diagramValueType,
+						raw_value: self.diagramRawValueType,
+					};
 					view.by_year = true;
 					Object.assign(view, self.timeParameters);
 					if(self.viewType == 'table' || self.viewType == 'csv-file') {
@@ -501,6 +619,10 @@ methods: {
 					}
 					if(self.viewType == 'csv-file') {
 						view.plot = plotStationNames;
+					}
+					if((self.viewType == 'diagram' || self.viewType == 'boxplot') && self.yAxisValueRange && self.validYAxisValueRangeMin && self.validYAxisValueRangeMax) {
+						view.value_min = self.yAxisValueRangeMin;
+						view.value_max = self.yAxisValueRangeMax;
 					}
 					views.push(view);
 				}
@@ -541,10 +663,18 @@ methods: {
 		if(a.year !== b.year) return false;
 		if(a.end_year !== b.end_year) return false;
 		if(a.month !== b.month) return false;
+		if(a.end_month !== b.end_month) return false;
 		if(a.day !== b.day) return false;
+		if(a.end_day !== b.end_day) return false;
 		if(a.quality !== b.quality) return false;
 		if(a.interpolated !== b.interpolated) return false;
 		if(a.byYear !== b.byYear) return false;
+		if(a.connection !== b.connection) return false;
+		if(a.raw_connection !== b.raw_connection) return false;
+		if(a.value !== b.value) return false;
+		if(a.raw_value !== b.raw_value) return false;		
+		if(a.value_min !== b.value_min) return false;
+		if(a.value_max !== b.value_max) return false;
 		return true;
 	},
 	compareViews: function(va, vb) {
@@ -579,7 +709,21 @@ methods: {
 		view.status = "running";
 		//console.log(view);
 		
-		var params = {plot: view.plot, sensor: view.sensor, aggregation: view.aggregation, interpolated: "false", quality: view.quality, interpolated: view.interpolated, width: view.width, height: view.height, by_year: view.byYear};		
+		var params = {
+			plot: view.plot, 
+			sensor: view.sensor, 
+			aggregation: view.aggregation, 
+			interpolated: "false", 
+			quality: view.quality, 
+			interpolated: view.interpolated, 
+			width: view.width, 
+			height: view.height, 
+			by_year: view.byYear,
+			connection: view.connection,
+			raw_connection: view.raw_connection,			
+			value: view.value,
+			raw_value: view.raw_value,			
+		};		
 		if(view.hasOwnProperty('year')) {
 			params.year = view.year;
 		}
@@ -589,8 +733,20 @@ methods: {
 		if(view.hasOwnProperty('month')) {
 			params.month = view.month;
 		}
+		if(view.hasOwnProperty('end_month')) {
+			params.end_month = view.end_month;
+		}
 		if(view.hasOwnProperty('day')) {
 			params.day = view.day;
+		}
+		if(view.hasOwnProperty('end_day')) {
+			params.end_day = view.end_day;
+		}
+		if(view.hasOwnProperty('value_min')) {
+			params.value_min = view.value_min;
+		}
+		if(view.hasOwnProperty('value_max')) {
+			params.value_max = view.value_max;
 		}
 		
 		var url= 'unknown';
@@ -816,6 +972,27 @@ watch: {
 	byYear: function() {
 		this.updateViews();
 	},
+	diagramConnectionType: function() {
+		this.updateViews();
+	},
+	diagramRawConnectionType: function() {
+		this.updateViews();
+	},
+	diagramValueType: function() {
+		this.updateViews();
+	},
+	diagramRawValueType: function() {
+		this.updateViews();
+	},
+	yAxisValueRange: function() {
+		this.updateViews();
+	},
+	yAxisValueRangeMin: function() {
+		this.updateViews();
+	},
+	yAxisValueRangeMax: function() {
+		this.updateViews();
+	},	
 	groupViewYearRange: function() {
 		if(this.groupViewYearRange != undefined) {
 			var startYear = this.groupViewYearRange.start;
@@ -834,6 +1011,21 @@ watch: {
 			}
 		}
 	},
+	timeYearEnds: function() {
+		if(this.timeYearEnds.every(y => y != this.timeYearEnd)) {
+			this.timeYearEnd = '';
+		}
+	},
+	timeMonthEnds: function() {
+		if(this.timeMonthEnds.every(m => m != this.timeMonthEnd)) {
+			this.timeMonthEnd = '';
+		}
+	},
+	timeDayEnds: function() {
+		if(this.timeDayEnds.every(m => m != this.timeDayEnd)) {
+			this.timeDayEnd = '';
+		}
+	},
 }, //end watch
 
 });	//end visualisation-interface
@@ -846,7 +1038,7 @@ template: '#help-template',
 data: function () {
 	return {
 
-	visible: false,
+	visible: undefined,
 
 	};
 },
@@ -856,14 +1048,14 @@ mounted: function() {
 	window.addEventListener('keyup', function (e) {
 		if (e.keyCode == 27) {
 			console.log(e);
-			self.visible = false;
+			self.visible = undefined;
 		}
 	});
 },
 
 methods: {
-	show() {
-		this.visible = true;
+	show(language) {
+		this.visible = language;
 	}
 },
 

@@ -8,9 +8,9 @@
   <title>Map of Plots</title>
   <link rel="stylesheet" href="ol.css" type="text/css">
 	<link rel="stylesheet" href="map2.css" type="text/css">
-  <script src="ol-debug.js"></script>
-	<script src="vue.js"></script>
-	<script src="axios.js"></script>
+	<script src="ol.js"></script>
+	<script src="vue.min.js"></script>
+	<script src="axios.min.js"></script>
 	<script src="map2.js"></script>
   </head>
   
@@ -103,18 +103,78 @@
 		<plots-dialog v-if="showPlotsDialog" @close="showPlotsDialog = false" :plots="selectedPlots" @plot="viewPlot($event);">
 		</plots-dialog>
 		<plot-dialog v-if="showPlotDialog" @close="showPlotDialog = false" :plot="selectedPlot">
-		</plot-dialog>
+    </plot-dialog>
+    <div class="control_panel" @click="control_panel_show_content = !control_panel_show_content">
+      <div style="background-color: #e8e8e8;">Background map <span v-show="!control_panel_show_content">[&oline;]</span> <span v-show="control_panel_show_content">[X]</span></div>
+      <div v-show="control_panel_show_content" @click.stop class="control_panel_content">
+        <select v-model="backgroundMap">
+          <option v-for="backgroundMap in backgroundMaps" :value="backgroundMap.id" :key="backgroundMap.id">
+          {{backgroundMap.title}}
+          </option>
+        </select>
+        <div v-if="backgroundMap !== undefined && backgroundMapPropMap[backgroundMap].type === 'XYZ'">
+          <span class="key">Type: </span>
+          <span class="value">{{backgroundMapPropMap[backgroundMap].type}}</span> 
+          <span class="key">URL:</span> 
+          <span class="value" v-show="backgroundMap !== 'CustomXYZ'">{{backgroundMapPropMap[backgroundMap].url}}</span>
+          <input v-model="customXYZUrl" placeholder="XYZ source URL"  v-show="backgroundMap === 'CustomXYZ'" size="100">
+        </div>
+        <div v-if="backgroundMap !== undefined && backgroundMapPropMap[backgroundMap].type === 'WMS'">
+          <span class="key">Type: </span>
+          <span class="value">{{backgroundMapPropMap[backgroundMap].type}}</span> 
+          <span class="key">URL:</span> 
+          <span class="value" v-show="backgroundMap !== 'CustomWMS'">{{backgroundMapPropMap[backgroundMap].url}}</span>
+          <input v-model="customWMSUrl" placeholder="WMS Capabilities URL"  v-show="backgroundMap === 'CustomWMS'" size="100">
+          <div v-show="WMSMessage !== undefined">
+            {{WMSMessage}}
+          </div>
+          <div v-if="WMSCapabilities !== undefined">
+            <div v-if="WMSCapabilities.Service !== undefined">
+              <div v-if="WMSCapabilities.Service.Title !== undefined"><span>Title: </span><span>{{WMSCapabilities.Service.Title}}</span></div>
+              <div v-if="WMSCapabilities.Service.AccessConstraints !== undefined"><span style="font-size: smaller;">AccessConstraints: </span><span style="color: grey; font-size: smaller;">{{WMSCapabilities.Service.AccessConstraints}}</span></div>              
+            </div>
+            <div v-if="WMSCapabilities.Capability !== undefined">
+              <span class="key">Layer: </span>
+              <select v-model="WMSLayer">
+                <option v-for="layer in WMSLayers" :value="layer.Name" :key="layer.Name">
+                {{layer.Title}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div v-if="backgroundMap !== undefined && backgroundMapPropMap[backgroundMap].type === 'WMTS'">
+          <span class="key">Type: </span>
+          <span class="value">{{backgroundMapPropMap[backgroundMap].type}}</span> 
+          <span class="key">URL:</span> 
+          <span class="value" v-show="backgroundMap !== 'CustomWMTS'">{{backgroundMapPropMap[backgroundMap].url}}</span>
+          <input v-model="customWMTSUrl" placeholder="WMTS Capabilities URL"  v-show="backgroundMap === 'CustomWMTS'" size="100">
+          <div v-show="WMTSMessage !== undefined">
+            {{WMTSMessage}}
+          </div>
+          <div v-if="WMTSCapabilities !== undefined && WMTSCapabilities.Contents !== undefined && WMTSCapabilities.Contents.Layer !== undefined">
+            <span class="key">Layer: </span>
+            <select v-model="WMTSLayer">
+              <option v-for="layer in WMTSCapabilities.Contents.Layer" :value="layer.Identifier" :key="layer.Identifier">
+              {{layer.Title}}
+              </option>
+            </select>
+          </div>
+         </div>
+      </div>
+    </div>
     <div class="main_page_link_and_help">
-    <a href="../index.html">main-page</a>
-    <button @click="toggleHelp">?</button>
+      <button @click="toggleHelp('English')"><b>[i]</b> (English)</button>
+      <button @click="toggleHelp('Deutsch')"><b>[i]</b> (Deutsch)</button>
+      <a href="../index.html">-->main-page</a>
     </div>
 
 
-    <div id="help" v-if="visibleHelp">
+    
+    <div id="help" v-if="visibleHelp === 'English'">
+      <button @click="toggleHelp()" style="position: absolute; right: 10px;"><b>[x]</b> Close</button>
       <h1>Instructions</h1>
       <hr>
-      (Press ?-button again to hide this help-box.)
-      <br><br>
       The map-page shows measurement plots on a world-map.
       <br>
       <br>
@@ -125,6 +185,22 @@
       <br> Click on a plot-name to show infos about the plot.
       <br><br> If you click on a circle with plot-name, the box with plot infos opens.
     </div>
+    
+    <div id="help" v-if="visibleHelp === 'Deutsch'">
+      <button @click="toggleHelp()" style="position: absolute; right: 10px;"><b>[x]</b> Schließen</button>
+      <h1>Anleitung</h1>
+      <hr>
+      Diese Kartenseite zeigt Klimastationen (Plots) auf einer Weltkarte.
+      <br>
+      <br>
+      Ein Kreis mit Zahl stellt die Anzahl der Plots an dieser Position dar.
+      <br>
+      Beim hineinzoomen (mit dem Mausrad) erscheinen Kreise mit Plotnamen.
+      <br><br> Mit Klick auf einen Kreis mit Zahlen, öffnet sich eine Box mit den enthaltenen Plot-Namen.
+      <br> Mit Klick auf einen Plot-Namen werden Informationen über den Plot angezeigt.
+      <br><br> Mit Klick auf einen Kreis mit Plot-Namen öffnet sich eine Box mit Plot-Infos.
+    </div>
+
 	</div>
   </body>
 </html>

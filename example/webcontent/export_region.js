@@ -1,9 +1,12 @@
+/* *** settings that may need to be changed at different runtime environments *** */
 var url_base = "../";
+var url_result_page = "export.html";
+var url_go_page = "export_plots.html";
+/* ***   *** */
 
 var url_region_list = url_base + "tsdb/region_list";
 var url_export_region = url_base + "export/region";
 var url_export_applay_region = url_base + "export/apply_region";
-var url_result_page = "export.html";
 
 var tasks = 0;
 
@@ -94,11 +97,31 @@ function on_apply() {
 		 });	
 }
 
+function on_apply_go() {
+	var region = "[region]";
+	for(i in region_radios) {
+		if(region_radios[i].checked) {
+			region = region_radios[i].id;
+		}
+	}
+	incTask();	
+	$.post(url_export_applay_region+"?region="+region,region)
+		 .done(function() {
+			window.location = url_go_page;
+			decTask();
+		 })
+		 .fail(function(jqXHR, textStatus, errorThrown) {
+			alert("error sending settings data: "+textStatus+"  "+errorThrown);
+			decTask();
+		 });	
+}
+
 function ready() {
 	incTask();
 	updataRegions();
 	document.getElementById("button_cancel").onclick = on_cancel;
 	document.getElementById("button_apply").onclick = on_apply;
+	document.getElementById("button_apply_go").onclick = on_apply_go;
 	decTask();
 }
 

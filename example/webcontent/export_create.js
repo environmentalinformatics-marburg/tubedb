@@ -1,4 +1,7 @@
+/* *** settings that may need to be changed at different runtime environments *** */
 var url_base = "../";
+var url_result_page = "export.html";
+/* ***   *** */
 
 var url_export_settings = url_base + "export/settings";
 var url_export_create = url_base + "export/create";
@@ -14,6 +17,10 @@ function getID(id) {
 }
 
 function ready() {
+document.getElementById("button_cancel").onclick = function() {
+	window.location = url_result_page;
+}
+
 getID("status").innerHTML = "start creating zip-file";
 $.get(url_export_create)
 	.done(function(data) {

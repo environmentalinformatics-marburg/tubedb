@@ -341,8 +341,8 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 			}
 
 			long nextAggTimestamp = calcAggregationTimestamp(timestamp);
-			if(nextAggTimestamp>aggregation_timestamp) { // aggregate aggregation_timestamp is ready for output
-				if(aggregation_timestamp>-1) { // if not init timestamp
+			if(nextAggTimestamp > aggregation_timestamp) { // aggregate aggregation_timestamp is ready for output
+				if(aggregation_timestamp > -1) { // if not init timestamp
 					boolean dataInAggregateCollection = collectedRowsInCurrentAggregate>0;
 					Pair<float[], int[][]> aggregatedPair = aggregateCollectedData();
 					if(aggregatedPair!=null) {

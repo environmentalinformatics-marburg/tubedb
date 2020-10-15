@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Export Climate Data</title>
+<title>Export Climate Data - overview</title>
 <meta name="robots" content="noindex, nofollow" />
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="favicon.png" />
 <link rel="stylesheet" href="./fonts/fonts.css" type="text/css">
-<script src="jquery-2.1.1.min.js"></script>
+<script src="jquery.min.js"></script>
 <script src="export.js"></script>
 
 <style type="text/css">
@@ -42,6 +42,16 @@ ul { padding-left:15px; }
 .center {flex:none;}
 .main {background-color:#f6f6f6;}
 
+.user-setting {
+    background-color: #fbfbfb;
+    border-color: #d3d3d3;
+    border-style: solid;
+    padding: 5px;
+    border-width: 1px;
+    border-radius: 7px;
+	box-shadow: 5px 5px #0000000a;
+}
+
 </style>
 
 </head>
@@ -57,17 +67,22 @@ ul { padding-left:15px; }
 <div id="status" style="display:inline-block">init...</div> 
 </div>
 <div id="top_line_right">
-<a href="index.html">main-page</a>
-<button onclick="var h=$('#div_help')[0].style;h.display=(h.display=='none')?'inline':'none'">?</button>
+	<button onclick="var hE=document.querySelector('#div_help_English').style;var hD=document.querySelector('#div_help_Deutsch').style;var vE=(hE.display=='none');hE.display=vE?'inline':'none';hD.display='none';">
+		<b>[i]</b> (English)
+	</button>
+	<button onclick="var hD=document.querySelector('#div_help_Deutsch').style;var hE=document.querySelector('#div_help_English').style;hD.display=(hD.display=='none')?'inline':'none';hE.display='none';">
+		<b>[i]</b> (Deutsch)
+	</button>
+	<a href="index.html">-->main-page</a>
 </div> 
 </div>
 
-<h1>Export Climate Data</h1>
+<h1>Export Climate Data - overview</h1>
 
 <div class="horizontal-box">
 <div class="spacer"></div>
 <div class="center">
-<button id="button_reset">reset</button>
+<button id="button_reset">[reset]</button>
 <div id="choose_region_div" style="display:inline">&nbsp;&nbsp;<b>(0)</b><button id="choose_region">region</button></div>
 &nbsp;&nbsp;<b>(1)</b><button id="choose_plots">plots</button>
 &nbsp;&nbsp;<b>(2)</b><button id="choose_sensors">parameters</button>
@@ -87,53 +102,75 @@ ul { padding-left:15px; }
 
 </div>
 
-<div id="div_help" style="display:none">
+<div id="div_help_English" style="display:none">
 <h3>Help</h3>
 This the main page to download time series data as zip-file.
-<br>Below is a <b>summary</b> of settings that will be used to create the zip-file. Before download check this info to make sure, that you chose correct settings for your request.
-<br><br>The numbers at the buttons at the top guide you through the process of data selection and download:
-<ul>
-<br><li><b>(0)</b> select your region of plots (only present if there are multiple regions)</li>
-<br><li><b>(1)</b> choose your set of plots</li>
-<br><li><b>(2)</b> choose your set of parameters (sensors) out of the available parameters</li>
-<br><li><b>(3)</b> choose an aggregation of time and a time series timespan</li>
-<br><li><b>(4)</b> choose some additional settings like quality control and structure of csv-files</li>
-<br><li><b>(5)</b> first examine the summary then download your zip-file by pressing the create ZIP-File button.
-<br>The create zip-file method opens a new page where you can watch the progress in processing the data. When it finishes you get a download link.</li>
-</ul>
-
+<br>Below is a <b>summary</b> of settings that will be used to create the zip-file. 
+<br>Before download check this info to make sure, that you chose correct settings for your request.
+<br><br>The numbers at the buttons at the top guide you through the process of data selection and download.
+<br>It is recommended to make the settings in the numbered order.
+<br><br>
+<table>
+<tr><td><b>(0) region</b></td><td>Select your region of plots (only present if there are multiple regions).</td></tr>
+<tr><td><b>(1) plots</b></td><td>Choose your set of plots.</td></tr>
+<tr><td><b>(2) parameters</b></td><td>Choose your set of parameters (sensors) out of the available parameters.</td></tr>
+<tr><td><b>(3) timespan</b></td><td>Choose an aggregation of time and a time series timespan.</td></tr>
+<tr><td><b>(4) settings</b></td><td>Choose some additional settings like quality control and structure of CSV-files.</td></tr>
+<tr><td><b>(5) create ZIP-file</b></td><td>First examine the summary then download your zip-file by pressing the create ZIP-File button.</td></tr>
+</table>
+<br>The create zip-file method opens a new page where you can watch the progress in processing the data. When it finishes you get a download link.
 <hr/>
 </div>
 
+<div id="div_help_Deutsch" style="display:none">
+<h3>Anleitung</h3>
+Dies ist die Hauptseite zum Herunterladen von Zeitreihendaten als Zip-Datei.
+<br>Unten ist eine <b>Zusammenfassung</b> der Einstellungen, die zur Erstellung der Zip-Datei verwendet werden. 
+<br>Überprüfen Sie vor dem Download, ob Sie die richtigen Einstellungen für Ihre Anfrage gewählt haben.
+<br><br>Die Zahlen bei den Schaltflächen oben führen Sie durch den Prozess der Datenauswahl und des Herunterladens.
+<br>Es wird empfohlen die Einstellungen in der nummerierten Reihenfolge vorzunehmen.
+<br><br>
+<table>
+<tr><td><b>(0) region</b></td><td> Wählen Sie Ihr Projekt (bzw. Region) der Plots aus (nur vorhanden, wenn es mehrere Projekte gibt).</td></tr>
+<tr><td><b>(1) plots</b></td><td>Wählen Sie die Plots aus.</td></tr>
+<tr><td><b>(2) parameters</b></td><td>Wählen Sie Ihren Parametersatz (Sensoren) aus den verfügbaren Parametern aus.</td></tr>
+<tr><td><b>(3) timespan</b></td><td>Wählen Sie eine Zeitaggregation und eine Zeitspanne.</td></tr>
+<tr><td><b>(4) settings</b></td><td>Wählen Sie einige zusätzliche Einstellungen wie Qualitätskontrolle und Struktur der CSV-Dateien.</td></tr>
+<tr><td><b>(5) create ZIP-file</b></td><td>Sehen Sie sich zuerst die Zusammenfassung an und laden Sie dann Ihre ZIP-Datei herunter, indem Sie auf die Schaltfläche "create ZIP-File" klicken.</td></tr>
+</table>
+<br>Die Methode "ZIP-Datei erstellen" öffnet eine neue Seite, auf der Sie den Fortschritt bei der Verarbeitung der Daten verfolgen können. Wenn sie beendet ist, erhalten Sie einen Download-Link.
+<hr/>
+</div>
 
 <div class="horizontal-box">
 <div class="spacer"></div>
 <div class="center main">
+<i>Specify your data request by the buttons above. Check your specified settings at this overview-page. Finally, download by 'create ZIP-file'-button.</i>
 <h3>Summary of exported climate time series</h3>
 <div id="div_region">
 <h4 style="display:inline-block">Region&nbsp; &nbsp; &nbsp;</h4>
-<div id="region_output" style="display:inline-block"></div>
+<div id="region_output" class="user-setting" style="display:inline-block"></div>
 </div>
 <div id="region_description_output" style="white-space: pre-line; max-width: 600px; text-align: justify;"></div>
 <h4 style="display:inline-block">Time&nbsp; &nbsp; &nbsp;</h4>
 timespan of &nbsp;&nbsp;
-<b><div id="timespan_output" style="display:inline-block"></div></b>
+<div id="timespan_output" class="user-setting" style="display:inline-block"></div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 with time steps of &nbsp;&nbsp;
-<b><div id="aggregation_output" style="display:inline-block"></div></b>
+<div id="aggregation_output" class="user-setting" style="display:inline-block"></div>
 <br/>
 <br/>
 <div style="display:inline-block;width:300px;/*line-height:0;*/vertical-align:top">
 <h4>Settings</h4>
-<div id="settings_output" style="height:200px"></div>
+<div id="settings_output" class="user-setting" style="height:200px"></div>
 </div>
 <div style="display:inline-block;width:200px;/*line-height:0;*/vertical-align:top">
 <h4>Plots</h4>
-<div id="plots_output"></div>
+<div id="plots_output" class="user-setting"></div>
 </div>
 <div style="display:inline-block;width:400px;/*line-height:0;*/vertical-align:top">
 <h4>Parameters</h4>
-<div id="sensors_output"></div>
+<div id="sensors_output" class="user-setting"></div>
 </div>
 </div> <!--END center-->
 <div class="spacer"></div>

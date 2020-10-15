@@ -95,7 +95,7 @@ public class TOA5Loader {
 				break;
 			default:
 				String translation = station.translateInputSensorName(name, true);
-				if(translation==null || !translation.equals("NaN")) {
+				if(translation == null || !translation.equals("NaN")) {
 					valueNameList.add(name);
 					valueReaderList.add(table.createColumnReaderFloat(name));
 					traceTranslatedList.add(translation == null ? name : translation);
@@ -143,7 +143,7 @@ public class TOA5Loader {
 				String sensorName = translation == null ? valueNames[i] : translation;
 				tsdb.streamStorage.insertDataEntryArray(station.stationID, sensorName, dataEntries);				
 			} catch(Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 				log.error(e+" with name "+valueNames[i]+"  in "+filename);
 			}
 		}

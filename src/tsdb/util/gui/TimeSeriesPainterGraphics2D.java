@@ -35,6 +35,7 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 	Color color_black = new Color(0,0,0);
 	Color color_grey = new Color(190,190,190);
 	Color color_light_blue = new Color(220,220,255);
+	Color color_light_darker_blue = new Color(200,200,245);
 
 	Font fontDefault;
 	Font fontSmall;
@@ -200,7 +201,7 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 
 	@Override
 	public void setColorAxisLine() {
-		gc.setColor(color_grey);		
+		gc.setColor(color_light_darker_blue);		
 	}
 
 	@Override

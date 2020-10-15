@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Export Time Series - time</title>
+<title>(3) Export Climate Data - timespan & aggregation</title>
 <meta name="robots" content="noindex, nofollow" />
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="favicon.png" />
 <link rel="stylesheet" href="./fonts/fonts.css" type="text/css">
-<script src="jquery-2.1.1.min.js"></script>
+<script src="jquery.min.js"></script>
 <script src="export_time.js"></script>
 
 <style type="text/css">
@@ -51,44 +51,112 @@ table {
 <div id="status" style="display:inline-block">init...</div>
 </div>
 <div id="top_line_right">
-<a href="index.html">main-page</a>
-<button onclick="var h=$('#div_help')[0].style;h.display=(h.display=='none')?'inline':'none'">?</button>
+	<button onclick="var hE=document.querySelector('#div_help_English').style;var hD=document.querySelector('#div_help_Deutsch').style;var vE=(hE.display=='none');hE.display=vE?'inline':'none';hD.display='none';">
+		<b>[i]</b> (English)
+	</button>
+	<button onclick="var hD=document.querySelector('#div_help_Deutsch').style;var hE=document.querySelector('#div_help_English').style;hD.display=(hD.display=='none')?'inline':'none';hE.display='none';">
+		<b>[i]</b> (Deutsch)
+	</button>
+	<a href="index.html">-->main-page</a>
 </div> 
 </div>
-<h1>Export Time Series - choose timespan and aggregation</h1>
+<h1>(3) Export Climate Data - timespan & aggregation</h1>
 
 <div class="horizontal-box">
 <div class="spacer"></div>
 <div class="center">
-<button id="button_cancel">cancel</button>
-<button id="button_apply">apply time</button>
+<button id="button_cancel">[X] discard</button>
+<button id="button_apply">[OK] save</button>
+<button id="button_apply_go">[OK] save --> go to (4)</button>
 </div> <!--END center-->
 <div class="spacer"></div>
 </div> <!--END horizontal-box-->
 
 <hr/>
 </div>
-<div id="div_help" style="display:none">
-<h3>Help</h3>
-On this page you can choose time steps and time span of the exported data. Click on "cancel" to discard changed. Click on "apply time" to confirm changes.
-<br>
-<br>
-Click on the "time steps" box to choose a suitable time step.
-<br>
-At the "time span"-section you can choose between different methods to select a time span.
-<br>
-When you want to specify exact start- and end-dates of the requested time span select "specific dates". There you can write a date consisting of year, month, day and hour. You don't need to write the date up to hour. For example "2014-04 to 2014-09" implies "2014-04-30T00 to 2014-09-30T23". To request to from beginning (or up to the end) write "*" in the "from" field (or in the "to" field).
 
-<hr/>
+<div id="div_help_English" style="display:none">
+	<h3>Help</h3>
+	On this page you can choose the range of time and time resolution for your data request.
+	<br>
+	<br>Click on the "<b>aggregation of time</b>"-control to choose the requested time resolution.
+	<ul>
+		<li><b>raw</b>: no aggregation (original measurement timestamps)</li> 
+		<li><b>hour</b></li>
+		<li><b>day</b></li>
+		<li><b>week</b></li>
+		<li><b>month</b></li>
+		<li><b>year</b></li>
+	</ul>
+	<br>Specify your requested <b>range of time.</b>
+	<ul>
+		<li><b>all available data</b>: The full time range of available measured data.</li>
+		<li><b>one year</b>: One full year.</li>
+		<li><b>years</b>: A range of full years.</li>
+		<li><b>specific dates</b>: Specific start and end dates.</li>
+	</ul>
+	
+	<b>Specific date specification:</b>
+	<br>When you want to specify exact start- and end-dates of the requested range of time select "specific dates". 
+	<br>There you can write a date consisting of year, month, day and hour for begin and end. 
+	<br>You don't need to write the date up to hour granularity. 
+	<br>For example "2014-04 to 2014-09" implies "2014-04-01T00 to 2014-09-30T23". 
+	<br>To request from beginning of measurement (or up to the end of measurement) write "*" in the "from" field (or in the "to" field).
+
+	<br><br>Click on "<b>[X] discard</b>" to discard changed. 
+	<br>Click on "<b>[OK] save</b>" to confirm changes. 
+	<br>Click on "<b>[OK] save --> go to (4)</b>" confirms the changes and switches to the next page with general settings.
+	<hr/>
 </div>
+
+<div id="div_help_Deutsch" style="display:none">
+	<h3>Anleitung</h3>
+	Auf dieser Seite können Sie den Zeitbereich und die Zeitauflösung für Ihre Datenanfrage wählen.
+	<br>
+	<br>Klicken Sie auf das "<b>aggregation of time</b>"-Bedienelement, um die gewünschte Zeitauflösung zu wählen.
+	<ul>
+		<li><b>raw</b>: Keine Aggregation (original Zeitstempel der Messungen).</li>
+		<li><b>hour</b>: Stündliche Zeitschritte.</li>
+		<li><b>day</b>: Tägliche Zeitschritte.</li>
+		<li><b>week</b>: Kalender-Wöchentliche Zeitschritte.</li>
+		<li><b>month</b>: Monatliche Zeitschritte.</li>
+		<li><b>year</b>: Jährliche Zeitschritte.</li>
+	</ul>
+	<br>Geben Sie den gewünschten Zeitbereich an (<b>range of time</b>).
+	<ul>
+		<li><b>all available data</b>: Der gesamte Zeitbereich der verfügbaren Messdaten.</li>
+		<li><b>one year</b>: Ein ganzes Jahr.</li>
+		<li><b>years</b>: Eine Reihe von ganzen Jahren.</li>
+		<li><b>specific dates</b>: Spezifische Start- und Enddaten.</li>
+	</ul>
+	
+	<b>Spezifische Datumsangaben:</b>
+	<br>Wenn Sie genaue Start- und Enddaten des gewünschten Zeitbereichs angeben möchten, wählen Sie "specific dates". 
+	<br>Hier können Sie ein Datum bestehend aus Jahr, Monat, Tag und Stunde für Beginn und Ende eintragen. 
+	<br>Sie brauchen das Datum nicht bis zur Stundengranularität zu schreiben. 
+	<br>Z.B. "2014-04 bis 2014-09" bedeutet "2014-04-01T00 bis 2014-09-30T23". 
+	<br>Um vom Beginn der Messung (oder bis zum Ende der Messung) anzufordern, schreiben Sie "*" in das Feld "from" (oder in das Feld "to").
+
+	<br><br>Ein Klick auf "<b>[X] discard</b>" verwirft die Änderungen. 
+	<br>Ein Klick auf "<b>[OK] save</b>" bestätigt die Änderungen.
+	<br>Ein Klick auf "<b>[OK] save --> go to (4)</b>" bestätigt die Änderungen und wechselt zur nächsten Seite mit allgemeinen Einstellungen.
+
+	<hr/>
+</div>
+
+
+
+
+
 
 <div class="horizontal-box">
 <div class="spacer"></div>
 <div class="center main">
+<i>Specify range of time and time resolution for your data request.</i>
 <h3>Time</h3>
 
 <div>
-<label for="choose_aggregation">Aggregation of time &nbsp;&nbsp;&nbsp;</label>
+<label for="choose_aggregation"><b>Aggregation of time</b> &nbsp;&nbsp;&nbsp;</label>
 <select id="choose_aggregation">
 <option>raw</option>
 <option>hour</option>
@@ -102,7 +170,7 @@ When you want to specify exact start- and end-dates of the requested time span s
 <br>
 
 <div>
-<h4>time span</h4>
+<h4>Range of time</h4>
 
 <table cellspacing="20">
 <tr><td><input type="radio" name="timespan_radio" id="radio_all">all available data<td><td><td><td>
@@ -116,9 +184,10 @@ When you want to specify exact start- and end-dates of the requested time span s
 
 <br>
 <br>
-Format of dates: <b>yyyy-mm-ddThh</b> ( [year]-[month]-[day]T[hour] )
+Format of specific dates: <b>yyyy-mm-ddThh</b> ( [year]-[month]-[day]T[hour] )
+<br><i>(Not all elements need to be specified.)</i>
 <br>
-valid examples:
+Valid examples:
 <br>
 <table>
 <tr><td><b>2014</b></td><td> year</td></tr> 

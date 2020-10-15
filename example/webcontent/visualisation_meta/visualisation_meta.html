@@ -8,18 +8,18 @@
 	<title>Visualisation</title>
 	<link rel="stylesheet" href="../fonts/fonts.css" type="text/css">
 	<link rel="stylesheet" href="visualisation_meta.css" type="text/css">
-	<script src="vue.js"></script>
-	<script src="axios.js"></script>
+	<script src="vue.min.js"></script>
+	<script src="axios.min.js"></script>
 	<script src="qs.js"></script>
 	<script src="visualisation_meta.js"></script>
 </head>
 
 <script type="text/x-template" id="help-template">
-	<div id="help" v-if="visible" class="help_container" @click.self="visible = false;">
-		<div class="help_box">
+	<div id="help" v-if="visible !== undefined" class="help_container" @click.self="visible = undefined;">
+		<div class="help_box" v-if="visible === 'English'">
 			<h1 style="text-align: center;">Instructions</h1>
 			<hr>
-			<button class="help_close_button" @click="visible = false;">X (close)</button>
+			<button class="help_close_button" @click="visible = undefined;">X (close)</button>
 			<br>
 			Climate Data Explorer is a tool to visualise climate time series.
 			<br><br>
@@ -37,7 +37,7 @@
 				<li><b>Project:</b> selected project</li>
 				<li><b>Group:</b> selected group of plots</li> 
 				<li><b>Plot:</b> selected plots</li>
-				<li><b>Sensor:</b> selected climate parameters</li>
+				<li><b>Parameter:</b> selected climate parameters</li>
 				<li><b>Time:</b> selected interval of time</li>
 				<li><b>Resolution:</b> selected aggregation of time</li>
 				<li><b>Quality:</b> selected quality checks</li>
@@ -50,7 +50,7 @@
 			<br>If there is just one project this control is not changeable.	
 			
 			<h3>Group</h3>
-			A project may consist of a set of plots that are organised by groups of plots. Selection of group filters plots in the plot-control.
+			A project may consist of a set of plots that are organised by groups of plots. Selection of a plot group filters plots in the plot-control.
 			<br>
 			<br> <b>*</b>-group denotes all plots of the project.
 			
@@ -59,11 +59,11 @@
 
 			<br><br> <b>*</b>-plot denotes all plots of the project. By click on a plot name, that plot is selected and visualised.
 			<br>Holding down ctrl-key (alias control-key or strg-key) enables selection of multiple plots. (Make sure to don't include the *-plot as it denotes all plots.)
-			<br><br>Depending on the project a plot my contain several measurement stations. 
+			<br><br>Depending on the project a plot may contain several measurement stations. 
 			<br>If this is the case individual stations of one plot can be selected by click on the station column.
 			
-			<h3>Sensor</h3>
-			With sensor-control climate parameters can be selected.
+			<h3>Parameter</h3>
+			With parameter-control climate parameters can be selected.
 			<br><br>
 			Click on a sensor name to select it for visualisation.
 			<br>Holding down ctrl-key (alias control-key or strg-key) enables selection of multiple sensors. (Make sure to don't include *-sensor as it denotes all sensors.)
@@ -78,7 +78,6 @@
 			<br>sub-control <b>day</b>: if one month is selected one day can be selected or <b>*</b> denotes full month.
 			
 			<h3>Resolution</h3>
-
 			Time-aggregation of measurement data.
 
 			<ul>
@@ -92,7 +91,14 @@
 			
 			<h3>Quality</h3>
 
-			Select quality checks that should be applied.
+			Select quality checks that should be applied. Faulty measured values can be detected and filtered out according to the following criteria.
+
+			<ul>
+				<li><b>„0: no quality check“:</b> No check.</li>
+				<li><b>„1: just physical range check“:</b> Check of the physical value range.</li>
+				<li><b>„2: physical range + step range check“:</b> 1 + Value fluctuation check.</li>
+				<li><b>„3: physical range + step + empirical check“:</b> 2 + check of the empirical value range.</li>
+			</ul>
 			
 			<h3>Interpolation</h3>
 
@@ -126,7 +132,7 @@
 
 			<h3>heatmap</h3>
 
-			heatamp
+			heatmap
 
 			<h3>boxplot</h3>
 
@@ -148,15 +154,157 @@
 
 			Table of Plots.
 			
-			<div style="text-align: center;" ><button @click="visible = false;">close</button></div>
+			<div style="text-align: center;" ><button @click="visible = undefined;">close</button></div>
 		</div>
+
+		<div class="help_box" v-if="visible === 'Deutsch'">
+			<h1 style="text-align: center;">Anleitung</h1>
+			<hr>
+			<button class="help_close_button" @click="visible = undefined;">X (schließen)</button>
+			<br>
+			Climate Data Explorer ist ein Werkzeug zur Visualisierung von Klima-Zeitreihen.
+			<br><br>
+			Eine Auswahl von Plots und Klimaparametern kann als Diagramm, Heatmap, Boxplot oder Wertetabelle visualisiert werden.
+			<br>
+			Visualisierungseigenschaften (z.B. Zeitintervall, Zeitaggregation, Lückenfüllung, Qualitätskontrolle) können durch mehrere Bedienelemente festgelegt werden.
+			<br>Um die Detailansicht eines Steuerelements zu öffnen, bewegen Sie die Maus über das Steuerelement. Dann können Sie die Einstellungen dieses Steuerelements ändern.  
+			<br>Eine Änderung der Einstellungen aktualisiert die Visualisierung sofort. 
+			
+			<hr>
+			<h2>Bedienelemente</h2>
+			Im Folgenden werden die Bedienelemente beschrieben.
+			<h3>Zusammenfassung</h3>
+			<ul>
+				<li><b>Project:</b> ausgewähltes Projekt</li>
+				<li><b>Group:</b> ausgewählte Gruppe von Plots</li> 
+				<li><b>Plot:</b> ausgewählte Plots</li>
+				<li><b>Parameter:</b> ausgewählte Klimaparameter</li>
+				<li><b>Time:</b> ausgewählte Zeitspanne</li>
+				<li><b>Resolution:</b> ausgewählte Zeitaggregation</li>
+				<li><b>Quality:</b> ausgewählte Qualitätsprüfungen</li>
+				<li><b>Interpolation:</b> angewandte Lückenfüllung</li>
+				<li><b>View:</b> Visualisierungsart</li>
+			</ul>
+			
+			<h3>Project</h3>
+			Wählen Sie ein Projekt für die Visualisierung aus. 
+			<br>Wenn es nur ein Projekt gibt, ist dieses Bedienelement nicht veränderbar.	
+			
+			<h3>Group</h3>
+			Ein Projekt kann aus vielen Plots bestehen, die in Gruppen von Plots organisiert sind. Die Auswahl einer Plotgruppe filtert die Plots in dem Plot-Bedienelement.
+			<br>
+			<br> <b>*</b>-Gruppe bezeichnet alle Plots des Projekts.
+			
+			<h3>Plot</h3>
+			Ein Plot kennzeichnet eine geographische Position mit Sensoren zur Messung von Klimaparametern.
+
+			<br><br> <b>*</b>-plot bezeichnet alle Plots des Projekts. Durch Klicken auf einen Plotnamen wird dieser ausgewählt und visualisiert.
+			<br>Wenn Sie die Strg-Taste (Steuerungs-Taste oder Ctrl-Taste) gedrückt halten, können Sie mehrere Plots auswählen. (Stellen Sie sicher, dass Sie die *-Plots nicht mit einbeziehen, da sie alle Plots bezeichnen).
+			<br><br>Je nach Projekt kann ein Plot mehrere Messstationen enthalten.
+			<br>Wenn dies der Fall ist, können einzelne Stationen eines Plots durch Klicken auf die Stationsspalte ausgewählt werden.
+			
+			<h3>Parameter</h3>
+			Mit dem parameter-Bedienelement können Klimaparameter ausgewählt werden.
+			<br><br>
+			Klicken Sie auf einen Sensornamen, um ihn zur Visualisierung auszuwählen.
+			<br>Wenn Sie die Strg-Taste (Steuerungs-Taste oder Ctrl-Taste) gedrückt halten, können Sie mehrere Sensoren auswählen. (Achten Sie darauf, dass Sie nicht den *-Sensor mit auswählen, da dieser alle Sensoren bezeichnet).
+			<br>Sensoren werden in "Measurement" (Messung), "Derived" (abgeleitet) und "Internal" (intern) kategorisiert.
+			<br> <b>*</b>-Sensor auf der oberstern Ebene bezeichnet alle Sensoren, <b>*</b>-Sensor in einer Kategorie bezeichnet alle Sensoren in dieser Kategorie.
+			
+			<h3>Time</h3>
+			Wählen Sie den Zeitraum für die Visualisierung aus.
+			<br>
+			<br>Unter-Bedienelement <b>year</b>: Ein Jahr kann ausgewählt werden oder <b>*</b> bezeichnet den vollen Zeitraum (alle Jahre).
+			<br>Unter-Bedienelement <b>month</b>: Wenn ein Jahr ausgewählt ist, kann ein Monat ausgewählt werden oder <b>*</b> bezeichnet das ganze Jahr.
+			<br>Unter-Bedienelement <b>day</b>: Wenn ein Monat ausgewählt ist, kann ein Tag ausgewählt werden oder <b>*</b> bezeichnet den vollen Monat.
+			
+			<h3>Resolution</h3>
+			Zeit-Aggregation der Messdaten.
+
+			<ul>
+				<li><b>raw:</b> Die Messungwerte werden nicht zeitlich aggregiert.</li>
+				<li><b>hour:</b> Die Messungwerte werden zeitlich zu Stunden aggregiert.</li>
+				<li><b>day:</b> Die Messungwerte werden zeitlich zu Tagen aggregiert.</li>
+				<li><b>week:</b> Die Messungwerte werden zeitlich zu Kalender-Wochen aggregiert. (Montag bis Sonntag)</li>
+				<li><b>month:</b> Die Messungwerte werden zeitlich zu Monaten aggregiert.</li>
+				<li><b>year:</b> Die Messungwerte werden zeitlich zu Jahren aggregiert.</li>
+			</ul>
+			
+			<h3>Quality</h3>
+			Wählen Sie Qualitätsprüfungen aus, die angewendet werden sollen. Fehlerhafte Messwerte können nach folgenden Kriterien erkannt und ausgefiltert werden.
+
+			<ul>
+				<li><b>„0: no quality check“:</b> Keine Prüfung.</li>
+				<li><b>„1: just physical range check“:</b> Prüfung des physikalischen Wertebereichs.</li>
+				<li><b>„2: physical range + step range check“:</b> 1 + Prüfung der Wertschwankung.</li>
+				<li><b>„3: physical range + step + empirical check“:</b> 2 + Prüfung des empirischen Wertebereichs.</li>
+			</ul>
+			
+			<h3>Interpolation</h3>
+			Wählen Sie, ob Lücken in Zeitreihen falls möglich aufgefüllt werden sollen.
+			
+			<h3>View</h3>
+			Wählen Sie die Art der Visualisierung aus.
+			<br><br>
+			Siehe Einzelheiten im folgenden Kapitel.
+
+			<hr>
+			<h2>Visualisierungen</h2>
+
+			Im Folgenden werden die verfügbaren Visualisierungstypen beschrieben.
+
+			<h3>Zusammenfassung</h3>
+			<ul>
+				<li><b>diagram</b></li>
+				<li><b>heatmap</b></li>
+				<li><b>boxplot</b></li>
+				<li><b>table</b></li>
+				<li><b>csv-file</b></li>
+				<li><b>sensors</b></li>
+				<li><b>plots</b></li>
+			</ul>
+
+			<h3>diagram</h3>
+
+			Zeit-Wert-Diagramm
+
+			<h3>heatmap</h3>
+
+			Heatmap ("Wärmebildkarte", zeitliche Farbkarte)
+
+			<h3>boxplot</h3>
+
+			Boxplot der Werte-Diagramm, Statistikdiagramm
+
+			<h3>table</h3>
+
+			Wertetabelle der Zeitreihe.
+
+			<h3>csv-file</h3>
+
+			Herunterladen der Zeitreihen als CSV-Datei.
+
+			<h3>sensors</h3>
+
+			Tabelle der Sensoren.
+
+			<h3>plots</h3>
+
+			Tabelle der Plots.
+			
+			<div style="text-align: center;" ><button @click="visible = undefined;">schließen</button></div>
+		</div>		
 	</div>
   </script>
 
 <script type="text/x-template" id="visualisation-template">
 	<div id="container">
 		<help-interface ref="help"></help-interface>		
-		<div class="main_page_link_and_help"><a v-if="back_link" href="../index.html" title="go to main page">main-page</a> <button title="show help" @click="$refs.help.show();">?</button></div>
+		<div class="main_page_link_and_help">
+			<button @click="$refs.help.show('English')"><b>[i]</b> (English)</button>
+			<button @click="$refs.help.show('Deutsch')"><b>[i]</b> (Deutsch)</button>
+			<a v-if="back_link" href="../index.html" title="go to main page">-->main-page</a> 
+		</div>
 		<div v-if="appMessage != undefined">
 			{{appMessage}}
 		</div>
@@ -320,9 +468,66 @@
 				
 					<div :class="[ { just_hide: (timeHover || timeHoverStay)}]" class="state">{{timeText}}</div>
 
+					<div v-show="(timeHover || timeHoverStay)" style="position: absolute; top: 20px; left: 0px;" class="overlay_settings">
+<table class="time-box-table">
+	<thead>
+		<tr>
+			<th></th>
+			<th>Year</th>
+			<th>Month</th>
+			<th>Day</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr id="time-from-row">
+			<td>From</td>
+			<td>
+				<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeYear">
+					<option>*</option>
+					<option v-for="y in timeYears">{{y}}</option>
+				</select>
+			</td>
+			<td>
+				<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeMonth" :class="[ { just_hide: timeYear === '*'}]">
+					<option>*</option>
+					<option v-for="m in timeMonths">{{m}}</option>
+				</select>
+			</td>
+			<td>
+				<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeDay" :class="[ { just_hide: timeYear === '*' || timeMonth === '*'}]">
+					<option>*</option>
+					<option v-for="d in timeDays">{{d}}</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>To</td>
+			<td>
+				<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeYearEnd">
+					<option></option>
+					<option v-for="y in timeYearEnds">{{y}}</option>
+				</select>
+			</td>
+			<td>
+				<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeMonthEnd" :class="[ { just_hide: timeYearEnd === ''}]">
+					<option></option>
+					<option v-for="m in timeMonthEnds">{{m}}</option>
+				</select>
+			</td>
+			<td>
+				<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeDayEnd" :class="[ { just_hide: timeYearEnd === '' || timeMonthEnd === ''}]">
+					<option></option>
+					<option v-for="d in timeDayEnds">{{d}}</option>
+				</select>
+			</td>			
+		</tr>
+	</tbody>
+</table>
+					</div>
 					
-					<div v-show="(timeHover || timeHoverStay)" style="position: absolute; top: 20px; left: 0px; white-space: nowrap;" class="overlay_settings">
+					<!--<div v-show="(timeHover || timeHoverStay)" style="position: absolute; top: 20px; left: 0px; white-space: nowrap;" class="overlay_settings">
 						<div style="display: inline-block;">
+						<b>from</b>
 						<div class="centered title">year</div>
 						<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeYear">
 							<option>*</option>
@@ -345,7 +550,31 @@
 							<option v-for="d in timeDays">{{d}}</option>
 						</select>
 						</div>
-					</div>
+						<br><b>to</b><br>
+						<div style="display: inline-block;">
+							<div class="centered title">year</div>
+							<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeYear">
+								<option>*</option>
+								<option v-for="y in timeYears">{{y}}</option>
+							</select>
+							</div>
+							-
+							<div style="display: inline-block;">
+							<div class="centered title">month</div>
+							<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeMonth" :class="[ { just_hide: timeYear === '*'}]">
+								<option>*</option>
+								<option v-for="m in timeMonths">{{m}}</option>
+							</select>
+							</div>
+							-
+							<div style="display: inline-block;">
+							<div class="centered title">day</div>
+							<select @focus="timeHoverStay = true" @blur="timeHoverStay = false" v-model="timeDay" :class="[ { just_hide: timeYear === '*' || timeMonth === '*'}]">
+								<option>*</option>
+								<option v-for="d in timeDays">{{d}}</option>
+							</select>
+							</div>
+					</div>-->
 				</div>
 				
 			</div>
@@ -452,6 +681,47 @@
 								
 							</div>
 						</div>
+						<div v-show="viewType === 'diagram' && aggregation !== 'raw'">
+							<hr>
+							<div>
+								Value
+								<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="diagramValueType">
+									<option v-for="diagramValueType in diagramValueTypes">{{diagramValueType}}</option>
+								</select>
+							</div>							
+							<div>
+								Value connection
+								<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="diagramConnectionType">
+									<option v-for="diagramConnectionType in diagramConnectionTypes">{{diagramConnectionType}}</option>
+								</select>
+							</div>						
+						</div>
+						<div v-show="viewType === 'diagram' && aggregation === 'raw'">
+							<hr>
+							<div>
+								Raw value
+								<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="diagramRawValueType">
+									<option v-for="diagramRawValueType in diagramRawValueTypes">{{diagramRawValueType}}</option>
+								</select>
+							</div>							
+							<div>
+								Raw value connection
+								<select @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" v-model="diagramRawConnectionType">
+									<option v-for="diagramRawConnectionType in diagramRawConnectionTypes">{{diagramRawConnectionType}}</option>
+								</select>
+							</div>							
+						</div>
+						<div v-show="viewType === 'diagram' || viewType === 'boxplot'">
+							<hr>
+							<div>
+								<input type="checkbox" v-model="yAxisValueRange"> y-axis value range
+								<div v-show="yAxisValueRange">
+								min <input v-model="yAxisValueRangeMin" @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" placeholder="min y value" size="4" v-bind:class="{ invalid: !validYAxisValueRangeMin }">
+								max <input v-model="yAxisValueRangeMax" @focus="viewTypeHoverStay = true" @blur="viewTypeHoverStay = false" placeholder="max y value" size="4" v-bind:class="{ invalid: !validYAxisValueRangeMax }">
+								</div>
+							</div>
+							<hr>						
+						</div>							
 						<div v-show="viewType === 'heatmap'">
 							<input type="checkbox" id="byYear" v-model="byYear">
 							<label for="byYear">by year</label>
@@ -647,7 +917,7 @@
 
 					</div>
 				</div>
-				<div v-show="projects.length == 1">
+				<div v-show="projects.length == 1" class="projects">
 					Project: {{projectMap[projectID].name}}
 				</div>
 

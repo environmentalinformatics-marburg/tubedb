@@ -109,8 +109,8 @@ option {
 
 .processing {
 	position: fixed;
-	top: 0;
-	right: 120px;
+	top: 0px;
+	left: 400px;
 	background-color: rgba(140, 135, 130, 0.4);
 	border-radius: 5px;
 	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
@@ -126,8 +126,8 @@ progress {
 
 .runtime {
 	position: absolute;
-	top: 0;
-	right: 120px;
+	top: 20px;
+	right: 10px;
 	background-color: rgba(140, 135, 130, 0.1);
 	/*border-radius: 5px;*/
 	/*box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);*/
@@ -138,7 +138,7 @@ progress {
 
 .message_box {
 	position: absolute;
-	top: 28px;
+	top: 50px;
 	right: 0px;
 	background-color: rgba(225, 218, 212, 0.7);
 	/*border-radius: 5px;*/
@@ -255,4 +255,27 @@ tr:nth-child(even){background-color: rgba(132, 104, 76, 0.1);}
 	position: absolute;
 	top: 2px;
 	right: 2px;
+}
+
+.time-box-table {
+	border-spacing: 0px;
+	border-collapse: collapse;
+
+}
+.time-box-table tr {
+	background-color: rgba(0, 0, 0, 0);
+}
+
+.time-box-table thead tr th {
+	text-decoration: underline;
+	font-weight: normal;
+}
+
+.time-box-table tbody tr td {
+	font-weight: normal;
+	text-align: center;
+}
+
+#time-from-row td:not(:first-child) {
+    border-bottom:1px solid black;
 }
