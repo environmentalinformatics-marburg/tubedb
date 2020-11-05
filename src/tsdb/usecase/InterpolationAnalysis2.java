@@ -64,7 +64,7 @@ public class InterpolationAnalysis2 {
 		List<Continuous> sources = nearPlots.stream().limit(meanPlotCount).map(plot->continuousGen.get(plot.getPlotID(), schema)).filter(p->p!=null).collect(Collectors.toList());
 		Continuous nearNode = sources.get(0);
 		int minCount = 1;
-		Continuous meanNode = Averaged.of(tsdb, sources, minCount); 
+		Continuous meanNode = Averaged.of(tsdb, sources, minCount, false); 
 		
 
 		

@@ -38,6 +38,7 @@ import tsdb.remote.ZipExport;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataQuality;
 import tsdb.util.Pair;
+import tsdb.web.api.ExportModel.SpatialAggregation;
 import tsdb.web.api.ExportModel.TimespanType;
 import tsdb.web.util.Web;
 
@@ -308,10 +309,12 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 		json.value(model.col_qualitycounter);
 		json.key("write_header");
 		json.value(model.write_header);
+		
+		json.key("spatial_aggregation");
+		json.value(model.spatial_aggregation.toText());	
 
 		json.key("timespan_type");
-		json.value(model.timespanType.toText());	
-
+		json.value(model.timespanType.toText());
 
 		json.key("timespan_year");
 		json.value(model.timespanYear);
@@ -358,7 +361,10 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 			model.col_datetime = json.getBoolean("col_datetime");
 			model.col_qualitycounter = json.getBoolean("col_qualitycounter");
 			model.write_header = json.getBoolean("write_header");
-
+			
+			if(json.has("spatial_aggregation")) {
+				model.spatial_aggregation = SpatialAggregation.parseText(json.getString("spatial_aggregation"));
+			}
 
 			TimespanType timespanType = TimespanType.parseText(json.getString("timespan_type"));
 			switch(timespanType) {
@@ -460,7 +466,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 			boolean write_header = model.write_header;
 			Pair<Long, Long> timespan = model.getTimespan();
 
-			ZipExport zipexport = new ZipExport(tsdb, region, sensorNames, plotIDs, aggregationInterval, dataQuality, interpolated, allinone,desc_sensor,desc_plot,desc_settings,col_plotid,col_timestamp,col_datetime,write_header,timespan.a,timespan.b,col_qualitycounter);
+			ZipExport zipexport = new ZipExport(tsdb, region, sensorNames, plotIDs, aggregationInterval, dataQuality, interpolated, allinone,desc_sensor,desc_plot,desc_settings,col_plotid,col_timestamp,col_datetime,write_header,timespan.a,timespan.b,col_qualitycounter, model.spatial_aggregation.isSeparate(), model.spatial_aggregation.isAggregated());
 			boolean ret = zipexport.writeToStream(outputstream);
 			return ret;
 		} catch (IOException e) {

@@ -30,7 +30,7 @@ body {
 	font-size: 0.9em;
 	font-family: Roboto,sans-serif;
 }
-table {
+table.input {
     background-color: #ffffff;
 }
 
@@ -153,7 +153,18 @@ table {
 <div class="spacer"></div>
 <div class="center main">
 <i>Specify range of time and time resolution for your data request.</i>
-<h3>Time</h3>
+
+<h3>Spatial aggregation</h3>
+
+<table cellspacing="20" class="input">
+<tr><td><input type="radio" name="spatial_aggregation_radio" id="spatial_aggregation_radio_separate">separate plots</td><td><i>no spatial aggregation (default)</i></td></tr>
+<tr><td><input type="radio" name="spatial_aggregation_radio" id="spatial_aggregation_radio_aggregated">combined plots</td><td><i>all plots are aggregated to one timeseries</i></td></tr>
+<tr><td><input type="radio" name="spatial_aggregation_radio" id="spatial_aggregation_radio_separate_and_aggregated">separate and combined plots</td><td><i>both variants are included in output</i></td></tr>
+</table>
+
+
+<hr>
+<h3>Temporal aggregation</h3>
 
 <div>
 <label for="choose_aggregation"><b>Aggregation of time</b> &nbsp;&nbsp;&nbsp;</label>
@@ -167,12 +178,11 @@ table {
 </select>
 </div>
 <br>
-<br>
 
 <div>
 <h4>Range of time</h4>
 
-<table cellspacing="20">
+<table cellspacing="20" class="input">
 <tr><td><input type="radio" name="timespan_radio" id="radio_all">all available data<td><td><td><td>
 <tr>
 <tr><td><input type="radio" name="timespan_radio" id="radio_year">one year<td><td><select id="time_select_year"><td><td>

@@ -175,12 +175,12 @@ public class CreateStationGroupAverageCache {
 
 				Averaged averaged = null;
 
-				if(averaged==null && additions.size()>=MIN_AVERAGE) {
-					averaged = Averaged.of(tsdb, additions, MIN_AVERAGE);
+				if(averaged==null && additions.size() >= MIN_AVERAGE) {
+					averaged = Averaged.of(tsdb, additions, MIN_AVERAGE, false);
 				}
 
-				if(averaged==null && sources.size()>=MIN_AVERAGE) {
-					averaged = Averaged.of(tsdb, sources, MIN_AVERAGE);
+				if(averaged==null && sources.size() >= MIN_AVERAGE) {
+					averaged = Averaged.of(tsdb, sources, MIN_AVERAGE, false);
 				}
 
 				if(averaged!=null) {
@@ -202,7 +202,5 @@ public class CreateStationGroupAverageCache {
 
 		long endRunTime = System.currentTimeMillis();
 		cbPrint.println("CreateStationGroupAverageCache run time: "+(endRunTime-startRunTime)/1000+" s");
-
 	}
-
 }

@@ -29,9 +29,10 @@ public class Averaged extends Continuous.Abstract {
 	private final List<Continuous> sources; //not null
 	private final String[] schema; //not null
 	private final int minCount;
+	private final boolean withQualityMeasures;
 	private final boolean _constant_timestep;
 
-	public Averaged(TsDB tsdb, List<Continuous> sources, String[] schema, int minCount) {
+	public Averaged(TsDB tsdb, List<Continuous> sources, String[] schema, int minCount, boolean withQualityMeasures) {
 		super(tsdb);
 		throwNulls(sources,schema);
 		if(sources.isEmpty()) {
@@ -40,6 +41,7 @@ public class Averaged extends Continuous.Abstract {
 		if(minCount<1) {
 			log.warn("no senseful min count= "+minCount);
 		}
+		this.withQualityMeasures = withQualityMeasures;
 		if(sources.size()<minCount) {
 			log.warn("insufficient sources with min count= "+minCount+"  "+sources.size());
 		}
@@ -54,7 +56,7 @@ public class Averaged extends Continuous.Abstract {
 		this.schema = schema;
 	}
 
-	public static Averaged of(TsDB tsdb, List<Continuous> sources, int minCount) {		
+	public static Averaged of(TsDB tsdb, List<Continuous> sources, int minCount, boolean withQualityMeasures) {		
 		Set<String> schemaSet = new LinkedHashSet<String>();
 		for(Continuous continuous:sources) {
 			String[] schema = continuous.getSchema();
@@ -62,7 +64,7 @@ public class Averaged extends Continuous.Abstract {
 				schemaSet.addAll(Arrays.asList(schema));
 			}
 		}
-		return new Averaged(tsdb, sources, schemaSet.toArray(new String[0]), minCount);
+		return new Averaged(tsdb, sources, schemaSet.toArray(new String[0]), minCount, withQualityMeasures);
 	}
 
 	@Override
@@ -101,7 +103,7 @@ public class Averaged extends Continuous.Abstract {
 		if(iteratorList.size()<minCount) {
 			return null;
 		}
-		return new AverageIterator(schema, iteratorList.toArray(new TsIterator[0]), minCount);		
+		return new AverageIterator(schema, iteratorList.toArray(new TsIterator[0]), minCount, withQualityMeasures);		
 	}
 
 	@Override

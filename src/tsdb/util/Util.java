@@ -707,7 +707,7 @@ public final class Util {
 	}
 
 	public static boolean empty(Object[] array) {
-		return array==null||array.length==0;
+		return array == null || array.length == 0;
 	}
 
 	public static String[] toArray(String e) {

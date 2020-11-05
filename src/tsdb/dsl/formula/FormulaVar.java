@@ -25,4 +25,9 @@ public class FormulaVar extends Formula {
 	public <T> T accept(FormulaVisitor1<T> visitor) {
 		return visitor.visitVar(this);
 	}
+	
+	@Override
+	public String toString() {
+		return (positive?"":"-") + "var[" + name + "]";
+	}
 }

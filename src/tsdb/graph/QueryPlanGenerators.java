@@ -228,7 +228,7 @@ public final class QueryPlanGenerators {
 				}
 			}
 			log.info(sensorMap);
-			Environment env = new PlotEnvironment(plot, sensorMap);
+			Environment env = plot == null ? new Environment(sensorMap) : new PlotEnvironment(plot, sensorMap);
 			Formula formula = formula_org.accept(new FormulaResolveUnifyVisitor(env));
 			try {
 				FormulaJavaVisitor v = new FormulaJavaVisitor(env);

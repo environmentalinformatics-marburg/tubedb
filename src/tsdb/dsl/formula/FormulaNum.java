@@ -43,4 +43,9 @@ public class FormulaNum extends Formula {
 	public <T> T accept(FormulaVisitor1<T> visitor) {
 		return visitor.visitNum(this);
 	}
+	
+	@Override
+	public String toString() {
+		return Float.toString(value);
+	}	
 }

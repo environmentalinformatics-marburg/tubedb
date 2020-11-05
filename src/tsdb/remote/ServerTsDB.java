@@ -156,7 +156,7 @@ public class ServerTsDB implements RemoteTsDB {
 		Collection<Region> regions = tsdb.getRegions();
 		return regions.toArray(new Region[regions.size()]);
 	}
-	
+
 	@Override
 	public Region getRegionByName(String name) {
 		return tsdb.getRegion(name);
@@ -488,6 +488,20 @@ public class ServerTsDB implements RemoteTsDB {
 	//-------------------------------------- query
 
 	@Override
+	public TimestampSeries plots_aggregate(String[] plotIDs, String[] columnNames, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated, Long start, Long end) {
+		Node node = QueryPlan.plots_aggregate(tsdb, plotIDs, columnNames, aggregationInterval, dataQuality, interpolated);
+		if(node==null) {
+			return null;
+		}
+		TsIterator it = node.get(start, end);
+		if(it==null||!it.hasNext()) {
+			return null;
+		}
+		log.trace(it.getProcessingChain().getText());
+		return it.toTimestampSeries(Arrays.toString(plotIDs));
+	}
+
+	@Override
 	public TimestampSeries plot(String queryType, String plotID, String[] columnNames, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated, Long start, Long end) {
 		Node node = null;
 		if(queryType==null||queryType.equals("standard")) {		
@@ -575,7 +589,7 @@ public class ServerTsDB implements RemoteTsDB {
 	public void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask) {
 		tsdb.streamStorage.setTimeSeriesMask(stationName, sensorName, timeSeriesMask, true);
 	}
-	
+
 	// ----- info -------
 
 	@Override
@@ -583,7 +597,7 @@ public class ServerTsDB implements RemoteTsDB {
 		// TODO Auto-generated method stub
 		return TsDB.tubedb_version;
 	}
-	
+
 	// ---- IoT API support -----
 
 	@Override
@@ -602,7 +616,7 @@ public class ServerTsDB implements RemoteTsDB {
 	public String[] getInternalStoredStationNames() throws RemoteException {
 		return tsdb.streamStorage.getStationNames().toArray(new String[0]);
 	}
-	
+
 	public DataEntry[] readRawData(String stationName, String sensorName) throws RemoteException {
 		StreamIterator it = tsdb.streamStorage.getRawSensorIterator(stationName, sensorName, null, null);
 		if(it == null || !it.hasNext()) {
@@ -619,16 +633,16 @@ public class ServerTsDB implements RemoteTsDB {
 		}
 		return it.toTimestampSeries(stationName);
 	}
-	
+
 	// ---- insert support -----
-	
+
 	@Override
 	public void insertDataRows(String stationName, String[] sensorNames, Collection<DataRow> dataRows) throws RemoteException {
 		tsdb.streamStorage.insertDataRows(stationName, sensorNames, dataRows);
 		tsdb.streamStorage.commit();
 
 	}
-	
+
 	@Override
 	public void insertSourceCatalogEntry(SourceEntry sourceEntry) throws RemoteException {
 		tsdb.sourceCatalog.insert(sourceEntry);

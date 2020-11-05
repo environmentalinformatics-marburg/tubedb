@@ -90,7 +90,7 @@ public class ZipExportProxy {
 
 			Pair<Long, Long> timespan = model.getTimespan();
 
-			zipexport = new ZipExport(tsdb, region, sensorNames, plotIDs, aggregationInterval, dataQuality, interpolated, allinone,desc_sensor,desc_plot,desc_settings,col_plotid,col_timestamp,col_datetime,write_header,timespan.a,timespan.b,col_qualitycounter);
+			zipexport = new ZipExport(tsdb, region, sensorNames, plotIDs, aggregationInterval, dataQuality, interpolated, allinone,desc_sensor,desc_plot,desc_settings,col_plotid,col_timestamp,col_datetime,write_header,timespan.a,timespan.b,col_qualitycounter, model.spatial_aggregation.isSeparate(), model.spatial_aggregation.isAggregated());
 			zipexport.setPrintCallback(this::println);
 			workerThread = new Thread(new Runnable() {					
 				@Override

@@ -11,4 +11,9 @@ public class FormulaMul extends FormulaBinary {
 	public <T> T accept(FormulaVisitor1<T> visitor) {
 		return visitor.visitMul(this);
 	}
+	
+	@Override
+	public String toString() {
+		return "(" + a + " * " + b + ")";
+	}
 }

@@ -195,8 +195,8 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 				aggLast[i] = value;
 			}		
 
-			if(inputQualityCounter!=null && aggQualityCounter!=null) {
-				for(int q=0;q<QUALITY_COUNTERS;q++) {
+			if(inputQualityCounter != null && aggQualityCounter != null) {
+				for(int q = 0; q < QUALITY_COUNTERS; q++) {
 					if(Float.isNaN(value)) {
 						//log.info(Arrays.toString(inputQualityCounter[i]));
 					}
@@ -235,12 +235,12 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 	private Pair<float[],int[][]> aggregateCollectedData() {
 		float[] resultData = new float[schema.length];
 		int[][] resultQualityCounter = null;
-		if(aggQualityCounter!=null) {
+		if(aggQualityCounter != null) {
 			resultQualityCounter = new int[schema.length][QUALITY_COUNTERS];			
 		}
-		int validValueCounter=0; //counter of valid aggregates
+		int validValueCounter = 0; //counter of valid aggregates
 
-		for(int i=0;i<schema.length;i++) {
+		for(int i = 0; i<schema.length; i++) {
 			//if(aggCnt[i]>0) {// at least one entry has been collected
 			if(isValidAggregate(aggCnt[i], aggregation[i])) { // a minimum of values need to be collected
 				switch(aggregation[i]) {
@@ -299,7 +299,7 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 					log.warn("aggration type unknown");
 				}
 
-				if(aggQualityCounter!=null) {
+				if(aggQualityCounter != null) {
 					for(int q=0;q<QUALITY_COUNTERS;q++) {
 						resultQualityCounter[i][q] = aggQualityCounter[i][q];
 					}
@@ -328,7 +328,7 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 			DataQuality[] inputQuality = entry.qualityFlag;
 			boolean[] inputInterpolated = entry.interpolated;
 			int[][] inputQualityCounter = entry.qualityCounter;
-			if(inputQualityCounter==null&&inputQuality!=null) {
+			if(inputQualityCounter == null && inputQuality != null) {
 				inputQualityCounter = new int[inputQuality.length][QUALITY_COUNTERS];
 				for(int i=0;i<inputQuality.length;i++) {
 					inputQualityCounter[i][QUALITY_COUNTER_POS_VALUES] = Float.isNaN(inputData[i])?0:1;
@@ -343,10 +343,10 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 			long nextAggTimestamp = calcAggregationTimestamp(timestamp);
 			if(nextAggTimestamp > aggregation_timestamp) { // aggregate aggregation_timestamp is ready for output
 				if(aggregation_timestamp > -1) { // if not init timestamp
-					boolean dataInAggregateCollection = collectedRowsInCurrentAggregate>0;
+					boolean dataInAggregateCollection = collectedRowsInCurrentAggregate > 0;
 					Pair<float[], int[][]> aggregatedPair = aggregateCollectedData();
-					if(aggregatedPair!=null) {
-						TsEntry resultElement = new TsEntry(aggregation_timestamp,null,aggregatedPair);
+					if(aggregatedPair != null) {
+						TsEntry resultElement = new TsEntry(aggregation_timestamp, null, aggregatedPair);
 						aggregation_timestamp = nextAggTimestamp;
 						collectValues(inputData, inputQualityCounter);
 						return resultElement;

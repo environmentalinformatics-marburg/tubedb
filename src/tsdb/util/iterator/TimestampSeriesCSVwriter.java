@@ -40,9 +40,9 @@ public class TimestampSeriesCSVwriter {
 		this.col_qualitycounter = col_qualitycounter;
 	}
 	
-	protected void writeCSVHeader(BufferedWriter bufferedWriter, String[] sensorNames) throws IOException {
+	protected void writeCSVHeader(BufferedWriter bufferedWriter, String[] sensorNames, boolean withPlotID) throws IOException {
 		boolean isFirst = true;
-		if(col_plotid) {
+		if(withPlotID) {
 			bufferedWriter.write("plotID");
 			isFirst = false;
 		}
@@ -79,7 +79,7 @@ public class TimestampSeriesCSVwriter {
 		bufferedWriter.write(LINE_SEPARATOR);
 	}
 	
-	protected void writeTimeseries(TimestampSeries timeseries, String plotID, String[] sensorNames, AggregationInterval aggregationInterval, BufferedWriter bufferedWriter) throws IOException {
+	protected void writeTimeseries(TimestampSeries timeseries, String plotID, String[] sensorNames, AggregationInterval aggregationInterval, BufferedWriter bufferedWriter, boolean withPlotID) throws IOException {
 		
 		AggregationInterval datetimeFormat = short_datetime?aggregationInterval:AggregationInterval.RAW;
 		
@@ -91,7 +91,7 @@ public class TimestampSeriesCSVwriter {
 		while(it.hasNext()) {
 			TsEntry entry = it.next();
 			boolean isFirst = true;
-			if(col_plotid) {
+			if(withPlotID) {
 				bufferedWriter.write(plotID);
 				isFirst = false;
 			}

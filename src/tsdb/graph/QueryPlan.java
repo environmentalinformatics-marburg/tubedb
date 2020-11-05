@@ -1,5 +1,8 @@
 package tsdb.graph;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,6 +15,7 @@ import tsdb.graph.node.ContinuousGen;
 import tsdb.graph.node.Node;
 import tsdb.graph.node.NodeGen;
 import tsdb.graph.processing.Aggregated;
+import tsdb.graph.processing.Averaged;
 import tsdb.graph.processing.InterpolatedAverageLinear;
 import tsdb.graph.processing.PostHourMutation;
 import tsdb.graph.source.RawSource;
@@ -20,6 +24,7 @@ import tsdb.graph.source.VirtualPlotStationRawSource;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataQuality;
 import tsdb.util.Mutator;
+import tsdb.util.Util;
 
 /**
  * With QueryPlan query graphs for specific queries a are build
@@ -29,6 +34,29 @@ import tsdb.util.Mutator;
 public final class QueryPlan {
 	private static final Logger log = LogManager.getLogger();	
 	private QueryPlan(){}
+
+	public static Node plots_aggregate(TsDB tsdb, String[] plotIDs, String[] schema, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated) {
+		if(aggregationInterval == AggregationInterval.RAW) {
+			throw new RuntimeException("raw data not supported for plots_aggregate");
+		} else {
+			List<Continuous> sources = new ArrayList<Continuous>();
+			for(String plotID : plotIDs) {
+				String[] plotSchema = tsdb.getValidSchemaWithVirtualSensors(plotID, schema);
+				if(!Util.empty(schema)) {
+					Node node = QueryPlan.plot(tsdb, plotID, plotSchema, AggregationInterval.HOUR, dataQuality, interpolated);
+					if(node != null) {
+						sources.add((Continuous) node);
+					}
+				}
+			}
+			Continuous aggregated = Averaged.of(tsdb, sources, 1, true);
+			if(aggregationInterval != AggregationInterval.HOUR) {
+				Mutator postDayMutator = QueryPlanGenerators.getPostDayMutators(tsdb, null, schema);
+				aggregated = Aggregated.of(tsdb, aggregated, aggregationInterval, postDayMutator);
+			}
+			return aggregated;
+		}
+	}
 
 	/**
 	 * Creates a general purpose graph for queries over one plot
@@ -42,8 +70,8 @@ public final class QueryPlan {
 	 */
 	public static Node plot(TsDB tsdb, String plotID, String[] schema, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated) {
 		//log.info("schema "+Arrays.toString(schema));
-		if(plotID.indexOf(':')<0) { //plotID
-			if(aggregationInterval!=AggregationInterval.RAW) { //plotID aggregated
+		if(plotID.indexOf(':') < 0) { //plotID
+			if(aggregationInterval != AggregationInterval.RAW) { //plotID aggregated
 				return plotWithoutSubStation(tsdb, plotID, schema, aggregationInterval, dataQuality, interpolated);
 			} else { //plotID raw
 				if(dataQuality==DataQuality.EMPIRICAL) {
@@ -61,7 +89,7 @@ public final class QueryPlan {
 				return rawSource;
 			}			
 		} else { // plotID:stationID 
-			if(aggregationInterval!=AggregationInterval.RAW) { // plotID:stationID aggregated
+			if(aggregationInterval != AggregationInterval.RAW) { // plotID:stationID aggregated
 				if(dataQuality==DataQuality.EMPIRICAL) {
 					dataQuality = DataQuality.STEP;
 					log.warn("query of plotID:stationID: DataQuality.EMPIRICAL not supported");
@@ -77,7 +105,7 @@ public final class QueryPlan {
 				}
 				return plotWithSubStation(tsdb, parts[0], parts[1], schema, aggregationInterval, dataQuality);
 			} else { // plotID:stationID raw
-				if(dataQuality==DataQuality.EMPIRICAL) {
+				if(dataQuality == DataQuality.EMPIRICAL) {
 					log.warn("raw query empirical quality check not supported");
 				}
 				if(interpolated) {
@@ -113,6 +141,9 @@ public final class QueryPlan {
 		} else {
 			continuous = continuousGen.get(plotID, schema);
 			//log.info("continuous "+continuous);
+		}
+		if(continuous == null) {
+			return null;
 		}
 		Plot plot = tsdb.getPlot(plotID);
 		Mutator postHourMutator = QueryPlanGenerators.getPostHourMutators(tsdb, plot, schema);

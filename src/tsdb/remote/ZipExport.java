@@ -69,10 +69,12 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 	private final boolean write_header;
 	private final Long startTimestamp;
 	private final Long endTimestamp;
+	private boolean plots_aggregate = true; // aggregate all plots to one value per time step
+	private boolean plots_separate = true; // separate plots
 
 	private int processedPlots = 0;
 
-	public ZipExport(RemoteTsDB tsdb, Region region, String[] sensorNames, String[] plotIDs, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated, boolean allinone, boolean desc_sensor, boolean desc_plot, boolean desc_settings, boolean col_plotid, boolean col_timestamp, boolean col_datetime, boolean write_header, Long startTimestamp, Long endTimestamp, boolean col_qualitycounter) {
+	public ZipExport(RemoteTsDB tsdb, Region region, String[] sensorNames, String[] plotIDs, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated, boolean allinone, boolean desc_sensor, boolean desc_plot, boolean desc_settings, boolean col_plotid, boolean col_timestamp, boolean col_datetime, boolean write_header, Long startTimestamp, Long endTimestamp, boolean col_qualitycounter, boolean plots_separate, boolean plots_aggregate) {
 		super(col_plotid, col_timestamp, col_datetime, col_qualitycounter);
 		throwNull(tsdb);
 		this.tsdb = tsdb;
@@ -114,6 +116,8 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 		this.write_header = write_header;
 		this.startTimestamp = startTimestamp;
 		this.endTimestamp = endTimestamp;
+		this.plots_separate = plots_separate;
+		this.plots_aggregate = plots_aggregate;
 	}
 
 	public boolean createZipFile(String filename) {
@@ -147,7 +151,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 		if(Util.empty(plotIDs)) {
 			return false;
 		}
-		printLine("plots "+plotIDs.length);
+		printLine("plots: "+plotIDs.length);
 		printLine("");
 
 		try {
@@ -215,66 +219,93 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 					bufferedWriter.flush();
 					writer.flush();
 				}
-			}	
+			}
 
-			if(allInOne) {				
-				zipOutputStream.putNextEntry(new ZipEntry("plots.csv"));
+			if(plots_aggregate) {
+				printLine("processing plots_aggregate ...");
+				zipOutputStream.putNextEntry(new ZipEntry("plots_aggregated.csv"));
 				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
 				BufferedWriter bufferedWriter = new BufferedWriter(writer);
 				if(write_header) {
-					writeCSVHeader(bufferedWriter, sensorNames);
+					writeCSVHeader(bufferedWriter, sensorNames, false);
 				}
-				processedPlots = 0;
-				for(String plotID:plotIDs) {
-					printLine("processing plot "+plotID+" ...");
-					try {
-						String[] schema = tsdb.getValidSchemaWithVirtualSensors(plotID, sensorNames);
-						if(!Util.empty(schema)) {
-							TimestampSeries timeseries = tsdb.plot(null,plotID, schema, aggregationInterval, dataQuality, interpolated, startTimestamp, endTimestamp);
-							if(timeseries!=null) {								
-								writeTimeseries(timeseries, plotID, sensorNames, aggregationInterval, bufferedWriter);	
-							} else {
-								printLine("not processed: "+plotID);
-							}
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-						log.error(e);
-						printLine("ERROR "+e);
+				try {
+					TimestampSeries timeseries = tsdb.plots_aggregate(plotIDs, sensorNames, aggregationInterval, dataQuality, interpolated, startTimestamp, endTimestamp);
+					String plots_aggregated_name = "mean";
+					if(timeseries!=null) {								
+						writeTimeseries(timeseries, plots_aggregated_name, sensorNames, aggregationInterval, bufferedWriter, false);	
+					} else {
+						printLine("not processed: " + plots_aggregated_name);
 					}
-					processedPlots++;
+				} catch (Exception e) {
+					e.printStackTrace();
+					log.error(e);
+					printLine("ERROR "+e);
 				}
 				bufferedWriter.flush();
 				writer.flush();
-			} else {
-				processedPlots = 0;
-				for(String plotID:plotIDs) {
-					printLine("processing plot "+plotID);
-					try {
-						String[] schema = tsdb.getValidSchemaWithVirtualSensors(plotID, sensorNames);
-						if(!Util.empty(schema)) {
-							TimestampSeries timeseries = tsdb.plot(null,plotID, schema, aggregationInterval, dataQuality, interpolated, startTimestamp, endTimestamp);
-							if(timeseries!=null) {
-								zipOutputStream.putNextEntry(new ZipEntry(plotID+".csv"));
-								OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
-								BufferedWriter bufferedWriter = new BufferedWriter(writer);
-								if(write_header) {
-									writeCSVHeader(bufferedWriter, sensorNames);
-								}
-								writeTimeseries(timeseries, plotID, sensorNames, aggregationInterval, bufferedWriter);
-								bufferedWriter.flush();
-								writer.flush();
-							} else {
-								printLine("not processed: "+plotID);
-							}
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-						log.error(e);
-						printLine("ERROR "+e);
+			}
+
+			if(plots_separate) {
+				if(allInOne) {				
+					zipOutputStream.putNextEntry(new ZipEntry("plots.csv"));
+					OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
+					BufferedWriter bufferedWriter = new BufferedWriter(writer);
+					if(write_header) {
+						writeCSVHeader(bufferedWriter, sensorNames, col_plotid);
 					}
-					processedPlots++;
-				}				
+					processedPlots = 0;
+					for(String plotID:plotIDs) {
+						printLine("processing plot "+plotID+" ...");
+						try {
+							String[] schema = tsdb.getValidSchemaWithVirtualSensors(plotID, sensorNames);
+							if(!Util.empty(schema)) {
+								TimestampSeries timeseries = tsdb.plot(null,plotID, schema, aggregationInterval, dataQuality, interpolated, startTimestamp, endTimestamp);
+								if(timeseries!=null) {								
+									writeTimeseries(timeseries, plotID, sensorNames, aggregationInterval, bufferedWriter, col_plotid);	
+								} else {
+									printLine("not processed: "+plotID);
+								}
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+							log.error(e);
+							printLine("ERROR "+e);
+						}
+						processedPlots++;
+					}
+					bufferedWriter.flush();
+					writer.flush();
+				} else {
+					processedPlots = 0;
+					for(String plotID:plotIDs) {
+						printLine("processing plot "+plotID);
+						try {
+							String[] schema = tsdb.getValidSchemaWithVirtualSensors(plotID, sensorNames);
+							if(!Util.empty(schema)) {
+								TimestampSeries timeseries = tsdb.plot(null,plotID, schema, aggregationInterval, dataQuality, interpolated, startTimestamp, endTimestamp);
+								if(timeseries!=null) {
+									zipOutputStream.putNextEntry(new ZipEntry(plotID+".csv"));
+									OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
+									BufferedWriter bufferedWriter = new BufferedWriter(writer);
+									if(write_header) {
+										writeCSVHeader(bufferedWriter, sensorNames, col_plotid);
+									}
+									writeTimeseries(timeseries, plotID, sensorNames, aggregationInterval, bufferedWriter, col_plotid);
+									bufferedWriter.flush();
+									writer.flush();
+								} else {
+									printLine("not processed: "+plotID);
+								}
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+							log.error(e);
+							printLine("ERROR "+e);
+						}
+						processedPlots++;
+					}				
+				}
 			}
 			zipOutputStream.finish();
 			printLine("");
@@ -341,10 +372,19 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 			if(col_qualitycounter) columnlist.add("qualitycounter");
 			map.put("data columns", columnlist);
 
-			map.put("data header", write_header);			
-			map.put("all plots in one file", allInOne);
+			map.put("data header", write_header);
 
-			map.put("data files", allInOne ? "plots.csv" : "[PLOT].csv");
+			if(plots_aggregate) {
+				map.put("aggregation over all plots", "plots_aggregated.csv");
+			}
+
+			if(plots_separate) {
+				if(allInOne) {
+					map.put("all plots in one file", "plots.csv");
+				} else {
+					map.put("all plots in separate files", "[PLOT].csv");
+				}
+			}
 
 			List<String> filelist = new ArrayList<String>();
 			if(desc_sensor) filelist.add("sensor_description.csv");

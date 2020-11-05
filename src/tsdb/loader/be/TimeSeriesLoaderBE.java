@@ -31,6 +31,7 @@ import tsdb.util.AssumptionCheck;
 import tsdb.util.DataRow;
 import tsdb.util.Interval;
 import tsdb.util.Pair;
+import tsdb.util.TimeUtil;
 
 
 /**
@@ -245,7 +246,7 @@ public class TimeSeriesLoaderBE {
 					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
 					try {
 						PropertyComputation cprop = (PropertyComputation) prop.content;
-						//log.info("computation "+prop.station + "   " + cprop.target +"    "+ cprop.formula_org);
+						log.info(TimeUtil.oleMinutesToText(eventMap.firstKey().intValue(), eventMap.lastKey().intValue()) + "    computation "+prop.station + "  " +  TimeUtil.oleMinutesToText(prop.start, prop.end) + "   " + cprop.target +"    "+ cprop.formula_org);
 						cprop.calculate(rows, station.loggerType.sensorNames);
 					} catch(Exception e) {
 						log.warn(e);

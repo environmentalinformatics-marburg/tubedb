@@ -54,6 +54,50 @@ public class ExportModel{
 			}
 		}
 	}
+	
+	public enum SpatialAggregation {
+		SEPARATE, AGGREGATED, SEPARATE_AND_AGGREGATED;
+
+		public static SpatialAggregation parseText(String text) {
+			if(text==null) {
+				log.warn("unknown SpatialAggregation null");
+				return SEPARATE;
+			}
+			switch(text.toLowerCase()) {
+			case "separate":
+				return SEPARATE;
+			case "aggregated":
+				return AGGREGATED;
+			case "separate_and_aggregated":
+				return SEPARATE_AND_AGGREGATED;	
+			default:
+				log.warn("unknown SpatialAggregation: "+text);
+				return SEPARATE;
+			}
+		}
+		
+		public String toText() {
+			switch(this) {
+			case SEPARATE:
+				return "separate";
+			case AGGREGATED:
+				return "aggregated";
+			case SEPARATE_AND_AGGREGATED:
+				return "separate_and_aggregated";					
+			default:
+				log.warn("unknown SpatialAggregation: " + this);
+				return "separate plots";
+			}
+		}
+
+		boolean isSeparate() {
+			return this == SEPARATE || this == SEPARATE_AND_AGGREGATED;
+		}
+		
+		boolean isAggregated() {
+			return this == AGGREGATED || this == SEPARATE_AND_AGGREGATED;
+		}
+	}
 
 	public String[] plots;
 	public String[] sensors;
@@ -70,6 +114,7 @@ public class ExportModel{
 	public boolean col_datetime;
 	public boolean col_qualitycounter;
 	public boolean write_header;
+	public SpatialAggregation spatial_aggregation;
 
 	public TimespanType timespanType;	
 	public int timespanYear;	
@@ -98,6 +143,7 @@ public class ExportModel{
 		this.col_datetime = true;
 		this.col_qualitycounter = false; //default true?
 		this.write_header = true;
+		this.spatial_aggregation = SpatialAggregation.SEPARATE;
 		this.timespanType = TimespanType.ALL;
 		this.timespanYear = 0;
 		this.timespanYearsFrom = 0;

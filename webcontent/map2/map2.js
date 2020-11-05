@@ -20,6 +20,13 @@ var layersCollector = function(layers, collector) {
 	})
 }
 
+String.prototype.replaceAll = function(strReplace, strWith) {
+    // See http://stackoverflow.com/a/3561711/556609
+    var esc = strReplace.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    var reg = new RegExp(esc, 'ig');
+    return this.replace(reg, strWith);
+};
+
 function init() {
 	
 Vue.component('plot-dialog', {
@@ -297,7 +304,17 @@ methods: {
 		}
 
 		if(backgroundMapProps.type === 'WMS' && this.WMSCapabilities != undefined) {
-			var url = this.WMSCapabilities.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource;
+			var url = undefined;
+			if(this.WMSCapabilities.Capability.Request !== undefined) {
+				try {
+					url = this.WMSCapabilities.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource;
+				} catch(e) {
+					console.log(e);
+				}
+			}
+			if(url === undefined && this.customWMSUrl !== undefined) {
+				url = this.customWMSUrl.replaceAll('REQUEST=GetCapabilities', '');
+			}
 			var WMSOptions = {};
 			WMSOptions.url = url;
 			if(this.WMSLayer !== undefined) {
