@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 import org.yaml.snakeyaml.DumperOptions.LineBreak;
@@ -24,6 +25,11 @@ public class TimestampSeriesCSVwriter {
 	protected final boolean col_plotid;
 	protected final boolean col_timestamp;
 	protected final boolean col_datetime;
+	protected final boolean col_year;
+	protected final boolean col_month;
+	protected final boolean col_day;
+	protected final boolean col_hour;
+	protected final boolean col_day_of_year;
 	protected final boolean col_qualitycounter;
 
 	
@@ -33,11 +39,16 @@ public class TimestampSeriesCSVwriter {
 	private static final DecimalFormat decimalFormat2 = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.ENGLISH));
 	private static final DecimalFormat decimalFormat5 = new DecimalFormat("0.00000", new DecimalFormatSymbols(Locale.ENGLISH));
 	
-	public TimestampSeriesCSVwriter(boolean col_plotid, boolean col_timestamp, boolean col_datetime, boolean col_qualitycounter) {
+	public TimestampSeriesCSVwriter(boolean col_plotid, boolean col_timestamp, boolean col_datetime, boolean col_qualitycounter, boolean col_year, boolean col_month, boolean col_day, boolean col_hour, boolean col_day_of_year) {
 		this.col_plotid = col_plotid;
 		this.col_timestamp = col_timestamp;
 		this.col_datetime = col_datetime;
 		this.col_qualitycounter = col_qualitycounter;
+		this.col_year = col_year;
+		this.col_month = col_month;
+		this.col_day = col_day;
+		this.col_hour = col_hour;
+		this.col_day_of_year = col_day_of_year;
 	}
 	
 	protected void writeCSVHeader(BufferedWriter bufferedWriter, String[] sensorNames, boolean withPlotID) throws IOException {
@@ -62,13 +73,71 @@ public class TimestampSeriesCSVwriter {
 			bufferedWriter.write("datetime");
 			isFirst = false;
 		}
-		for(String name:sensorNames) {
+		
+		if(col_year) {
+			if(!isFirst) {
+				bufferedWriter.write(',');			
+			}
+			bufferedWriter.write("year");
+			isFirst = false;
+		}
+		
+		if(col_month) {
+			if(!isFirst) {
+				bufferedWriter.write(',');			
+			}
+			bufferedWriter.write("month");
+			isFirst = false;
+		}
+		
+		if(col_day) {
+			if(!isFirst) {
+				bufferedWriter.write(',');			
+			}
+			bufferedWriter.write("day");
+			isFirst = false;
+		}
+		
+		if(col_hour) {
+			if(!isFirst) {
+				bufferedWriter.write(',');			
+			}
+			bufferedWriter.write("hour");
+			isFirst = false;
+		}
+		
+		if(col_day_of_year) {
+			if(!isFirst) {
+				bufferedWriter.write(',');			
+			}
+			bufferedWriter.write("day_of_year");
+			isFirst = false;
+		}
+		
+		if(col_year) {
+			if(!isFirst) {
+				bufferedWriter.write(',');			
+			}
+			bufferedWriter.write("year");
+			isFirst = false;
+		}
+		
+		if(col_year) {
+			if(!isFirst) {
+				bufferedWriter.write(',');			
+			}
+			bufferedWriter.write("year");
+			isFirst = false;
+		}
+		
+		for(String name : sensorNames) {
 			if(!isFirst) {
 				bufferedWriter.write(',');
 			}
 			bufferedWriter.write(name);
 			isFirst = false;
 		}
+		
 		if(col_qualitycounter) {
 			if(!isFirst) {
 				bufferedWriter.write(',');				
@@ -102,13 +171,49 @@ public class TimestampSeriesCSVwriter {
 				bufferedWriter.write(Integer.toString((int) entry.timestamp));
 				isFirst = false;
 			}
+			LocalDateTime datetime = TimeUtil.oleMinutesToLocalDateTime(entry.timestamp);
 			if(col_datetime) {
 				if(!isFirst) {
 					bufferedWriter.write(',');
 				}				
-				bufferedWriter.write(TimeUtil.fastTimestampWrite(entry.timestamp, datetimeFormat));
+				bufferedWriter.write(TimeUtil.fastTimestampWrite(datetime, datetimeFormat));
 				isFirst = false;
 			}
+			if(col_year) {
+				if(!isFirst) {
+					bufferedWriter.write(',');
+				}				
+				bufferedWriter.write(Integer.toString(datetime.getYear()));
+				isFirst = false;
+			}
+			if(col_month) {
+				if(!isFirst) {
+					bufferedWriter.write(',');
+				}				
+				bufferedWriter.write(Integer.toString(datetime.getMonthValue()));
+				isFirst = false;
+			}
+			if(col_day) {
+				if(!isFirst) {
+					bufferedWriter.write(',');
+				}				
+				bufferedWriter.write(Integer.toString(datetime.getDayOfMonth()));
+				isFirst = false;
+			}
+			if(col_hour) {
+				if(!isFirst) {
+					bufferedWriter.write(',');
+				}				
+				bufferedWriter.write(Integer.toString(datetime.getHour()));
+				isFirst = false;
+			}
+			if(col_day_of_year) {
+				if(!isFirst) {
+					bufferedWriter.write(',');
+				}				
+				bufferedWriter.write(Integer.toString(datetime.getDayOfYear()));
+				isFirst = false;
+			}			
 			for(int i=0;i<sensorNames.length;i++) {
 				float v = entry.data[i];
 				if(!isFirst) {

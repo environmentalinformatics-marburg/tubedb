@@ -57,6 +57,11 @@ $(document).ready(function(){
 		json_settings.col_plotid = document.getElementById("col_plotid").checked;
 		json_settings.col_timestamp = document.getElementById("col_timestamp").checked;
 		json_settings.col_datetime = document.getElementById("col_datetime").checked;
+		json_settings.col_year = document.getElementById("col_year").checked;
+		json_settings.col_month = document.getElementById("col_month").checked;
+		json_settings.col_day = document.getElementById("col_day").checked;
+		json_settings.col_hour = document.getElementById("col_hour").checked;
+		json_settings.col_day_of_year = document.getElementById("col_day_of_year").checked;
 		json_settings.col_qualitycounter = document.getElementById("col_qualitycounter").checked;
 		json_settings.write_header = document.getElementById("write_header").checked;
 
@@ -65,8 +70,7 @@ $(document).ready(function(){
 			window.location = url_result_page;
 			decTask();
 		 })
-		 .fail(function(jqXHR, textStatus, errorThrown) {alert("error sending settings data: "+textStatus+"  "+errorThrown);decTask();});	
-	 
+		 .fail(function(jqXHR, textStatus, errorThrown) {alert("error sending settings data: "+textStatus+"  "+errorThrown);decTask();});	 
 	}
 	
 	incTask();
@@ -83,6 +87,11 @@ $(document).ready(function(){
 		document.getElementById("col_plotid").checked = json_settings.col_plotid;
 		document.getElementById("col_timestamp").checked = json_settings.col_timestamp;
 		document.getElementById("col_datetime").checked = json_settings.col_datetime;
+		document.getElementById("col_year").checked = json_settings.col_year;
+		document.getElementById("col_month").checked = json_settings.col_month;
+		document.getElementById("col_day").checked = json_settings.col_day;
+		document.getElementById("col_hour").checked = json_settings.col_hour;
+		document.getElementById("col_day_of_year").checked = json_settings.col_day_of_year;
 		document.getElementById("col_qualitycounter").checked = json_settings.col_qualitycounter;
 		document.getElementById("write_header").checked = json_settings.write_header;
 		

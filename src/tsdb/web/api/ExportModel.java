@@ -112,6 +112,11 @@ public class ExportModel{
 	public boolean col_plotid;
 	public boolean col_timestamp;
 	public boolean col_datetime;
+	public boolean col_year;
+	public boolean col_month;
+	public boolean col_day;
+	public boolean col_hour;
+	public boolean col_day_of_year;
 	public boolean col_qualitycounter;
 	public boolean write_header;
 	public SpatialAggregation spatial_aggregation;
@@ -140,8 +145,13 @@ public class ExportModel{
 		this.region = null;
 		this.col_plotid = true;
 		this.col_timestamp = false;
-		this.col_datetime = true;
-		this.col_qualitycounter = false; //default true?
+		this.col_datetime = true;		
+		this.col_year = false;
+		this.col_month = false;
+		this.col_day = false;
+		this.col_hour = false;
+		this.col_day_of_year = false;		
+		this.col_qualitycounter = false;
 		this.write_header = true;
 		this.spatial_aggregation = SpatialAggregation.SEPARATE;
 		this.timespanType = TimespanType.ALL;

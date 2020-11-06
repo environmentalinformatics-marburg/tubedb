@@ -18,7 +18,7 @@ public class TsEntry implements Serializable {
 	public static TsEntry of(long timestamp, float ... values) {
 		return new TsEntry(timestamp, values);
 	}
-	
+
 	public static TsEntry of(DataEntry e) {
 		return new TsEntry(e.timestamp, new float[]{e.value});
 	}
@@ -123,6 +123,49 @@ public class TsEntry implements Serializable {
 	}
 
 	public String qualityCountersToString() {
+		String s = "";
+		if(qualityCounter==null) {
+			if(interpolated==null) {
+				for(int i=0;i<data.length;i++) {
+					if(i>0) {
+						s += "_";
+					}
+					s += Float.isNaN(data[i]) ? "NA" : "c1";
+				}
+			} else {
+				for(int i=0;i<data.length;i++) {
+					if(i>0) {
+						s += "_";
+					}
+					s += Float.isNaN(data[i]) ? "NA" : (interpolated[i] ? "c1i1" : "c1");
+				}				
+			}
+		} else {
+			for(int i=0;i<qualityCounter.length;i++) {
+				if(i>0) {
+					s += "_";
+				}
+				if(Float.isNaN(data[i])) {
+					s += "NA";
+				} else {
+					int[] qc = qualityCounter[i];
+					if(qc.length == 1) {
+						s += "c" + qc[0];
+					} else if(qc.length == 2) {
+						s += "c" + qc[0];
+						if(qc[1] > 0) {
+							s +=  "i" + qc[1];
+						}
+					} else {
+						s += "NN";
+					}
+				}
+			}			
+		}
+		return s;
+	}
+
+	public String qualityCountersToString_OldFormat() {
 		String s = "";	
 		if(qualityCounter==null) {
 			if(interpolated==null) {
@@ -165,7 +208,7 @@ public class TsEntry implements Serializable {
 		}
 		return s;
 	}
-	
+
 	public TsEntry withTimeOffset(int minutes) {
 		return new TsEntry(timestamp + minutes, data, qualityFlag, qualityCounter, interpolated);
 	}

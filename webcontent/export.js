@@ -178,11 +178,17 @@ $.getJSON(url_export_settings).done(function( data ) {
 		if(json_settings.desc_settings) {
 			settings_array.push("include settings description");
 		}
-		if(json_settings.allinone) {
-			settings_array.push("all plots in one file");
-		} else {
-			settings_array.push("one file per plot");
+		if(json_settings.spatial_aggregation == "separate" ||  json_settings.spatial_aggregation == "separate_and_aggregated") {
+			if(json_settings.allinone) {
+				settings_array.push("all plots in one file");
+			} else {
+				settings_array.push("one file per plot");
+			}
 		}
+		if(json_settings.spatial_aggregation == "aggregated" ||  json_settings.spatial_aggregation == "separate_and_aggregated") {
+			settings_array.push("plots aggregated in one file");
+		}
+
 		if(!json_settings.write_header) {
 			settings_array.push("not write CSV header");
 		}		

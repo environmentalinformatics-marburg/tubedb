@@ -74,8 +74,8 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 
 	private int processedPlots = 0;
 
-	public ZipExport(RemoteTsDB tsdb, Region region, String[] sensorNames, String[] plotIDs, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated, boolean allinone, boolean desc_sensor, boolean desc_plot, boolean desc_settings, boolean col_plotid, boolean col_timestamp, boolean col_datetime, boolean write_header, Long startTimestamp, Long endTimestamp, boolean col_qualitycounter, boolean plots_separate, boolean plots_aggregate) {
-		super(col_plotid, col_timestamp, col_datetime, col_qualitycounter);
+	public ZipExport(RemoteTsDB tsdb, Region region, String[] sensorNames, String[] plotIDs, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated, boolean allinone, boolean desc_sensor, boolean desc_plot, boolean desc_settings, boolean col_plotid, boolean col_timestamp, boolean col_datetime, boolean write_header, Long startTimestamp, Long endTimestamp, boolean col_qualitycounter, boolean plots_separate, boolean plots_aggregate, boolean col_year, boolean col_month, boolean col_day, boolean col_hour, boolean col_day_of_year) {
+		super(col_plotid, col_timestamp, col_datetime, col_qualitycounter, col_year, col_month, col_day, col_hour, col_day_of_year);
 		throwNull(tsdb);
 		this.tsdb = tsdb;
 
@@ -368,10 +368,14 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 			List<String> columnlist = new ArrayList<String>();
 			if(col_plotid) columnlist.add("plotID");
 			if(col_timestamp) columnlist.add("timestamp");
-			if(col_datetime) columnlist.add("datetime");
+			if(col_datetime) columnlist.add("datetime");			
+			if(col_year) columnlist.add("year");
+			if(col_month) columnlist.add("month");
+			if(col_day) columnlist.add("day");
+			if(col_hour) columnlist.add("hour");
+			if(col_day_of_year) columnlist.add("day_of_year");			
 			if(col_qualitycounter) columnlist.add("qualitycounter");
 			map.put("data columns", columnlist);
-
 			map.put("data header", write_header);
 
 			if(plots_aggregate) {
