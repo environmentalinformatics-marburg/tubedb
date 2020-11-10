@@ -500,6 +500,20 @@ public class ServerTsDB implements RemoteTsDB {
 		log.trace(it.getProcessingChain().getText());
 		return it.toTimestampSeries(Arrays.toString(plotIDs));
 	}
+	
+	@Override
+	public TimestampSeries plots_casted(String[] plotIDs, String[] columnNames, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated, Long start, Long end) {
+		Node node = QueryPlan.plots_casted(tsdb, plotIDs, columnNames, aggregationInterval, dataQuality, interpolated);
+		if(node==null) {
+			return null;
+		}
+		TsIterator it = node.get(start, end);
+		if(it==null||!it.hasNext()) {
+			return null;
+		}
+		log.trace(it.getProcessingChain().getText());
+		return it.toTimestampSeries(Arrays.toString(plotIDs));
+	}
 
 	@Override
 	public TimestampSeries plot(String queryType, String plotID, String[] columnNames, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated, Long start, Long end) {

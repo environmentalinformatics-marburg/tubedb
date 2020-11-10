@@ -114,22 +114,6 @@ public class TimestampSeriesCSVwriter {
 			isFirst = false;
 		}
 		
-		if(col_year) {
-			if(!isFirst) {
-				bufferedWriter.write(',');			
-			}
-			bufferedWriter.write("year");
-			isFirst = false;
-		}
-		
-		if(col_year) {
-			if(!isFirst) {
-				bufferedWriter.write(',');			
-			}
-			bufferedWriter.write("year");
-			isFirst = false;
-		}
-		
 		for(String name : sensorNames) {
 			if(!isFirst) {
 				bufferedWriter.write(',');
@@ -214,7 +198,7 @@ public class TimestampSeriesCSVwriter {
 				bufferedWriter.write(Integer.toString(datetime.getDayOfYear()));
 				isFirst = false;
 			}			
-			for(int i=0;i<sensorNames.length;i++) {
+			for(int i = 0; i < sensorNames.length; i++) {
 				float v = entry.data[i];
 				if(!isFirst) {
 					bufferedWriter.write(',');

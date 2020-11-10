@@ -64,6 +64,7 @@ $(document).ready(function(){
 		json_settings.col_day_of_year = document.getElementById("col_day_of_year").checked;
 		json_settings.col_qualitycounter = document.getElementById("col_qualitycounter").checked;
 		json_settings.write_header = document.getElementById("write_header").checked;
+		json_settings.casted = document.getElementById("allinoneColumns").checked;
 
 		$.postJSON(url_export_apply_settings,json_settings)
 		 .done(function() {
@@ -94,6 +95,14 @@ $(document).ready(function(){
 		document.getElementById("col_day_of_year").checked = json_settings.col_day_of_year;
 		document.getElementById("col_qualitycounter").checked = json_settings.col_qualitycounter;
 		document.getElementById("write_header").checked = json_settings.write_header;
+
+		document.getElementById("allinoneRows").checked = false;
+		document.getElementById("allinoneColumns").checked = false;
+		if(json_settings.casted !== undefined && json_settings.casted) {
+			document.getElementById("allinoneColumns").checked = true;
+		} else {
+			document.getElementById("allinoneRows").checked = true;
+		}
 		
 		var raw = false;
 		if(json_settings.timestep=="raw") {

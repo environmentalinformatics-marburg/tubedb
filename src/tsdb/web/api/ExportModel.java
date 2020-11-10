@@ -120,6 +120,7 @@ public class ExportModel{
 	public boolean col_qualitycounter;
 	public boolean write_header;
 	public SpatialAggregation spatial_aggregation;
+	public boolean casted;
 
 	public TimespanType timespanType;	
 	public int timespanYear;	
@@ -154,6 +155,7 @@ public class ExportModel{
 		this.col_qualitycounter = false;
 		this.write_header = true;
 		this.spatial_aggregation = SpatialAggregation.SEPARATE;
+		this.casted = false;
 		this.timespanType = TimespanType.ALL;
 		this.timespanYear = 0;
 		this.timespanYearsFrom = 0;

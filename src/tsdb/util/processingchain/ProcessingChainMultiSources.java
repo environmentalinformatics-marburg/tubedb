@@ -18,7 +18,7 @@ public class ProcessingChainMultiSources implements ProcessingChain {
 		if(entry==null) {
 			entry = ProcessingChainEntry.createUnknown();
 		}
-		ProcessingChain[] chains = Arrays.stream(sources).map(it->it==null?ProcessingChain.createUnknown():it.getProcessingChain()).toArray(ProcessingChain[]::new);
+		ProcessingChain[] chains = Arrays.stream(sources).map(it -> it == null ? ProcessingChain.createUnknown() : it.getProcessingChain()).toArray(ProcessingChain[]::new);
 		return of(chains,entry);
 	}
 	

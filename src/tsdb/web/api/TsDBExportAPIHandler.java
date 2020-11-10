@@ -321,7 +321,10 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 		json.value(model.write_header);
 		
 		json.key("spatial_aggregation");
-		json.value(model.spatial_aggregation.toText());	
+		json.value(model.spatial_aggregation.toText());
+		
+		json.key("casted");
+		json.value(model.casted);	
 
 		json.key("timespan_type");
 		json.value(model.timespanType.toText());
@@ -379,6 +382,10 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 			
 			if(json.has("spatial_aggregation")) {
 				model.spatial_aggregation = SpatialAggregation.parseText(json.getString("spatial_aggregation"));
+			}
+			
+			if(json.has("casted")) {
+				model.casted = json.getBoolean("casted");
 			}
 
 			TimespanType timespanType = TimespanType.parseText(json.getString("timespan_type"));
@@ -481,7 +488,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 			boolean write_header = model.write_header;
 			Pair<Long, Long> timespan = model.getTimespan();
 
-			ZipExport zipexport = new ZipExport(tsdb, region, sensorNames, plotIDs, aggregationInterval, dataQuality, interpolated, allinone,desc_sensor,desc_plot,desc_settings,col_plotid,col_timestamp,col_datetime,write_header,timespan.a,timespan.b,col_qualitycounter, model.spatial_aggregation.isSeparate(), model.spatial_aggregation.isAggregated(), model.col_year, model.col_month, model.col_day, model.col_hour, model.col_day_of_year);
+			ZipExport zipexport = new ZipExport(tsdb, region, sensorNames, plotIDs, aggregationInterval, dataQuality, interpolated, allinone,desc_sensor,desc_plot,desc_settings,col_plotid,col_timestamp,col_datetime,write_header,timespan.a,timespan.b,col_qualitycounter, model.spatial_aggregation.isSeparate(), model.spatial_aggregation.isAggregated(), model.col_year, model.col_month, model.col_day, model.col_hour, model.col_day_of_year, model.casted);
 			boolean ret = zipexport.writeToStream(outputstream);
 			return ret;
 		} catch (IOException e) {

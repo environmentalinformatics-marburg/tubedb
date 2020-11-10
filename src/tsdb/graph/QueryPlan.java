@@ -16,6 +16,7 @@ import tsdb.graph.node.Node;
 import tsdb.graph.node.NodeGen;
 import tsdb.graph.processing.Aggregated;
 import tsdb.graph.processing.Averaged;
+import tsdb.graph.processing.DataCasted;
 import tsdb.graph.processing.InterpolatedAverageLinear;
 import tsdb.graph.processing.PostHourMutation;
 import tsdb.graph.source.RawSource;
@@ -55,6 +56,25 @@ public final class QueryPlan {
 				aggregated = Aggregated.of(tsdb, aggregated, aggregationInterval, postDayMutator);
 			}
 			return aggregated;
+		}
+	}
+	
+	public static Node plots_casted(TsDB tsdb, String[] plotIDs, String[] schema, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated) {
+		if(aggregationInterval == AggregationInterval.RAW) {
+			throw new RuntimeException("raw data not supported for plots_casted");
+		} else {
+			List<Continuous> sources = new ArrayList<Continuous>();
+			for(String plotID : plotIDs) {
+				String[] plotSchema = tsdb.getValidSchemaWithVirtualSensors(plotID, schema);
+				if(!Util.empty(schema)) {
+					Node node = QueryPlan.plot(tsdb, plotID, plotSchema, aggregationInterval, dataQuality, interpolated);
+					if(node != null) {
+						sources.add((Continuous) node);
+					}
+				}
+			}
+			DataCasted casted = DataCasted.of(tsdb, sources);
+			return casted;
 		}
 	}
 
