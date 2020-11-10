@@ -96,6 +96,12 @@ $(document).ready(function(){
 		document.getElementById("col_qualitycounter").checked = json_settings.col_qualitycounter;
 		document.getElementById("write_header").checked = json_settings.write_header;
 
+		if(json_settings.spatial_aggregation === "aggregated") {
+			document.getElementById("allinone").disabled = true;
+		} else {
+			document.getElementById("allinone").disabled = false;
+		}
+
 		document.getElementById("allinoneRows").checked = false;
 		document.getElementById("allinoneColumns").checked = false;
 		if(json_settings.casted !== undefined && json_settings.casted) {
@@ -113,6 +119,7 @@ $(document).ready(function(){
 			document.getElementById("div_quality").style.color = "silver";
 		}		
 		
+		update();
 		
 		decTask();
 	})
@@ -120,3 +127,19 @@ $(document).ready(function(){
 
 	decTask();
 });
+
+function update() {
+	if((!document.getElementById("allinone").disabled) && document.getElementById("allinone").checked) {
+		document.getElementById("allinoneRows").disabled = false;
+		document.getElementById("allinoneColumns").disabled = false;
+	} else {
+		document.getElementById("allinoneRows").disabled = true;
+		document.getElementById("allinoneColumns").disabled = true;
+	}
+	
+	if(document.getElementById("allinone").disabled || (document.getElementById("allinone").checked && document.getElementById("allinoneColumns").checked)) {
+		document.getElementById("col_plotid").disabled = true;
+	} else {
+		document.getElementById("col_plotid").disabled = false;
+	}
+}

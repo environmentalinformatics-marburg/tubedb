@@ -784,11 +784,11 @@
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 							
 							of &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	<b>[ {{table.data[0].split(',')[0]}} to {{table.data[table.data.length - 1].split(',')[0]}} ]</b>						
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-							{{view.plot}} 
-							<table>
+							<!--{{view.plot}}-->
+							<table class="data-table">
 								<thead>
 									<tr>
-										<th v-for="col in table.header.split(',')">{{col}}</th>
+										<th v-for="col in table.header">{{col}}</th>
 									</tr>
 								</thead>
 								<tbody>

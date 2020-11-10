@@ -31,6 +31,10 @@ body {
 	font-family: Roboto,sans-serif;
 }
 
+input:disabled+label{
+	color:#ccc;
+}
+
 .horizontal-box {display:flex; flex-flow:row;}
 .spacer {flex:auto;}
 .center {flex:none;}
@@ -135,9 +139,9 @@ On this page you can specify general setting of the time series generating proce
 <p><input type="checkbox" id="interpolate"><label for="interpolate">try to interpolate missing data</label></p>
 </div>
 <p>
-	<input type="checkbox" id="allinone"><label for="allinone">write all plots in one CSV-File</label>
-	<br><input type="radio" name="allinone" id="allinoneRows" style="margin-left: 30px;"> one plot timeseries after another (default), e.g. columns: <i>sensor1, sensor2</i>
-	<br><input type="radio" name="allinone" id="allinoneColumns" style="margin-left: 30px;"> all plots together, one column per plot-sensor pair, e.g. columns: <i>plot1.sensor1, plot2.sensor1, plot1.sensor2</i>
+	<input type="checkbox" id="allinone" onchange="update()"><label for="allinone">write all plots in one CSV-File</label>
+	<br><input type="radio" name="allinone" id="allinoneRows" style="margin-left: 30px;" onchange="update()"><label for="allinoneRows"> one plot timeseries after another (default), e.g. columns: <i>sensor1, sensor2</i></label>
+	<br><input type="radio" name="allinone" id="allinoneColumns" style="margin-left: 30px;" onchange="update()"><label for="allinoneColumns"> all plots together, one column per plot-sensor pair, e.g. columns: <i>plot1.sensor1, plot2.sensor1, plot1.sensor2</i></label>
 </p>
 <p><input type="checkbox" id="write_header"><label for="write_header">write header in CSV-Files</label></p>
 <h4>columns in CSV-Files</h4>

@@ -279,3 +279,10 @@ tr:nth-child(even){background-color: rgba(132, 104, 76, 0.1);}
 #time-from-row td:not(:first-child) {
     border-bottom:1px solid black;
 }
+
+.data-table > thead > tr > th:not(:first-child) {
+	overflow-wrap: anywhere;
+	min-width: 50px;
+	max-width: 0px;
+	vertical-align: top;
+}

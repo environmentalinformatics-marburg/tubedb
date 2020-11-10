@@ -16,6 +16,8 @@ query_timeseries(
   year = NULL,
   month = NULL,
   day = NULL,
+  casted = FALSE,
+  spatial_aggregated = FALSE,
   datetimeFormat = "character",
   colYear = FALSE,
   colPlot = TRUE,
@@ -46,6 +48,10 @@ query_timeseries(
 \item{month}{get data of one full month of one year only, parameter year neads to be specified (You may use this 'month' parameter OR 'start'/'end' parameters)}
 
 \item{day}{get data of one full day of one month only, parameter month neads to be specified (You may use this 'day' parameter OR 'start'/'end' parameters)}
+
+\item{casted}{all plot-sensor pairs in one row per timestamp, e.g. columns plot1.sensor1, plot2.sensor1, plot1.sensor2}
+
+\item{spatial_aggregated}{combine all values of one sensor over all plots to one value per timestamp by mean}
 
 \item{datetimeFormat}{character, requested type of timestamps. one of: "character", "POSIXct", "POSIXlt"}
 

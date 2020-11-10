@@ -22,6 +22,7 @@ import tsdb.util.TimeUtil;
 import tsdb.util.iterator.CSV;
 import tsdb.util.iterator.CSVTimeType;
 import tsdb.util.iterator.TimestampSeries;
+import tsdb.util.iterator.TsIterator;
 
 /**
  * Get timeseries data as CSV-file.
@@ -120,6 +121,38 @@ public class Handler_query_csv extends MethodHandler {
 				}
 			} catch (Exception e) {
 				log.warn(e);
+			}
+		}
+
+		String casted_text = request.getParameter("casted");
+		boolean casted = false;
+		if(casted_text != null) {
+			switch(casted_text) {
+			case "true":
+				casted = true;
+				break;
+			case "false":
+				casted = false;
+				break;
+			default:
+				log.warn("unknown input");
+				casted = false;				
+			}
+		}
+		
+		String spatial_aggregated_text = request.getParameter("spatial_aggregated");
+		boolean spatial_aggregated = false;
+		if(spatial_aggregated_text != null) {
+			switch(spatial_aggregated_text) {
+			case "true":
+				spatial_aggregated = true;
+				break;
+			case "false":
+				spatial_aggregated = false;
+				break;
+			default:
+				log.warn("unknown input");
+				spatial_aggregated = false;				
 			}
 		}
 
@@ -267,7 +300,7 @@ public class Handler_query_csv extends MethodHandler {
 		if(startText != null) {
 			startTime = (long) TimeUtil.parseStartTimestamp(startText);
 		}
-		
+
 		String endText = request.getParameter("end");
 		if(endText != null) {
 			endTime = (long) TimeUtil.parseEndTimestamp(endText, agg);
@@ -285,32 +318,41 @@ public class Handler_query_csv extends MethodHandler {
 			String[] processingSensorNames = processingSensorNameCollector.toArray(new String[0]);
 
 			ServletOutputStream out = response.getOutputStream();
-			boolean firstPlot = true;
-			for(String plot:plots) {
-				sensorNames = tsdb.supplementSchema(sensorNames, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
-				String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, sensorNames);
-				/*if(sensorNames.length!=validSchema.length) {
-					String error = "some sensors not in plot: "+plot+"  "+Arrays.toString(sensorNames);
-					log.info(error);
-					response.getWriter().println(error);
-					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);				
-					return;
-				}*/
-				try {
-					log.info("load of "+Arrays.toString(validSchema));
-					TimestampSeries ts = tsdb.plot(null, plot, validSchema, agg, dataQuality, isInterpolated, startTime, endTime);
-					if(ts != null) {					
-						ProjectionFillIterator it = new ProjectionFillIterator(ts.tsIterator(), processingSensorNames);
-						String plot_text = col_plot ? plot : null;
-						CSV.write(it, firstPlot, out, ",", nanText, csvTimeType, false, false, agg, plot_text);
-						firstPlot = false;
+
+			if(spatial_aggregated) {
+				TimestampSeries ts = tsdb.plots_aggregate(plots, processingSensorNames, agg, dataQuality, isInterpolated, startTime, endTime);
+				if(ts != null) {
+					TsIterator it = ts.tsIterator();
+					CSV.write(it, true, out, ",", nanText, csvTimeType, false, false, agg, null);
+				}
+			} else {
+				if(casted) {
+					TimestampSeries ts = tsdb.plots_casted(plots, processingSensorNames, agg, dataQuality, isInterpolated, startTime, endTime);
+					if(ts != null) {
+						TsIterator it = ts.tsIterator();
+						CSV.write(it, true, out, ",", nanText, csvTimeType, false, false, agg, null);
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					log.error(e);
+				} else {
+					boolean firstPlot = true;			
+					for(String plot:plots) {
+						sensorNames = tsdb.supplementSchema(sensorNames, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
+						String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, sensorNames);
+						try {
+							log.info("load of "+Arrays.toString(validSchema));
+							TimestampSeries ts = tsdb.plot(null, plot, validSchema, agg, dataQuality, isInterpolated, startTime, endTime);
+							if(ts != null) {					
+								ProjectionFillIterator it = new ProjectionFillIterator(ts.tsIterator(), processingSensorNames);
+								String plot_text = col_plot ? plot : null;
+								CSV.write(it, firstPlot, out, ",", nanText, csvTimeType, false, false, agg, plot_text);
+								firstPlot = false;
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+							log.error(e);
+						}
+					}
 				}
 			}
-
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {
 			e.printStackTrace();
