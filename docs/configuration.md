@@ -15,7 +15,7 @@ Meta data is updated at TubeDB start.
 
 [TubeDB configuration](./configuration/tubedb)
 
-[accounts list](./configuration/accounts)
+[accounts](./configuration/accounts)
 
 [sensor configuration](./configuration/sensor)
 

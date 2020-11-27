@@ -8,10 +8,8 @@ import tsdb.VirtualPlot;
 import tsdb.component.Sensor;
 import tsdb.component.iterator.PeakFlagIterator;
 import tsdb.component.iterator.PhysicalFlagIterator;
-import tsdb.component.iterator.PhysicalStepFlagIterator;
 import tsdb.graph.node.Node;
 import tsdb.util.DataQuality;
-import tsdb.util.iterator.InputIterator;
 import tsdb.util.iterator.LowQualityToNanIterator;
 import tsdb.util.iterator.TsIterator;
 

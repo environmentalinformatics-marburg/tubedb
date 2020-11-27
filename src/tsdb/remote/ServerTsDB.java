@@ -41,6 +41,7 @@ import tsdb.util.DataRow;
 import tsdb.util.Pair;
 import tsdb.util.TimeSeriesMask;
 import tsdb.util.TimestampInterval;
+import tsdb.util.TsEntry;
 import tsdb.util.iterator.TimestampSeries;
 import tsdb.util.iterator.TsIterator;
 
@@ -63,31 +64,7 @@ public class ServerTsDB implements RemoteTsDB {
 
 	@Override
 	public String[] getSensorNamesOfPlotWithVirtual(String plotID) {
-		if(plotID==null) {
-			log.warn("plotID null");
-			return null;
-		}
-		int sep = plotID.indexOf(':');
-		if(sep>0) {
-			String stationID = plotID.substring(sep+1);
-			log.info("stationID "+stationID);
-			Station station = tsdb.getStation(stationID);
-			if(station!=null) {
-				return tsdb.includeVirtualSensorNames(station.getSensorNames());
-
-			}
-		}
-		VirtualPlot virtualPlot = tsdb.getVirtualPlot(plotID);
-		if(virtualPlot!=null) {
-			return tsdb.includeVirtualSensorNames(virtualPlot.getSensorNames());
-		}
-		Station station = tsdb.getStation(plotID);
-		if(station!=null) {
-			return tsdb.includeVirtualSensorNames(station.getSensorNames());
-
-		}
-		log.warn("plotID not found "+plotID);
-		return null;
+		return tsdb.getSensorNamesOfPlotWithVirtual(plotID);
 	}
 
 	@Override
@@ -387,35 +364,77 @@ public class ServerTsDB implements RemoteTsDB {
 			long[] interval = tsdb.getTimeInterval(plotID);
 			if(interval!=null) {
 				float voltage = Float.NaN;
+				float scale = 1;
 				StreamIterator it = null;
 				//tsdb.streamStorage.getStationTimeInterval(plotID);
-				int[] uottInterval = tsdb.streamStorage.getSensorTimeInterval(plotID, "UOtt");
-				if(uottInterval!=null&&uottInterval[1]+(60*24)>=interval[1]) {
-					it = tsdb.streamStorage.getRawSensorIterator(plotID, "UOtt", (long)uottInterval[1], (long)uottInterval[1]);
-				}
-				if(it==null) {
-					int[] ubInterval = tsdb.streamStorage.getSensorTimeInterval(plotID, "UB");
-					if(ubInterval!=null&&ubInterval[1]+(60*24)>=interval[1]) {
-						it = tsdb.streamStorage.getRawSensorIterator(plotID, "UB", (long)ubInterval[1], (long)ubInterval[1]);
+				{
+					scale = 1;
+					String sensorName = "UOtt";
+					int[] sensorInterval = tsdb.streamStorage.getSensorTimeInterval(plotID, sensorName);
+					if(sensorInterval != null && sensorInterval[1] + (60*24) >= interval[1]) {
+						it = tsdb.streamStorage.getRawSensorIterator(plotID, sensorName, (long)sensorInterval[1], (long)sensorInterval[1]);
 					}
 				}
-				if(it!=null&&it.hasNext()) {
-					DataEntry e = it.next();
-					//if(e.timestamp==ub[1]) {
-					voltage = e.value;
-					//} else {
-					//	log.warn("timestamp error");
-					//}
+				if(it==null) {
+					scale = 1;
+					String sensorName = "UB";
+					int[] sensorInterval = tsdb.streamStorage.getSensorTimeInterval(plotID, sensorName);
+					if(sensorInterval!=null&&sensorInterval[1] + (60*24) >= interval[1]) {
+						it = tsdb.streamStorage.getRawSensorIterator(plotID, sensorName, (long)sensorInterval[1], (long)sensorInterval[1]);
+					}
 				}
+				if(it != null) {
+					if(it.hasNext()) {
+						DataEntry e = it.next();
+						//if(e.timestamp==ub[1]) {
+						voltage = e.value;
+						//} else {
+						//	log.warn("timestamp error");
+						//}
+					}
+				} else {
+					Node node = null;
+					{
+						scale = 1000;
+						String sensorName = "tt_battery_voltage";
+						String[] schema = new String[] {sensorName};
+						if(tsdb.isValidSchemaWithVirtualSensors(plotID, schema)) {
+							schema = tsdb.supplementSchema(plotID, schema);
+							log.info("status get: " + Arrays.toString(schema));
+							node = QueryPlan.plot(tsdb, plotID, schema, AggregationInterval.RAW, DataQuality.Na, false);
+						}
+					}
+					if(node == null ){
+						scale = 1000;
+						String sensorName = "ttraw_Battery_level";
+						String[] schema = new String[] {sensorName};
+						if(tsdb.isValidSchemaWithVirtualSensors(plotID, schema)) {
+							schema = tsdb.supplementSchema(schema, getSensorNamesOfPlotWithVirtual(plotID));
+							log.info("status get: " + Arrays.toString(schema));
+							node = QueryPlan.plot(tsdb, plotID, schema, AggregationInterval.RAW, DataQuality.Na, false);
+						}
+					}
+					if(node != null ) {
+						long[] sensorInterval = node.getTimestampInterval();
+						if(sensorInterval != null && sensorInterval[1] + (60*24) >= interval[1]) {
+							TsIterator tsIt = node.get(sensorInterval[1], sensorInterval[1]);
+							if(tsIt != null && tsIt.hasNext()) {
+								TsEntry e = tsIt.next();
+								voltage = e.data[0];
+							}							
+						}
+					}
+				}
+
 				PlotMessage plotMessage = null;
 				try {
-					if(messageMap!=null) {
+					if(messageMap != null) {
 						plotMessage = messageMap.get(plotID);
 					}
 				} catch(Exception e) {
 					log.error(e);
 				}
-				result.add(new PlotStatus(plotID, (int)interval[0], (int)interval[1], voltage, plotMessage));
+				result.add(new PlotStatus(plotID, (int)interval[0], (int)interval[1], voltage / scale, plotMessage));
 			}
 		});		
 		return result;
@@ -500,7 +519,7 @@ public class ServerTsDB implements RemoteTsDB {
 		log.trace(it.getProcessingChain().getText());
 		return it.toTimestampSeries(Arrays.toString(plotIDs));
 	}
-	
+
 	@Override
 	public TimestampSeries plots_casted(String[] plotIDs, String[] columnNames, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated, Long start, Long end) {
 		Node node = QueryPlan.plots_casted(tsdb, plotIDs, columnNames, aggregationInterval, dataQuality, interpolated);

@@ -60,7 +60,9 @@ public class DataCastIterator extends MoveIterator {
 				//log.info("value " + value + "  it " + iteratorIndex + " " + inputIteratorIndex + " -> " + inputIteratorIndices[inputIteratorIndex]);
 				if(!Float.isNaN(value)) {
 					int outputPos = inputIteratorIndices[inputIteratorIndex];
-					values[outputPos] = value;
+					if(outputPos >= 0) {
+						values[outputPos] = value;
+					}
 				}				
 			}
 		}

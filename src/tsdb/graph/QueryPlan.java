@@ -17,6 +17,7 @@ import tsdb.graph.node.NodeGen;
 import tsdb.graph.processing.Aggregated;
 import tsdb.graph.processing.Averaged;
 import tsdb.graph.processing.DataCasted;
+import tsdb.graph.processing.DataCastedRaw;
 import tsdb.graph.processing.InterpolatedAverageLinear;
 import tsdb.graph.processing.PostHourMutation;
 import tsdb.graph.source.RawSource;
@@ -61,19 +62,32 @@ public final class QueryPlan {
 	
 	public static Node plots_casted(TsDB tsdb, String[] plotIDs, String[] schema, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated) {
 		if(aggregationInterval == AggregationInterval.RAW) {
-			throw new RuntimeException("raw data not supported for plots_casted");
+			List<Node> sources = new ArrayList<Node>();
+			for(String plotID : plotIDs) {
+				String[] plotSchema = tsdb.getValidSchemaWithVirtualSensors(plotID, schema);				
+				if(!Util.empty(plotSchema)) {
+					plotSchema = tsdb.supplementSchema(plotID, plotSchema);
+					Node node = QueryPlan.plot(tsdb, plotID, plotSchema, aggregationInterval, dataQuality, interpolated);
+					if(node != null) {
+						sources.add(node);
+					}
+				}
+			}
+			DataCastedRaw casted = DataCastedRaw.of(tsdb, sources, schema);
+			return casted;
 		} else {
 			List<Continuous> sources = new ArrayList<Continuous>();
 			for(String plotID : plotIDs) {
-				String[] plotSchema = tsdb.getValidSchemaWithVirtualSensors(plotID, schema);
-				if(!Util.empty(schema)) {
+				String[] plotSchema = tsdb.getValidSchemaWithVirtualSensors(plotID, schema);				
+				if(!Util.empty(plotSchema)) {
+					plotSchema = tsdb.supplementSchema(plotID, plotSchema);
 					Node node = QueryPlan.plot(tsdb, plotID, plotSchema, aggregationInterval, dataQuality, interpolated);
 					if(node != null) {
 						sources.add((Continuous) node);
 					}
 				}
 			}
-			DataCasted casted = DataCasted.of(tsdb, sources);
+			DataCasted casted = DataCasted.of(tsdb, sources, schema);
 			return casted;
 		}
 	}

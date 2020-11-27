@@ -313,6 +313,7 @@ public class Handler_query_csv extends MethodHandler {
 			LinkedHashSet<String> processingSensorNameCollector = new LinkedHashSet<>();
 			for(String plot:plots) {
 				String[] schema = tsdb.getValidSchemaWithVirtualSensors(plot, sensorNames);
+				//schema = tsdb.supplementSchema(schema, tsdb.getSensorNamesOfPlotWithVirtual(plot));
 				processingSensorNameCollector.addAll(Arrays.asList(schema));
 			}
 			String[] processingSensorNames = processingSensorNameCollector.toArray(new String[0]);

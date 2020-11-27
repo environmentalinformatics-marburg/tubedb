@@ -33,7 +33,7 @@ import tsdb.util.Util;
 public class TsDB implements AutoCloseable {
 	private static final Logger log = LogManager.getLogger();
 	
-	public static final String tubedb_version = "1.19";
+	public static final String tubedb_version = "1.19.1";
 
 	/**
 	 * map regionName -> Region
@@ -669,6 +669,18 @@ public class TsDB implements AutoCloseable {
 		}
 		throw new RuntimeException("plotID not found: "+plotID);
 	}
+	
+	public boolean isValidSchemaWithVirtualSensors(String plotID, String[] schema) {
+		VirtualPlot virtualPlot = getVirtualPlot(plotID);
+		if(virtualPlot!=null) {
+			return virtualPlot.isValidSchemaWithVirtualSensors(schema);
+		}
+		Station station = getStation(plotID);
+		if(station!=null) {
+			return station.isValidSchemaWithVirtualSensors(schema);
+		}
+		throw new RuntimeException("plotID not found: "+plotID);
+	}
 
 	/**
 	 * Get an array of reference values of sensors at plotID.
@@ -812,6 +824,11 @@ public class TsDB implements AutoCloseable {
 			return Stream.concat(Arrays.stream(schema), additionalSensorNames.stream()).toArray(String[]::new);			
 		}
 	}
+	
+	public String[] supplementSchema(String plotID, String[] schema) {
+		schema = supplementSchema(schema, getSensorNamesOfPlotWithVirtual(plotID));
+		return schema;
+	}
 
 	public Plot getPlot(String plotID) {
 		VirtualPlot virtualPlot = getVirtualPlot(plotID);
@@ -832,6 +849,34 @@ public class TsDB implements AutoCloseable {
 		} else {
 			station.labeledProperties.insert(property);
 		}
+	}
+	
+	public String[] getSensorNamesOfPlotWithVirtual(String plotID) {
+		if(plotID==null) {
+			log.warn("plotID null");
+			return null;
+		}
+		int sep = plotID.indexOf(':');
+		if(sep>0) {
+			String stationID = plotID.substring(sep+1);
+			log.info("stationID "+stationID);
+			Station station = getStation(stationID);
+			if(station!=null) {
+				return includeVirtualSensorNames(station.getSensorNames());
+
+			}
+		}
+		VirtualPlot virtualPlot = getVirtualPlot(plotID);
+		if(virtualPlot!=null) {
+			return includeVirtualSensorNames(virtualPlot.getSensorNames());
+		}
+		Station station = getStation(plotID);
+		if(station!=null) {
+			return includeVirtualSensorNames(station.getSensorNames());
+
+		}
+		log.warn("plotID not found "+plotID);
+		return null;
 	}
 
 	//**********  sensor dependency management    *********

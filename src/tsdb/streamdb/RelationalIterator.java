@@ -97,7 +97,7 @@ public class RelationalIterator extends TsIterator {
 
 	@Override
 	public boolean hasNext() {
-		return curr!=null;
+		return curr != null;
 	}
 
 	@Override

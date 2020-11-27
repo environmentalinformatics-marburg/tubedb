@@ -2,12 +2,14 @@
 title: "TubeDB Configuration"
 ---
 
-In `tsdb_paths.ini`-file at TubeDB root global settings for TubeDB are specified.
+In `tsdb_paths.ini`-file at TubeDB root global settings for TubeDB are specified.  
+Settings are read at TubeDB start time. To apply changes you need to save changes in `tsdb_paths.ini`-file, stop TubeDB and then start TubeDB.
 
 ---
 ### `tsdb_paths.ini` description
 
-Ini-file defines setting. One per line.
+[Ini-file](https://en.wikipedia.org/wiki/INI_file) defines settings in ini-section `[tsdb_paths]`. One per line.   
+A line is marked as comment if it starts with `#`.
 
 `tsdb_paths.ini`-file with default settings: (if a setting is not set that defaults are used)
 ~~~ ini

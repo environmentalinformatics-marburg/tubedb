@@ -38,7 +38,7 @@ public class StationRawSource extends RawSource.Abstract {
 	}
 	
 	public static StationRawSource of(TsDB tsdb, Station station, String[] querySchema) {
-		if(querySchema==null) {
+		if(querySchema == null) {
 			querySchema = station.loggerType.sensorNames;
 		}
 		return new StationRawSource(tsdb, station, querySchema);

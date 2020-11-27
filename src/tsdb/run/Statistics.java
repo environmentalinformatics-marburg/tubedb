@@ -70,8 +70,7 @@ public class Statistics {
 
 						while(plotIt.hasNext()) {
 							String plotID = plotIt.next();
-							String[] fullSchema = tsdb.includeVirtualSensorNames(tsdb.getSensorNamesOfPlot(plotID));
-							String[] plotColumnNames = tsdb.supplementSchema(columnNames, fullSchema);
+							String[] plotColumnNames = tsdb.supplementSchema(plotID, columnNames);
 							
 							if(tsdb.getValidSchema(plotID, plotColumnNames).length>0) {
 								//log.info(plotID+"  "+Arrays.toString(plotColumnNames));
