@@ -5,4 +5,9 @@ TubeDB is an on-demand processing database system for climate station data.
 
 ---
 
+--> [TubeDB paper](https://doi.org/10.1016/j.cageo.2020.104641)
+
+
+---
+
 --> [rTubeDB](rTubeDB): R package to connect to TubeDB server

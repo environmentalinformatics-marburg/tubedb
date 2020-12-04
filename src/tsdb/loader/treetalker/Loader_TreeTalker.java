@@ -110,6 +110,7 @@ public class Loader_TreeTalker {
 			HashMap<String, ArrayList<DataRow>> tt4B_dataMap = new HashMap<String, ArrayList<DataRow>>();	
 			HashMap<String, ArrayList<DataRow>> tt4C_dataMap = new HashMap<String, ArrayList<DataRow>>();	
 			HashMap<String, ArrayList<DataRow>> tt4D_dataMap = new HashMap<String, ArrayList<DataRow>>();
+			HashMap<String, ArrayList<DataRow>> tt53_dataMap = new HashMap<String, ArrayList<DataRow>>();
 
 			//ArrayList<DataRow> tt4D_data = new ArrayList<DataRow>();
 			//int tt4D_data_prev = -1;
@@ -243,6 +244,35 @@ public class Loader_TreeTalker {
 					tt4D_data.add(new DataRow(data, timestamp));
 					break;
 				}
+				case "53": {
+					//log.info(tt_Type);					
+					int timestamp = toTimestamp(row[3]);
+					float[] data = new float[]{
+							Float.parseFloat(row[4]),
+							Float.parseFloat(row[5]),
+							Float.parseFloat(row[6]),
+							Float.parseFloat(row[7]),
+							Float.parseFloat(row[8]),
+							Float.parseFloat(row[9]),
+							Float.parseFloat(row[10]),
+							Float.parseFloat(row[11]),
+							Float.parseFloat(row[12]),
+							Float.parseFloat(row[13]),
+							Float.parseFloat(row[14]),
+							Float.parseFloat(row[15]),
+							Float.parseFloat(row[16]),
+							Float.parseFloat(row[17]),
+							Float.parseFloat(row[18]),
+							Float.parseFloat(row[19]),
+							Float.parseFloat(row[20])};
+					ArrayList<DataRow> tt53_data = tt53_dataMap.get(tt_ID);
+					if(tt53_data == null) {
+						tt53_data = new ArrayList<DataRow>();
+						tt53_dataMap.put(tt_ID, tt53_data);
+					}
+					tt53_data.add(new DataRow(data, timestamp));
+					break;
+				}
 				default: {
 					log.warn("unknown tt_Type" +tt_Type);
 					/*long timeStampSeconds = Long.parseLong(row[3]);
@@ -332,6 +362,26 @@ public class Loader_TreeTalker {
 					"ttraw_StWC", 
 					"ttraw_adc_Vbat"
 			};
+			
+			String[] tt53_sensors = new String[] {
+					"ttraw_adc_bandgap",
+					"ttraw_bits",
+					"tt_air_relative_humidity",
+					"ttraw_air_temperature",
+					"ttraw_g_z",
+					"ttraw_g_z_std", 
+					"ttraw_g_y", 
+					"ttraw_g_y_std", 
+					"ttraw_g_x", 
+					"ttraw_g_x_std", 
+					"tt53_sensor11",
+					"tt53_sensor12",
+					"tt53_sensor13",
+					"tt53_sensor14",
+					"tt53_sensor15",
+					"tt53_sensor16",
+					"ttraw_adc_Vbat",
+			};
 
 
 			TreeSet<String> missingStationsCollector = new TreeSet<String>();
@@ -356,6 +406,11 @@ public class Loader_TreeTalker {
 				insert(tsdb, tt4D_dataMap, tt4D_sensors, missingStationsCollector, file.toPath());
 			}catch(Exception e) {
 				log.warn("at tt4D " + e.getMessage());
+			}
+			try {
+				insert(tsdb, tt53_dataMap, tt53_sensors, missingStationsCollector, file.toPath());
+			}catch(Exception e) {
+				log.warn("at tt53 " + e.getMessage());
 			}
 
 			if(!missingStationsCollector.isEmpty()) {

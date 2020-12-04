@@ -2152,3 +2152,17 @@ acoustic_evenness:
 
 acoustic_complexity:  
   aggregation: average
+  
+# 2020-12-03 TreeTalker manual calculated sensors  
+
+tt_VWWC:
+  description: daily VWWC
+  unit: VWWC
+  aggregation_day: last # pass-through daily values from raw to day aggregation
+  aggregation: average # aggregation from day to year
+  
+tt_sap_flow_density:
+  description: daily sap flow density
+  unit: sap flow density
+  aggregation_day: last # pass-through daily values from raw to day aggregation
+  aggregation: average # aggregation from day to year  

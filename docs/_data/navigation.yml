@@ -2,6 +2,8 @@
 main:
   - title: "Documentation"
     url: /doc
+  - title: "Paper"
+    url: https://doi.org/10.1016/j.cageo.2020.104641    
   - title: "Javadoc"
     url: /javadoc/    
   - title: "Source"
