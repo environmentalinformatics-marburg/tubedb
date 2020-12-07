@@ -103,8 +103,6 @@ public class ImportGenericCSV {
 			e.printStackTrace();
 			log.error(e+"   "+filePath);
 		}
-
-
 	}
 
 	protected String parseStationName(Path filePath) {

@@ -19,6 +19,7 @@ import tsdb.component.Region;
 import tsdb.loader.bale.TOA5Loader;
 import tsdb.loader.be.TimeSeriesLoaderBE;
 import tsdb.loader.burgwald.HoboLoader;
+import tsdb.loader.csv.CSV_MXminiLoader;
 import tsdb.loader.csv.ImportGenericCSV;
 import tsdb.loader.csv.MofLoader;
 import tsdb.loader.influx.InfluxLoader;
@@ -95,6 +96,10 @@ public class DataImport {
 			case "csv_tfi": {
 				TimeSeriesLoaderKiLi_manual_tfi TimeSerieaLoaderKiLi_manual_tfi = new TimeSeriesLoaderKiLi_manual_tfi(tsdb);
 				TimeSerieaLoaderKiLi_manual_tfi.loadOneDirectory_structure_kili_tfi(rootDirectory);
+				break;
+			}
+			case "csv_mxmini": {
+				new CSV_MXminiLoader(tsdb).load(rootDirectory);
 				break;
 			}
 			case "csv_hobo": {

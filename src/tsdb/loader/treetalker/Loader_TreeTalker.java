@@ -244,7 +244,7 @@ public class Loader_TreeTalker {
 					tt4D_data.add(new DataRow(data, timestamp));
 					break;
 				}
-				case "53": {
+				case "53": { // 53 = three level ground moisture sensor log record identifier
 					//log.info(tt_Type);					
 					int timestamp = toTimestamp(row[3]);
 					float[] data = new float[]{
@@ -374,12 +374,12 @@ public class Loader_TreeTalker {
 					"ttraw_g_y_std", 
 					"ttraw_g_x", 
 					"ttraw_g_x_std", 
-					"tt53_sensor11",
-					"tt53_sensor12",
-					"tt53_sensor13",
-					"tt53_sensor14",
-					"tt53_sensor15",
-					"tt53_sensor16",
+					"ttraw_gms_fq_1", // frequency of ground moisture sensor #1
+					"ttraw_gms_ntc_1", // ntc value of ground moisture sensor #1
+					"ttraw_gms_fq_2", // frequency of ground moisture sensor #2
+					"ttraw_gms_ntc_2", // ntc value of ground moisture sensor #2
+					"ttraw_gms_fq_3", // frequency of ground moisture sensor #3
+					"ttraw_gms_ntc_3", // ntc value of ground moisture sensor #3
 					"ttraw_adc_Vbat",
 			};
 

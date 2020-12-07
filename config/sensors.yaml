@@ -2165,4 +2165,11 @@ tt_sap_flow_density:
   description: daily sap flow density
   unit: sap flow density
   aggregation_day: last # pass-through daily values from raw to day aggregation
-  aggregation: average # aggregation from day to year  
+  aggregation: average # aggregation from day to year
+
+tt_twi_prec:
+  description: TWI precipitation
+  unit: TWI precipitation
+  aggregation_day: last # pass-through daily values from raw to day aggregation
+  aggregation: average # aggregation from day to year
+  
