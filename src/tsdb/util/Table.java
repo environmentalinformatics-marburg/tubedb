@@ -201,6 +201,9 @@ public class Table {
 		@Override
 		public boolean get(String[] row) {
 			String text = row[rowIndex];
+			if(text.isEmpty()) {
+				return missing;
+			}
 			if(text.length()!=1) {
 				text = text.trim();
 				if(text.length()!=1) {
