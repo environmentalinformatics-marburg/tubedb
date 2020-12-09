@@ -2177,7 +2177,7 @@ tt_quality:
   description: TreeTalker data quality
   unit: 0/1
   dependency: [tt_quality_diff]
-  raw_func: "(0 <= tt_quality_diff AND tt_quality_diff <= 15  ? 1 : 0)"
+  raw_func: "(0 <= tt_quality_diff AND tt_quality_diff <= 16  ? 1 : 0)"
   aggregation: average
   category: other 
   

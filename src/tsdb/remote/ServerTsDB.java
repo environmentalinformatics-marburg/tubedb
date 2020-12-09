@@ -364,12 +364,18 @@ public class ServerTsDB implements RemoteTsDB {
 			long[] interval = tsdb.getTimeInterval(plotID);
 			if(interval!=null) {
 				float voltage = Float.NaN;
+				float voltage_min_watch = 0;
+				float voltage_min_good = 0;
+				float voltage_min_error = Float.MAX_VALUE;
 				float scale = 1;
 				StreamIterator it = null;
 				//tsdb.streamStorage.getStationTimeInterval(plotID);
 				{
 					scale = 1;
 					String sensorName = "UOtt";
+					voltage_min_watch = 11.8f;
+					voltage_min_good = 12.2f;
+					voltage_min_error = 15.0f;
 					int[] sensorInterval = tsdb.streamStorage.getSensorTimeInterval(plotID, sensorName);
 					if(sensorInterval != null && sensorInterval[1] + (60*24) >= interval[1]) {
 						it = tsdb.streamStorage.getRawSensorIterator(plotID, sensorName, (long)sensorInterval[1], (long)sensorInterval[1]);
@@ -378,6 +384,9 @@ public class ServerTsDB implements RemoteTsDB {
 				if(it==null) {
 					scale = 1;
 					String sensorName = "UB";
+					voltage_min_watch = 11.8f;
+					voltage_min_good = 12.2f;
+					voltage_min_error = 15.0f;
 					int[] sensorInterval = tsdb.streamStorage.getSensorTimeInterval(plotID, sensorName);
 					if(sensorInterval!=null&&sensorInterval[1] + (60*24) >= interval[1]) {
 						it = tsdb.streamStorage.getRawSensorIterator(plotID, sensorName, (long)sensorInterval[1], (long)sensorInterval[1]);
@@ -397,6 +406,9 @@ public class ServerTsDB implements RemoteTsDB {
 					{
 						scale = 1000;
 						String sensorName = "tt_battery_voltage";
+						voltage_min_watch = 3.4f;
+						voltage_min_good = 3.5f;
+						voltage_min_error = 5.0f;
 						String[] schema = new String[] {sensorName};
 						if(tsdb.isValidSchemaWithVirtualSensors(plotID, schema)) {
 							schema = tsdb.supplementSchema(plotID, schema);
@@ -407,6 +419,9 @@ public class ServerTsDB implements RemoteTsDB {
 					if(node == null ){
 						scale = 1000;
 						String sensorName = "ttraw_Battery_level";
+						voltage_min_watch = 3.4f;
+						voltage_min_good = 3.5f;
+						voltage_min_error = 5.0f;
 						String[] schema = new String[] {sensorName};
 						if(tsdb.isValidSchemaWithVirtualSensors(plotID, schema)) {
 							schema = tsdb.supplementSchema(schema, getSensorNamesOfPlotWithVirtual(plotID));
@@ -434,7 +449,7 @@ public class ServerTsDB implements RemoteTsDB {
 				} catch(Exception e) {
 					log.error(e);
 				}
-				result.add(new PlotStatus(plotID, (int)interval[0], (int)interval[1], voltage / scale, plotMessage));
+				result.add(new PlotStatus(plotID, (int)interval[0], (int)interval[1], voltage / scale, voltage_min_watch, voltage_min_good, voltage_min_error, plotMessage));
 			}
 		});		
 		return result;

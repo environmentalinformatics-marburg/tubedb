@@ -95,7 +95,13 @@ public class Handler_status extends MethodHandler {
 				json_output.value(TimeUtil.oleMinutesToText(status.lastTimestamp));
 				if(Float.isFinite(status.voltage)) {
 					json_output.key("voltage");
-					json_output.value(new JSONFloat(status.voltage));					
+					json_output.value(new JSONFloat(status.voltage));	
+					json_output.key("voltage_min_watch");
+					json_output.value(new JSONFloat(status.voltage_min_watch));
+					json_output.key("voltage_min_good");
+					json_output.value(new JSONFloat(status.voltage_min_good));
+					json_output.key("voltage_min_error");
+					json_output.value(new JSONFloat(status.voltage_min_error));
 				}
 				if(status.plotMessage!=null) {
 					try {

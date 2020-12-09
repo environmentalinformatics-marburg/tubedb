@@ -130,9 +130,10 @@ Vue.component('demo-grid', {
 		return timeMark; 
 	},
 	
-	voltageStyle: function(voltage) {
+	voltageStyle: function(entry) {
+		var voltage = entry.voltage;
 		var voltageMark = "voltageMarkNaN";
-		if(voltage!=undefined) {
+		/*if(voltage != undefined) {
 			if(voltage>15) {
 				voltageMark = "voltageMarkNaN";
 			} else if(voltage>=12.2) {
@@ -142,6 +143,15 @@ Vue.component('demo-grid', {
 			}else if(voltage>=0) {
 				voltageMark = "volageMarkCRITICAL"; 
 			}				
+		}*/
+		if(voltage != undefined && 0 <= voltage && voltage < entry.voltage_min_error) {
+			if(entry.voltage_min_good <= voltage) {
+				voltageMark = "voltageMarkOK";
+			} else if(entry.voltage_min_watch <= voltage) {
+				voltageMark = "volageMarkWARN";
+			} else {
+				voltageMark = "volageMarkCRITICAL";
+			}
 		}
 		return voltageMark;
 	},
@@ -175,12 +185,7 @@ var statusApp = new Vue({
     searchQuery: '',
     gridColumns: ['plot', 'first_datetime', 'last_datetime', 'elapsed', 'voltage', 'message_date', 'message'],
 	gridColumnTitles: ['Plot', 'First Timestamp', 'Last Timestamp', 'elapsed days', 'latest voltage', 'reception date', 'reception message'],
-    gridData: [
-      {"plot":"AEG01","first_timestamp":57498540,"last_timestamp":61455420,"first_datetime":"2009-04-26T13:00","last_datetime":"2016-11-03T09:00","voltage":15.31,"message_date":"2016-11-03T09:12","message":"OK"},
-	  {"plot":"AEG02","first_timestamp":57495330,"last_timestamp":61456560,"first_datetime":"2009-04-24T07:30","last_datetime":"2016-11-04T04:00","voltage":12.67,"message_date":"2016-11-04T04:06:23","message":"OK"},
-	  {"plot":"AEG03","first_timestamp":57494190,"last_timestamp":61448040,"first_datetime":"2009-04-23T12:30","last_datetime":"2016-10-29T06:00","voltage":12.98,"message_date":"2016-10-29T07:02","message":"OK"},
-	  {"plot":"AEW47","first_timestamp":57495570,"last_timestamp":61427400,"first_datetime":"2009-04-24T11:30","last_datetime":"2016-10-14T22:00","voltage":12.1,"message_date":"2016-10-28T22:22","message":"AEW47: error[678] --> Der Remotecomputer hat nicht geantwortet. Führen Sie für den Remotecomputer einen Ping-Befehl aus, um sicherzustellen, dass der Server erreichbar ist."}
-    ]
+    gridData: []
   },
   
   created: function () {
