@@ -32,7 +32,7 @@ import tsdb.util.Util;
  */
 public class TsDB implements AutoCloseable {
 	private static final Logger log = LogManager.getLogger();
-	
+
 	public static final String tubedb_version = "1.19.3";
 
 	/**
@@ -51,7 +51,7 @@ public class TsDB implements AutoCloseable {
 	 * HEG01, ...
 	 */
 	private Map<String,Station> stationMap;
-	
+
 	/**
 	 * alias names for stations
 	 * does include station names
@@ -228,7 +228,7 @@ public class TsDB implements AutoCloseable {
 		}
 
 		for(Station station:getStations()) {
-			if(station.generalStation!=null) {
+			if(station.generalStation != null) {
 				GeneralStation generalStation = station.generalStation;
 				if(generalStation!=null) {
 					generalStation.stationList.add(station);
@@ -239,12 +239,32 @@ public class TsDB implements AutoCloseable {
 		}
 
 		for(VirtualPlot virtualplot:virtualplotMap.values()) {
-			if(virtualplot.generalStation!=null) {
+			if(virtualplot.generalStation != null) {
 				virtualplot.generalStation.virtualPlots.add(virtualplot);
 			} else {
 				log.warn("no general station in "+virtualplot.plotID);
 			}
 
+		}
+
+		for(GeneralStation g:getGeneralStations()) {
+			if(g.assigned_plots_list != null) {
+				for(String plotName : g.assigned_plots_list) {
+					VirtualPlot virtualplot = getVirtualPlot(plotName);
+					if(virtualplot != null) {
+						if( !g.virtualPlots.contains(virtualplot)) {
+							g.virtualPlots.add(virtualplot);
+						}
+					} else {
+						Station station = getStation(plotName);
+						if(station != null) {
+							if( !g.stationList.contains(station)) {
+								g.stationList.add(station);
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -253,15 +273,15 @@ public class TsDB implements AutoCloseable {
 	public Station getStation(String stationName) {
 		return stationMap.get(stationName);		
 	}
-	
+
 	public Station getStationWithAlias(String stationName) {
 		return stationAliasMap.get(stationName);		
 	}
-	
+
 	public Collection<Station> getStations() {
 		return stationMap.values();
 	}
-	
+
 	public void refresStationAliasMap() {
 		stationAliasMap.clear();
 		stationAliasMap.putAll(stationMap);
@@ -282,9 +302,9 @@ public class TsDB implements AutoCloseable {
 	public boolean stationExists(String stationName) {
 		return stationMap.containsKey(stationName);
 	}
-	
+
 	public boolean stationExistsWithAlias(String stationName) {
-	    return stationAliasMap.containsKey(stationName);
+		return stationAliasMap.containsKey(stationName);
 	}
 
 	public void insertStation(Station station) {
@@ -669,7 +689,7 @@ public class TsDB implements AutoCloseable {
 		}
 		throw new RuntimeException("plotID not found: "+plotID);
 	}
-	
+
 	public boolean isValidSchemaWithVirtualSensors(String plotID, String[] schema) {
 		VirtualPlot virtualPlot = getVirtualPlot(plotID);
 		if(virtualPlot!=null) {
@@ -759,7 +779,7 @@ public class TsDB implements AutoCloseable {
 			return Stream.concat(Arrays.stream(schema), additionalSensorNames.stream()).toArray(String[]::new);			
 		}
 	}
-	
+
 
 
 	/**
@@ -824,7 +844,7 @@ public class TsDB implements AutoCloseable {
 			return Stream.concat(Arrays.stream(schema), additionalSensorNames.stream()).toArray(String[]::new);			
 		}
 	}
-	
+
 	public String[] supplementSchema(String plotID, String[] schema) {
 		schema = supplementSchema(schema, getSensorNamesOfPlotWithVirtual(plotID));
 		return schema;
@@ -850,7 +870,7 @@ public class TsDB implements AutoCloseable {
 			station.labeledProperties.insert(property);
 		}
 	}
-	
+
 	public String[] getSensorNamesOfPlotWithVirtual(String plotID) {
 		if(plotID==null) {
 			log.warn("plotID null");

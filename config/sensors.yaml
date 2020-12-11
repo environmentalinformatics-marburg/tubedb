@@ -1952,35 +1952,56 @@ tt_StWC_pinus_sylvestris:
   aggregation: average   
 
 ttraw_Tref:
-  description: Raw reference probe transmit stem temperature
+  description: Raw reference probe transmit stem temperature, start
   unit: raw
   aggregation: average
   visibility: internal
   
 ttraw_Tref_1:
-  description: Raw reference probe transmit stem temperature
+  description: Raw reference probe transmit stem temperature, end
   unit: raw
   aggregation: average
   visibility: internal  
   
 ttraw_Theat:
-  description: Raw heating probe transmit stem temperature
+  description: Raw heating probe transmit stem temperature, start
   unit: raw
   aggregation: average
   visibility: internal
   
-tt_Tref: 
-  description: Reference probe transmit stem temperature
+ttraw_Theat_1:
+  description: Raw heating probe transmit stem temperature, end
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+  
+tt_Tref_0c: 
+  description: Reference probe transmit stem temperature, start
   unit: °C (degree Celcius)
   dependency: ttraw_Tref
   raw_func: "127.6 - 0.006045 * ttraw_Tref + 1.26E-07 * ttraw_Tref ^ 2 - 1.15E-12 * ttraw_Tref ^ 3"  
   aggregation: average
+  
+tt_Tref_1c: 
+  description: Reference probe transmit stem temperature, end
+  unit: °C (degree Celcius)
+  dependency: ttraw_Tref_1
+  raw_func: "127.6 - 0.006045 * ttraw_Tref_1 + 1.26E-07 * ttraw_Tref_1 ^ 2 - 1.15E-12 * ttraw_Tref_1 ^ 3"  
+  aggregation: average  
 
-tt_Theat: 
-  description: Heating probe transmit stem temperature
+tt_Theat_0c: 
+  description: Heating probe transmit stem temperature, start
   unit: °C (degree Celcius)
   dependency: ttraw_Theat
   raw_func: "127.6 - 0.006045 * ttraw_Theat + 1.26E-07 * ttraw_Theat ^ 2 - 1.15E-12 * ttraw_Theat ^ 3"  
+  aggregation: average  
+
+tt_Theat_1c: 
+  description: Heating probe transmit stem temperature, end
+  unit: °C (degree Celcius)
+  dependency: ttraw_Theat_1
+  raw_func: "127.6 - 0.006045 * ttraw_Theat_1 + 1.26E-07 * ttraw_Theat_1 ^ 2 - 1.15E-12 * ttraw_Theat_1 ^ 3"  
   aggregation: average   
 
 ttraw_growth:
@@ -2174,7 +2195,7 @@ tt_twi_prec:
   aggregation: average # aggregation from day to year
 
 tt_quality:  
-  description: TreeTalker data quality
+  description: TreeTalker data quality (0 <= tt_quality_diff <= 16)
   unit: 0/1
   dependency: [tt_quality_diff]
   raw_func: "(0 <= tt_quality_diff AND tt_quality_diff <= 16  ? 1 : 0)"
@@ -2182,9 +2203,9 @@ tt_quality:
   category: other 
   
 tt_quality_diff:  
-  description: diff (tt_Theat - tt_Tref)
+  description: diff (tt_Theat_1c - tt_Tref_1c)
   unit: °K (degree Kelvin)
-  dependency: [tt_Theat, tt_Tref]
-  raw_func: "tt_Theat - tt_Tref"
+  dependency: [tt_Theat_1c, tt_Tref_1c]
+  raw_func: "tt_Theat_1c - tt_Tref_1c"
   aggregation: average
   category: other 

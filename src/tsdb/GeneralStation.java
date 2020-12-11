@@ -32,6 +32,8 @@ public class GeneralStation {
 	
 	public final Interval viewTimeRange; //nullable
 	
+	public List<String> assigned_plots_list; //nullable
+	
 	public GeneralStation(String name, Region region, String longName, String group, Interval viewTimeRange) {
 		this.name = name;
 		this.region = region;
