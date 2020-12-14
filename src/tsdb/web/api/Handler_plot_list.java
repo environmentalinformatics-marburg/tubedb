@@ -19,6 +19,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
 
 import tsdb.TsDBFactory;
+import tsdb.remote.GeneralStationInfo;
 import tsdb.remote.PlotInfo;
 import tsdb.remote.RemoteTsDB;
 import tsdb.util.Table;
@@ -66,19 +67,19 @@ public class Handler_plot_list extends MethodHandler {
 		response.setContentType("text/plain;charset=utf-8");
 		String generalstationName = request.getParameter("generalstation");
 		String regionName = request.getParameter("region");
-		if(regionName!=null && !Web.isAllowed(userIdentity, regionName)) {
-			log.warn("no access to region "+regionName);
+		if(regionName != null && !Web.isAllowed(userIdentity, regionName)) {
+			log.warn("no access to region " + regionName);
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return;
 		}
-		if((generalstationName==null&&regionName==null)||(generalstationName!=null&&regionName!=null)) {
+		if((generalstationName == null && regionName == null) || (generalstationName != null && regionName != null)) {
 			log.warn("wrong call");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
 		Map<String,String> commentMap = null;
 		String comment = request.getParameter("comment");
-		if(comment!=null) {
+		if(comment != null) {
 			try {
 				commentMap = new HashMap<String,String>();
 				int commentYear = Integer.parseInt(comment);				
@@ -115,6 +116,40 @@ public class Handler_plot_list extends MethodHandler {
 		
 		
 		try {
+			HashMap<String, GeneralStationInfo> assigned_plotMap = new HashMap<String, GeneralStationInfo>();
+			
+			if(generalstationName != null) {
+				GeneralStationInfo[] generalStationInfos = tsdb.getGeneralStations();
+				if(generalStationInfos == null) {
+					log.error("generalStationInfos null: ");
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);				
+					return;
+				}
+				for(GeneralStationInfo generalStationInfo : generalStationInfos) {
+					if(generalStationInfo.name.equals(generalstationName)) {
+						if(generalStationInfo.assigned_plots != null && Web.isAllowed(userIdentity, generalStationInfo.region.name)) {
+							for(String assigned_plot : generalStationInfo.assigned_plots) {
+								assigned_plotMap.put(assigned_plot, generalStationInfo);
+							}
+						}
+					}
+				}
+			} else {
+				GeneralStationInfo[] generalStationInfos = tsdb.getGeneralStationsOfRegion(regionName);			
+				if(generalStationInfos == null) {
+					log.error("generalStationInfos null: ");
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);				
+					return;
+				}
+				for(GeneralStationInfo generalStationInfo : generalStationInfos) {
+					if(generalStationInfo.assigned_plots != null && Web.isAllowed(userIdentity, generalStationInfo.region.name)) {
+						for(String assigned_plot : generalStationInfo.assigned_plots) {
+							assigned_plotMap.put(assigned_plot, generalStationInfo);
+						}
+					}				
+				}
+			}			
+			
 			PlotInfo[] plotInfos = tsdb.getPlots();
 			if(plotInfos==null) {
 				log.error("plotInfos null: ");
@@ -122,10 +157,11 @@ public class Handler_plot_list extends MethodHandler {
 				return;
 			}
 			Predicate<PlotInfo> plotFilter;
-			if(generalstationName!=null) {
-				plotFilter = p->Web.isAllowed(userIdentity, p.generalStationInfo.region.name) && p.generalStationInfo.name.equals(generalstationName);
+			if(generalstationName != null) {
+				plotFilter = p -> (Web.isAllowed(userIdentity, p.generalStationInfo.region.name) && p.generalStationInfo.name.equals(generalstationName)) 
+						|| assigned_plotMap.containsKey(p.name);
 			} else {
-				plotFilter = p->p.generalStationInfo.region.name.equals(regionName);
+				plotFilter = p -> p.generalStationInfo.region.name.equals(regionName) || assigned_plotMap.containsKey(p.name);
 			}
 			final Map<String, String> cMap = commentMap;
 			String[] webList = Arrays.stream(plotInfos)

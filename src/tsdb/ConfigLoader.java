@@ -194,6 +194,10 @@ public class ConfigLoader {
 	 * @param configFile
 	 */
 	public void readLoggerTypeSchema(String configFile) {
+		if(!new File(configFile).exists()) {
+			log.warn("missing config file: " + configFile);
+			return;
+		}
 		try {
 			Wini ini = new Wini(new File(configFile));
 			for(String typeName:ini.keySet()) {
@@ -563,6 +567,11 @@ public class ConfigLoader {
 	}
 
 	public void readPlotInventory(String configFile) {
+		if(!new File(configFile).exists()) {
+			log.warn("missing config file: " + configFile);
+			return;
+		}
+		
 		Table table = Table.readCSV(configFile,',');
 		ColumnReaderString cr_plot = table.createColumnReader("plot");
 		ColumnReaderString cr_general = table.createColumnReader("general");
@@ -655,6 +664,9 @@ public class ConfigLoader {
 			Map<String, List<StationProperties>> stationPropertiesListMap = new HashMap<String, List<StationProperties>>();
 
 			for(String[] row:table.rows) {
+				if(row.length == 0 || (row.length == 1 && row[0].isEmpty())) {
+					continue;
+				}
 				String plotID = cr_plot.get(row);
 				String loggerTypeName = cr_logger.get(row);
 				String serial = cr_serial.get(row);

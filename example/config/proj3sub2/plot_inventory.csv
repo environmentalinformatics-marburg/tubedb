@@ -1,0 +1,3 @@
+plot,general,lat,lon,focal,is_station,logger,alternative_id,elevation,comment
+stationC,sub2main,51.3508,8.9895,N,N,,,251.2,
+stationD,sub2main,51.2778,9.0774,N,N,,,245.0,

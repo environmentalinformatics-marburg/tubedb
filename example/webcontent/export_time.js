@@ -60,6 +60,15 @@ function on_cancel() {
 
 function on_apply() {
 	incTask();
+
+	if(document.getElementById("spatial_aggregation_radio_separate").checked) {
+		json_settings.spatial_aggregation = "separate";
+	} else if(document.getElementById("spatial_aggregation_radio_aggregated").checked) {
+		json_settings.spatial_aggregation = "aggregated";
+	} else if(document.getElementById("spatial_aggregation_radio_separate_and_aggregated").checked) {
+		json_settings.spatial_aggregation = "separate_and_aggregated";
+	}
+
 	json_settings.timestep = document.getElementById("choose_aggregation").value;
 	
 	if(document.getElementById("radio_all").checked) {
@@ -87,6 +96,15 @@ function on_apply() {
 
 function on_apply_go() {
 	incTask();
+
+	if(document.getElementById("spatial_aggregation_radio_separate").checked) {
+		json_settings.spatial_aggregation = "separate";
+	} else if(document.getElementById("spatial_aggregation_radio_aggregated").checked) {
+		json_settings.spatial_aggregation = "aggregated";
+	} else if(document.getElementById("spatial_aggregation_radio_separate_and_aggregated").checked) {
+		json_settings.spatial_aggregation = "separate_and_aggregated";
+	}
+
 	json_settings.timestep = document.getElementById("choose_aggregation").value;
 	
 	if(document.getElementById("radio_all").checked) {
@@ -158,6 +176,16 @@ function radio_select(timespan_type) {
 	}
 }
 
+function spatial_aggregation_radio_select(spatial_aggregation) {
+	if(spatial_aggregation === "separate") {
+		document.getElementById("spatial_aggregation_radio_separate").checked = true;
+	} else if(spatial_aggregation === "aggregated") {
+		document.getElementById("spatial_aggregation_radio_aggregated").checked = true;
+	} else if(spatial_aggregation === "separate_and_aggregated") {
+		document.getElementById("spatial_aggregation_radio_separate_and_aggregated").checked = true;
+	}
+}
+
 
 var time_select_year;
 var time_select_years_from;
@@ -189,6 +217,11 @@ $(document).ready(function(){
 	$.getJSON(url_export_settings).done(function( data ) {
 		json_settings = data;
 		console.log(json_settings);
+
+		var spatial_aggregation = json_settings.spatial_aggregation;
+		if(spatial_aggregation !== undefined) {
+			spatial_aggregation_radio_select(spatial_aggregation);
+		}
 		
 		document.getElementById("choose_aggregation").value = json_settings.timestep;
 		

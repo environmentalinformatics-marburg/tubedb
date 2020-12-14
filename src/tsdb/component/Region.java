@@ -29,4 +29,9 @@ public class Region implements Serializable {
 		this.defaultGeneralStation = null;
 		this.description = null;
 	}
+	
+	@Override
+	public String toString() {
+		return "Region [name=" + name + ", longName=" + longName + "]";
+	}
 }

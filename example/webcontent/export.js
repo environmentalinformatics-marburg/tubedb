@@ -78,6 +78,7 @@ var region_output = getID("region_output");
 var region_description_output = getID("region_description_output");
 var timespan_output = getID("timespan_output");
 var aggregation_output = getID("aggregation_output");
+var spatial_aggregation_output = getID("spatial_aggregation_output");
 
 clear_println(region_output,"query data...");
 incTask();
@@ -143,6 +144,16 @@ $.getJSON(url_export_settings).done(function( data ) {
 			
 		} else {
 			timespanText = "[not valid timespan]";
+		}
+		
+		if(json_settings.spatial_aggregation === "separate") {
+			spatial_aggregation_output.innerHTML = "separate plots";
+		} else if(json_settings.spatial_aggregation === "aggregated") {
+			spatial_aggregation_output.innerHTML = "combined plots";
+		} else if(json_settings.spatial_aggregation === "separate_and_aggregated") {
+			spatial_aggregation_output.innerHTML = "both separate and combined plots";
+		} else {
+			spatial_aggregation_output.innerHTML = "unknown";
 		}		
 		
 		timespan_output.innerHTML = timespanText;
@@ -167,11 +178,17 @@ $.getJSON(url_export_settings).done(function( data ) {
 		if(json_settings.desc_settings) {
 			settings_array.push("include settings description");
 		}
-		if(json_settings.allinone) {
-			settings_array.push("all plots in one file");
-		} else {
-			settings_array.push("one file per plot");
+		if(json_settings.spatial_aggregation == "separate" ||  json_settings.spatial_aggregation == "separate_and_aggregated") {
+			if(json_settings.allinone) {
+				settings_array.push("all plots in one file");
+			} else {
+				settings_array.push("one file per plot");
+			}
 		}
+		if(json_settings.spatial_aggregation == "aggregated" ||  json_settings.spatial_aggregation == "separate_and_aggregated") {
+			settings_array.push("plots aggregated in one file");
+		}
+
 		if(!json_settings.write_header) {
 			settings_array.push("not write CSV header");
 		}		

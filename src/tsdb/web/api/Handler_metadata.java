@@ -3,6 +3,7 @@ package tsdb.web.api;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -94,10 +95,11 @@ public class Handler_metadata extends MethodHandler {
 		}
 		json_output.endObject();
 
-		GeneralStationInfo[] generalStationInfos = tsdb.getGeneralStationsOfRegion(region.name);		
+		GeneralStationInfo[] generalStationInfos = tsdb.getGeneralStationsOfRegion(region.name);
+		HashMap<String, GeneralStationInfo> assigned_plotMap = new HashMap<String, GeneralStationInfo>();
 		json_output.key("general_stations");
 		json_output.array();
-		for(GeneralStationInfo generalStationInfo:generalStationInfos) {
+		for(GeneralStationInfo generalStationInfo : generalStationInfos) {
 			json_output.object();
 			json_output.key("id");
 			json_output.value(generalStationInfo.name);
@@ -113,6 +115,12 @@ public class Handler_metadata extends MethodHandler {
 				json_output.endObject();
 			}
 			json_output.endObject();
+			if(generalStationInfo.assigned_plots != null) {
+				for(String assigned_plot : generalStationInfo.assigned_plots) {
+					assigned_plotMap.put(assigned_plot, generalStationInfo);
+				}
+			}
+			
 		}
 		json_output.endArray();
 
@@ -123,7 +131,7 @@ public class Handler_metadata extends MethodHandler {
 		json_output.key("plots");
 		json_output.array();
 		for(PlotInfo plotInfo:plotInfos) {
-			if(region.name.equals(plotInfo.generalStationInfo.region.name)) {
+			if(region.name.equals(plotInfo.generalStationInfo.region.name) || assigned_plotMap.containsKey(plotInfo.name)) {
 				String[] sensorNames = tsdb.getSensorNamesOfPlotWithVirtual(plotInfo.name);
 				Arrays.sort(sensorNames, String.CASE_INSENSITIVE_ORDER);
 				json_output.object();

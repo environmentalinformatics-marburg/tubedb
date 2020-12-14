@@ -27,6 +27,7 @@ import tsdb.remote.GeneralStationInfo;
 import tsdb.remote.PlotInfo;
 import tsdb.remote.RemoteTsDB;
 import tsdb.util.Pair;
+import tsdb.util.TimeUtil;
 import tsdb.web.util.Web;
 
 /**
@@ -283,12 +284,26 @@ public class TsDBAPIHandler extends AbstractHandler {
 	}
 
 	private boolean handle_region_plot_list(PrintWriter writer, String regionName) {
-		try {
+		try {			
+			GeneralStationInfo[] generalStationInfos = tsdb.getGeneralStationsOfRegion(regionName);			
+			if(generalStationInfos == null) {
+				return false;
+			}
+			
+			HashMap<String, GeneralStationInfo> assigned_plotMap = new HashMap<String, GeneralStationInfo>();
+			for(GeneralStationInfo generalStationInfo : generalStationInfos) {
+				if(generalStationInfo.assigned_plots != null) {
+					for(String assigned_plot : generalStationInfo.assigned_plots) {
+						assigned_plotMap.put(assigned_plot, generalStationInfo);
+					}
+				}				
+			}			
+			
 			PlotInfo[] plotInfos = tsdb.getPlots();
-			if(plotInfos!=null) {
+			if(plotInfos != null) {
 				String[] webList = Arrays.stream(plotInfos)
-						.filter(p->p.generalStationInfo.region.name.equals(regionName))
-						.map(p->p.name)
+						.filter(plotInfo -> plotInfo.generalStationInfo.region.name.equals(regionName) || assigned_plotMap.containsKey(plotInfo.name))
+						.map(plotInfo -> plotInfo.name)
 						.toArray(String[]::new);
 				//String[] webList = Arrays.stream(generalStationInfos).map(g->g.name+","+g.longName).toArray(String[]::new);
 				writeStringArray(writer, webList);

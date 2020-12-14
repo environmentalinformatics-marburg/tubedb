@@ -23,6 +23,7 @@ public class GeneralStationInfo implements Serializable, Comparable<GeneralStati
 	public final Interval viewTimeRange; //nullable
 	public final int stationCount;
 	public final int virtualPlotCount;
+	public final String[] assigned_plots;
 	
 	public GeneralStationInfo(GeneralStation generalStation) {
 		this.name = generalStation.name;
@@ -32,6 +33,7 @@ public class GeneralStationInfo implements Serializable, Comparable<GeneralStati
 		this.viewTimeRange = generalStation.viewTimeRange;
 		this.stationCount = generalStation.stationList.size();
 		this.virtualPlotCount = generalStation.virtualPlots.size();
+		this.assigned_plots = generalStation.assigned_plots == null ? null : generalStation.assigned_plots.toArray(new String[0]);
 	}
 	
 	public GeneralStationInfo(String generalName, String regionName) {
@@ -43,6 +45,7 @@ public class GeneralStationInfo implements Serializable, Comparable<GeneralStati
 		this.viewTimeRange = null;
 		this.stationCount = 0;
 		this.virtualPlotCount = 0;
+		this.assigned_plots = null;
 	}
 	
 	public String getName() {

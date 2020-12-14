@@ -1,0 +1,4 @@
+plot,logger,serial,start,end
+stationC,logger3B,rec123,*,*
+stationD,logger3B,rec124,*,*
+

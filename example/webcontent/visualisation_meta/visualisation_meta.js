@@ -614,8 +614,14 @@ methods: {
 					};
 					view.by_year = true;
 					Object.assign(view, self.timeParameters);
-					if(self.viewType == 'table' || self.viewType == 'csv-file') {
+					if(self.viewType == 'table') {
+						view.sensor = sensorNames.slice(0, 10);
+					}
+					if(self.viewType == 'csv-file') {
 						view.sensor = sensorNames;
+					}
+					if(self.viewType == 'table') {
+						view.plot = plotStationNames.slice(0, 10);
 					}
 					if(self.viewType == 'csv-file') {
 						view.plot = plotStationNames;
@@ -763,6 +769,7 @@ methods: {
 				url = url_query_heatmap;
 				break;
 			case 'table':
+				params.casted = true;
 				url = url_query_csv;
 				responseType = 'text';			
 				break;
@@ -774,6 +781,8 @@ methods: {
 			default:
 				url = 'error';
 		}
+
+		console.log(params);
 		
 		if(self.viewType == 'csv-file') {
 			view.url = url;
@@ -798,7 +807,10 @@ methods: {
 			}
 			case 'table': {
 				var data = response.data.split('\r\n');
-				var header = data.shift();
+				console.log("lines loaded");
+				var header = data.shift().split(',');
+				console.log(header);
+				header = header.map(name => name.replace(/\./g, " "));
 				data.pop(); //remove last empty line
 				self.table = {header: header, data: data};
 				view.status = "done";

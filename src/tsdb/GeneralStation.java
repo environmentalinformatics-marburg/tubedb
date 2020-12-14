@@ -52,4 +52,9 @@ public class GeneralStation {
 		return Stream.concat(stationStream, virtualPlotStream);
 	}
 
+	@Override
+	public String toString() {
+		return "GeneralStation [name=" + name + ", region=" + region + ", longName=" + longName + ", assigned_plots " + assigned_plots + "]";
+	}
+
 }

@@ -57,16 +57,21 @@ $(document).ready(function(){
 		json_settings.col_plotid = document.getElementById("col_plotid").checked;
 		json_settings.col_timestamp = document.getElementById("col_timestamp").checked;
 		json_settings.col_datetime = document.getElementById("col_datetime").checked;
+		json_settings.col_year = document.getElementById("col_year").checked;
+		json_settings.col_month = document.getElementById("col_month").checked;
+		json_settings.col_day = document.getElementById("col_day").checked;
+		json_settings.col_hour = document.getElementById("col_hour").checked;
+		json_settings.col_day_of_year = document.getElementById("col_day_of_year").checked;
 		json_settings.col_qualitycounter = document.getElementById("col_qualitycounter").checked;
 		json_settings.write_header = document.getElementById("write_header").checked;
+		json_settings.casted = document.getElementById("allinoneColumns").checked;
 
 		$.postJSON(url_export_apply_settings,json_settings)
 		 .done(function() {
 			window.location = url_result_page;
 			decTask();
 		 })
-		 .fail(function(jqXHR, textStatus, errorThrown) {alert("error sending settings data: "+textStatus+"  "+errorThrown);decTask();});	
-	 
+		 .fail(function(jqXHR, textStatus, errorThrown) {alert("error sending settings data: "+textStatus+"  "+errorThrown);decTask();});	 
 	}
 	
 	incTask();
@@ -83,8 +88,27 @@ $(document).ready(function(){
 		document.getElementById("col_plotid").checked = json_settings.col_plotid;
 		document.getElementById("col_timestamp").checked = json_settings.col_timestamp;
 		document.getElementById("col_datetime").checked = json_settings.col_datetime;
+		document.getElementById("col_year").checked = json_settings.col_year;
+		document.getElementById("col_month").checked = json_settings.col_month;
+		document.getElementById("col_day").checked = json_settings.col_day;
+		document.getElementById("col_hour").checked = json_settings.col_hour;
+		document.getElementById("col_day_of_year").checked = json_settings.col_day_of_year;
 		document.getElementById("col_qualitycounter").checked = json_settings.col_qualitycounter;
 		document.getElementById("write_header").checked = json_settings.write_header;
+
+		if(json_settings.spatial_aggregation === "aggregated") {
+			document.getElementById("allinone").disabled = true;
+		} else {
+			document.getElementById("allinone").disabled = false;
+		}
+
+		document.getElementById("allinoneRows").checked = false;
+		document.getElementById("allinoneColumns").checked = false;
+		if(json_settings.casted !== undefined && json_settings.casted) {
+			document.getElementById("allinoneColumns").checked = true;
+		} else {
+			document.getElementById("allinoneRows").checked = true;
+		}
 		
 		var raw = false;
 		if(json_settings.timestep=="raw") {
@@ -95,6 +119,7 @@ $(document).ready(function(){
 			document.getElementById("div_quality").style.color = "silver";
 		}		
 		
+		update();
 		
 		decTask();
 	})
@@ -102,3 +127,19 @@ $(document).ready(function(){
 
 	decTask();
 });
+
+function update() {
+	if((!document.getElementById("allinone").disabled) && document.getElementById("allinone").checked) {
+		document.getElementById("allinoneRows").disabled = false;
+		document.getElementById("allinoneColumns").disabled = false;
+	} else {
+		document.getElementById("allinoneRows").disabled = true;
+		document.getElementById("allinoneColumns").disabled = true;
+	}
+	
+	if(document.getElementById("allinone").disabled || (document.getElementById("allinone").checked && document.getElementById("allinoneColumns").checked)) {
+		document.getElementById("col_plotid").disabled = true;
+	} else {
+		document.getElementById("col_plotid").disabled = false;
+	}
+}
