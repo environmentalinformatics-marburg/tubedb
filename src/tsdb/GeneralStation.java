@@ -32,9 +32,9 @@ public class GeneralStation {
 	
 	public final Interval viewTimeRange; //nullable
 	
-	public List<String> assigned_plots_list; //nullable
+	public List<String> assigned_plots; //nullable
 	
-	public GeneralStation(String name, Region region, String longName, String group, Interval viewTimeRange) {
+	public GeneralStation(String name, Region region, String longName, String group, Interval viewTimeRange, List<String> assigned_plots) {
 		this.name = name;
 		this.region = region;
 		this.longName = longName;
@@ -43,6 +43,7 @@ public class GeneralStation {
 		this.virtualPlots = new ArrayList<VirtualPlot>();
 		this.group = group;
 		this.viewTimeRange = viewTimeRange;
+		this.assigned_plots = assigned_plots;
 	}
 	
 	public Stream<String> getStationAndVirtualPlotNames() {

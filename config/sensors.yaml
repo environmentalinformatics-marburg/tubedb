@@ -2208,4 +2208,70 @@ tt_quality_diff:
   dependency: [tt_Theat_1c, tt_Tref_1c]
   raw_func: "tt_Theat_1c - tt_Tref_1c"
   aggregation: average
+  category: other
+
+ttraw_gms_fq_1:
+  description: "frequency of ground moisture sensor #1"
+  unit: (raw)
+  category: other
+  aggregation: average
+  visibility: internal
+  
+ttraw_gms_ntc_1:
+  description: "ntc value of ground moisture sensor #1"
+  unit: (raw)
+  category: other   
+  aggregation: average
+  visibility: internal
+  
+ttraw_gms_fq_2:
+  description: "frequency of ground moisture sensor #2"
+  unit: (raw)
+  category: other
+  aggregation: average
+  visibility: internal
+  
+ttraw_gms_ntc_2:
+  description: "ntc value of ground moisture sensor #2"
+  unit: (raw)
   category: other 
+  aggregation: average
+  visibility: internal
+
+ttraw_gms_fq_3:
+  description: "frequency of ground moisture sensor #3"
+  unit: (raw)
+  category: other
+  aggregation: average
+  visibility: internal
+  
+ttraw_gms_ntc_3:
+  description: "ntc value of ground moisture sensor #3"
+  unit: (raw)
+  category: other
+  aggregation: average
+  visibility: internal
+  
+tt_gms_T_1: 
+  description: "Temperature of ground moisture sensor #1"
+  unit: °C (degree Celcius)
+  dependency: ttraw_gms_ntc_1
+  raw_func: "127.6 - 0.006045 * ttraw_gms_ntc_1 + 1.26E-07 * ttraw_gms_ntc_1 ^ 2 - 1.15E-12 * ttraw_gms_ntc_1 ^ 3"  
+  aggregation: average
+  category: temperature
+
+tt_gms_T_2: 
+  description: "Temperature of ground moisture sensor #2"
+  unit: °C (degree Celcius)
+  dependency: ttraw_gms_ntc_2
+  raw_func: "127.6 - 0.006045 * ttraw_gms_ntc_2 + 1.26E-07 * ttraw_gms_ntc_2 ^ 2 - 1.15E-12 * ttraw_gms_ntc_2 ^ 3"  
+  aggregation: average
+  category: temperature  
+
+tt_gms_T_3: 
+  description: "Temperature of ground moisture sensor #3"
+  unit: °C (degree Celcius)
+  dependency: ttraw_gms_ntc_3
+  raw_func: "127.6 - 0.006045 * ttraw_gms_ntc_3 + 1.26E-07 * ttraw_gms_ntc_3 ^ 2 - 1.15E-12 * ttraw_gms_ntc_3 ^ 3"  
+  aggregation: average
+  category: temperature

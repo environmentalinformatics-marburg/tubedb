@@ -71,6 +71,7 @@ public class ConfigLoader {
 		public String longName;
 		public String group;
 		public Interval viewTimeRange; //nullable
+		public List<String> assigned_plots;  //nullable
 
 		public GeneralStationBuilder(String name) {
 			this.name = name;
@@ -83,7 +84,16 @@ public class ConfigLoader {
 			if(group==null) {
 				group = name;
 			}
-			return new GeneralStation(name, region, longName, group, viewTimeRange);
+			return new GeneralStation(name, region, longName, group, viewTimeRange, assigned_plots);
+		}
+
+		public void addAssigned_plots(String[] plots) {			
+			List<String> plotList = Arrays.asList(plots);			
+			if(assigned_plots == null) {
+				this.assigned_plots = plotList;
+			} else {
+				this.assigned_plots.addAll(plotList);
+			}			
 		}
 	}
 
@@ -118,8 +128,8 @@ public class ConfigLoader {
 				}
 			}
 
-			Section section_general_station_groups = ini.get("general_station_groups"); //******************** [general_station_groups]			if(section_general_station_long_names!=null) {
-			if(section_general_station_groups!=null) {
+			Section section_general_station_groups = ini.get("general_station_groups"); //******************** [general_station_groups]			
+			if(section_general_station_groups != null) {
 				for(Entry<String, String> entry:section_general_station_groups.entrySet()) {
 					if(creationMap.containsKey(entry.getKey())) {
 						creationMap.get(entry.getKey()).group = entry.getValue();
@@ -130,7 +140,7 @@ public class ConfigLoader {
 			}
 
 			Section section_general_station_view_time_ranges = ini.get("general_station_view_time_ranges");  //******************** [general_station_view_time_ranges]
-			if(section_general_station_view_time_ranges!=null) {
+			if(section_general_station_view_time_ranges != null) {
 				for(Entry<String, String> entry:section_general_station_view_time_ranges.entrySet()) {
 					if(creationMap.containsKey(entry.getKey())) {
 						String range = entry.getValue();
@@ -146,6 +156,22 @@ public class ConfigLoader {
 						}
 
 
+					} else {
+						log.warn("general station unknown: "+entry.getKey());
+					}
+				}
+			}
+			
+			Section section_general_station_plots = ini.get("general_station_assigned_plots"); //******************** [general_station_assigned_plots]
+			if(section_general_station_plots != null) {
+				for(Entry<String, String> entry : section_general_station_plots.entrySet()) {
+					if(creationMap.containsKey(entry.getKey())) {
+						String plotsText = entry.getValue();
+						String[] plots = plotsText.split("\\s+");
+						if(plots.length > 0) {
+							GeneralStationBuilder builder = creationMap.get(entry.getKey());
+							builder.addAssigned_plots(plots);												
+						}
 					} else {
 						log.warn("general station unknown: "+entry.getKey());
 					}

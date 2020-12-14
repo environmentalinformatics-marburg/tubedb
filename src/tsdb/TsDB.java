@@ -33,7 +33,7 @@ import tsdb.util.Util;
 public class TsDB implements AutoCloseable {
 	private static final Logger log = LogManager.getLogger();
 
-	public static final String tubedb_version = "1.19.3";
+	public static final String tubedb_version = "1.19.4";
 
 	/**
 	 * map regionName -> Region
@@ -248,8 +248,8 @@ public class TsDB implements AutoCloseable {
 		}
 
 		for(GeneralStation g:getGeneralStations()) {
-			if(g.assigned_plots_list != null) {
-				for(String plotName : g.assigned_plots_list) {
+			if(g.assigned_plots != null) {
+				for(String plotName : g.assigned_plots) {
 					VirtualPlot virtualplot = getVirtualPlot(plotName);
 					if(virtualplot != null) {
 						if( !g.virtualPlots.contains(virtualplot)) {
