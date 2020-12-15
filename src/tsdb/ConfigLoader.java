@@ -33,6 +33,7 @@ import org.yaml.snakeyaml.constructor.Construct;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.Tag;
 
+import tsdb.GeneralStation.GeneralStationBuilder;
 import tsdb.component.LoggerType;
 import tsdb.component.Region;
 import tsdb.component.Sensor;
@@ -62,39 +63,6 @@ public class ConfigLoader {
 	public ConfigLoader(TsDB tsdb) {
 		throwNull(tsdb);
 		this.tsdb = tsdb;
-	}
-
-	private class GeneralStationBuilder {
-
-		public String name;
-		public Region region;
-		public String longName;
-		public String group;
-		public Interval viewTimeRange; //nullable
-		public List<String> assigned_plots;  //nullable
-
-		public GeneralStationBuilder(String name) {
-			this.name = name;
-		}
-
-		public GeneralStation build() {			                  
-			if(longName==null) {
-				longName = name;
-			}
-			if(group==null) {
-				group = name;
-			}
-			return new GeneralStation(name, region, longName, group, viewTimeRange, assigned_plots);
-		}
-
-		public void addAssigned_plots(String[] plots) {			
-			List<String> plotList = Arrays.asList(plots);			
-			if(assigned_plots == null) {
-				this.assigned_plots = plotList;
-			} else {
-				this.assigned_plots.addAll(plotList);
-			}			
-		}
 	}
 
 	/**
@@ -167,7 +135,8 @@ public class ConfigLoader {
 				for(Entry<String, String> entry : section_general_station_plots.entrySet()) {
 					if(creationMap.containsKey(entry.getKey())) {
 						String plotsText = entry.getValue();
-						String[] plots = plotsText.split("\\s+");
+						//String[] plots = plotsText.split("\\s+");
+						String[] plots = plotsText.split(",");
 						if(plots.length > 0) {
 							GeneralStationBuilder builder = creationMap.get(entry.getKey());
 							builder.addAssigned_plots(plots);												

@@ -22,27 +22,35 @@ file structure:
 ---
 ### `config/project1/general_stations.ini`
 
-Ini-file lists plot groups ("general stations"). One plot is contained in exactly one plot group.
+Ini-file lists plot groups ("general stations"). One plot is contained in exactly one plot group (primary group).
 
-Optionally several groups may form a super group. If present all plots of one super group are the set of plots for interpolation and reference generation purposes.
+Optionally a plot may be assigned to several plot groups (secondary groups).
+
+Optionally several plot groups may form a processing group ("general_station_groups"). If present all plots of one processing group are the set of plots for interpolation and reference generation purposes. Processing groups are not visible at the web interface.
 
 file structure:
 
 `[general_stations]`
 
-`GROUP_NAME = REGION_NAME`
+`PLOT_GROUP_NAME = REGION_NAME`
 
 ...
 
 `[general_station_long_names]`
  
-`GROUP_NAME = GROUP_LONG_NAME`
+`PLOT_GROUP_NAME = LONG_NAME`
 
 ...
 
-`[general_station_groups]` (optional)
+`[general_station_assigned_plots]` *(optional list of additional plots that are assigned to this plot group, plots that are contained in a different primary plot group)*
 
-`GROUP_NAME = SUPER_GROUP_NAME`
+`PLOT_GROUP_NAME	=	PLOT1, PLOT2, PLOT3`, ...
+
+...
+
+`[general_station_groups]` *(optional processing groups)*
+
+`PLOT_GROUP_NAME = PROCESSING_GROUP_NAME`
 
 ...
 
