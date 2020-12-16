@@ -2051,7 +2051,8 @@ tt_battery_voltage:
   dependency: [ttraw_adc_bandgap, ttraw_adc_Vbat]
   raw_func: "2 * 1100 * (ttraw_adc_Vbat / ttraw_adc_bandgap)"  
   aggregation: average  
-
+  physical_range: [0.0, 5000.0]
+  
 tt_Ts_20_exploratories: 
   description: Ts_20 from Tref_1 (exploratories only)
   unit: °C (degree Celcius)
@@ -2275,3 +2276,9 @@ tt_gms_T_3:
   raw_func: "127.6 - 0.006045 * ttraw_gms_ntc_3 + 1.26E-07 * ttraw_gms_ntc_3 ^ 2 - 1.15E-12 * ttraw_gms_ntc_3 ^ 3"  
   aggregation: average
   category: temperature
+  
+tt_Battery_level:
+  description: Battery voltage
+  unit: mV (millivolt) 
+  aggregation: average
+  physical_range: [0.0, 5000.0]  

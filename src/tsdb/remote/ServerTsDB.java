@@ -418,9 +418,12 @@ public class ServerTsDB implements RemoteTsDB {
 					}
 					if(node == null ){
 						scale = 1000;
-						String sensorName = "ttraw_Battery_level";
-						voltage_min_watch = 3.4f;
+						String sensorName = "tt_Battery_level";
+						/*voltage_min_watch = 3.4f;
 						voltage_min_good = 3.5f;
+						voltage_min_error = 5.0f;*/
+						voltage_min_watch = 3.6f;
+						voltage_min_good = 3.8f;
 						voltage_min_error = 5.0f;
 						String[] schema = new String[] {sensorName};
 						if(tsdb.isValidSchemaWithVirtualSensors(plotID, schema)) {

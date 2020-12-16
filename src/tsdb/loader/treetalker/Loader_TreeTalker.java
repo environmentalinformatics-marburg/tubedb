@@ -313,7 +313,7 @@ public class Loader_TreeTalker {
 					"ttraw_MNC_telephone_operator",
 					"ttraw_GSM_registration",
 					"ttraw_GSM_field level",
-					"ttraw_Battery_level",
+					"tt_Battery_level",
 					// "Firmware Version", // Firmware Version is not a number	
 			};			
 
