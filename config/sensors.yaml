@@ -1542,7 +1542,7 @@ Tsky:
   interpolation_mse: 7
   category: temperature
   dependency: LWDR
-  post_hour_func: "(LWDR / 5.67e-11)^0.25 - 273.15"
+  raw_func: "(LWDR / 5.67e-11)^0.25 - 273.15"
 
 Tgnd:
   description: Ground temperature
@@ -1554,7 +1554,7 @@ Tgnd:
   interpolation_mse: 7
   category: temperature
   dependency: LWUR
-  post_hour_func: "(LWUR / 5.67e-11)^0.25 - 273.15"
+  raw_func: "(LWUR / 5.67e-11)^0.25 - 273.15"
   
 precipitation_radolan:
   description: Precipitation based on RADOLAN product
