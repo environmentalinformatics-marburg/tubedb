@@ -2,7 +2,6 @@ package tsdb.iterator;
 
 import static tsdb.util.AssumptionCheck.throwEmpty;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;

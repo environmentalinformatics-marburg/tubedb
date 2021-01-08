@@ -667,254 +667,192 @@ B_01:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements) 
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_02:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
  
 B_03:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_04:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_05:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_06:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_07:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_08:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_09:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_10:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_11:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_12:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
  
 B_13:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_14:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_15:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_16:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_17:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_18:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_19:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_20:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_21:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_22:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_23:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_24:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_25:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_26:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_27:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_28:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_29:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 B_30:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
-  step_range: [0.0, 1000.0]
   category: water 
   
 Fog:
   description: Fog
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 1000.0]
   category: water 
   
 Rainfall:
   description: Precipitation
   unit: mm (millimeter) (based on approx. weekly measurements)  
   aggregation: sum
-  physical_range: [0.0, 2000.0]
   category: water 
 
 #************* south africa sensors at own stations *********
@@ -2213,7 +2151,7 @@ tt_quality_diff:
 
 ttraw_gms_fq_1:
   description: "frequency of ground moisture sensor #1"
-  unit: (raw)
+  unit: raw Hz (hertz)
   category: other
   aggregation: average
   visibility: internal
@@ -2227,7 +2165,7 @@ ttraw_gms_ntc_1:
   
 ttraw_gms_fq_2:
   description: "frequency of ground moisture sensor #2"
-  unit: (raw)
+  unit: raw Hz (hertz)
   category: other
   aggregation: average
   visibility: internal
@@ -2241,7 +2179,7 @@ ttraw_gms_ntc_2:
 
 ttraw_gms_fq_3:
   description: "frequency of ground moisture sensor #3"
-  unit: (raw)
+  unit: raw Hz (hertz)
   category: other
   aggregation: average
   visibility: internal
@@ -2255,7 +2193,7 @@ ttraw_gms_ntc_3:
   
 tt_gms_T_1: 
   description: "Temperature of ground moisture sensor #1"
-  unit: °C (degree Celcius)
+  unit: "°C (degree Celcius)"
   dependency: ttraw_gms_ntc_1
   raw_func: "127.6 - 0.006045 * ttraw_gms_ntc_1 + 1.26E-07 * ttraw_gms_ntc_1 ^ 2 - 1.15E-12 * ttraw_gms_ntc_1 ^ 3"  
   aggregation: average
@@ -2263,7 +2201,7 @@ tt_gms_T_1:
 
 tt_gms_T_2: 
   description: "Temperature of ground moisture sensor #2"
-  unit: °C (degree Celcius)
+  unit: "°C (degree Celcius)"
   dependency: ttraw_gms_ntc_2
   raw_func: "127.6 - 0.006045 * ttraw_gms_ntc_2 + 1.26E-07 * ttraw_gms_ntc_2 ^ 2 - 1.15E-12 * ttraw_gms_ntc_2 ^ 3"  
   aggregation: average
@@ -2271,11 +2209,107 @@ tt_gms_T_2:
 
 tt_gms_T_3: 
   description: "Temperature of ground moisture sensor #3"
-  unit: °C (degree Celcius)
+  unit: "°C (degree Celcius)"
   dependency: ttraw_gms_ntc_3
   raw_func: "127.6 - 0.006045 * ttraw_gms_ntc_3 + 1.26E-07 * ttraw_gms_ntc_3 ^ 2 - 1.15E-12 * ttraw_gms_ntc_3 ^ 3"  
   aggregation: average
   category: temperature
+  
+tt_gms_ECf_T_1: 
+  description: "Temperature ECf reference sensor #1"
+  unit: Hz (hertz)
+  dependency: tt_gms_T_1
+  raw_func: "-11.282 * tt_gms_T_1 + 0"  
+  aggregation: average
+  category: other
+  
+tt_gms_ECf_T_2: 
+  description: "Temperature ECf reference sensor #2"
+  unit: Hz (hertz)
+  dependency: tt_gms_T_2
+  raw_func: "-11.282 * tt_gms_T_2 + 0"  
+  aggregation: average
+  category: other
+
+tt_gms_ECf_T_3: 
+  description: "Temperature ECf reference sensor #3"
+  unit: Hz (hertz)
+  dependency: tt_gms_T_3
+  raw_func: "-11.282 * tt_gms_T_3 + 0"  
+  aggregation: average
+  category: other  
+  
+tt_gms_delta_ECf_1: 
+  description: "Temperature corrected delta ECf sensor #1"
+  unit: "Hz (hertz)"
+  dependency: [ttraw_gms_fq_1, tt_gms_ECf_T_1] 
+  raw_func: "ttraw_gms_fq_1 - tt_gms_ECf_T_1"  
+  aggregation: average
+  category: other
+  
+tt_gms_delta_ECf_2: 
+  description: "Temperature corrected delta ECf sensor #2"
+  unit: "Hz (hertz)"
+  dependency: [ttraw_gms_fq_2, tt_gms_ECf_T_2] 
+  raw_func: "ttraw_gms_fq_2 - tt_gms_ECf_T_2"  
+  aggregation: average
+  category: other
+  
+tt_gms_delta_ECf_3: 
+  description: "Temperature corrected delta ECf sensor #3"
+  unit: "Hz (hertz)"
+  dependency: [ttraw_gms_fq_3, tt_gms_ECf_T_3] 
+  raw_func: "ttraw_gms_fq_3 - tt_gms_ECf_T_3"  
+  aggregation: average
+  category: other  
+
+tt_gms_vwc_african_soil_1: 
+  description: "african soil volumetric water content sensor #1"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_1] 
+  raw_func: " -4E-12 * tt_gms_delta_ECf_1^3 + 2E-07 * tt_gms_delta_ECf_1^2 - 0.0026 * tt_gms_delta_ECf_1 + 47.409"  
+  aggregation: average
+  category: other
+  
+tt_gms_vwc_african_soil_2: 
+  description: "african soil volumetric water content sensor #2"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_2] 
+  raw_func: " -4E-12 * tt_gms_delta_ECf_2^3 + 2E-07 * tt_gms_delta_ECf_2^2 - 0.0026 * tt_gms_delta_ECf_2 + 47.409"  
+  aggregation: average
+  category: other
+
+tt_gms_vwc_african_soil_3: 
+  description: "african soil volumetric water content sensor #3"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_3] 
+  raw_func: " -4E-12 * tt_gms_delta_ECf_3^3 + 2E-07 * tt_gms_delta_ECf_3^2 - 0.0026 * tt_gms_delta_ECf_3 + 47.409"  
+  aggregation: average
+  category: other  
+
+tt_gms_vwc_loamy_soil_1: 
+  description: "loamy soil volumetric water content sensor #1"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_1] 
+  raw_func: "2E-12 * tt_gms_delta_ECf_1^3 + 7E-08 * tt_gms_delta_ECf_1^2 - 0.0039 * tt_gms_delta_ECf_1 + 50.647"  
+  aggregation: average
+  category: other
+
+tt_gms_vwc_loamy_soil_2: 
+  description: "loamy soil volumetric water content sensor #2"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_2] 
+  raw_func: "2E-12 * tt_gms_delta_ECf_2^3 + 7E-08 * tt_gms_delta_ECf_2^2 - 0.0039 * tt_gms_delta_ECf_2 + 50.647"  
+  aggregation: average
+  category: other
+
+tt_gms_vwc_loamy_soil_3: 
+  description: "loamy soil volumetric water content sensor #3"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_3] 
+  raw_func: "2E-12 * tt_gms_delta_ECf_3^3 + 7E-08 * tt_gms_delta_ECf_3^2 - 0.0039 * tt_gms_delta_ECf_3 + 50.647"  
+  aggregation: average
+  category: other   
   
 tt_Battery_level:
   description: Battery voltage

@@ -93,12 +93,12 @@ public class JWSAuthentication extends AbstractHandler {
 	private SigningKeyResolver signingKeyResolver = new SigningKeyResolver() {
 
 		@Override
-		public Key resolveSigningKey(JwsHeader header, String plaintext) {
+		public Key resolveSigningKey(@SuppressWarnings("rawtypes") JwsHeader header, String plaintext) {
 			throw new RuntimeException("not implemented");
 		}
 
 		@Override
-		public Key resolveSigningKey(JwsHeader header, Claims claims) {
+		public Key resolveSigningKey(@SuppressWarnings("rawtypes") JwsHeader header, Claims claims) {
 			return stringToPublicKey(getKey(header.getKeyId()));
 		}
 

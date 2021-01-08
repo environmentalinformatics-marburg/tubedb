@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import tsdb.dsl.FormulaBaseVisitor;
 import tsdb.dsl.FormulaParser.AtomContext;
 import tsdb.dsl.FormulaParser.ConditionalContext;
 import tsdb.dsl.FormulaParser.ExpressionContext;

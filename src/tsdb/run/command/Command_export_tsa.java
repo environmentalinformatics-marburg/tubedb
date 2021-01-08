@@ -12,8 +12,6 @@ import tsdb.component.Region;
 import tsdb.streamdb.StreamIterator;
 import tsdb.util.DataEntry;
 import tsdb.util.TimeSeriesArchivWriter;
-import tsdb.util.iterator.TimestampSeries;
-import tsdb.util.iterator.TsIterator;
 
 public class Command_export_tsa {
 	private static final Logger log = LogManager.getLogger();

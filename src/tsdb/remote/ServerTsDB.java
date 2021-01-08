@@ -2,7 +2,6 @@ package tsdb.remote;
 
 import static tsdb.util.AssumptionCheck.throwNull;
 
-import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;

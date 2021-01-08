@@ -1,9 +1,6 @@
 package tsdb.web.api;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,7 +22,6 @@ import tsdb.util.DataRow;
 import tsdb.util.Table;
 import tsdb.util.TimeUtil;
 import tsdb.util.iterator.CSVTimeType;
-import tsdb.web.util.Web;
 
 /**
  * get meta data of region 

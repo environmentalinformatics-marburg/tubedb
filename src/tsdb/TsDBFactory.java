@@ -2,6 +2,7 @@ package tsdb;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,7 +51,7 @@ public final class TsDBFactory {
 	//private static final String WEB_SERVER_PREFIX_BASE_URL = "/0123456789abcdef"; //example prefix
 	public static int WEB_SERVER_PORT = 8080;
 	public static boolean WEB_SERVER_LOGIN = false;
-	
+
 	public static boolean WEB_SERVER_HTTPS = false;
 	public static String WEB_SERVER_HTTPS_KEY_STORE_PASSWORD = "password";
 	public static int WEB_SERVER_HTTPS_PORT = 0;
@@ -63,7 +64,7 @@ public final class TsDBFactory {
 	//public static String JUST_ONE_REGION = "SA";
 
 	public static boolean HIDE_INTENAL_SENSORS = true;
-	
+
 	public static boolean IOT_API = false;
 	public static String IOT_API_KEY = ""; //no key
 
@@ -121,7 +122,7 @@ public final class TsDBFactory {
 			WEB_SERVER_HTTPS_KEY_STORE_PASSWORD = getString(pathMap, "WEB_SERVER_HTTPS_KEY_STORE_PASSWORD", WEB_SERVER_HTTPS_KEY_STORE_PASSWORD);
 			WEB_SERVER_HTTPS_PORT = getInt(pathMap, "WEB_SERVER_HTTPS_PORT", WEB_SERVER_HTTPS_PORT);
 			WEB_SERVER_JWS_PORT = getInt(pathMap, "WEB_SERVER_JWS_PORT", WEB_SERVER_JWS_PORT);
-			
+
 			IOT_API = getBoolean(pathMap, "IOT_API", IOT_API);
 			IOT_API_KEY = getString(pathMap, "IOT_API_KEY", IOT_API_KEY);
 		} catch (IOException e) {
@@ -197,7 +198,7 @@ public final class TsDBFactory {
 		try {
 			TsDB tsdb = new TsDB(databaseDirectory, cacheDirectory, streamdbPathPrefix, configDirectory);
 			ConfigLoader configLoader = new ConfigLoader(tsdb);			
-			
+
 			//*** global config start
 			configLoader.readSensorMetaData(configDirectory+"sensors.yaml"); // read sensor meta data
 			tsdb.createSensorDependencies();
@@ -205,23 +206,25 @@ public final class TsDBFactory {
 			//*** global config end			
 
 			//*** region config start
-			for(Path path : Files.newDirectoryStream(Paths.get(configDirectory), path->path.toFile().isDirectory())) {
-				String dir = path.toString();
-				//log.info("dir  "+path+"  "+path.getFileName());
-				try {
-					Region region = configLoader.readRegion(dir+"/region.ini", JUST_ONE_REGION);
-					if(region!=null) {
-						configLoader.readGeneralStation(dir+"/general_stations.ini");
-						configLoader.readLoggerTypeSchema(dir+"/logger_type_schema.ini");
-						configLoader.readPlotInventory(dir+"/plot_inventory.csv");
-						configLoader.readOptionalStationInventory(dir+"/station_inventory.csv"); // If all plots are stations then this file is not required.
-						configLoader.readOptinalSensorTranslation(dir+"/sensor_translation.ini");
-						configLoader.readOptionalSensorNameCorrection(dir+"/sensor_name_correction.json");  // read sensor translation and insert it into existing stations
-						configLoader.readOptionalStationProperties(dir+"/station_properties.yaml");
+			try(DirectoryStream<Path> paths = Files.newDirectoryStream(Paths.get(configDirectory), path->path.toFile().isDirectory())) {
+				for(Path path : paths) {
+					String dir = path.toString();
+					//log.info("dir  "+path+"  "+path.getFileName());
+					try {
+						Region region = configLoader.readRegion(dir+"/region.ini", JUST_ONE_REGION);
+						if(region!=null) {
+							configLoader.readGeneralStation(dir+"/general_stations.ini");
+							configLoader.readLoggerTypeSchema(dir+"/logger_type_schema.ini");
+							configLoader.readPlotInventory(dir+"/plot_inventory.csv");
+							configLoader.readOptionalStationInventory(dir+"/station_inventory.csv"); // If all plots are stations then this file is not required.
+							configLoader.readOptinalSensorTranslation(dir+"/sensor_translation.ini");
+							configLoader.readOptionalSensorNameCorrection(dir+"/sensor_name_correction.json");  // read sensor translation and insert it into existing stations
+							configLoader.readOptionalStationProperties(dir+"/station_properties.yaml");
+						}
+					} catch(Exception e) {
+						e.printStackTrace();
+						log.info("could not load meta data of  "+path+"  "+e);
 					}
-				} catch(Exception e) {
-					e.printStackTrace();
-					log.info("could not load meta data of  "+path+"  "+e);
 				}
 			}
 			//*** region config end			
