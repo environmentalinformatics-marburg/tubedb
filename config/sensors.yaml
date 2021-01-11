@@ -249,44 +249,57 @@ Albedo:
   unit: ratio (0 to 1)
   aggregation: average_albedo
   physical_range: [0.0, 1.0]
-  step_range: [0.0, 1000.0]
   empirical_diff: 0.31
+  dependency: [SWUR, SWDR]
+  raw_func: "SWUR / SWDR"   
   
 SWDR_300:
   description: Shortwave Downward Radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
-  step_range: [0.0, 1000.0]
+  aggregation: sum
+  physical_range: [-0.1, 1.5]
+  step_range: [0.0, 1.0]
   empirical_diff: 157.2
-  interpolation_mse: 10000   
+  interpolation_mse: 10000
+  dependency: SWDR_300
+  raw_func: "SWDR_300 / 1000"
+  derived: false # raw_func converts unit only  
   
 SWUR_300:
   description: Shortwave Upward Radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  step_range: [0.0, 1000.0]
+  aggregation: sum
+  physical_range: [-0.1, 1.0]
+  step_range: [0.0, 1.0]
   empirical_diff: 43.03
-  interpolation_mse: 10000   
+  interpolation_mse: 10000
+  dependency: SWUR_300
+  raw_func: "SWUR_300 / 1000"    
+  derived: false # raw_func converts unit only 
   
 LWDR_300:
   description: Longwave Downward Radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  step_range: [0.0, 220.0]
+  aggregation: sum
+  physical_range: [-0.1, 1.0]
+  step_range: [0.0, 0.22]  
   empirical_diff: 34.29
-  interpolation_mse: 10000   
+  interpolation_mse: 10000
+  dependency: LWDR_300
+  raw_func: "LWDR_300 / 1000"   
+  derived: false # raw_func converts unit only 
   
 LWUR_300:
   description: Longwave Upward Radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  step_range: [0.0, 1000.0]
+  aggregation: sum
+  physical_range: [-0.1, 1.0]
+  step_range: [0.0, 1.0]   
   empirical_diff: 18.31
-  interpolation_mse: 10000   
+  interpolation_mse: 10000  
+  dependency: LWUR_300
+  raw_func: "LWUR_300 / 1000"    
+  derived: false # raw_func converts unit only 
   
 Trad:
   description: Radiation temperature
@@ -373,71 +386,95 @@ SWDR:
   description: Shortwave Downward Radiation
   unit: kWh/m^2 (kilo watt hour per square meter) 
   raw_source: [SWDR_300, SWDR_3700, SWDR_4400, SWDR_200] # use first available sensor in list
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
-  step_range: [0.0, 1000.0]
+  aggregation: sum
+  physical_range: [-0.1, 1.5]
+  step_range: [0.0, 1.0]
   empirical_diff: 157.2
-  interpolation_mse: 10000   
+  interpolation_mse: 10000
+  dependency: SWDR
+  raw_func: "SWDR / 1000"    
   
 SWUR:
   description: Shortwave Upward Radiation
   unit: kWh/m^2 (kilo watt hour per square meter)
   raw_source: [SWUR_300, SWUR_3700, SWUR_4400] # use first available sensor in list  
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  step_range: [0.0, 1000.0]
+  aggregation: sum
+  physical_range: [-0.1, 1.0]
+  step_range: [0.0, 1.0]
   empirical_diff: 43.03
-  interpolation_mse: 10000   
+  interpolation_mse: 10000
+  dependency: SWUR
+  raw_func: "SWUR / 1000"    
   
 LWDR:
   description: Longwave Downward Radiation
   unit: kWh/m^2 (kilo watt hour per square meter) 
   raw_source: [LWDR_300, LWDR_3700, LWDR_4400] # use first available sensor in list
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  step_range: [0.0, 220.0]
+  aggregation: sum
+  physical_range: [-0.1, 1.0]
+  step_range: [0.0, 0.22]
   empirical_diff: 34.29
-  interpolation_mse: 10000   
+  interpolation_mse: 10000
+  dependency: LWDR
+  raw_func: "LWDR / 1000"  
   
 LWUR:
   description: Longwave Upward Radiation
   unit: kWh/m^2 (kilo watt hour per square meter) 
   raw_source: [LWUR_300, LWUR_3700, LWUR_4400] # use first available sensor in list
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  step_range: [0.0, 1000.0]
+  aggregation: sum
+  physical_range: [-0.1, 1.0]
+  step_range: [0.0, 1.0]
   empirical_diff: 18.31
   interpolation_mse: 10000   
+  dependency: LWUR
+  raw_func: "LWUR / 1000"  
 
 #****** new sensors in AET06 ********
 
 SWDR_3700:
   description: Shortwave Downward Radiation at 37 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
+  aggregation: sum
+  physical_range: [-0.1, 1.5]
+  step_range: [0.0, 1.0] 
   interpolation_mse: 10000   
+  dependency: SWDR_3700
+  raw_func: "SWDR_3700 / 1000" 
+  derived: false # raw_func converts unit only 
   
 SWUR_3700:
   description: Shortwave Upward Radiation at 37 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  interpolation_mse: 10000   
+  aggregation: sum
+  physical_range: [-0.1, 1.0]
+  step_range: [0.0, 1.0]  
+  interpolation_mse: 10000
+  dependency: SWUR_3700
+  raw_func: "SWUR_3700 / 1000"   
+  derived: false # raw_func converts unit only 
   
 LWDR_3700:
   description: Longwave Downward Radiation at 37 meters height
   unit: kWh/m^2 (kilo watt hour per square meter)
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
+  aggregation: sum
+  physical_range: [-0.1, 1.0]
+  step_range: [0.0, 1.0]  
   interpolation_mse: 10000   
+  dependency: LWDR_3700
+  raw_func: "LWDR_3700 / 1000"     
+  derived: false # raw_func converts unit only 
   
 LWUR_3700:
   description: Longwave Upward Radiation at 37 meters height
   unit: kWh/m^2 (kilo watt hour per square meter)
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
+  aggregation: sum
+  physical_range: [-0.1, 1.0]
+  step_range: [0.0, 1.0]  
   interpolation_mse: 10000   
+  dependency: LWUR_3700
+  raw_func: "LWUR_3700 / 1000"    
+  derived: false # raw_func converts unit only 
   
 PAR_2000:
   description: Photosynthetically activ radiation at 20 meters height
@@ -534,31 +571,47 @@ rH_3700:
 SWDR_4400:
   description: Shortwave Downward Radiation at 44 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
-  interpolation_mse: 10000   
+  aggregation: sum
+  physical_range: [-0.1, 1.5]
+  step_range: [0.0, 1.0]
+  interpolation_mse: 10000
+  dependency: SWDR_4400
+  raw_func: "SWDR_4400 / 1000"    
+  derived: false # raw_func converts unit only 
   
 SWUR_4400:
   description: Shortwave Upward Radiation at 44 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  interpolation_mse: 10000   
+  aggregation: sum
+  physical_range: [-0.1, 1.0]
+  step_range: [0.0, 1.0]  
+  interpolation_mse: 10000
+  dependency: SWUR_4400
+  raw_func: "SWUR_4400 / 1000"    
+  derived: false # raw_func converts unit only 
   
 LWDR_4400:
   description: Longwave Downward Radiation at 44 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  interpolation_mse: 10000   
+  aggregation: sum
+  physical_range: [-0.1, 1.0]
+  step_range: [0.0, 1.0]  
+  interpolation_mse: 10000
+  dependency: LWDR_4400
+  raw_func: "LWDR_4400 / 1000"    
+  derived: false # raw_func converts unit only 
   
 LWUR_4400:
   description: Longwave Upward Radiation at 44 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1000.0]
-  interpolation_mse: 10000   
- 
+  aggregation: sum
+  physical_range: [-0.1, 1.0]
+  step_range: [0.0, 1.0]  
+  interpolation_mse: 10000
+  dependency: LWUR_4400
+  raw_func: "LWUR_4400 / 1000"    
+  derived: false # raw_func converts unit only 
+  
 Ta_4400:
   description: Air temperature at 44 meters above ground
   unit: °C (degree Celcius, -40 to 60)
@@ -652,17 +705,25 @@ par_02:
 swdr_01:
   description: Shortwave downward radiation
   unit: kWh/m^2 (kilo watt hour per square meter)
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
-  interpolation_mse: 10000   
-   
+  aggregation: sum
+  physical_range: [-0.1, 1.5]
+  step_range: [0.0, 1.0]  
+  interpolation_mse: 10000
+  dependency: swdr_01
+  raw_func: "swdr_01 / 1000"    
+  derived: false # raw_func converts unit only 
+  
 swdr_02:
   description: Shortwave downward radiation
   unit: kWh/m^2 (kilo watt hour per square meter)
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
-  interpolation_mse: 10000   
-   
+  aggregation: sum
+  physical_range: [-0.1, 1.5]
+  step_range: [0.0, 1.0]  
+  interpolation_mse: 10000
+  dependency: swdr_02
+  raw_func: "swdr_02 / 1000"    
+  derived: false # raw_func converts unit only 
+  
 B_01:
   description: Specific precipitation measurement
   unit: mm (millimeter) (based on approx. weekly measurements) 
@@ -1348,11 +1409,14 @@ evaporation_calculated:
 SWDR_200:
   description: Shortwave Downward Radiation at 2 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
-  step_range: [0.0, 1000.0]
+  aggregation: sum
+  physical_range: [-0.1, 1.5]
+  step_range: [0.0, 1.0]  
   empirical_diff: 157.2
-  interpolation_mse: 10000 
+  interpolation_mse: 10000
+  dependency: SWDR_200
+  raw_func: "SWDR_200 / 1000"
+  derived: false # raw_func converts unit only   
   
 SWDR_200_MJ:
   description: (internal) Shortwave Downward Radiation at 2 meters height
@@ -1437,12 +1501,23 @@ Albedo_4400:
   dependency: [SWUR_4400, SWDR_4400]
   post_hour_func: "(SWDR_4400 > 0.01 && SWUR_4400 < SWDR_4400 * 0.9 ? SWUR_4400 / SWDR_4400 : NA)"
 
+Rn:
+  description: Net radiation
+  unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation: sum
+  physical_range: [-0.1, 1.5]
+  step_range: [0.0, 1.0]  
+  empirical_diff: 112.19
+  interpolation_mse: 10000
+  dependency: [SWDR, SWUR, LWDR, LWUR]
+  raw_func: "SWDR - SWUR + LWDR - LWUR"
+
 Rn_300:
   description: Net radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
-  step_range: [0.0, 1000.0]
+  aggregation: sum
+  physical_range: [-0.1, 1.5]
+  step_range: [0.0, 1.0]
   empirical_diff: 112.19
   interpolation_mse: 10000
   dependency: [SWDR_300, SWUR_300, LWDR_300, LWUR_300]
@@ -1451,9 +1526,9 @@ Rn_300:
 Rn_3700:
   description: Net radiation at 37 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
-  step_range: [0.0, 1000.0]
+  aggregation: sum
+  physical_range: [-0.1, 1.5]
+  step_range: [0.0, 1.0]
   empirical_diff: 112.19
   interpolation_mse: 10000
   dependency: [SWDR_3700, SWUR_3700, LWDR_3700, LWUR_3700]
@@ -1462,9 +1537,9 @@ Rn_3700:
 Rn_4400:
   description: Net radiation at 44 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
-  aggregation: sum_radiation
-  physical_range: [-100.0, 1500.0]
-  step_range: [0.0, 1000.0]
+  aggregation: sum
+  physical_range: [-0.1, 1.5]
+  step_range: [0.0, 1.0]
   empirical_diff: 112.19
   interpolation_mse: 10000
   dependency: [SWDR_4400, SWUR_4400, LWDR_4400, LWUR_4400]
@@ -1493,6 +1568,55 @@ Tgnd:
   category: temperature
   dependency: LWUR
   raw_func: "(LWUR / 5.67e-11)^0.25 - 273.15"
+  
+Tsky_Tgnd_ratio:
+  description: "Tsky / Tgnd"
+  unit: ratio
+  aggregation: average
+  dependency: [Tsky, Tgnd]
+  raw_func: "Tsky / Tgnd"   
+  
+coverage_clear_1:
+  description: "(Tsky < 0 ? 0 : NA)" 
+  unit: flag 0
+  aggregation: average
+  dependency: [Tsky]
+  raw_func: "(Tsky < 0 ? 0 : NA)"  
+  
+coverage_clear_2:
+  description: "(Tsky / Tgnd > 5 ? 0 : NA)"
+  unit: flag 0
+  aggregation: average
+  dependency: [Tsky, Tgnd]
+  raw_func: "(Tsky / Tgnd > 5 ? 0 : NA)" 
+
+coverage_clear:
+  description: "(Tsky < 0 AND Tsky / Tgnd > 5 ? 0 : NA)"
+  unit: flag 0
+  aggregation: average
+  dependency: [Tsky, Tgnd]
+  raw_func: "(Tsky < 0 AND Tsky / Tgnd > 5 ? 0 : NA)"
+
+coverage_cloudy_1:
+  description: "(Tsky < 0 ? 0 : NA)" 
+  unit: flag 8
+  aggregation: average
+  dependency: [Tsky]
+  raw_func: "(Tsky > 0 ? 8 : NA)"   
+
+coverage_cloudy_2:
+  description: "(Tsky < 0 AND Tsky / Tgnd < 5 ? 8 : NA)"
+  unit: flag 8
+  aggregation: average
+  dependency: [Tsky, Tgnd]
+  raw_func: "(Tsky < 0 AND Tsky / Tgnd < 5 ? 8 : NA)"
+  
+coverage_cloudy:
+  description: "(Tsky > 0 AND Tsky / Tgnd < 5 ? 8 : NA)"
+  unit: flag 8
+  aggregation: average
+  dependency: [Tsky, Tgnd]
+  raw_func: "(Tsky > 0 AND Tsky / Tgnd < 5 ? 8 : NA)"  
   
 precipitation_radolan:
   description: Precipitation based on RADOLAN product

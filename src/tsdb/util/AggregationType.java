@@ -20,7 +20,6 @@ public enum AggregationType {
 	AVERAGE_ALBEDO, // average of values, special base aggregation for albedo
 	SUM_SUNSHINE, // average of values, special base aggregation for sunshine (SD)
 	SUM_OF_AVERAGE, // sum of values, average for base aggregation
-	SUM_RADIATION, // sum of values, special average for base aggregation - used for radiation sensors ( W/m^2 -> Wh/m^2)
 	SUM_SECOND_TO_HOUR, // sum of values, unit second to hour conversion for base aggregation
 	LAST; // most recent value of aggregation interval
 	
@@ -50,8 +49,6 @@ public enum AggregationType {
 			return SUM_SUNSHINE;
 		case "sum_of_average":
 			return SUM_OF_AVERAGE;
-		case "sum_radiation":
-			return SUM_RADIATION;
 		case "sum_second_to_hour":
 			return SUM_SECOND_TO_HOUR;
 		case "last":

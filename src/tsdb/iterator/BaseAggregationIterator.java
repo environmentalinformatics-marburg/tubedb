@@ -296,14 +296,6 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 						resultData[i] = Float.NaN;
 					}
 					break;
-				case SUM_RADIATION:
-					resultData[i] = aggSum[i]/(aggCnt[i]*1000);
-					/*if(resultData[i]<0f) { //negative values may be valid
-						resultData[i] = 0f;
-					}*/
-					validValueCounter++;
-					columnEntryCounter[i]++;
-					break;
 				case LAST:
 					resultData[i] = aggLast[i];
 					validValueCounter++;

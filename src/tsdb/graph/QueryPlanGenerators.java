@@ -83,16 +83,16 @@ public final class QueryPlanGenerators {
 
 	public static Node rawProcessing(TsDB tsdb, Node rawSource, String[] schema, DataQuality dataQuality) {		
 		Mutator rawMutators = QueryPlanGenerators.getRawMutators(tsdb, rawSource.getSourcePlot(), schema);
+		rawSource = elementRawCopy(tsdb, rawSource); // First copy raw source then apply mutators. So, mutators are not applied to copied raw source!
 		if(rawMutators != null) {
 			rawSource = MutatorNode.of(tsdb, rawSource, rawMutators);
 		}		
-		if(DataQuality.Na!=dataQuality) {
-			if(DataQuality.NO!=dataQuality) {
+		if(DataQuality.Na != dataQuality) {
+			if(DataQuality.NO != dataQuality) {
 				rawSource = Mask.of(tsdb, rawSource);
 			}
 			rawSource = RangeStepFiltered.of(tsdb, rawSource, dataQuality);
 		}
-		rawSource = elementRawCopy(tsdb, rawSource);
 		if(Util.containsString(schema, SunshineIterator.SUNSHINE_SENSOR_NAME)) {
 			rawSource = Sunshine.of(tsdb, rawSource);
 		}
@@ -117,7 +117,7 @@ public final class QueryPlanGenerators {
 	 */
 	public static Node elementRawCopy(TsDB tsdb, Node source) {
 		String[] schema = source.getSchema();
-		//log.info("schema "+Arrays.toString(schema));
+		//log.info("elementRawCopy schema " + Arrays.toString(schema));
 		if(Util.containsOneString(schema, tsdb.raw_copy_sensor_names)) {
 			List<Action> actions = new ArrayList<>();
 			for(VirtualCopyList p:tsdb.raw_copy_lists) { 
@@ -147,6 +147,7 @@ public final class QueryPlanGenerators {
 						break;
 					}
 				}
+				//log.info(finalActions);
 				source = ElementRawCopy.of(source, finalActions.toArray(new Action[0]));
 			}
 		}
