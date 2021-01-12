@@ -1569,54 +1569,61 @@ Tgnd:
   dependency: LWUR
   raw_func: "(LWUR / 5.67e-11)^0.25 - 273.15"
   
-Tsky_Tgnd_ratio:
-  description: "Tsky / Tgnd"
-  unit: ratio
+Tgnd_Tsky_delta:
+  description: "Tgnd - Tsky, low value: clouds reflect ground radiation, high value: no clouds, low reflection of ground radiation"
+  unit: °K (degree Kelvin)
   aggregation: average
   dependency: [Tsky, Tgnd]
-  raw_func: "Tsky / Tgnd"   
+  raw_func: "Tgnd - Tsky"
+
+LWDR_LWUR_ratio:
+  description: "LWDR / LWUR, ratio of downward (cloud reflected) radiation to upward (ground emitted) radiation"
+  unit: ratio  
+  aggregation: average
+  dependency: [LWDR, LWUR]
+  raw_func: "LWDR / LWUR"   
   
 coverage_clear_1:
-  description: "(Tsky < 0 ? 0 : NA)" 
+  description: "(Tsky < 0 ? 1 : 0)" 
   unit: flag 0
   aggregation: average
   dependency: [Tsky]
-  raw_func: "(Tsky < 0 ? 0 : NA)"  
+  raw_func: "(Tsky < 0 ? 1 : 0)"  
   
 coverage_clear_2:
-  description: "(Tsky / Tgnd > 5 ? 0 : NA)"
+  description: "(Tgnd_Tsky_delta > 5 ? 1 : 0)"
   unit: flag 0
   aggregation: average
-  dependency: [Tsky, Tgnd]
-  raw_func: "(Tsky / Tgnd > 5 ? 0 : NA)" 
+  dependency: [Tgnd_Tsky_delta]
+  raw_func: "(Tgnd_Tsky_delta > 5 ? 1 : 0)" 
 
 coverage_clear:
-  description: "(Tsky < 0 AND Tsky / Tgnd > 5 ? 0 : NA)"
+  description: "(Tsky < 0 AND Tgnd_Tsky_delta > 5 ? 1 : 0)"
   unit: flag 0
   aggregation: average
-  dependency: [Tsky, Tgnd]
-  raw_func: "(Tsky < 0 AND Tsky / Tgnd > 5 ? 0 : NA)"
+  dependency: [Tsky, Tgnd_Tsky_delta]
+  raw_func: "(Tsky < 0 AND Tgnd_Tsky_delta > 5 ? 1 : 0)"
 
 coverage_cloudy_1:
-  description: "(Tsky < 0 ? 0 : NA)" 
+  description: "(Tsky > 0 ? 1 : 0)" 
   unit: flag 8
   aggregation: average
   dependency: [Tsky]
-  raw_func: "(Tsky > 0 ? 8 : NA)"   
+  raw_func: "(Tsky > 0 ? 1 : 0)"   
 
 coverage_cloudy_2:
-  description: "(Tsky < 0 AND Tsky / Tgnd < 5 ? 8 : NA)"
+  description: "(Tgnd_Tsky_delta < 5 ? 1 : 0)"
   unit: flag 8
   aggregation: average
-  dependency: [Tsky, Tgnd]
-  raw_func: "(Tsky < 0 AND Tsky / Tgnd < 5 ? 8 : NA)"
+  dependency: [Tgnd_Tsky_delta]
+  raw_func: "(Tgnd_Tsky_delta < 5 ? 1 : 0)"
   
 coverage_cloudy:
-  description: "(Tsky > 0 AND Tsky / Tgnd < 5 ? 8 : NA)"
+  description: "(Tsky > 0 AND Tgnd_Tsky_delta < 5 ? 1 : 0)"
   unit: flag 8
   aggregation: average
-  dependency: [Tsky, Tgnd]
-  raw_func: "(Tsky > 0 AND Tsky / Tgnd < 5 ? 8 : NA)"  
+  dependency: [Tsky, Tgnd_Tsky_delta]
+  raw_func: "(Tsky > 0 AND Tgnd_Tsky_delta < 5 ? 1 : 0)"  
   
 precipitation_radolan:
   description: Precipitation based on RADOLAN product

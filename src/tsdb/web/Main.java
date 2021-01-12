@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -13,11 +14,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.servlet.ServletException;
 import javax.servlet.SessionCookieConfig;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.io.Connection;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
@@ -36,6 +41,7 @@ import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.DefaultHandler;
@@ -82,7 +88,7 @@ public class Main {
 	private static final String WEB_SERVER_LOGIN_PROPERTIES_FILENAME = "realm.properties";
 	private static final String REALM_IP_CSV_FILENAME = "realm_ip.csv";
 	private static final String WEB_SERVER_HTTPS_KEY_STORE_FILENAME = "keystore.jks";
-
+	
 	private static HttpConfiguration createBaseHttpConfiguration() {
 		HttpConfiguration httpConfiguration = new HttpConfiguration();
 		httpConfiguration.setSendServerVersion(false);
@@ -119,7 +125,7 @@ public class Main {
 		httpsConfiguration.addCustomizer(new Customizer() {			
 			@Override
 			public void customize(Connector connector, HttpConfiguration channelConfig, Request request) {
-				request.setAttribute("JWS", "JWS");				
+				request.setAttribute("JWS", "JWS");	
 			}
 		});
 		return httpsConfiguration;
