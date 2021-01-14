@@ -28,4 +28,18 @@ public enum SensorCategory {
 			return OTHER;
 		}
 	}
+	
+	@Override
+	public String toString() {
+		switch(this) {
+		case TEMPERATURE: 
+			return "temperature";
+		case WATER: 
+			return "water";
+		case OTHER: 
+			return "other";		
+		default:
+			return "unknown";
+		}
+	}
 }

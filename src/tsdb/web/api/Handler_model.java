@@ -39,15 +39,89 @@ public class Handler_model extends MethodHandler {
 		for(Sensor sensor : tsdb.getSensors()) {
 			json.key(sensor.name);
 			json.object();
-			json.key("desc");
-			json.value(sensor.description);
+			if(sensor.description != null) {
+				json.key("description");
+				json.value(sensor.description);
+			}
+			if(sensor.unitDescription != null) {
+				json.key("unit");
+				json.value(sensor.unitDescription);
+			}
+			json.key("aggregation_hour");
+			json.value(sensor.getAggregationHour().toString());
+			json.key("aggregation_day");
+			json.value(sensor.getAggregationDay().toString());
+			json.key("aggregation_week");
+			json.value(sensor.getAggregationWeek().toString());
+			json.key("aggregation_month");
+			json.value(sensor.getAggregationMonth().toString());
+			json.key("aggregation_year");
+			json.value(sensor.getAggregationYear().toString());
+			if(-Float.MAX_VALUE < sensor.physicalMin || sensor.physicalMax < Float.MAX_VALUE) {
+				json.key("physical_range");
+				json.array();
+				json.value(sensor.physicalMin);
+				json.value(sensor.physicalMax);
+				json.endArray();
+			}
+			if(-Float.MAX_VALUE < sensor.stepMin || sensor.stepMax < Float.MAX_VALUE) {
+				json.key("step_range");
+				json.array();
+				json.value(sensor.stepMin);
+				json.value(sensor.stepMax);
+				json.endArray();
+			}
+			if(sensor.empiricalDiff != null) {
+				json.key("empirical_diff");
+				json.value(sensor.empiricalDiff);
+			}
+			if(sensor.useInterpolation) {
+				json.key("interpolation_mse");
+				json.value(sensor.maxInterpolationMSE);
+			}
+			json.key("category");
+			json.value(sensor.category.toString());
+			json.key("visibility");
+			json.value(sensor.internal ? "internal" : "public");
+			if(sensor.isDerived()) {
+				json.key("derived");
+				json.value(sensor.isDerived());
+			}
+			if(sensor.raw_source != null && sensor.raw_source.length > 0) {
+				json.key("raw_source");
+				json.array();
+				for(String name:sensor.raw_source) {
+					json.value(name);
+				}
+				json.endArray();
+			}
+			if(sensor.dependency != null && sensor.dependency.length > 0) {
+				json.key("dependency");
+				json.array();
+				for(String name:sensor.dependency) {
+					json.value(name);
+				}
+				json.endArray();
+			}
+			if(sensor.raw_func != null) {
+				json.key("raw_func");
+				json.value(sensor.raw_func);
+			}
+			if(sensor.post_hour_func != null) {
+				json.key("post_hour_func");
+				json.value(sensor.post_hour_func);
+			}
+			if(sensor.post_day_func != null) {
+				json.key("post_day_func");
+				json.value(sensor.post_day_func);
+			}
 			json.endObject();
 		}
 		json.endObject();  // end sensors
 		json.endObject(); // end model
 		json.endObject(); // end
-		
+
 	}
 
-	
+
 }

@@ -58,4 +58,38 @@ public enum AggregationType {
 			return null;
 		}
 	}
+	
+	@Override
+	public String toString() {
+		switch(this) {
+		case NONE: 
+			return "none";
+		case AVERAGE: 
+			return "average";
+		case SUM: 
+			return "sum";
+		case AVERAGE_WIND_DIRECTION: 
+			return "average_wind_direction";
+		case AVERAGE_WIND_VELOCITY: 
+			return "average_wind_velocity";
+		case MINIMUM: 
+			return "minimum";
+		case MAXIMUM: 
+			return "maximum";
+		case AVERAGE_ZERO: 
+			return "average_zero";
+		case AVERAGE_ALBEDO: 
+			return "average_albedo";
+		case SUM_SUNSHINE: 
+			return "sum_sunshine";
+		case SUM_OF_AVERAGE: 
+			return "sum_second_to_hour";
+		case SUM_SECOND_TO_HOUR: 
+			return "sum_second_to_hour";
+		case LAST: 
+			return "last";
+		default:
+			return "unknown";
+		}
+	}
 }
