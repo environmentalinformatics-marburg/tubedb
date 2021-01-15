@@ -20,6 +20,7 @@ import tsdb.dsl.formula.FormulaSub;
 import tsdb.dsl.formula.FormulaVar;
 
 public class FormulaUnifyVisitor implements FormulaVisitor1<Formula>, BooleanFormulaVisitor1<BooleanFormula> {
+	public final static FormulaUnifyVisitor DEFAULT = new FormulaUnifyVisitor();
 
 	@Override
 	public BooleanFormula visitTRUE(BooleanFormula booleanFormulaTRUE) {

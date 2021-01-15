@@ -26,9 +26,26 @@
           <span class="text-weight-medium" v-if="sensor.raw_source !== undefined"> <a v-for="name in sensor.raw_source" :key="name" :href="'#/model/sensors/' + name" style="margin-left: 10px;">{{name}}</a></span> 
         </span>
       </span>
-      <span v-if="sensor.physical_range !== undefined"><span>physical_range </span> <span> {{sensor.physical_range[0]}} to {{sensor.physical_range[1]}}</span></span>
-      <span v-if="sensor.step_range !== undefined"><span>step_range </span> <span> {{sensor.step_range[0]}} to {{sensor.step_range[1]}}</span></span>      
-      <span v-if="sensor.raw_func !== undefined"><span>raw_func</span> <span> {{sensor.raw_func}}</span></span>
+      <div class="property-grid">
+        <template v-if="sensor.physical_range !== undefined">
+          <div>physical_range</div> 
+          <div>{{sensor.physical_range[0]}} .. {{sensor.physical_range[1]}}</div>
+        </template>
+        <template v-if="sensor.step_range !== undefined">
+          <div>step_range</div> 
+          <div>{{sensor.step_range[0]}} .. {{sensor.step_range[1]}}</div>
+        </template>
+        <template v-if="sensor.raw_func !== undefined">
+          <div>raw_func</div> 
+          <div>{{sensor.raw_func}}</div>
+          <template v-if="sensor.raw_func_parsed !== undefined">
+            <div>--> parsed</div> 
+            <div>{{sensor.raw_func_parsed}}</div>
+            <div>--> tree</div>
+            <div><formula-tree :node="sensor.raw_func_tree" :level="0"/></div>
+          </template>          
+        </template> 
+      </div>
     </div>
     <div class="column processing-node" v-if="sensor.aggregation_hour !== 'none'">
       <span>
@@ -38,11 +55,28 @@
           <span class="text-weight-medium"> {{sensor.aggregation_hour}}</span>
         </span>
       </span>
-      <span v-if="sensor.empirical_diff !== undefined"><span>empirical_diff_range </span> <span> {{sensor.empirical_diff}}</span></span>
-      <span v-if="sensor.interpolation_mse !== undefined"><span>interpolation_mse </span> <span> {{sensor.interpolation_mse}}</span></span>
-      <span v-if="sensor.post_hour_func !== undefined"><span>post_hour_func</span> <span> {{sensor.post_hour_func}}</span></span>
+      <div class="property-grid">
+        <template v-if="sensor.empirical_diff !== undefined">
+          <div>empirical_diff_range</div> 
+          <div>{{sensor.empirical_diff}}</div>
+        </template>
+        <template v-if="sensor.interpolation_mse !== undefined">
+          <div>interpolation_mse</div> 
+          <div>{{sensor.interpolation_mse}}</div>
+        </template>
+        <template v-if="sensor.post_hour_func !== undefined">
+          <div>post_hour_func</div> 
+          <div>{{sensor.post_hour_func}}</div>
+          <template v-if="sensor.post_hour_func_parsed !== undefined">
+            <div>--> parsed</div> 
+            <div>{{sensor.post_hour_func_parsed}}</div>
+            <div>--> tree</div>
+            <div><formula-tree :node="sensor.post_hour_func_tree" :level="0"/></div>            
+          </template>           
+        </template> 
+      </div>
     </div>
-    <div v-if="sensor.aggregation_hour === 'none'" style="margin: 20px;">
+    <div v-if="sensor.aggregation_hour === 'none'" class="text-grey-5" style="margin: 20px;">
       (no further aggregation defined)
     </div>
 
@@ -54,9 +88,20 @@
           <span class="text-weight-medium"> {{sensor.aggregation_day}}</span>
         </span>
       </span>
-      <span v-if="sensor.post_day_func !== undefined"><span>post_day_func</span> <span> {{sensor.post_day_func}}</span></span>
+      <div class="property-grid">
+        <template v-if="sensor.post_day_func !== undefined">
+          <div>post_day_func</div> 
+          <div>{{sensor.post_day_func}}</div>
+          <template v-if="sensor.post_day_func_parsed !== undefined">
+            <div>--> parsed</div> 
+            <div>{{sensor.post_day_func_parsed}}</div>
+            <div>--> tree</div>
+            <div><formula-tree :node="sensor.post_day_func_tree" :level="0"/></div>            
+          </template>           
+        </template>
+      </div>
     </div>
-    <div v-if="sensor.aggregation_hour !== 'none' && sensor.aggregation_day === 'none'" style="margin: 20px;">
+    <div v-if="sensor.aggregation_hour !== 'none' && sensor.aggregation_day === 'none'" class="text-grey-5" style="margin: 20px;">
       (no further aggregation defined)
     </div>
 
@@ -68,8 +113,10 @@
           <span class="text-weight-medium"> {{sensor.aggregation_week}}</span>
         </span>
       </span>
+      <div class="property-grid">
+      </div>      
     </div>
-    <div v-if="sensor.aggregation_hour !== 'none' && sensor.aggregation_day !== 'none' && sensor.aggregation_week === 'none'" style="margin: 20px;">
+    <div v-if="sensor.aggregation_hour !== 'none' && sensor.aggregation_day !== 'none' && sensor.aggregation_week === 'none'" class="text-grey-5" style="margin: 20px;">
       (no further aggregation defined)
     </div>
 
@@ -81,8 +128,10 @@
           <span class="text-weight-medium"> {{sensor.aggregation_month}}</span>
         </span>
       </span>
+      <div class="property-grid">
+      </div>       
     </div>
-    <div v-if="sensor.aggregation_hour !== 'none' && sensor.aggregation_day !== 'none' && sensor.aggregation_month === 'none'" style="margin: 20px;">
+    <div v-if="sensor.aggregation_hour !== 'none' && sensor.aggregation_day !== 'none' && sensor.aggregation_month === 'none'" class="text-grey-5" style="margin: 20px;">
       (no further aggregation defined)
     </div>
 
@@ -93,9 +142,11 @@
           <span class="text-grey-5"> from month by </span> 
           <span class="text-weight-medium"> {{sensor.aggregation_year}}</span>
         </span>
+      <div class="property-grid">
+      </div>         
       </span>
     </div>
-        <div v-if="sensor.aggregation_hour !== 'none' && sensor.aggregation_day !== 'none' && sensor.aggregation_month !== 'none' && sensor.aggregation_year === 'none'" style="margin: 20px;">
+        <div v-if="sensor.aggregation_hour !== 'none' && sensor.aggregation_day !== 'none' && sensor.aggregation_month !== 'none' && sensor.aggregation_year === 'none'" class="text-grey-5" style="margin: 20px;">
       (no further aggregation defined)
     </div>
 
@@ -105,8 +156,14 @@
 <script>
 import { mapState } from 'vuex'
 
+import formulaTree from 'components/formula-tree.vue'
+
+
 export default {
   name: 'sensor',
+  components: {
+    formulaTree,
+  },
   props: ['id'],
   computed: {
     ...mapState({
@@ -124,10 +181,19 @@ export default {
 </script>
 
 <style scoped>
+
 .processing-node {
   margin: 20px;
   border: 2px solid #00000029;
   border-radius: 5px; 
 }
+
+.property-grid {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  gap: 10px 20px;
+  margin: 10px;
+}
+
 </style>
 

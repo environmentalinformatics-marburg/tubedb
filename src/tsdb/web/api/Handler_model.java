@@ -13,6 +13,12 @@ import org.eclipse.jetty.server.Request;
 import org.json.JSONWriter;
 
 import tsdb.component.Sensor;
+import tsdb.dsl.FormulaBuilder;
+import tsdb.dsl.FormulaJavaVisitor;
+import tsdb.dsl.FormulaToJsonTreeVisitor;
+import tsdb.dsl.FormulaToStringVisitor;
+import tsdb.dsl.FormulaUnifyVisitor;
+import tsdb.dsl.formula.Formula;
 import tsdb.remote.RemoteTsDB;
 
 public class Handler_model extends MethodHandler {	
@@ -64,7 +70,7 @@ public class Handler_model extends MethodHandler {
 				json.value(sensor.physicalMax);
 				json.endArray();
 			}
-			if(-Float.MAX_VALUE < sensor.stepMin || sensor.stepMax < Float.MAX_VALUE) {
+			if(0f < sensor.stepMin || sensor.stepMax < Float.MAX_VALUE) {
 				json.key("step_range");
 				json.array();
 				json.value(sensor.stepMin);
@@ -106,14 +112,58 @@ public class Handler_model extends MethodHandler {
 			if(sensor.raw_func != null) {
 				json.key("raw_func");
 				json.value(sensor.raw_func);
+
+				try {
+					Formula formula_org = FormulaBuilder.parseFormula(sensor.raw_func);
+					Formula formula_unified = formula_org.accept(FormulaUnifyVisitor.DEFAULT);
+					String funcText = formula_unified.accept(FormulaToStringVisitor.DEFAULT);
+					if(funcText != null && !funcText.isEmpty()) {
+						json.key("raw_func_parsed");				
+						json.value(funcText);
+						json.key("raw_func_tree");				
+						formula_unified.accept(new FormulaToJsonTreeVisitor(json));		
+					}
+				} catch(Exception e) {
+					log.warn(e);
+				}
 			}
 			if(sensor.post_hour_func != null) {
 				json.key("post_hour_func");
 				json.value(sensor.post_hour_func);
+				
+				try {
+					Formula formula_org = FormulaBuilder.parseFormula(sensor.post_hour_func);
+					Formula formula_unified = formula_org.accept(FormulaUnifyVisitor.DEFAULT);
+					String funcText = formula_unified.accept(FormulaToStringVisitor.DEFAULT);
+					FormulaToJsonTreeVisitor jsonVisitor = new FormulaToJsonTreeVisitor(json);
+					formula_unified.accept(jsonVisitor);
+					if(funcText != null && !funcText.isEmpty()) {
+						json.key("post_hour_func_parsed");				
+						json.value(funcText);	
+						json.key("post_hour_func_tree");				
+						formula_unified.accept(new FormulaToJsonTreeVisitor(json));		
+					}
+				} catch(Exception e) {
+					log.warn(e);
+				}
 			}
 			if(sensor.post_day_func != null) {
 				json.key("post_day_func");
 				json.value(sensor.post_day_func);
+				
+				try {
+					Formula formula_org = FormulaBuilder.parseFormula(sensor.post_day_func);
+					Formula formula_unified = formula_org.accept(FormulaUnifyVisitor.DEFAULT);
+					String funcText = formula_unified.accept(FormulaToStringVisitor.DEFAULT);
+					if(funcText != null && !funcText.isEmpty()) {
+						json.key("post_day_func_parsed");				
+						json.value(funcText);
+						json.key("post_day_func_tree");				
+						formula_unified.accept(new FormulaToJsonTreeVisitor(json));		
+					}
+				} catch(Exception e) {
+					log.warn(e);
+				}				
 			}
 			json.endObject();
 		}
