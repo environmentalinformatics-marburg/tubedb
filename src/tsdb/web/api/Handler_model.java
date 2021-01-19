@@ -15,10 +15,13 @@ import org.json.JSONWriter;
 import tsdb.component.Sensor;
 import tsdb.dsl.FormulaBuilder;
 import tsdb.dsl.FormulaJavaVisitor;
+import tsdb.dsl.FormulaPrintFormulaVisistor;
 import tsdb.dsl.FormulaToJsonTreeVisitor;
 import tsdb.dsl.FormulaToStringVisitor;
 import tsdb.dsl.FormulaUnifyVisitor;
 import tsdb.dsl.formula.Formula;
+import tsdb.dsl.printformula.PrintFormula;
+import tsdb.dsl.printformula.PrintFormulaToJsonVisitor;
 import tsdb.remote.RemoteTsDB;
 
 public class Handler_model extends MethodHandler {	
@@ -122,6 +125,9 @@ public class Handler_model extends MethodHandler {
 						json.value(funcText);
 						json.key("raw_func_tree");				
 						formula_unified.accept(new FormulaToJsonTreeVisitor(json));		
+						json.key("raw_func_print");				
+						PrintFormula printFormula = formula_unified.accept(FormulaPrintFormulaVisistor.DEFAULT);	
+						printFormula.accept(new PrintFormulaToJsonVisitor(json));
 					}
 				} catch(Exception e) {
 					log.warn(e);
@@ -135,16 +141,18 @@ public class Handler_model extends MethodHandler {
 					Formula formula_org = FormulaBuilder.parseFormula(sensor.post_hour_func);
 					Formula formula_unified = formula_org.accept(FormulaUnifyVisitor.DEFAULT);
 					String funcText = formula_unified.accept(FormulaToStringVisitor.DEFAULT);
-					FormulaToJsonTreeVisitor jsonVisitor = new FormulaToJsonTreeVisitor(json);
-					formula_unified.accept(jsonVisitor);
 					if(funcText != null && !funcText.isEmpty()) {
 						json.key("post_hour_func_parsed");				
 						json.value(funcText);	
 						json.key("post_hour_func_tree");				
 						formula_unified.accept(new FormulaToJsonTreeVisitor(json));		
+						json.key("post_hour_func_print");				
+						PrintFormula printFormula = formula_unified.accept(FormulaPrintFormulaVisistor.DEFAULT);	
+						printFormula.accept(new PrintFormulaToJsonVisitor(json));
 					}
 				} catch(Exception e) {
-					log.warn(e);
+					e.printStackTrace();
+					log.warn(e + " at " + sensor.post_hour_func);
 				}
 			}
 			if(sensor.post_day_func != null) {
@@ -160,6 +168,9 @@ public class Handler_model extends MethodHandler {
 						json.value(funcText);
 						json.key("post_day_func_tree");				
 						formula_unified.accept(new FormulaToJsonTreeVisitor(json));		
+						json.key("post_day_func_print");				
+						PrintFormula printFormula = formula_unified.accept(FormulaPrintFormulaVisistor.DEFAULT);	
+						printFormula.accept(new PrintFormulaToJsonVisitor(json));
 					}
 				} catch(Exception e) {
 					log.warn(e);

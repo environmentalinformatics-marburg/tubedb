@@ -41,8 +41,10 @@
           <template v-if="sensor.raw_func_parsed !== undefined">
             <div>--> parsed</div> 
             <div>{{sensor.raw_func_parsed}}</div>
-            <div>--> tree</div>
-            <div><formula-tree :node="sensor.raw_func_tree" :level="0"/></div>
+            <!--<div> tree</div>
+            <div><formula-tree :node="sensor.raw_func_tree" :level="0"/></div>-->
+            <div>--> print</div>  
+            <formula-print :node="sensor.raw_func_print" :level="0"/>              
           </template>          
         </template> 
       </div>
@@ -70,8 +72,10 @@
           <template v-if="sensor.post_hour_func_parsed !== undefined">
             <div>--> parsed</div> 
             <div>{{sensor.post_hour_func_parsed}}</div>
-            <div>--> tree</div>
-            <div><formula-tree :node="sensor.post_hour_func_tree" :level="0"/></div>            
+            <!--<div> tree</div>
+            <div><formula-tree :node="sensor.post_hour_func_tree" :level="0"/></div>-->   
+            <div>--> print</div>  
+            <formula-print :node="sensor.post_hour_func_print" :level="0"/>          
           </template>           
         </template> 
       </div>
@@ -95,8 +99,10 @@
           <template v-if="sensor.post_day_func_parsed !== undefined">
             <div>--> parsed</div> 
             <div>{{sensor.post_day_func_parsed}}</div>
-            <div>--> tree</div>
-            <div><formula-tree :node="sensor.post_day_func_tree" :level="0"/></div>            
+            <!--<div> tree</div>
+            <div><formula-tree :node="sensor.post_day_func_tree" :level="0"/></div>-->
+            <div>--> print</div>  
+            <formula-print :node="sensor.post_day_func_print" :level="0"/>        
           </template>           
         </template>
       </div>
@@ -156,13 +162,15 @@
 <script>
 import { mapState } from 'vuex'
 
-import formulaTree from 'components/formula-tree.vue'
+//import formulaTree from 'components/formula-tree.vue'
+import formulaPrint from 'components/formula-print.vue'
 
 
 export default {
   name: 'sensor',
   components: {
-    formulaTree,
+    //formulaTree,
+    formulaPrint,
   },
   props: ['id'],
   computed: {
