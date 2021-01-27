@@ -9,4 +9,10 @@ public abstract class PrintFormulaBinary extends PrintFormula {
 		this.a = a;
 		this.b = b;
 	}
+	
+	public PrintFormulaBinary(PrintFormula a, PrintFormula b, int depth) {
+		super(depth);
+		this.a = a;
+		this.b = b;
+	}
 }

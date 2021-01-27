@@ -6,10 +6,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,8 +57,10 @@ import org.eclipse.jetty.server.session.DefaultSessionIdManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.gdal.gdal.gdal;
 import org.yaml.snakeyaml.Yaml;
 
+import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.remote.RemoteTsDB;
 import tsdb.remote.ServerTsDB;
@@ -262,25 +268,38 @@ public class Main {
 		server.start();
 		//server.dumpStdErr();
 		System.out.println("------------------------------------------------------------");
+		try {
+			Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();	
+			System.out.println("Host IPv4 IPs: ");
+			while(networkInterfaces.hasMoreElements()) {
+				NetworkInterface networkInterface = networkInterfaces.nextElement();				
+				for(InterfaceAddress interfaceAddress:networkInterface.getInterfaceAddresses()) {
+					InetAddress inetAddress = interfaceAddress.getAddress();
+					if(inetAddress.getAddress().length==4) {
+						System.out.println(inetAddress.getHostAddress()/*+"\t"+networkInterface.getName()*/+"\t\t\t"+ networkInterface.getDisplayName());
+					}
+				}
+
+			}
+		} catch (Exception e) {
+			log.error(e);
+		}
 		System.out.println();
-		System.out.println("stop Web Server:");
+		System.out.println("Stop web server:");
+		System.out.println("- Directly:  by pressing 'Ctrl-C'");
+		System.out.println("- At local terminal:  curl --proxy '' --request POST http://localhost:" + TsDBFactory.WEB_SERVER_PORT + "/shutdown?token=stop");
 		System.out.println();
-		System.out.println("- directly:  by pressing 'Ctrl-C'");
-		System.out.println();
-		System.out.println("- at local terminal:  curl --proxy '' --request POST http://localhost:" + TsDBFactory.WEB_SERVER_PORT + "/shutdown?token=stop");
-		System.out.println();
-		System.out.println();
-		System.out.println("Web Sever started at    ***      http://[HOSTNAME]:" + TsDBFactory.WEB_SERVER_PORT + TsDBFactory.WEB_SERVER_PREFIX_BASE_URL + "      ***");
+		System.out.println("Web sever started at    ***      http://[HOSTNAME]:" + TsDBFactory.WEB_SERVER_PORT + TsDBFactory.WEB_SERVER_PREFIX_BASE_URL + "      ***");
 		if(use_https) {
 			System.out.println();
 			System.out.println("secure channel    ***      https://[HOSTNAME]:" + TsDBFactory.WEB_SERVER_HTTPS_PORT + TsDBFactory.WEB_SERVER_PREFIX_BASE_URL + "      ***");
 		}
 		System.out.println();
-		System.out.println("waiting for requests...");
+		System.out.println("TubeDB v"+ TsDB.tubedb_version + "   waiting for requests ...");
 
 		server.join();
 
-		System.out.println("...Web Sever stopped");		
+		System.out.println("Web sever stopped.");		
 	}
 
 	private static UserStore openUserStore() {

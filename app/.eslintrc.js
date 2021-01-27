@@ -79,5 +79,8 @@ module.exports = {
     'comma-dangle': 'off',
     'space-before-function-paren': 'off',
     'keyword-spacing': 'off',
+    'object-curly-spacing': 'off',
+    'block-spacing': 'off',
+    'quotes': 'off',
   }
 }

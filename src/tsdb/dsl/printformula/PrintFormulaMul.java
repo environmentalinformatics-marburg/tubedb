@@ -5,7 +5,7 @@ public class PrintFormulaMul extends PrintFormula {
 	public final PrintFormula[] factors;
 	
 	public PrintFormulaMul(PrintFormula[] factors) {
-		super(PrintFormula.getDepth(factors));
+		super(PrintFormula.getDepth(factors) + 1);
 		this.factors = factors;
 	}
 

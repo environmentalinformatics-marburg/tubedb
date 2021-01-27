@@ -10,6 +10,11 @@ const routes = [
   },
 
   {
+    path: '/diagram',
+    component: () => import('layouts/DiagramLayout.vue'),
+  },
+
+  {
     path: '/',
     redirect: '/model',
   },

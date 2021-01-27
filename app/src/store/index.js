@@ -16,7 +16,7 @@ export default function (/* { ssrContext } */) {
     getters: {
       api: (state) => (...parts) => {
         var path = parts.join('/');
-        return isDev ? ('http://localhost:8080/' + path) : ('/' + path);
+        return isDev ? ('http://127.0.0.1:8080/' + path) : ('../../' + path);
       },
       apiGET: (state, getters) => (parts, params) => {
         //console.log(parts);

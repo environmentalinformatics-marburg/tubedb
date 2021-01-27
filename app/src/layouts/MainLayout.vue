@@ -34,8 +34,11 @@
       <router-view />
     </q-page-container>
 
-    <q-page-container v-if="model === undefined">
+    <q-page-container v-if="modelLoading">
       Loading model ...
+    </q-page-container>
+    <q-page-container v-else-if="modelError !== undefined">
+      Error Loading model.
     </q-page-container>
 
   </q-layout>
@@ -54,6 +57,8 @@ export default {
   computed: {
     ...mapState({
       model: state => state.model.data,  
+      modelLoading: state => state.model.loading,
+      modelError: state => state.model.error,    
     }),
     sensor_id() {
       return this.$route.params.sensor_id;

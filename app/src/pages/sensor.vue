@@ -43,8 +43,10 @@
             <div>{{sensor.raw_func_parsed}}</div>
             <!--<div> tree</div>
             <div><formula-tree :node="sensor.raw_func_tree" :level="0"/></div>-->
-            <div>--> print</div>  
+            <div>--> print</div>
+             <div class="formula-print">  
             <formula-print :node="sensor.raw_func_print" :level="0"/>              
+             </div>
           </template>          
         </template> 
       </div>
@@ -74,8 +76,10 @@
             <div>{{sensor.post_hour_func_parsed}}</div>
             <!--<div> tree</div>
             <div><formula-tree :node="sensor.post_hour_func_tree" :level="0"/></div>-->   
-            <div>--> print</div>  
-            <formula-print :node="sensor.post_hour_func_print" :level="0"/>          
+            <div>--> print</div>
+             <div class="formula-print">  
+              <formula-print :node="sensor.post_hour_func_print" :level="0"/>
+             </div>          
           </template>           
         </template> 
       </div>
@@ -102,7 +106,9 @@
             <!--<div> tree</div>
             <div><formula-tree :node="sensor.post_day_func_tree" :level="0"/></div>-->
             <div>--> print</div>  
-            <formula-print :node="sensor.post_day_func_print" :level="0"/>        
+            <div class="formula-print">
+              <formula-print :node="sensor.post_day_func_print" :level="0"/>        
+            </div>
           </template>           
         </template>
       </div>
@@ -201,6 +207,11 @@ export default {
   grid-template-columns: max-content max-content;
   gap: 10px 20px;
   margin: 10px;
+}
+
+.formula-print {
+  border: 1px solid #1C6EA4;
+  justify-self: start;
 }
 
 </style>

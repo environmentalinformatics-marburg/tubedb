@@ -4,7 +4,9 @@
   <template v-if="node.op === 'add'">
     <template v-for="(sub, index) in node.terms">
       <div :class="{'formula-op-add-column': true, 'formula-op-add-column-follow': index > 0}" :key="JSON.stringify(sub)+0">{{index == 0 && sub.positive ? '' : sub.positive ? '+' : '-'}}</div> 
-      <formula-print :node="sub.term" :level="node.depth === 1 ? level : level + 1" :key="JSON.stringify(sub)+1"/> 
+      <div :key="JSON.stringify(sub)+1" class="formula-op-add-item">
+        <formula-print :node="sub.term" :level="node.depth <= 2 ? level : level + 1" /> 
+      </div>
     </template>
   </template>
   <template v-else-if="node.op === 'var'">
@@ -44,14 +46,14 @@
     </template>
   </template> 
   <template v-else-if="node.op === 'pow'">
-    <formula-print :node="node.a" :level="node.depth === 1 ? level : level + 1"/>
+    <formula-print :node="node.a" :level="node.depth === 1 || node.depth === 0 ? level : level + 1"/>
     <div>^</div> 
-    <formula-print :node="node.b" :level="node.depth === 1 ? level : level + 1" class="formula-op-pow-exp"/> 
+    <formula-print :node="node.b" :level="node.depth === 1 || node.depth === 0 ? level : level + 1" class="formula-op-pow-exp"/> 
   </template>
   <template v-else-if="node.pred_op === 'and'">
     <template v-for="(pred, index) in node.preds">
       <div class="formula-op-and-column" :key="JSON.stringify(pred)+index">{{index == 0 ? '' : 'AND'}}</div>
-      <formula-print :node="pred" :level="node.depth === 1 ? level : level + 1" :key="JSON.stringify(pred)"/> 
+      <formula-print :node="pred" :level="node.depth <= 2 ? level : level + 1" :key="JSON.stringify(pred)"/> 
     </template>
   </template>
   <template v-else-if="node.op === 'func'">
@@ -160,7 +162,14 @@ export default {
   display: grid; 
   grid-template-columns: max-content max-content; 
   align-items: center; 
-  justify-items: right;
+  justify-items: stretch;
+}
+
+.formula-op-add-item {
+  border-left: 1px solid #ffffff5e;
+  display: flex;
+  align-items: center;
+  justify-content: right;
 }
 
 .formula-op-add-column {
