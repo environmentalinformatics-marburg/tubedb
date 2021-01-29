@@ -69,6 +69,9 @@ public class Handler_query_csv extends MethodHandler {
 			//log.info("dt " + datetime_fomat);
 			if(datetime_fomat != null) {
 				switch(datetime_fomat) {
+				case "timestamp":
+					csvTimeType = CSVTimeType.TIMESTAMP;
+					break;
 				case "custom":
 					csvTimeType = CSVTimeType.CUSTOM;
 					break;

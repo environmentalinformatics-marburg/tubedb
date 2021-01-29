@@ -18,8 +18,7 @@
     </q-drawer>
 
     <q-page-container>
-      <canvas style="border-style: solid;">
-      </canvas>
+      <div ref="diagram"></div>
     </q-page-container>
 
 
@@ -31,6 +30,120 @@
 
 import { mapState, mapGetters } from 'vuex';
 import * as d3 from 'd3';
+import uPlot from 'uPlot';
+import 'uPlot/dist/uPlot.min.css';
+
+function wheelZoomPlugin(opts) {
+  let factor = opts.factor || 0.75;
+
+  let xMin, xMax, yMin, yMax, xRange, yRange;
+
+  function clamp(nRange, nMin, nMax, fRange, fMin, fMax) {
+    if (nRange > fRange) {
+      nMin = fMin;
+      nMax = fMax;
+    } else if (nMin < fMin) {
+      nMin = fMin;
+      nMax = fMin + nRange;
+    } else if (nMax > fMax) {
+      nMax = fMax;
+      nMin = fMax - nRange;
+    }
+
+    return [nMin, nMax];
+  }
+
+  return {
+    hooks: {
+      ready: u => {
+        xMin = u.scales.x.min;
+        xMax = u.scales.x.max;
+        yMin = u.scales.y.min;
+        yMax = u.scales.y.max;
+
+        xRange = xMax - xMin;
+        yRange = yMax - yMin;
+
+        let plot = u.root.querySelector(".u-over");
+        let rect = plot.getBoundingClientRect();
+
+        // wheel drag pan
+        plot.addEventListener("mousedown", e => {
+          if (e.button === 1) {
+          //plot.style.cursor = "move";
+            e.preventDefault();
+
+            let left0 = e.clientX;
+            //let top0 = e.clientY;
+
+            let scXMin0 = u.scales.x.min;
+            let scXMax0 = u.scales.x.max;
+
+            let xUnitsPerPx = u.posToVal(1, 'x') - u.posToVal(0, 'x');
+
+            function onmove(e) {
+              e.preventDefault();
+
+              let left1 = e.clientX;
+              //let top1 = e.clientY;
+
+              let dx = xUnitsPerPx * (left1 - left0);
+
+              u.setScale('x', {
+                min: scXMin0 - dx,
+                max: scXMax0 - dx,
+              });
+            }
+
+            function onup(e) {
+              document.removeEventListener("mousemove", onmove);
+              document.removeEventListener("mouseup", onup);
+            }
+
+            document.addEventListener("mousemove", onmove);
+            document.addEventListener("mouseup", onup);
+          }
+        });
+
+        // wheel scroll zoom
+        plot.addEventListener("wheel", e => {
+          e.preventDefault();
+
+          let {left, top} = u.cursor;
+
+          let leftPct = left / rect.width;
+          let btmPct = 1 - top / rect.height;
+          let xVal = u.posToVal(left, "x");
+          let yVal = u.posToVal(top, "y");
+          let oxRange = u.scales.x.max - u.scales.x.min;
+          let oyRange = u.scales.y.max - u.scales.y.min;
+
+          let nxRange = e.deltaY < 0 ? oxRange * factor : oxRange / factor;
+          let nxMin = xVal - leftPct * nxRange;
+          let nxMax = nxMin + nxRange;
+          [nxMin, nxMax] = clamp(nxRange, nxMin, nxMax, xRange, xMin, xMax);
+
+          let nyRange = e.deltaY < 0 ? oyRange * factor : oyRange / factor;
+          let nyMin = yVal - btmPct * nyRange;
+          let nyMax = nyMin + nyRange;
+          [nyMin, nyMax] = clamp(nyRange, nyMin, nyMax, yRange, yMin, yMax);
+
+          u.batch(() => {
+            u.setScale("x", {
+              min: nxMin,
+              max: nxMax,
+            });
+
+            /*u.setScale("y", {
+              min: nyMin,
+              max: nyMax,
+            });*/
+          });
+        });
+      }
+    }
+  };
+}
 
 export default {
   data () {
@@ -48,30 +161,7 @@ export default {
     ...mapGetters({
       api: 'api',
       apiGET: 'apiGET',
-    }),
-    dataXrange() {
-      if(this.data === undefined) {
-        return [0, 1];
-      }
-      return [0, this.data.length - 1];     
-    },
-    dataYrange() {
-      if(this.data === undefined) {
-        return [0, 1];
-      }
-      var min = Number.POSITIVE_INFINITY;
-      var max = Number.NEGATIVE_INFINITY;
-      this.data.forEach(function(r) {
-        var v = r[1];
-        if (max < v) {
-          max = v;
-        }
-        if (min > v) {
-          min = v;
-        }
-      });
-      return [min, max];      
-    }, 
+    }), 
   },
   methods: {
     onChangeDrawerWidth(e) {
@@ -85,43 +175,43 @@ export default {
       }
     },
     createDiagram() {
-      const Width = 1280;
-      const Height = 400;
-      const margin = {top: 0, right: 0, bottom: 0, left: 0};
-      const width = Width - margin.right - margin.left;
-      const height = Height - margin.top - margin.bottom;
+      if(this.data === undefined) { 
+        return;   
+      }
 
-      const xScale = d3.scaleLinear().range([0, width]);
-      const yScale = d3.scaleLinear().range([height, 0]);
-      const xAxis = d3.axisBottom(xScale);
-      const yAxis = d3.axisLeft(yScale);
+      let opts = {
+        title: "My Chart",
+        id: "chart1",
+        class: "my-chart",
+        width: 800,
+        height: 600,
+        plugins: [
+          wheelZoomPlugin({factor: 0.75})
+        ],        
+        series: [
+          {},
+          {
+            // initial toggled state (optional)
+            show: true,
 
-      const canvas = d3.select('canvas').attr('width', Width).attr('height', Height);
-      const context = canvas.node().getContext('2d', { alpha: false });
-      context.webkitImageSmoothingEnabled = false;
-      context.mozImageSmoothingEnabled = false;
-      context.imageSmoothingEnabled = false;
-      context.translate(margin.left, margin.top);
+            spanGaps: false,
 
-      const line = d3.line()
-        .x((r, i) => ~~xScale(i))
-        .y(r => ~~yScale(r[1]))
-        .context(context);
+            // in-legend display
+            label: "Value",
+            value: (self, rawValue) => rawValue,
 
-      const data = this.data === undefined ? [] : this.data;
-      xScale.domain(this.dataXrange);
-      yScale.domain(this.dataYrange);
+            // series style
+            stroke: "red",
+            width: 1,
+            //fill: "rgba(255, 0, 0, 0.3)",
+            //dash: [10, 5],
+          }
+        ],
+      };
 
-      //context.clearRect(0, 0, width, height);
-      context.fillStyle = "white";
-      context.fillRect(0, 0, width, height);
-      context.beginPath();
-      line(data);
-      context.lineWidth = 1;
-      context.opacity = 1;
-      context.strokeStyle = 'black';
-      context.stroke();
-      context.closePath();
+      this.$refs.diagram.innderHTML = '';
+      new uPlot(opts, this.data, this.$refs.diagram);
+
     },
   },
   watch: {
@@ -141,22 +231,27 @@ export default {
             raw_connection: 'curve', 
             value: 'line', 
             raw_value: 'point', 
-            year: 2020, 
+            //year: 2019, 
+            datetime_format: 'timestamp',
           };
+          console.time('apiGET');
           var data = await this.apiGET(['tsdb', 'query_csv'], { params: params });
+          console.timeEnd('apiGET');
+          console.time('csvParseRows');
           var d = d3.csvParseRows(data.data);
+          console.timeEnd('csvParseRows');
+          console.time('prepare');
           d.shift();
-          d = d.map(r => [r[0], Number.parseFloat(r[1])]);
-          this.data = d;
+          var col0 = d.map(row => (row[0] - 36819360 - 60) * 60);
+          var col1 = d.map(row => row[1] === 'NA' ? null : Number.parseFloat(row[1]));
+          this.data = [col0, col1];
+          console.timeEnd('prepare');
         } catch(e) {
           console.log(e);
         }
       }
     },
     data() {
-      //var q = d3.csvParse(this.data);
-      //var q = d3.csvParseRows(this.data);
-      //console.log(q);  
       this.createDiagram();    
     },
   },
@@ -207,13 +302,6 @@ export default {
 .drawerChanger::after {
   background-color: #0000008f;
   margin-right: 1px;
-}
-
-canvas {
-  image-rendering: crisp-edges;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: -webkit-optimize-contrast;
-  -ms-interpolation-mode: nearest-neighbor;
 }
 
 </style>

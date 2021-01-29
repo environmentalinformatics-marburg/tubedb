@@ -82,5 +82,13 @@ module.exports = {
     'object-curly-spacing': 'off',
     'block-spacing': 'off',
     'quotes': 'off',
+    'no-multi-spaces': 'off',
+    'no-unused-vars': 'warn',
+    'prefer-const': 'off',
+    'array-bracket-spacing': 'off',
+    'new-cap': 'off',
+    'padded-blocks': 'off',
+    'no-new': 'off',
+    'no-inner-declarations': 'off',
   }
 }
