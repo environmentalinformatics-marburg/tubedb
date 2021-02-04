@@ -393,4 +393,14 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 		}
 		entryList = Arrays.asList(result);
 	}
+
+	public int getIndexOfSensorName(String sensorName) {
+		for (int i = 0; i < sensorNames.length; i++) {
+			if(sensorNames[i].equals(sensorName)) {
+				return i;
+			}
+		}
+		return -1;
+		
+	}
 }

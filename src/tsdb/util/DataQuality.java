@@ -60,6 +60,7 @@ public enum DataQuality {
 		}
 		switch(text) {
 		case "no":
+		case "none":
 			return NO;
 		case "physical":
 			return PHYSICAL;

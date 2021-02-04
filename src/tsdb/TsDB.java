@@ -1,7 +1,5 @@
 package tsdb;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,7 +23,6 @@ import tsdb.streamdb.StreamStorageStreamDB;
 import tsdb.util.AggregationType;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.BaseAggregationTimeUtil;
-import tsdb.util.TimeUtil;
 import tsdb.util.Util;
 
 /**
@@ -36,7 +33,7 @@ import tsdb.util.Util;
 public class TsDB implements AutoCloseable {
 	private static final Logger log = LogManager.getLogger();
 
-	public static final String tubedb_version = "1.19.14";
+	public static final String tubedb_version = "1.19.15";
 
 	/**
 	 * map regionName -> Region
@@ -760,7 +757,7 @@ public class TsDB implements AutoCloseable {
 
 			for(VirtualCopyList p:raw_copy_lists) { // one source need to be contained
 				innerLoop: for(String source:p.sources) {
-					if(Util.containsWithRef(allSensorNames, source)) {
+					if(Util.containsWithRef(allSensorNames, source) && !allSensorNames.contains(p.target)) {
 						additionalSensorNames.add(p.target);
 						allSensorNames.add(p.target);
 						break innerLoop;
@@ -776,7 +773,7 @@ public class TsDB implements AutoCloseable {
 						break innerLoop;
 					}
 				}
-				if(satisfied) {
+				if(satisfied && !allSensorNames.contains(p.target)) {
 					additionalSensorNames.add(p.target);
 					allSensorNames.add(p.target);
 				}

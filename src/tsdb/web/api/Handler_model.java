@@ -2,6 +2,7 @@ package tsdb.web.api;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.HashSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -10,8 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.UserIdentity;
 import org.json.JSONWriter;
 
+import tsdb.component.Region;
 import tsdb.component.Sensor;
 import tsdb.dsl.FormulaBuilder;
 import tsdb.dsl.FormulaJavaVisitor;
@@ -22,7 +25,10 @@ import tsdb.dsl.FormulaUnifyVisitor;
 import tsdb.dsl.formula.Formula;
 import tsdb.dsl.printformula.PrintFormula;
 import tsdb.dsl.printformula.PrintFormulaToJsonVisitor;
+import tsdb.remote.GeneralStationInfo;
+import tsdb.remote.PlotInfo;
 import tsdb.remote.RemoteTsDB;
+import tsdb.web.util.Web;
 
 public class Handler_model extends MethodHandler {	
 	private static final Logger log = LogManager.getLogger();
@@ -33,156 +39,236 @@ public class Handler_model extends MethodHandler {
 
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		UserIdentity userIdentity = Web.getUserIdentity(baseRequest);
 		baseRequest.setHandled(true);
 		response.setContentType("application/json;charset=utf-8");
 		JSONWriter json = new JSONWriter(response.getWriter());
-		writeModel(json);		
+		writeModel(json, userIdentity);		
 	}
 
-	private void writeModel(JSONWriter json) throws RemoteException {
+	private void writeModel(JSONWriter json, UserIdentity userIdentity) throws RemoteException {
 		json.object();
 		json.key("model");
 		json.object();
+		json.key("projects");
+		json.object();
+		for(Region region : tsdb.getRegions()) {
+			if(Web.isAllowed(userIdentity, region.name)) {
+				json.key(region.name);
+				json.object();
+				json.key("id");
+				json.value(region.name);
+				json.key("title");
+				json.value(region.longName);				
+				json.key("groups");
+				json.array();
+				GeneralStationInfo[] generalStationInfos = tsdb.getGeneralStationsOfRegion(region.name);
+				for(GeneralStationInfo generalStationInfo : generalStationInfos) {
+					json.value(generalStationInfo.name);
+				}
+				json.endArray(); // end groups
+				json.endObject(); // end project
+			}
+		}
+		json.endObject(); // end projects
+		json.key("groups");
+		json.object();
+		HashSet<String> allPlots = new HashSet<String>();
+		for(GeneralStationInfo generalStationInfo : tsdb.getGeneralStations()) {
+			if(Web.isAllowed(userIdentity, generalStationInfo.region.name)) {
+				json.key(generalStationInfo.name);
+				json.object();
+				json.key("id");
+				json.value(generalStationInfo.name);
+				json.key("title");
+				json.value(generalStationInfo.longName);				
+				json.key("plots");
+				json.array();
+				HashSet<String> assignedPlots = new HashSet<String>();
+				if(generalStationInfo.assigned_plots != null) {
+					for(String assigned_plot : generalStationInfo.assigned_plots) {
+						assignedPlots.add(assigned_plot);
+					}
+				}
+				PlotInfo[] plotInfos = tsdb.getPlots();
+				for(PlotInfo plotInfo : plotInfos) {
+					if(assignedPlots.contains(plotInfo.name) || plotInfo.generalStationInfo.name.equals(generalStationInfo.name)) {
+						json.value(plotInfo.name);
+						allPlots.add(plotInfo.name);
+					}
+				}
+				json.endArray(); // end plots
+				json.endObject(); // end group
+			}
+		}
+		json.endObject(); // end groups
+		json.key("plots");
+		json.object();
+		HashSet<String> allSensors = new HashSet<String>();
+		PlotInfo[] plotInfos = tsdb.getPlots();
+		for(PlotInfo plotInfo : plotInfos) {
+			if(allPlots.contains(plotInfo.name)) {
+				json.key(plotInfo.name);
+				json.object();
+				json.key("id");
+				json.value(plotInfo.name);
+				json.key("sensors");
+				json.array();
+				String[] sensorNames = tsdb.getSensorNamesOfPlotWithVirtual(plotInfo.name);
+				for(String sensorName : sensorNames) {
+					json.value(sensorName);
+					allSensors.add(sensorName);
+				}
+				json.endArray(); // end sensors
+				json.endObject(); // end plot
+			}
+		}
+		json.endObject(); // end plots
 		json.key("sensors");
 		json.object();
 		for(Sensor sensor : tsdb.getSensors()) {
-			json.key(sensor.name);
-			json.object();
-			if(sensor.description != null) {
-				json.key("description");
-				json.value(sensor.description);
-			}
-			if(sensor.unitDescription != null) {
-				json.key("unit");
-				json.value(sensor.unitDescription);
-			}
-			json.key("aggregation_hour");
-			json.value(sensor.getAggregationHour().toString());
-			json.key("aggregation_day");
-			json.value(sensor.getAggregationDay().toString());
-			json.key("aggregation_week");
-			json.value(sensor.getAggregationWeek().toString());
-			json.key("aggregation_month");
-			json.value(sensor.getAggregationMonth().toString());
-			json.key("aggregation_year");
-			json.value(sensor.getAggregationYear().toString());
-			if(-Float.MAX_VALUE < sensor.physicalMin || sensor.physicalMax < Float.MAX_VALUE) {
-				json.key("physical_range");
-				json.array();
-				json.value(sensor.physicalMin);
-				json.value(sensor.physicalMax);
-				json.endArray();
-			}
-			if(0f < sensor.stepMin || sensor.stepMax < Float.MAX_VALUE) {
-				json.key("step_range");
-				json.array();
-				json.value(sensor.stepMin);
-				json.value(sensor.stepMax);
-				json.endArray();
-			}
-			if(sensor.empiricalDiff != null) {
-				json.key("empirical_diff");
-				json.value(sensor.empiricalDiff);
-			}
-			if(sensor.useInterpolation) {
-				json.key("interpolation_mse");
-				json.value(sensor.maxInterpolationMSE);
-			}
-			json.key("category");
-			json.value(sensor.category.toString());
-			json.key("visibility");
-			json.value(sensor.internal ? "internal" : "public");
-			if(sensor.isDerived()) {
-				json.key("derived");
-				json.value(sensor.isDerived());
-			}
-			if(sensor.raw_source != null && sensor.raw_source.length > 0) {
-				json.key("raw_source");
-				json.array();
-				for(String name:sensor.raw_source) {
-					json.value(name);
+			if(allSensors.contains(sensor.name)) {
+				json.key(sensor.name);
+				json.object();
+				json.key("id");
+				json.value(sensor.name);
+				if(sensor.description != null) {
+					json.key("description");
+					json.value(sensor.description);
 				}
-				json.endArray();
-			}
-			if(sensor.dependency != null && sensor.dependency.length > 0) {
-				json.key("dependency");
-				json.array();
-				for(String name:sensor.dependency) {
-					json.value(name);
+				if(sensor.unitDescription != null) {
+					json.key("unit");
+					json.value(sensor.unitDescription);
 				}
-				json.endArray();
-			}
-			if(sensor.raw_func != null) {
-				json.key("raw_func");
-				json.value(sensor.raw_func);
+				json.key("aggregation_hour");
+				json.value(sensor.getAggregationHour().toString());
+				json.key("aggregation_day");
+				json.value(sensor.getAggregationDay().toString());
+				json.key("aggregation_week");
+				json.value(sensor.getAggregationWeek().toString());
+				json.key("aggregation_month");
+				json.value(sensor.getAggregationMonth().toString());
+				json.key("aggregation_year");
+				json.value(sensor.getAggregationYear().toString());
+				if(-Float.MAX_VALUE < sensor.physicalMin || sensor.physicalMax < Float.MAX_VALUE) {
+					json.key("physical_range");
+					json.array();
+					json.value(sensor.physicalMin);
+					json.value(sensor.physicalMax);
+					json.endArray();
+				}
+				if(0f < sensor.stepMin || sensor.stepMax < Float.MAX_VALUE) {
+					json.key("step_range");
+					json.array();
+					json.value(sensor.stepMin);
+					json.value(sensor.stepMax);
+					json.endArray();
+				}
+				if(sensor.empiricalDiff != null) {
+					json.key("empirical_diff");
+					json.value(sensor.empiricalDiff);
+				}
+				if(sensor.useInterpolation) {
+					json.key("interpolation_mse");
+					json.value(sensor.maxInterpolationMSE);
+				}
+				json.key("category");
+				json.value(sensor.category.toString());
+				json.key("visibility");
+				json.value(sensor.internal ? "internal" : "public");
+				if(sensor.isDerived()) {
+					json.key("derived");
+					json.value(sensor.isDerived());
+				}
+				if(sensor.raw_source != null && sensor.raw_source.length > 0) {
+					json.key("raw_source");
+					json.array();
+					for(String name:sensor.raw_source) {
+						json.value(name);
+					}
+					json.endArray();
+				}
+				if(sensor.dependency != null && sensor.dependency.length > 0) {
+					json.key("dependency");
+					json.array();
+					for(String name:sensor.dependency) {
+						json.value(name);
+					}
+					json.endArray();
+				}
+				if(sensor.raw_func != null) {
+					json.key("raw_func");
+					json.value(sensor.raw_func);
 
-				try {
-					Formula formula_org = FormulaBuilder.parseFormula(sensor.raw_func);
-					Formula formula_unified = formula_org.accept(FormulaUnifyVisitor.DEFAULT);
-					String funcText = formula_unified.accept(FormulaToStringVisitor.DEFAULT);
-					if(funcText != null && !funcText.isEmpty()) {
-						json.key("raw_func_parsed");				
-						json.value(funcText);
-						json.key("raw_func_tree");				
-						formula_unified.accept(new FormulaToJsonTreeVisitor(json));		
-						json.key("raw_func_print");				
-						PrintFormula printFormula = formula_unified.accept(FormulaPrintFormulaVisistor.DEFAULT);	
-						printFormula.accept(new PrintFormulaToJsonVisitor(json));
+					try {
+						Formula formula_org = FormulaBuilder.parseFormula(sensor.raw_func);
+						Formula formula_unified = formula_org.accept(FormulaUnifyVisitor.DEFAULT);
+						String funcText = formula_unified.accept(FormulaToStringVisitor.DEFAULT);
+						if(funcText != null && !funcText.isEmpty()) {
+							json.key("raw_func_parsed");				
+							json.value(funcText);
+							json.key("raw_func_tree");				
+							formula_unified.accept(new FormulaToJsonTreeVisitor(json));		
+							json.key("raw_func_print");				
+							PrintFormula printFormula = formula_unified.accept(FormulaPrintFormulaVisistor.DEFAULT);	
+							printFormula.accept(new PrintFormulaToJsonVisitor(json));
+						}
+					} catch(Exception e) {
+						log.warn(e);
 					}
-				} catch(Exception e) {
-					log.warn(e);
 				}
-			}
-			if(sensor.post_hour_func != null) {
-				json.key("post_hour_func");
-				json.value(sensor.post_hour_func);
-				
-				try {
-					Formula formula_org = FormulaBuilder.parseFormula(sensor.post_hour_func);
-					Formula formula_unified = formula_org.accept(FormulaUnifyVisitor.DEFAULT);
-					String funcText = formula_unified.accept(FormulaToStringVisitor.DEFAULT);
-					if(funcText != null && !funcText.isEmpty()) {
-						json.key("post_hour_func_parsed");				
-						json.value(funcText);	
-						json.key("post_hour_func_tree");				
-						formula_unified.accept(new FormulaToJsonTreeVisitor(json));		
-						json.key("post_hour_func_print");				
-						PrintFormula printFormula = formula_unified.accept(FormulaPrintFormulaVisistor.DEFAULT);	
-						printFormula.accept(new PrintFormulaToJsonVisitor(json));
+				if(sensor.post_hour_func != null) {
+					json.key("post_hour_func");
+					json.value(sensor.post_hour_func);
+
+					try {
+						Formula formula_org = FormulaBuilder.parseFormula(sensor.post_hour_func);
+						Formula formula_unified = formula_org.accept(FormulaUnifyVisitor.DEFAULT);
+						String funcText = formula_unified.accept(FormulaToStringVisitor.DEFAULT);
+						if(funcText != null && !funcText.isEmpty()) {
+							json.key("post_hour_func_parsed");				
+							json.value(funcText);	
+							json.key("post_hour_func_tree");				
+							formula_unified.accept(new FormulaToJsonTreeVisitor(json));		
+							json.key("post_hour_func_print");				
+							PrintFormula printFormula = formula_unified.accept(FormulaPrintFormulaVisistor.DEFAULT);	
+							printFormula.accept(new PrintFormulaToJsonVisitor(json));
+						}
+					} catch(Exception e) {
+						e.printStackTrace();
+						log.warn(e + " at " + sensor.post_hour_func);
 					}
-				} catch(Exception e) {
-					e.printStackTrace();
-					log.warn(e + " at " + sensor.post_hour_func);
 				}
+				if(sensor.post_day_func != null) {
+					json.key("post_day_func");
+					json.value(sensor.post_day_func);
+
+					try {
+						Formula formula_org = FormulaBuilder.parseFormula(sensor.post_day_func);
+						Formula formula_unified = formula_org.accept(FormulaUnifyVisitor.DEFAULT);
+						String funcText = formula_unified.accept(FormulaToStringVisitor.DEFAULT);
+						if(funcText != null && !funcText.isEmpty()) {
+							json.key("post_day_func_parsed");				
+							json.value(funcText);
+							json.key("post_day_func_tree");				
+							formula_unified.accept(new FormulaToJsonTreeVisitor(json));		
+							json.key("post_day_func_print");				
+							PrintFormula printFormula = formula_unified.accept(FormulaPrintFormulaVisistor.DEFAULT);	
+							printFormula.accept(new PrintFormulaToJsonVisitor(json));
+						}
+					} catch(Exception e) {
+						log.warn(e);
+					}				
+				}
+				json.endObject(); // end sensor
 			}
-			if(sensor.post_day_func != null) {
-				json.key("post_day_func");
-				json.value(sensor.post_day_func);
-				
-				try {
-					Formula formula_org = FormulaBuilder.parseFormula(sensor.post_day_func);
-					Formula formula_unified = formula_org.accept(FormulaUnifyVisitor.DEFAULT);
-					String funcText = formula_unified.accept(FormulaToStringVisitor.DEFAULT);
-					if(funcText != null && !funcText.isEmpty()) {
-						json.key("post_day_func_parsed");				
-						json.value(funcText);
-						json.key("post_day_func_tree");				
-						formula_unified.accept(new FormulaToJsonTreeVisitor(json));		
-						json.key("post_day_func_print");				
-						PrintFormula printFormula = formula_unified.accept(FormulaPrintFormulaVisistor.DEFAULT);	
-						printFormula.accept(new PrintFormulaToJsonVisitor(json));
-					}
-				} catch(Exception e) {
-					log.warn(e);
-				}				
-			}
-			json.endObject();
 		}
-		json.endObject();  // end sensors
+		json.endObject();  // end sensors		
 		json.endObject(); // end model
 		json.endObject(); // end
-
 	}
+
+
 
 
 }

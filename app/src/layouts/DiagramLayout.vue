@@ -10,18 +10,53 @@
     <q-drawer show-if-above side="left" behavior="desktop" content-class="bg-grey-4" v-if="model !== undefined" :width="drawerWidth">    
       <div class="fit row">
       <q-scroll-area class="col-grow">  
-        
+        <q-list>
+
+          <q-item tag="label" >
+            <q-item-section>
+              <q-select v-model="timeAggregation" :options="['none', 'hour', 'day', 'week', 'month', 'year']" label="Aggregation by time" stack-label borderless :dense="true" :options-dense="true"/>
+            </q-item-section>
+          </q-item>
+
+          <q-item tag="label" >
+            <q-item-section>
+              <q-select v-model="quality" :options="['none', 'physical', 'step', 'empirical']" label="Quality checks" stack-label borderless :dense="true" :options-dense="true"/>
+            </q-item-section>
+          </q-item> 
+
+          <q-item tag="label" style="user-select: none;" v-if="timeAggregation != 'none'">
+            <q-item-section avatar>
+              <q-checkbox v-model="interpolation" color="teal" size="xs"/>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Interpolation</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-separator />
+
+          <q-item>
+            <timeseries-selector @plot-sensor-changed="selectedPlots = $event.plots; selectedSensors = $event.sensors;" />            
+          </q-item>
+                    
+        </q-list>
       </q-scroll-area>
       <div v-touch-pan.prevent.mouse="onChangeDrawerWidth" class="drawerChanger">
       </div>
       </div> 
     </q-drawer>
 
-    <q-page-container>
-      <div ref="diagram"></div>
+    <q-page-container style="position: relative;">
+      <div v-if="dataRequestSentCounter > dataRequestReceivedCounter" style="position: absolute;">
+        Waiting for data ...
+      </div>
+      <div v-if="dataRequestError !== undefined" style="position: absolute;">
+        {{dataRequestError}}
+      </div>
+      <div ref="diagram">        
+        <q-resize-observer @resize="onChangeDiagramDimensions" debounce="250" />
+      </div>
     </q-page-container>
-
-
 
   </q-layout>
 </template>
@@ -29,9 +64,19 @@
 <script>
 
 import { mapState, mapGetters } from 'vuex';
-import * as d3 from 'd3';
 import uPlot from 'uPlot';
 import 'uPlot/dist/uPlot.min.css';
+
+import timeseriesSelector from 'components/timeseries-selector.vue';
+
+function convertFloat32ArrayToArray(a) {
+  var r = [];
+  for(var i = 0; i < a.length; i++) {
+    var v = a[i];
+    r[i] = Number.isFinite(v) ? v : null;
+  }
+  return r;
+}
 
 function wheelZoomPlugin(opts) {
   let factor = opts.factor || 0.75;
@@ -146,10 +191,24 @@ function wheelZoomPlugin(opts) {
 }
 
 export default {
+  components: {
+    timeseriesSelector,
+  },
   data () {
     return {
       drawerWidth: 400,
       data: undefined,
+      uplot: undefined,
+      dataRequestSentCounter: 0,
+      dataRequestReceivedCounter: 0,
+      dataRequestError: 'init',
+
+      timeAggregation: 'hour',
+      quality: 'step',
+      interpolation: false,
+      
+      selectedPlots: [],
+      selectedSensors: [],
     }
   },
   computed: {
@@ -161,7 +220,23 @@ export default {
     ...mapGetters({
       api: 'api',
       apiGET: 'apiGET',
-    }), 
+      apiPOST: 'apiPOST',
+    }),
+    plotSensorList() {
+      let list = [];
+      for(let selectedSensor of this.selectedSensors) {
+        for(let selectedPlot of this.selectedPlots) {
+          if(selectedPlot.sensorSet.has(selectedSensor.id)) {
+            let entry = {plot: selectedPlot.id, sensor: selectedSensor.id};
+            list.push(entry);
+            if(list.length > 4) {
+              return list;
+            }
+          }
+        }
+      }
+      return list;
+    }, 
   },
   methods: {
     onChangeDrawerWidth(e) {
@@ -174,17 +249,32 @@ export default {
         this.drawerWidth = 800;
       }
     },
+    onChangeDiagramDimensions() {
+      if(this.uplot !== undefined && this.$refs.diagram !== undefined) {
+        var width = this.$refs.diagram.clientWidth;
+        //var height = this.$refs.diagram.clientHeight;
+        var height = 400;
+        this.uplot.setSize({ width: width, height: height });
+      }
+    },
     createDiagram() {
+      if(this.uplot !== undefined) {
+        this.uplot.destroy();
+        this.uplot = undefined;
+      }
       if(this.data === undefined) { 
         return;   
       }
 
+      var width = this.$refs.diagram.clientWidth;
+      //var height = this.$refs.diagram.clientHeight;
+      var height = 400;
+
+      console.log(width + " x "  + height);
+
       let opts = {
-        title: "My Chart",
-        id: "chart1",
-        class: "my-chart",
-        width: 800,
-        height: 600,
+        width: width,
+        height: height,
         plugins: [
           wheelZoomPlugin({factor: 0.75})
         ],        
@@ -198,7 +288,7 @@ export default {
 
             // in-legend display
             label: "Value",
-            value: (self, rawValue) => rawValue,
+            value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
 
             // series style
             stroke: "red",
@@ -210,54 +300,94 @@ export default {
       };
 
       this.$refs.diagram.innderHTML = '';
-      new uPlot(opts, this.data, this.$refs.diagram);
+      this.uplot = new uPlot(opts, this.data, this.$refs.diagram);
 
+    },
+    settingsChanged() {
+      this.requestData();
+    },
+    async requestData() {
+      if(this.model !== undefined) {
+        if(this.plotSensorList.length < 1) {
+          this.data = undefined;
+          return;
+        }
+        try {
+          this.dataRequestSentCounter++;
+          var dataRequestCurrentCounter = this.dataRequestSentCounter;
+          this.dataRequestError = undefined;
+          console.time('apiPOST');
+          var reqConfig = {
+            responseType: 'arraybuffer',
+          }
+          var reqData = {
+            settings: {
+              timeAggregation: this.timeAggregation,
+              quality: this.quality,
+              interpolation: this.interpolation,
+            },
+            timeseries: this.plotSensorList,
+          };
+          var response = await this.apiPOST(['tsdb', 'query_js'], reqData, reqConfig);
+          if(dataRequestCurrentCounter < this.dataRequestSentCounter) {
+            return;
+          }
+          this.dataRequestReceivedCounter = dataRequestCurrentCounter;
+          console.log(response);
+          console.timeEnd('apiPOST');
+          console.time('prepare');         
+          var arrayBuffer = response.data;
+          var dataView = new DataView(arrayBuffer);
+          var entryCount = dataView.getInt32(0, true);
+          var schemaCount = dataView.getInt32(4, true); 
+          console.log(entryCount);
+          console.log(schemaCount);
+          var data = [];
+          var timestamps = new Int32Array(arrayBuffer, 4 + 4, entryCount);
+          console.log(timestamps);
+          data[0] = timestamps.map(t => (t - 36819360 - 60) * 60);
+          for(var i = 0; i < schemaCount; i++) {
+            var values = new Float32Array(arrayBuffer, 4 + 4 + 4 * entryCount * (i + 1), entryCount); 
+            data[i + 1] = convertFloat32ArrayToArray(values);
+          }
+          //console.log(data);
+          console.timeEnd('prepare');
+          this.data = data;
+        } catch(e) {
+          console.log(e);
+          if(dataRequestCurrentCounter < this.dataRequestSentCounter) {
+            return;
+          }
+          this.dataRequestError = "ERROR receiving data";
+          this.dataRequestReceivedCounter = dataRequestCurrentCounter;
+        }       
+      }
     },
   },
   watch: {
     async model() {
-      if(this.model !== undefined) {
-        try {
-          var params = {
-            plot: 'AEG01', 
-            sensor: 'Ta_200', 
-            aggregation: 'hour', 
-            interpolated: false, 
-            quality: 'step', 
-            width: 1890, 
-            height: 100, 
-            by_year: true, 
-            connection: 'step', 
-            raw_connection: 'curve', 
-            value: 'line', 
-            raw_value: 'point', 
-            //year: 2019, 
-            datetime_format: 'timestamp',
-          };
-          console.time('apiGET');
-          var data = await this.apiGET(['tsdb', 'query_csv'], { params: params });
-          console.timeEnd('apiGET');
-          console.time('csvParseRows');
-          var d = d3.csvParseRows(data.data);
-          console.timeEnd('csvParseRows');
-          console.time('prepare');
-          d.shift();
-          var col0 = d.map(row => (row[0] - 36819360 - 60) * 60);
-          var col1 = d.map(row => row[1] === 'NA' ? null : Number.parseFloat(row[1]));
-          this.data = [col0, col1];
-          console.timeEnd('prepare');
-        } catch(e) {
-          console.log(e);
-        }
-      }
+      this.requestData();
     },
     data() {
       this.createDiagram();    
     },
+    timeAggregation() {
+      this.settingsChanged();
+    },
+    quality() {
+      this.settingsChanged();
+    },    
+    interpolation() {
+      this.settingsChanged();
+    },
+    plotSensorList() {
+      this.settingsChanged();
+    },
   },
   async mounted() {
+    this.requestData();
+
     this.$store.dispatch('model/init');
-    this.createDiagram();
   },
 }
 </script>
