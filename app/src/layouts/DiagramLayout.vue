@@ -2,9 +2,7 @@
   <q-layout view="hHh LpR fFf">
 
     <q-header reveal elevated class="bg-grey-7 text-grey-4">
-      <q-toolbar class="fit row wrap justify-center items-start content-start title">       
-        <div class="text-h5">TubeDB Diagram</div>
-       </q-toolbar>
+      <pages-toolbar title="TubeDB Diagram" active="/diagram"/>
     </q-header>
 
     <q-drawer show-if-above side="left" behavior="desktop" content-class="bg-grey-4" v-if="model !== undefined" :width="drawerWidth">    
@@ -36,8 +34,16 @@
           <q-separator />
 
           <q-item>
-            <timeseries-selector @plot-sensor-changed="selectedPlots = $event.plots; selectedSensors = $event.sensors;" />            
+            <timeseries-selector :multiTimeseries="multiTimeseries" @plot-sensor-changed="selectedPlots = $event.plots; selectedSensors = $event.sensors;" />            
           </q-item>
+
+          <q-separator />
+          <template v-if="plotSensorList.length > 0">
+            Selected timeseries:
+          <q-item v-for="plotSensor in plotSensorList" :key="plotSensor">
+            {{plotSensor.plot}} / {{plotSensor.sensor}}
+          </q-item>
+          </template>
                     
         </q-list>
       </q-scroll-area>
@@ -46,15 +52,21 @@
       </div> 
     </q-drawer>
 
-    <q-page-container style="position: relative;">
-      <div v-if="dataRequestSentCounter > dataRequestReceivedCounter" style="position: absolute;">
+    <q-page-container>
+      <div style="position: relative;">
+      <div v-if="dataRequestSentCounter > dataRequestReceivedCounter" style="position: absolute; top: 50px; left: 50px;">
         Waiting for data ...
       </div>
-      <div v-if="dataRequestError !== undefined" style="position: absolute;">
+      <div v-if="dataRequestError !== undefined" style="position: absolute; top: 100px; left: 100px;">
         {{dataRequestError}}
+      </div>
+      <div style="margin-top: 10px; margin-left: 10px;">
+        <b>Inspect timeseries values</b>: Move mouse over diagram to show time / measurement values.
+        <br><b>Zoom in/out</b>: Place mouse on diagram and rotate the mouse wheel.
       </div>
       <div ref="diagram">        
         <q-resize-observer @resize="onChangeDiagramDimensions" debounce="250" />
+      </div>
       </div>
     </q-page-container>
 
@@ -67,6 +79,7 @@ import { mapState, mapGetters } from 'vuex';
 import uPlot from 'uPlot';
 import 'uPlot/dist/uPlot.min.css';
 
+import pagesToolbar from 'components/pages-toolbar.vue';
 import timeseriesSelector from 'components/timeseries-selector.vue';
 
 function convertFloat32ArrayToArray(a) {
@@ -76,6 +89,148 @@ function convertFloat32ArrayToArray(a) {
     r[i] = Number.isFinite(v) ? v : null;
   }
   return r;
+}
+
+function touchZoomPlugin(opts) {
+  function init(u, opts, data) {
+    let plot = u.root.querySelector(".u-over");
+    let rect, oxRange, oyRange, xVal, yVal;
+    let fr = {x: 0, y: 0, dx: 0, dy: 0};
+    let to = {x: 0, y: 0, dx: 0, dy: 0};
+
+    function storePos(t, e) {
+      let ts = e.touches;
+
+      let t0 = ts[0];
+      let t0x = t0.clientX - rect.left;
+      let t0y = t0.clientY - rect.top;
+
+      if (ts.length === 1) {
+        t.x = t0x;
+        t.y = t0y;
+        t.d = t.dx = t.dy = 1;
+      } else {
+        let t1 = e.touches[1];
+        let t1x = t1.clientX - rect.left;
+        let t1y = t1.clientY - rect.top;
+
+        let xMin = Math.min(t0x, t1x);
+        let yMin = Math.min(t0y, t1y);
+        let xMax = Math.max(t0x, t1x);
+        let yMax = Math.max(t0y, t1y);
+
+        // midpts
+        t.y = (yMin + yMax) / 2;
+        t.x = (xMin + xMax) / 2;
+
+        t.dx = xMax - xMin;
+        t.dy = yMax - yMin;
+
+        // dist
+        t.d = Math.sqrt(t.dx * t.dx + t.dy * t.dy);
+      }
+    }
+
+    let rafPending = false;
+
+    function zoom() {
+      rafPending = false;
+
+      let left = to.x;
+      let top = to.y;
+
+      // non-uniform scaling
+      //let xFactor = fr.dx / to.dx;
+      //let yFactor = fr.dy / to.dy;
+
+      // uniform x/y scaling
+      let xFactor = fr.d / to.d;
+      let yFactor = fr.d / to.d;
+
+      let leftPct = left / rect.width;
+      let btmPct = 1 - top / rect.height;
+
+      let nxRange = oxRange * xFactor;
+      let nxMin = xVal - leftPct * nxRange;
+      let nxMax = nxMin + nxRange;
+
+      let nyRange = oyRange * yFactor;
+      let nyMin = yVal - btmPct * nyRange;
+      let nyMax = nyMin + nyRange;
+
+      u.batch(() => {
+        u.setScale("x", {
+          min: nxMin,
+          max: nxMax,
+        });
+
+        u.setScale("y", {
+          min: nyMin,
+          max: nyMax,
+        });
+      });
+    }
+
+    function touchmove(e) {
+      storePos(to, e);
+
+      if (!rafPending) {
+        rafPending = true;
+        requestAnimationFrame(zoom);
+      }
+    }
+
+    plot.addEventListener("touchstart", function(e) {
+      rect = plot.getBoundingClientRect();
+
+      storePos(fr, e);
+
+      oxRange = u.scales.x.max - u.scales.x.min;
+      oyRange = u.scales.y.max - u.scales.y.min;
+
+      let left = fr.x;
+      let top = fr.y;
+
+      xVal = u.posToVal(left, "x");
+      yVal = u.posToVal(top, "y");
+
+      document.addEventListener("touchmove", touchmove, {passive: true});
+    });
+
+    plot.addEventListener("touchend", function(e) {
+      document.removeEventListener("touchmove", touchmove, {passive: true});
+    });
+
+
+    plot.addEventListener("mousedown", function(e) {
+      console.log("mousedown");
+      rect = plot.getBoundingClientRect();
+
+      storePos(fr, e);
+
+      oxRange = u.scales.x.max - u.scales.x.min;
+      oyRange = u.scales.y.max - u.scales.y.min;
+
+      let left = fr.x;
+      let top = fr.y;
+
+      xVal = u.posToVal(left, "x");
+      yVal = u.posToVal(top, "y");
+
+      document.addEventListener("mousemove", touchmove, {passive: true});
+    });
+
+    plot.addEventListener("mouseup", function(e) {
+      console.log("mouseup");
+      document.removeEventListener("mousemove", touchmove, {passive: true});
+    });
+  }  
+
+  return {
+    hooks: {
+      init
+    }
+  };
 }
 
 function wheelZoomPlugin(opts) {
@@ -192,16 +347,17 @@ function wheelZoomPlugin(opts) {
 
 export default {
   components: {
+    pagesToolbar,
     timeseriesSelector,
   },
-  data () {
+  data() {
     return {
       drawerWidth: 400,
       data: undefined,
       uplot: undefined,
       dataRequestSentCounter: 0,
       dataRequestReceivedCounter: 0,
-      dataRequestError: 'init',
+      dataRequestError: 'no data loaded',
 
       timeAggregation: 'hour',
       quality: 'step',
@@ -209,6 +365,8 @@ export default {
       
       selectedPlots: [],
       selectedSensors: [],
+
+      multiTimeseries: false,
     }
   },
   computed: {
@@ -275,8 +433,17 @@ export default {
       let opts = {
         width: width,
         height: height,
+        cursor: {
+          x: false,
+          y: false,
+          drag: {
+            x: false,
+            y: false,
+          },          
+        },
         plugins: [
-          wheelZoomPlugin({factor: 0.75})
+          touchZoomPlugin({}),
+          wheelZoomPlugin({factor: 0.75}),
         ],        
         series: [
           {},
@@ -393,20 +560,6 @@ export default {
 </script>
 
 <style scoped>
-
-.title {
-  background: radial-gradient( circle farthest-corner at center center, #757575, #a4a2a2 ) no-repeat;
-  color: #e0e0e0b5 !important;
-  text-shadow: 0 0 5px #8c8c8c, 0 0 10px #4a4a4a, 0 0 20px #ffffff1f, 0 0 30px #fff3, 0 0 40px #ffffff38, 0 0 55px #ffffff42, 0 0 70px #fff3;
-  transition: 5s;
-  user-select: none;
-}
-
-.title:hover {
-  background: radial-gradient( circle farthest-corner at center center, #757575, #a4a2a2 ) no-repeat;
-  text-shadow: 0 0 5px #000, 0 0 10px #000, 0 0 20px #ffffff8a, 0 0 30px rgba(255, 255, 255, 0.514), 0 0 40px #ffffff91, 0 0 55px #ffffff8a, 0 0 70px rgba(255, 255, 255, 0.582);
-  user-select: none;
-}
 
 .drawerChanger {
   display: flex;

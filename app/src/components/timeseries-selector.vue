@@ -4,28 +4,66 @@
 
     <q-item tag="label" >
       <q-item-section>
-        <q-select v-model="selectedProjects" :options="projects" option-label="title" label="Projects" stack-label borderless dense options-dense options-cover multiple/>
+        <q-select v-model="selectedProjectsModel" :options="projects" option-value="id" for="id" option-label="title" label="Projects" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
+          <template v-if="selectedProjects.length > 0" v-slot:append>
+            <q-icon name="cancel" @click.stop="selectedProjectsModel = null" class="cursor-pointer" />
+          </template>
+        </q-select>
       </q-item-section>
     </q-item>
 
-    <q-item tag="label" >
-      <q-item-section>
-        <q-select v-model="selectedGroups" :options="groups" option-label="title" label="Groups" stack-label borderless dense options-dense options-cover multiple/>
-      </q-item-section>
-    </q-item>
+    <template v-if="selectedProjects.length > 0">
+      <q-item tag="label">
+        <q-item-section>
+          <q-select v-model="selectedGroupsModel" :options="groups" option-value="id" for="id" option-label="title" label="Groups" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
+            <template v-if="selectedGroups.length > 0" v-slot:append>
+              <q-icon name="cancel" @click.stop="selectedGroupsModel = null" class="cursor-pointer" />
+            </template>
+          </q-select>            
+        </q-item-section>
+      </q-item>
 
-    <q-item tag="label" >
-      <q-item-section>
-        <q-select v-model="selectedPlots" :options="plots" option-label="id" label="Plots" stack-label borderless dense options-dense options-cover multiple/>
-      </q-item-section>
-    </q-item>
+      <template v-if="selectedGroups.length > 0">
+        <q-item tag="label" >
+          <q-item-section>
+            <q-select v-model="selectedPlotsModel" :options="plots" option-value="id" for="id" option-label="id" label="Plots" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
+              <template v-if="selectedPlots.length > 0" v-slot:append>
+                <q-icon name="cancel" @click.stop="selectedPlotsModel = null" class="cursor-pointer" />
+              </template>
+            </q-select>  
+          </q-item-section>
+        </q-item>
 
-    <q-item tag="label" >
-      <q-item-section>
-        <q-select v-model="selectedSensors" :options="sensors" option-label="id" label="Sensors" stack-label borderless dense options-dense options-cover multiple/>
-      </q-item-section>
-    </q-item>             
+        <template v-if="selectedPlots.length > 0">
+          <q-item tag="label" >
+            <q-item-section>
+              <q-select v-model="selectedSensorsModel" :options="sensors" option-value="id" for="id" option-label="id" label="Sensors" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
+                <template v-if="selectedSensors.length > 0" v-slot:append>
+                  <q-icon name="cancel" @click.stop="selectedSensorsModel = null" class="cursor-pointer" />
+                </template>
+              </q-select>                
+            </q-item-section>
+          </q-item>
 
+          <template v-if="selectedSensors.length > 0">
+            
+          </template>
+          <div v-else>
+            no sensor selected
+          </div>
+
+        </template>
+        <div v-else>
+          no group selected
+        </div>
+      </template>
+      <div v-else>
+        no group selected
+      </div>
+    </template>             
+    <div v-else>
+      no project selected
+    </div>
   </q-list>         
 </q-item-section>
 </template>
@@ -36,13 +74,14 @@ import { mapState, mapGetters } from 'vuex';
 export default {
   name: 'timeseries-selector',
   props: [
+    'multiTimeseries',
   ],
   data () {
     return {
-      selectedProjects: [],
-      selectedGroups: [],
-      selectedPlots: [],
-      selectedSensors: [],
+      selectedProjectsModel: null,
+      selectedGroupsModel: null,
+      selectedPlotsModel: null,
+      selectedSensorsModel: null,
     }
   },  
   computed: {
@@ -56,6 +95,46 @@ export default {
       apiGET: 'apiGET',
       apiPOST: 'apiPOST',
     }),
+    selectedProjects() {
+      if(this.selectedProjectsModel === null) {
+        return [];
+      }
+      if(this.multiTimeseries) {
+        return this.selectedProjectsModel;
+      } else {
+        return [this.selectedProjectsModel];
+      }
+    },
+    selectedGroups() {
+      if(this.selectedGroupsModel === null) {
+        return [];
+      }
+      if(this.multiTimeseries) {
+        return this.selectedGroupsModel;
+      } else {
+        return [this.selectedGroupsModel];
+      }
+    },
+    selectedPlots() {
+      if(this.selectedPlotsModel === null) {
+        return [];
+      }
+      if(this.multiTimeseries) {
+        return this.selectedPlotsModel;
+      } else {
+        return [this.selectedPlotsModel];
+      }
+    },
+    selectedSensors() {
+      if(this.selectedSensorsModel === null) {
+        return [];
+      }
+      if(this.multiTimeseries) {
+        return this.selectedSensorsModel;
+      } else {
+        return [this.selectedSensorsModel];
+      }
+    },
     projects() {
       if(this.model === undefined) {
         return [];
@@ -97,16 +176,17 @@ export default {
       return result;
     },
     plots() {
+      console.log("a");
       if(this.model === undefined || this.selectedGroups.length === 0) {
         return [];
       }
-      var plotNames = new Set();
+      var plotNameSet = new Set();
       for (let group of this.selectedGroups) {
         for(let plotName of group.plots) {
-          plotNames.add(plotName);
+          plotNameSet.add(plotName);
         }
       }
-      let result = [...plotNames].map(plotName => this.model.plots[plotName]);
+      let result = [...plotNameSet].map(plotName => this.model.plots[plotName]);
       result.sort((a, b) => {
         var nameA = a.id.toLowerCase();
         var nameB = b.id.toLowerCase();
@@ -118,8 +198,9 @@ export default {
         }
         return 0;
       });
+      console.log("b");
       return result;
-    },      
+    },
     sensors() {
       if(this.model === undefined || this.selectedPlots.length === 0) {
         return [];
@@ -142,6 +223,7 @@ export default {
         }
         return 0;
       });
+      console.log(result);
       return result;
     },      
   },

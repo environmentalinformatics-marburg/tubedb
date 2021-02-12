@@ -1,5 +1,11 @@
 
 const routes = [
+
+  {
+    path: '/overview',
+    component: () => import('layouts/OverviewLayout.vue'),
+  },
+
   {
     path: '/model',
     component: () => import('layouts/MainLayout.vue'),
@@ -16,7 +22,7 @@ const routes = [
 
   {
     path: '/',
-    redirect: '/model',
+    redirect: '/overview',
   },
 
   {

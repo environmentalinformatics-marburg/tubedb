@@ -2,9 +2,7 @@
   <q-layout view="hHh LpR fFf">
 
     <q-header reveal elevated class="bg-grey-7 text-grey-4">
-      <q-toolbar class="fit row wrap justify-center items-start content-start title">       
-        <div class="text-h5">TubeDB Metadata Explorer</div>
-       </q-toolbar>
+      <pages-toolbar title="TubeDB Metadata" active="/model"/>
     </q-header>
 
     <q-drawer show-if-above side="left" behavior="desktop" content-class="bg-grey-4" v-if="model !== undefined" :width="drawerWidth">    
@@ -48,8 +46,13 @@
 
 import { mapState } from 'vuex'
 
+import pagesToolbar from 'components/pages-toolbar.vue';
+
 export default {
-  data () {
+  components: {
+    pagesToolbar,
+  },  
+  data() {
     return {
       drawerWidth: 400,
     }

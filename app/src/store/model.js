@@ -21,7 +21,6 @@ export default {
       console.log(data);
       for(let plot of Object.values(data.plots)) {
         plot.sensorSet = new Set(plot.sensors);
-        console.log(plot.id);
       }
       state.data = data;
     },
