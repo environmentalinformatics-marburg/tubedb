@@ -30,31 +30,51 @@
               <template v-if="selectedPlots.length > 0" v-slot:append>
                 <q-icon name="cancel" @click.stop="selectedPlotsModel = null" class="cursor-pointer" />
               </template>
-            </q-select>  
+            </q-select>
+            <q-item-label caption v-if="plotstations.length === 1 && selectedPlots.length === 1  && plotstations[0].id !== selectedPlots[0].id">
+              {{plotstations[0].id}}
+            </q-item-label>  
           </q-item-section>
         </q-item>
 
         <template v-if="selectedPlots.length > 0">
-          <q-item tag="label" >
+          <q-item tag="label" v-if="plotstations.length > 1">
             <q-item-section>
-              <q-select v-model="selectedSensorsModel" :options="sensors" option-value="id" for="id" option-label="id" label="Sensors" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
-                <template v-if="selectedSensors.length > 0" v-slot:append>
-                  <q-icon name="cancel" @click.stop="selectedSensorsModel = null" class="cursor-pointer" />
+              <q-select v-model="selectedPlotstationsModel" :options="plotstations" option-value="id" for="id" option-label="id" label="Plot-Stations" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
+                <template v-if="selectedPlotstations.length > 0" v-slot:append>
+                  <q-icon name="cancel" @click.stop="selectedPlotstationsModel = null" class="cursor-pointer" />
                 </template>
               </q-select>                
             </q-item-section>
           </q-item>
 
-          <template v-if="selectedSensors.length > 0">
+          <template v-if="selectedPlotstations.length > 0">
             
+            <q-item tag="label" >
+              <q-item-section>
+                <q-select v-model="selectedSensorsModel" :options="sensors" option-value="id" for="id" option-label="id" label="Sensors" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
+                  <template v-if="selectedSensors.length > 0" v-slot:append>
+                    <q-icon name="cancel" @click.stop="selectedSensorsModel = null" class="cursor-pointer" />
+                  </template>
+                </q-select>                
+              </q-item-section>
+            </q-item>
+
+            <template v-if="selectedSensors.length > 0">
+            
+            </template>
+            <div v-else>
+              no sensor selected
+            </div>
+
           </template>
           <div v-else>
-            no sensor selected
-          </div>
+            no plot-station selected
+          </div>         
 
         </template>
         <div v-else>
-          no group selected
+          no plot selected
         </div>
       </template>
       <div v-else>
@@ -81,6 +101,7 @@ export default {
       selectedProjectsModel: null,
       selectedGroupsModel: null,
       selectedPlotsModel: null,
+      selectedPlotstationsModel: null,
       selectedSensorsModel: null,
     }
   },  
@@ -123,6 +144,20 @@ export default {
         return this.selectedPlotsModel;
       } else {
         return [this.selectedPlotsModel];
+      }
+    },
+    selectedPlotstations() {
+      if(this.selectedPlotstationsModel === null) {
+        if(this.plotstations.length === 0) {
+          return [];
+        } else {
+          return [this.plotstations[0]];
+        }
+      }
+      if(this.multiTimeseries) {
+        return this.selectedPlotstationsModel;
+      } else {
+        return [this.selectedPlotstationsModel];
       }
     },
     selectedSensors() {
@@ -176,7 +211,6 @@ export default {
       return result;
     },
     plots() {
-      console.log("a");
       if(this.model === undefined || this.selectedGroups.length === 0) {
         return [];
       }
@@ -198,8 +232,37 @@ export default {
         }
         return 0;
       });
-      console.log("b");
       return result;
+    },
+    plotstations() {
+      var ps = [];
+      for (let plot of this.selectedPlots) {
+        switch(plot.stations.length) {
+          case 0: {
+            let id = plot.id;
+            let sensorSet = plot.sensorSet;
+            ps.push({id: id, sensorSet: sensorSet});
+            break;
+          }
+          case 1: {
+            let stationName = plot.stations[0];
+            let id = plot.id + ":" + stationName;
+            let sensorSet = this.model.stations[stationName].sensorSet;
+            ps.push({id: id, sensorSet: sensorSet});
+            break;
+          }
+          default: {
+            let id = plot.id; 
+            ps.push({id: id});
+            for(let stationName of plot.stations) {
+              let id = plot.id + ":" + stationName;
+              let sensorSet = this.model.stations[stationName].sensorSet;
+              ps.push({id: id, sensorSet: sensorSet});
+            }
+          }
+        }
+      }
+      return ps;
     },
     sensors() {
       if(this.model === undefined || this.selectedPlots.length === 0) {
@@ -223,17 +286,16 @@ export default {
         }
         return 0;
       });
-      console.log(result);
       return result;
     },      
   },
   methods: {
     onPlotSensorChanged() {
-      this.$emit('plot-sensor-changed', {plots: this.selectedPlots, sensors: this.selectedSensors});
+      this.$emit('plot-sensor-changed', {plots: this.selectedPlotstations, sensors: this.selectedSensors});
     },
   },
   watch: {
-    selectedPlots() {
+    selectedPlotStations() {
       this.onPlotSensorChanged();
     },
     selectedSensors() {

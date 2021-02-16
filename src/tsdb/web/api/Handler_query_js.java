@@ -19,6 +19,7 @@ import org.json.JSONTokener;
 import tsdb.remote.RemoteTsDB;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataQuality;
+import tsdb.util.TimeUtil;
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.TimestampSeries;
 
@@ -62,6 +63,12 @@ public class Handler_query_js extends MethodHandler {
 
 		List<TsEntry> entries = ts.entryList;
 		int entryCount = entries.size();
+		
+		if(entryCount > 1) {
+			TsEntry a = entries.get(0);
+			TsEntry b = entries.get(entryCount - 1);
+			log.info(entryCount + " entries  " + TimeUtil.oleMinutesToText(a.timestamp, b.timestamp) + "   " + a.timestamp + " - " + b.timestamp);
+		}
 
 		int INT_SIZE = 4;
 		int FLOAT_SIZE = 4;

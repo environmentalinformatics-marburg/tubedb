@@ -18,9 +18,12 @@ export default {
   
     setData (state, data) {
       state.loading = false;
-      console.log(data);
+      //console.log(data);
       for(let plot of Object.values(data.plots)) {
         plot.sensorSet = new Set(plot.sensors);
+      }
+      for(let station of Object.values(data.stations)) {
+        station.sensorSet = new Set(station.sensors);
       }
       state.data = data;
     },

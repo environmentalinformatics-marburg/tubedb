@@ -2,6 +2,7 @@ package tsdb.web.api;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.HashSet;
 
 import javax.servlet.ServletException;
@@ -28,6 +29,7 @@ import tsdb.dsl.printformula.PrintFormulaToJsonVisitor;
 import tsdb.remote.GeneralStationInfo;
 import tsdb.remote.PlotInfo;
 import tsdb.remote.RemoteTsDB;
+import tsdb.remote.StationInfo;
 import tsdb.web.util.Web;
 
 public class Handler_model extends MethodHandler {	
@@ -104,6 +106,7 @@ public class Handler_model extends MethodHandler {
 		json.endObject(); // end groups
 		json.key("plots");
 		json.object();
+		HashSet<String> allStations = new HashSet<String>();
 		HashSet<String> allSensors = new HashSet<String>();
 		PlotInfo[] plotInfos = tsdb.getPlots();
 		for(PlotInfo plotInfo : plotInfos) {
@@ -111,7 +114,18 @@ public class Handler_model extends MethodHandler {
 				json.key(plotInfo.name);
 				json.object();
 				json.key("id");
-				json.value(plotInfo.name);
+				json.value(plotInfo.name);				
+				json.key("stations");
+				json.array();
+				String[] stationNames = tsdb.getPlotStations(plotInfo.name);
+				if(stationNames != null)  {
+					for(String stationName : stationNames) {
+						json.value(stationName);
+						allStations.add(stationName);
+					}
+				}
+				json.endArray(); // end stations
+
 				json.key("sensors");
 				json.array();
 				String[] sensorNames = tsdb.getSensorNamesOfPlotWithVirtual(plotInfo.name);
@@ -124,6 +138,28 @@ public class Handler_model extends MethodHandler {
 			}
 		}
 		json.endObject(); // end plots
+		json.key("stations");
+		json.object();
+		StationInfo[] stations = tsdb.getStations();
+		Arrays.sort(stations,(a,b)->String.CASE_INSENSITIVE_ORDER.compare(a.stationID, b.stationID));
+		for(StationInfo station: stations) {
+			if(allStations.contains(station.stationID)) {
+				json.key(station.stationID);
+				json.object();
+				json.key("id");
+				json.value(station.stationID);				
+				json.key("sensors");
+				json.array();
+				String[] sensorNames = tsdb.getSensorNamesOfPlotWithVirtual(station.stationID);
+				for(String sensorName : sensorNames) {
+					json.value(sensorName);
+					allSensors.add(sensorName);
+				}
+				json.endArray(); // end sensors
+				json.endObject(); // end plot
+			}
+		}
+		json.endObject(); // end stations
 		json.key("sensors");
 		json.object();
 		for(Sensor sensor : tsdb.getSensors()) {
