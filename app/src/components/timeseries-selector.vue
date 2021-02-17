@@ -26,7 +26,7 @@
       <template v-if="selectedGroups.length > 0">
         <q-item tag="label" >
           <q-item-section>
-            <q-select v-model="selectedPlotsModel" :options="plots" option-value="id" for="id" option-label="id" label="Plots" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
+            <q-select v-model="selectedPlotsModel" :options="plots" label="Plots" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
               <template v-if="selectedPlots.length > 0" v-slot:append>
                 <q-icon name="cancel" @click.stop="selectedPlotsModel = null" class="cursor-pointer" />
               </template>
@@ -41,7 +41,7 @@
           <q-item tag="label" v-if="plotstations.length > 1">
             <q-item-section>
               <q-select v-model="selectedPlotstationsModel" :options="plotstations" option-value="id" for="id" option-label="id" label="Plot-Stations" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
-                <template v-if="selectedPlotstations.length > 0" v-slot:append>
+                <template v-if="selectedPlotstations.length > 1" v-slot:append>
                   <q-icon name="cancel" @click.stop="selectedPlotstationsModel = null" class="cursor-pointer" />
                 </template>
               </q-select>                
@@ -141,9 +141,9 @@ export default {
         return [];
       }
       if(this.multiTimeseries) {
-        return this.selectedPlotsModel;
+        return this.selectedPlotsModel.map(plotName => this.model.plots[plotName]);
       } else {
-        return [this.selectedPlotsModel];
+        return [this.model.plots[this.selectedPlotsModel]];
       }
     },
     selectedPlotstations() {
@@ -220,10 +220,19 @@ export default {
           plotNameSet.add(plotName);
         }
       }
-      let result = [...plotNameSet].map(plotName => this.model.plots[plotName]);
+      //console.log(plotNameSet);
+      /*let result = [...plotNameSet].map(plotName => {
+        let p = this.model.plots[plotName];
+        return {id: p.id};
+      });*/
+      let result = [...plotNameSet];
+      /*result = result.filter(plot => {
+        //console.log(plot.id);
+        return plot !== undefined;
+      });*/
       result.sort((a, b) => {
-        var nameA = a.id.toLowerCase();
-        var nameB = b.id.toLowerCase();
+        var nameA = a.toLowerCase();
+        var nameB = b.toLowerCase();
         if (nameA < nameB) {
           return -1;
         }
@@ -295,11 +304,26 @@ export default {
     },
   },
   watch: {
-    selectedPlotStations() {
-      this.onPlotSensorChanged();
+    projects() {
+      this.selectedProjectsModel = null;
     },
-    selectedSensors() {
-      this.onPlotSensorChanged();
+    groups() {
+      this.selectedGroupsModel = null;
+    },
+    plots() {
+      this.selectedPlotsModel = null;
+    },
+    plotstations() {
+      this.selectedPlotstationsModel = null;
+    },
+    sensors() {
+      this.selectedSensorsModel = null;
+    },
+    selectedPlotstations() {
+      this.$nextTick(() => this.onPlotSensorChanged());
+    },    
+    selectedSensors() {      
+      this.$nextTick(() => this.onPlotSensorChanged());
     }
   },  
   async mounted() {

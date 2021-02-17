@@ -306,6 +306,56 @@ export default {
 
       //console.log(width + " x "  + height);
 
+      let series = [{}];
+      if(this.data.length > 1) {
+        series.push({
+          show: true,
+          spanGaps: false,
+          // in-legend display
+          label: "Value",
+          value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
+          // series style
+          stroke: "red",
+          width: 1,
+        });
+      }
+      if(this.data.length > 2) {
+        series.push({
+          show: true,
+          spanGaps: false,
+          // in-legend display
+          label: "Value",
+          value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
+          // series style
+          stroke: "blue",
+          width: 1,
+        });
+      }
+      if(this.data.length > 3) {
+        series.push({
+          show: true,
+          spanGaps: false,
+          // in-legend display
+          label: "Value",
+          value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
+          // series style
+          stroke: "green",
+          width: 1,
+        });
+      }
+      if(this.data.length > 4) {
+        series.push({
+          show: true,
+          spanGaps: false,
+          // in-legend display
+          label: "Value",
+          value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
+          // series style
+          stroke: "violet",
+          width: 1,
+        });
+      }
+
       let opts = {
         width: width,
         height: height,
@@ -321,28 +371,10 @@ export default {
           touchZoomPlugin({}),
           wheelZoomPlugin({factor: 0.75}),
         ],        
-        series: [
-          {},
-          {
-            // initial toggled state (optional)
-            show: true,
-
-            spanGaps: false,
-
-            // in-legend display
-            label: "Value",
-            value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
-
-            // series style
-            stroke: "red",
-            width: 1,
-            //fill: "rgba(255, 0, 0, 0.3)",
-            //dash: [10, 5],
-          }
-        ],
+        series: series,
       };
 
-      this.$refs.diagram.innderHTML = '';
+      this.$refs.diagram.innerHTML = '';
       this.uplot = new uPlot(opts, this.data, this.$refs.diagram);
 
     },    

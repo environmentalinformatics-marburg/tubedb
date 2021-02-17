@@ -3,6 +3,7 @@ package tsdb.web.api;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -44,26 +45,63 @@ public class Handler_query_js extends MethodHandler {
 		AggregationInterval agg = AggregationInterval.parse(timeAggregation);
 		DataQuality dataQuality = DataQuality.parse(quality);
 
-		JSONArray jsonTimeseries = jsonReq.getJSONArray("timeseries");
-		log.info(jsonTimeseries);
-		JSONObject jsonTimeseriesEntry = jsonTimeseries.getJSONObject(0);
-		String jsonTimeseriesEntryPlot = jsonTimeseriesEntry.getString("plot");
-		String jsonTimeseriesEntrySensor = jsonTimeseriesEntry.getString("sensor");
-
-		String plot = jsonTimeseriesEntryPlot;
-		String[] schema = new String[] {jsonTimeseriesEntrySensor};
-		int schemaCount = schema.length;
-
 		Long startTime = null;
 		Long endTime = null;
 
-		String[] supplementedSchema = tsdb.supplementSchema(schema, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
-		String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, supplementedSchema);
-		TimestampSeries ts = tsdb.plot(null, plot, validSchema, agg, dataQuality, interpolation, startTime, endTime);
+		TimestampSeries resultTs = null;
+		int resultSchemaCount = -1;
 
-		List<TsEntry> entries = ts.entryList;
-		int entryCount = entries.size();
+		JSONArray jsonTimeseries = jsonReq.getJSONArray("timeseries");
+		log.info(jsonTimeseries);
+		int jsonTimeseriesLen = jsonTimeseries.length();
+
+		switch(jsonTimeseriesLen) {
+		case 0: {
+			return;
+		}
+		case 1: {
+			JSONObject jsonTimeseriesEntry = jsonTimeseries.getJSONObject(0);
+			String jsonTimeseriesEntryPlot = jsonTimeseriesEntry.getString("plot");
+			String jsonTimeseriesEntrySensor = jsonTimeseriesEntry.getString("sensor");
+
+			String plot = jsonTimeseriesEntryPlot;
+			String[] schema = new String[] {jsonTimeseriesEntrySensor};
+			resultSchemaCount = schema.length;
+
+			String[] supplementedSchema = tsdb.supplementSchema(schema, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
+			String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, supplementedSchema);
+			resultTs = tsdb.plot(null, plot, validSchema, agg, dataQuality, interpolation, startTime, endTime);
+			break;
+		}
+		default: {
+			TimestampSeries[] tss = new TimestampSeries[jsonTimeseriesLen];
+			for (int i = 0; i < jsonTimeseriesLen; i++) {
+				JSONObject jsonTimeseriesEntry = jsonTimeseries.getJSONObject(i);
+				String jsonTimeseriesEntryPlot = jsonTimeseriesEntry.getString("plot");
+				String jsonTimeseriesEntrySensor = jsonTimeseriesEntry.getString("sensor");
+
+				String plot = jsonTimeseriesEntryPlot;
+				String[] schema = new String[] {jsonTimeseriesEntrySensor};
+
+				String[] supplementedSchema = tsdb.supplementSchema(schema, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
+				String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, supplementedSchema);
+				tss[i] = tsdb.plot(null, plot, validSchema, agg, dataQuality, interpolation, startTime, endTime);
+				log.info(tss[i].toString());
+			}
+			resultTs = TimestampSeries.castMerge(tss);
+			resultSchemaCount = resultTs.sensorNames.length;
+		}
+		}
 		
+		log.info(Arrays.toString(resultTs.sensorNames));
+		
+		log.info(resultTs.toString());
+		
+		String[] schema = resultTs.sensorNames;
+
+		List<TsEntry> entries = resultTs.entryList;
+		int entryCount = entries.size();
+
 		if(entryCount > 1) {
 			TsEntry a = entries.get(0);
 			TsEntry b = entries.get(entryCount - 1);
@@ -72,20 +110,22 @@ public class Handler_query_js extends MethodHandler {
 
 		int INT_SIZE = 4;
 		int FLOAT_SIZE = 4;
-		int bufferLen = INT_SIZE + INT_SIZE + entryCount * (INT_SIZE + schemaCount * FLOAT_SIZE);
+		int bufferLen = INT_SIZE + INT_SIZE + entryCount * (INT_SIZE + resultSchemaCount * FLOAT_SIZE);
 		byte[] data = new byte[bufferLen];
 		ByteBuffer byteBuffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
 		byteBuffer.putInt(entryCount);
-		byteBuffer.putInt(schemaCount);
+		byteBuffer.putInt(resultSchemaCount);
 		for(TsEntry entry : entries) {
 			byteBuffer.putInt((int) entry.timestamp);
 		}
-		for(int i = 0; i < schemaCount; i++) {
+		for(int i = 0; i < resultSchemaCount; i++) {
 			String sensorName = schema[i];
-			int sensorNameIndex = ts.getIndexOfSensorName(sensorName);
+			int sensorNameIndex = resultTs.getIndexOfSensorName(sensorName);
 			if(sensorNameIndex >= 0) {
 				for(TsEntry entry : entries) {
-					byteBuffer.putFloat(entry.data[i]);
+					float value = entry.data[sensorNameIndex];
+					//log.info("put " + value);
+					byteBuffer.putFloat(value);
 				}
 			} else {
 				for (int j = 0; j < entryCount; j++) {

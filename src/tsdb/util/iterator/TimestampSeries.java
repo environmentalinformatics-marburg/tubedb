@@ -14,6 +14,7 @@ import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +43,7 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 	public String[] sensorNames;
 	public Integer timeinterval; // null if raw data
 	public List<TsEntry> entryList;
-	
+
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeUTF(name);
@@ -80,8 +81,8 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 			this.entryList.add(new TsEntry(timestamp,data));
 		}		
 	}
-	
-	
+
+
 	/**
 	 * Included data: name, sensorNames, entries
 	 * NOT included data; timeInterval
@@ -89,14 +90,14 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 	 *
 	 */	
 	private static class TimeSeriesArchivSerializer implements org.mapdb.Serializer<TimestampSeries> {
-		
+
 		final static String TOC_START = "TimestampSeries:start";
 		final static String TOC_END = "TimestampSeries:end";
 
 		@Override
 		public void serialize(DataOutput out, TimestampSeries timestampSeries) throws IOException {
 			out.writeUTF(TOC_START);
-			
+
 			out.writeUTF(timestampSeries.name);
 			DataOutput2.packInt(out,timestampSeries.sensorNames.length);
 			for(String sensorName:timestampSeries.sensorNames) {
@@ -124,7 +125,7 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 			if(!start.equals(TOC_START)) {
 				throw new RuntimeException("file format error");
 			}			
-			
+
 			String name = in.readUTF(); 
 			final int sensorCount = DataInput2.unpackInt(in);
 			String[] sensorNames = new String[sensorCount];
@@ -146,7 +147,7 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 				entryList.add(new TsEntry(timestamp,data));
 				prevTimestamp = timestamp;
 			}			
-			
+
 			String end = in.readUTF();
 			if(!end.equals(TOC_END)) {
 				throw new RuntimeException("file format error: \""+end+"\"");
@@ -158,16 +159,16 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 		public int fixedSize() {
 			return -1;
 		}
-		
+
 	}
-	
+
 	public static final org.mapdb.Serializer<TimestampSeries> TIMESERIESARCHIV_SERIALIZER = new TimeSeriesArchivSerializer();
-	
+
 	/**
 	 * for Externalizable only!
 	 */
 	public TimestampSeries() {
-		
+
 	}
 
 
@@ -234,14 +235,14 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 
 	@Override
 	public String toString() {
-		int n = entryList.size()>=3?3:entryList.size();
+		int n = entryList.size() >= 10 ? 10 :entryList.size();
 		String s=name+"\t"+TimeUtil.oleMinutesToLocalDateTime(getFirstTimestamp())+" - "+TimeUtil.oleMinutesToLocalDateTime(getLastTimestamp())+"\n";
 		s+="("+entryList.size()+")\t\t";
 		for(int i=0;i<sensorNames.length;i++) {
 			s+=sensorNames[i]+"\t";
 		}
 		s+='\n';
-		for(int i=0;i<n;i++) {			
+		for(int i = 0; i < n; i++) {			
 			TsEntry entry = entryList.get(i);
 			/*float[] data = entry.data;
 			s+=TimeConverter.oleMinutesToLocalDateTime(entry.timestamp)+"\t";
@@ -365,7 +366,7 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 			}
 		}
 	}
-	
+
 	public static TimestampSeries readFromBinaryFile(String filename) throws IOException, ClassNotFoundException {
 		ObjectInputStream objectInputStream = null;
 		RandomAccessFile raf = null;
@@ -383,7 +384,7 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 			}
 		}
 	}
-	
+
 	public void changeTime(int timeOffset) {
 		int len = entryList.size();
 		TsEntry[] result = new TsEntry[len];
@@ -401,6 +402,69 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 			}
 		}
 		return -1;
-		
+
+	}
+
+	public static TimestampSeries castMerge(TimestampSeries[] tss) {
+		int tsLen = tss.length;
+		@SuppressWarnings("unchecked")
+		Iterator<TsEntry>[] its = new Iterator[tsLen];
+		int[] schemaLens = new int[tsLen];
+		TsEntry[] currs = new TsEntry[tsLen];
+		int resultSchemaLen = 0;
+		for (int i = 0; i < tsLen; i++) {
+			its[i] = tss[i].entryList.iterator();
+			//schemaLens[i] = tss[i].sensorNames.length;
+			schemaLens[i] = 1; //     !!!!!
+			resultSchemaLen += schemaLens[i];
+			if(its[i].hasNext()) {
+				currs[i] = its[i].next();
+			}
+		}
+		ArrayList<TsEntry> result = new ArrayList<TsEntry>();
+		while(true) {
+			long timestamp = Long.MAX_VALUE;
+			for (int i = 0; i < tsLen; i++) {
+				TsEntry curr = currs[i];
+				if(curr != null && curr.timestamp < timestamp) {
+					timestamp = curr.timestamp;
+				}
+			}
+			if(timestamp == Long.MAX_VALUE) {
+				break;
+			}
+			float[] values = new float[resultSchemaLen];
+			int pos = 0;
+			for (int i = 0; i < tsLen; i++) {
+				TsEntry curr = currs[i];
+				int schemaLen = schemaLens[i];				
+				if(curr != null && curr.timestamp == timestamp) {
+					timestamp = curr.timestamp;
+					float[] data = curr.data;
+					for(int j = 0; j < schemaLen; j++) {
+						values[pos++] = data[j];
+					}
+					currs[i] = its[i].hasNext() ? its[i].next() : null;
+				} else {
+					for(int j = 0; j < schemaLen; j++) {
+						values[pos++] = Float.NaN;
+					}
+				}
+			}
+			TsEntry entry = TsEntry.of(timestamp, values);
+			result.add(entry);
+		}
+		String[] resultSchema = new String[resultSchemaLen];
+		int pos = 0;
+		for (int i = 0; i < tsLen; i++) {
+			String name = tss[i].name;
+			String[] sensorNames = tss[i].sensorNames;
+			int schemaLen = schemaLens[i];
+			for(int j = 0; j < schemaLen; j++) {
+				resultSchema[pos++] = name + "/" + sensorNames[j];
+			}
+		}
+		TimestampSeries resultTs = new TimestampSeries("castMerge", resultSchema , result);
+		return resultTs;
 	}
 }

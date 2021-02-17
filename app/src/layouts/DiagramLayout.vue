@@ -119,7 +119,7 @@ export default {
       selectedPlots: [],
       selectedSensors: [],
 
-      multiTimeseries: false,
+      multiTimeseries: true,
     }
   },
   computed: {
@@ -183,7 +183,7 @@ export default {
               quality: this.quality,
               interpolation: this.interpolation,
             },
-            timeseries: this.plotSensorList,
+            timeseries: this.plotSensorList.slice(0, 4),
           };
           var response = await this.apiPOST(['tsdb', 'query_js'], reqData, reqConfig);
           if(dataRequestCurrentCounter < this.dataRequestSentCounter) {
@@ -197,8 +197,7 @@ export default {
           var dataView = new DataView(arrayBuffer);
           var entryCount = dataView.getInt32(0, true);
           var schemaCount = dataView.getInt32(4, true); 
-          //console.log(entryCount);
-          //console.log(schemaCount);
+          console.log("entryCount: " + entryCount + "   schemaCount: " + schemaCount);
           var data = [];
           var timestamps = new Int32Array(arrayBuffer, 4 + 4, entryCount);
           //console.log(timestamps);
