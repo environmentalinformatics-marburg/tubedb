@@ -12,20 +12,20 @@ import tsdb.util.TsEntry;
 import tsdb.util.iterator.TsIterator;
 
 /**
- * HEG25 Ta_200_min aggregation to days
+ * Data quality check based on step range sensor property.
  * @author woellauer
  *
  */
 public class PeakFlagIterator extends TimeWindowIterator {
 	private static final Logger log = LogManager.getLogger();
 
-	private final int len;
+	private final int SchemaLen;
 	private long[] cleanTimestamp;
 	private final double[] steps;
 
 	public PeakFlagIterator(Sensor[] sensors, TsIterator input_iterator) {
 		super(input_iterator, 180, input_iterator.getSchema());
-		this.len = schema.length;
+		this.SchemaLen = schema.length;
 		cleanTimestamp = new long[input_iterator.getNames().length];
 		//log.info("PeakFlagIterator schema " + Arrays.toString(input_iterator.getNames()));
 		steps = Arrays.stream(sensors).mapToDouble(Sensor::getStepMax).toArray();
@@ -33,6 +33,7 @@ public class PeakFlagIterator extends TimeWindowIterator {
 
 	@Override
 	protected TsEntry processElement(TsEntry current) {
+		//log.info("processElement " + current.toString());
 		/*log.info("---");
 		log.info("current: "  + TimeUtil.oleMinutesToText(current.timestamp));
 		{
@@ -53,31 +54,51 @@ public class PeakFlagIterator extends TimeWindowIterator {
 
 		//log.info(TimeUtil.oleMinutesToText(current.timestamp));
 
-		float[] prev = new float[len];
-		for(int columnIndex = 0; columnIndex < len; columnIndex++) {
+		float[] prev = new float[SchemaLen];
+		for(int columnIndex = 0; columnIndex < SchemaLen; columnIndex++) {
 			prev[columnIndex] = Float.NaN;
-		}		
-		int fillCount = 0;
-		Iterator<TsEntry> it = past.descendingIterator();
-		pastLoop: while(it.hasNext()) {
-			TsEntry e = it.next();
-			DataQuality[] qf = e.qualityFlag;
-			float[] data = e.data;
-			for(int columnIndex = 0; columnIndex < len; columnIndex++) {
-				if(!Float.isFinite(prev[columnIndex]) && qf[columnIndex] == DataQuality.PHYSICAL) {
-					prev[columnIndex] = data[columnIndex];
-					fillCount++;
-					if(fillCount == len) {
-						//log.info("break");
-						break pastLoop;
+		}
+		
+		//log.info("pastFilled " + isPastFilled());
+		if(past.isEmpty()){
+			float[] currentData = current.data;
+			DataQuality[] currentQf = current.qualityFlag;
+			for(int columnIndex = 0; columnIndex < SchemaLen; columnIndex++) {
+				if(currentQf[columnIndex] == DataQuality.PHYSICAL) {
+					prev[columnIndex] = currentData[columnIndex];
+				}
+			}
+		} else {
+			int fillCount = 0;
+			Iterator<TsEntry> it = past.descendingIterator();
+			pastLoop: while(it.hasNext()) {
+				TsEntry e = it.next();
+				DataQuality[] qf = e.qualityFlag;
+				float[] data = e.data;
+				for(int columnIndex = 0; columnIndex < SchemaLen; columnIndex++) {
+					if(!Float.isFinite(prev[columnIndex]) && qf[columnIndex] == DataQuality.PHYSICAL) {
+						prev[columnIndex] = data[columnIndex];
+						fillCount++;
+						if(fillCount == SchemaLen) {
+							//log.info("break");
+							break pastLoop;
+						}
 					}
 				}
 			}
+			if(fillCount < SchemaLen && !isPastFilled()) {
+				float[] currentData = current.data;
+				DataQuality[] currentQf = current.qualityFlag;
+				for(int columnIndex = 0; columnIndex < SchemaLen; columnIndex++) {
+					if(!Float.isFinite(prev[columnIndex]) && currentQf[columnIndex] == DataQuality.PHYSICAL) {
+						prev[columnIndex] = currentData[columnIndex];
+					}
+				}				
+			}
+		}		
 
-		}
-
-		DataQuality[] flags = new DataQuality[len];
-		for(int columnIndex = 0; columnIndex < len; columnIndex++) {
+		DataQuality[] flags = new DataQuality[SchemaLen];
+		for(int columnIndex = 0; columnIndex < SchemaLen; columnIndex++) {
 			float currV = current.data[columnIndex];
 			float prevV = prev[columnIndex];
 			DataQuality currQ = current.qualityFlag[columnIndex];
@@ -86,6 +107,7 @@ public class PeakFlagIterator extends TimeWindowIterator {
 					currQ = DataQuality.STEP;	
 				} else {  // step check
 					if(cleanTimestamp[columnIndex] <= current.timestamp && Float.isFinite(prevV)) {
+						//log.info("check " + current.toString() +  "prev " + prevV);
 						currQ = DataQuality.STEP;
 						float diff = Math.abs(prevV - currV);
 						//log.info("diff " + diff);

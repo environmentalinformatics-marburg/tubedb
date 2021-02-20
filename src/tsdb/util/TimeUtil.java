@@ -52,7 +52,7 @@ public final class TimeUtil implements Serializable {
 	}
 
 	public static String oleMinutesToText(Long oleTimeMinutes) {
-		if(oleTimeMinutes==null||oleTimeMinutes==-1) {
+		if(oleTimeMinutes == null || oleTimeMinutes == -1) {
 			return "---";
 		}
 		return oleMinutesToLocalDateTime(oleTimeMinutes).toString();

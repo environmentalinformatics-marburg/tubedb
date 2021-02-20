@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.mapdb.BTreeMap;
 
 import tsdb.util.DataEntry;
+import tsdb.util.TimeUtil;
 import tsdb.util.processingchain.ProcessingChainNode;
 
 /**
@@ -58,16 +59,20 @@ public class StreamIterator implements Iterator<DataEntry>, ProcessingChainNode 
 		this.stationName = sensorMeta.stationName;
 		this.sensorName = sensorMeta.sensorName;
 		
+		//log.info("query stream " + TimeUtil.oleMinutesToText(minQueryTimestamp, maxQueryTimestamp));
+		
 		int min = getDataMinTimestamp(chunkMetaMap,minQueryTimestamp);
 		int max = getDataMaxTimestamp(chunkMetaMap,maxQueryTimestamp);
 		
-		if(min<=max) {
+		if(min <= max) {
 			this.minQueryTimestamp = min;
 			this.maxQueryTimestamp = max;
 		} else {
 			this.minQueryTimestamp = -1;
 			this.maxQueryTimestamp = -1;
-		}		
+		}
+		
+		//log.info("get stream " + TimeUtil.oleMinutesToText(minQueryTimestamp, maxQueryTimestamp));
 		
 		this.chunkMetaIterator = ChunkMeta.createIterator(chunkMetaMap, minQueryTimestamp, maxQueryTimestamp);
 		if(chunkMetaIterator.hasNext()) {
@@ -79,10 +84,10 @@ public class StreamIterator implements Iterator<DataEntry>, ProcessingChainNode 
 
 	private void nextChunk() {
 		ChunkMeta chunkMeta = chunkMetaIterator.next();
-		//log.info("chunk "+TimeConverter.oleMinutesToText(chunkMeta.firstTimestamp,chunkMeta.lastTimestamp));
+		//log.info("chunk " + TimeUtil.oleMinutesToText(chunkMeta.firstTimestamp,chunkMeta.lastTimestamp));
 		Chunk chunk = sensorChunkMap.get(chunkMeta.firstTimestamp);
-		if(minQueryTimestamp<=chunkMeta.firstTimestamp) {
-			if(chunkMeta.lastTimestamp<=maxQueryTimestamp) {
+		if(minQueryTimestamp <= chunkMeta.firstTimestamp) {
+			if(chunkMeta.lastTimestamp <= maxQueryTimestamp) {
 				dataEntryIterator = new SimpleIterator(chunk.data);
 			} else {
 				dataEntryIterator = new ClipIterator(chunk.data,minQueryTimestamp,maxQueryTimestamp);
@@ -144,13 +149,14 @@ public class StreamIterator implements Iterator<DataEntry>, ProcessingChainNode 
 			this.chunk = chunk;
 			this.maxTimestamp = maxTimestamp;
 			this.currentPos = 0;
-			while(currentPos!=chunk.length&&chunk[currentPos].timestamp<minTimestamp) {
+			while(currentPos != chunk.length && chunk[currentPos].timestamp < minTimestamp) {
 				currentPos++;
 			}
+			//log.info("clip " + TimeUtil.oleMinutesToText(minTimestamp, maxTimestamp) + "   start " + currentPos);
 		}
 		@Override
 		public boolean hasNext() {
-			return currentPos!=chunk.length&&chunk[currentPos].timestamp<=maxTimestamp;
+			return currentPos != chunk.length && chunk[currentPos].timestamp <= maxTimestamp;
 		}
 		@Override
 		public DataEntry next() {

@@ -39,6 +39,7 @@ import tsdb.util.DataQuality;
 import tsdb.util.DataRow;
 import tsdb.util.Pair;
 import tsdb.util.TimeSeriesMask;
+import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.TimestampSeries;
@@ -554,6 +555,7 @@ public class ServerTsDB implements RemoteTsDB {
 	@Override
 	public TimestampSeries plot(String queryType, String plotID, String[] columnNames, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated, Long start, Long end) {
 		Node node = null;
+		//log.info("query " + TimeUtil.oleMinutesToText(start, end));
 		if(queryType==null||queryType.equals("standard")) {		
 			node = QueryPlan.plot(tsdb, plotID, columnNames, aggregationInterval, dataQuality, interpolated);
 		} else if(queryType.equals("difference")) {
@@ -569,7 +571,7 @@ public class ServerTsDB implements RemoteTsDB {
 		if(it==null||!it.hasNext()) {
 			return null;
 		}
-		log.trace(it.getProcessingChain().getText());
+		//log.info(it.getProcessingChain().getText());
 		return it.toTimestampSeries(plotID);
 	}
 

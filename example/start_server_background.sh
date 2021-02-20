@@ -5,7 +5,7 @@ sessions=$(screen -ls | grep tubedb | wc -l)
 if [ $sessions -ne 0 ]
 then
 	echo
-	echo "---WARNING--- screen session with tsdb already running: exiting old and restarting new..."
+	echo "---WARNING--- screen session with tubedb already running: exiting old and restarting new..."
 	echo
 	screen -X -S tubedb quit
 	#exit 1

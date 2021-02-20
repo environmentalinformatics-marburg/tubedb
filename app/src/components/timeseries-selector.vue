@@ -51,12 +51,15 @@
           <template v-if="selectedPlotstations.length > 0">
             
             <q-item tag="label" >
-              <q-item-section>
+              <q-item-section v-if="sensors.length > 0">
                 <q-select v-model="selectedSensorsModel" :options="sensors" option-value="id" for="id" option-label="id" label="Sensors" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
                   <template v-if="selectedSensors.length > 0" v-slot:append>
                     <q-icon name="cancel" @click.stop="selectedSensorsModel = null" class="cursor-pointer" />
                   </template>
                 </q-select>                
+              </q-item-section>
+              <q-item-section v-if="sensors.length === 0">
+                no sensors              
               </q-item-section>
             </q-item>
 
@@ -250,19 +253,18 @@ export default {
           case 0: {
             let id = plot.id;
             let sensorSet = plot.sensorSet;
-            ps.push({id: id, sensorSet: sensorSet});
+            ps.push({id: id, plot: plot.id, station: plot.id, sensorSet: sensorSet});
             break;
           }
           case 1: {
             let stationName = plot.stations[0];
             let id = plot.id + ":" + stationName;
             let sensorSet = this.model.stations[stationName].sensorSet;
-            ps.push({id: id, sensorSet: sensorSet});
+            ps.push({id: id, plot: plot.id, station: stationName, sensorSet: sensorSet});
             break;
           }
           default: {
-            let id = plot.id; 
-            ps.push({id: id});
+            ps.push({id: plot.id, plot: plot.id, station: plot.id, sensorSet: plot.sensorSet});
             for(let stationName of plot.stations) {
               let id = plot.id + ":" + stationName;
               let sensorSet = this.model.stations[stationName].sensorSet;
@@ -304,20 +306,72 @@ export default {
     },
   },
   watch: {
-    projects() {
-      this.selectedProjectsModel = null;
+    projects: {
+      handler() {
+        this.selectedProjectsModel = null;
+        console.log("A");
+        if(this.projects.length === 1) {
+          console.log("A");
+          if(this.multiTimeseries) {
+            this.selectedProjectsModel = [this.projects[0]];
+          } else {
+            this.selectedProjectsModel = this.projects[0];
+          }
+        }
+      },
+      immediate: true,      
     },
-    groups() {
-      this.selectedGroupsModel = null;
+    groups: {
+      handler() {
+        this.selectedGroupsModel = null;
+        if(this.groups.length === 1) {
+          if(this.multiTimeseries) {
+            this.selectedGroupsModel = [this.groups[0]];
+          } else {
+            this.selectedGroupsModel = this.groups[0];
+          }
+        }
+      },
+      immediate: true,  
     },
-    plots() {
-      this.selectedPlotsModel = null;
+    plots: {
+      handler() {
+        this.selectedPlotsModel = null;
+        if(this.plots.length === 1) {
+          if(this.multiTimeseries) {
+            this.selectedPlotsModel = [this.plots[0]];
+          } else {
+            this.selectedPlotsModel = this.plots[0];
+          }
+        }
+      },
+      immediate: true, 
     },
-    plotstations() {
-      this.selectedPlotstationsModel = null;
+    plotstations: {
+      handler() {
+        this.selectedPlotstationsModel = null;
+        if(this.plotstations.length === 1) {
+          if(this.multiTimeseries) {
+            this.selectedPlotstationsModel = [this.plotstations[0]];
+          } else {
+            this.selectedPlotstationsModel = this.plotstations[0];
+          }
+        }
+      },
+      immediate: true, 
     },
-    sensors() {
-      this.selectedSensorsModel = null;
+    sensors: {
+      handler() {
+        this.selectedSensorsModel = null;
+        if(this.sensors.length === 1) {
+          if(this.multiTimeseries) {
+            this.selectedSensorsModel = [this.sensors[0]];
+          } else {
+            this.selectedSensorsModel = this.sensors[0];
+          }
+        }
+      },
+      immediate: true,
     },
     selectedPlotstations() {
       this.$nextTick(() => this.onPlotSensorChanged());

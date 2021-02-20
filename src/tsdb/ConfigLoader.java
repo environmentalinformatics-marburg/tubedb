@@ -555,9 +555,13 @@ public class ConfigLoader {
 		ColumnReaderString cr_alternative_id = table.createColumnReader("alternative_id", null);  // only for plots that are stations
 
 		for(String[] row:table.rows) {
-			if(row.length == 1 && (row[0].length() == 0 || row[0].trim().isEmpty() || row[0].trim().startsWith("#"))) { // skip empty rows and comments
+			if(row.length == 0 || (row.length == 1 && row[0].trim().isEmpty())) { // skip empty rows
 				continue;
 			}
+			if(row[0].trim().startsWith("#")) { // row is marked as comment
+				continue;
+			}
+
 			String plotID = cr_plot.get(row);
 			String generalStationName = cr_general.get(row);
 			GeneralStation generalStation = tsdb.getGeneralStation(generalStationName);
@@ -632,10 +636,14 @@ public class ConfigLoader {
 
 			Map<String, List<StationProperties>> stationPropertiesListMap = new HashMap<String, List<StationProperties>>();
 
-			for(String[] row:table.rows) {
-				if(row.length == 0 || (row.length == 1 && row[0].isEmpty())) {
+			for(String[] row : table.rows) {
+				if(row.length == 0 || (row.length == 1 && row[0].trim().isEmpty())) { // skip empty rows
 					continue;
 				}
+				if(row[0].trim().startsWith("#")) { // row is marked as comment
+					continue;
+				}
+				
 				String plotID = cr_plot.get(row);
 				String loggerTypeName = cr_logger.get(row);
 				String serial = cr_serial.get(row);

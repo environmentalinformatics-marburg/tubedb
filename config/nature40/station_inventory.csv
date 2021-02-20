@@ -75,7 +75,6 @@ SEW17_1_N,be_treetalker_logger,tt_5F200007,2020-12-01,2025-12-31
 SEW17_2_M,be_treetalker_logger,tt_5F200008,2020-12-01,2025-12-31
 SEW17_2_S,be_treetalker_logger,tt_5F200009,2020-12-01,2025-12-31
 SEW17_3_M,be_treetalker_logger,tt_5F200010,2020-12-01,2025-12-31
-plot_tt_5F200025,be_treetalker_logger,tt_5F200025,2020-12-01,2025-12-31
 SEW17_CLOUD,be_treetalker_node,tt_C0200132,*,*
 JIG_0001,be_treetalker_logger,tt_5F200074,*,*
 JIG_0001,be_treetalker_logger,tt_5F200057,*,*
@@ -98,3 +97,9 @@ SEW18_C0200140,be_treetalker_logger,tt_5F200017,*,*
 SEW18_C0200140,be_treetalker_logger,tt_5F200018,*,*
 SEW18_C0200140,be_treetalker_logger,tt_5F200019,*,*
 SEW18_C0200140,be_treetalker_logger,tt_5F200020,*,*
+SEW03_C0200130_CLOUD,be_treetalker_node,tt_C0200130,*,*
+SEW03_C0200130,be_treetalker_logger,tt_5F200021,2020-12-01,2025-12-31
+SEW03_C0200130,be_treetalker_logger,tt_5F200022,2020-12-01,2025-12-31
+SEW03_C0200130,be_treetalker_logger,tt_5F200023,2020-12-01,2025-12-31
+SEW03_C0200130,be_treetalker_logger,tt_5F200024,2020-12-01,2025-12-31
+SEW03_C0200130,be_treetalker_logger,tt_5F200025,2020-12-01,2025-12-31

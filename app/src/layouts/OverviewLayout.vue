@@ -2,7 +2,7 @@
   <q-layout view="hHh LpR fFf">
 
     <q-header reveal elevated class="bg-grey-7 text-grey-4">
-      <pages-toolbar title="TubeDB Web App" active="/overview"/>
+      <pages-toolbar title="TubeDB Web App (beta)" active="/overview"/>
     </q-header>
 
     <q-page-container class="row justify-center">

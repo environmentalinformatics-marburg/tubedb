@@ -93,20 +93,20 @@ public class Handler_query_js extends MethodHandler {
 		}
 		}
 		
-		log.info(Arrays.toString(resultTs.sensorNames));
+		//log.info(Arrays.toString(resultTs.sensorNames));
 		
-		log.info(resultTs.toString());
+		//log.info(resultTs.toString());
 		
 		String[] schema = resultTs.sensorNames;
 
 		List<TsEntry> entries = resultTs.entryList;
 		int entryCount = entries.size();
 
-		if(entryCount > 1) {
+		/*if(entryCount > 1) {
 			TsEntry a = entries.get(0);
 			TsEntry b = entries.get(entryCount - 1);
 			log.info(entryCount + " entries  " + TimeUtil.oleMinutesToText(a.timestamp, b.timestamp) + "   " + a.timestamp + " - " + b.timestamp);
-		}
+		}*/
 
 		int INT_SIZE = 4;
 		int FLOAT_SIZE = 4;
