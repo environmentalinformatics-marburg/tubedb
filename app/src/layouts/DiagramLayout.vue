@@ -5,9 +5,9 @@
       <pages-toolbar title="TubeDB Diagram" active="/diagram"/>
     </q-header>
 
-    <q-drawer show-if-above side="left" behavior="desktop" content-class="bg-grey-4" v-if="model !== undefined" :width="drawerWidth">    
+    <q-drawer show-if-above side="left" behavior="desktop" content-class="bg-grey-4" :width="drawerWidth">    
       <div class="fit row">
-      <q-scroll-area class="col-grow">  
+      <q-scroll-area class="col-grow" v-if="model !== undefined">  
         <q-list>
 
           <q-item tag="label" >
@@ -47,6 +47,11 @@
                     
         </q-list>
       </q-scroll-area>
+      <div v-else  class="fit">
+        <div v-if="modelLoading">Loading metadata...</div>
+        <div v-else-if="modelError">Error loading metadata. <q-btn @click="$store.dispatch('model/refresh')">try again</q-btn></div>
+        <div v-else>Metadata not loaded.</div>
+      </div>
       <div v-touch-pan.prevent.mouse="onChangeDrawerWidth" class="drawerChanger">
       </div>
       </div> 

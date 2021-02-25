@@ -19,7 +19,7 @@
             <template v-if="selectedGroups.length > 0" v-slot:append>
               <q-icon name="cancel" @click.stop="selectedGroupsModel = null" class="cursor-pointer" />
             </template>
-          </q-select>            
+          </q-select>          
         </q-item-section>
       </q-item>
 
@@ -38,12 +38,21 @@
         </q-item>
 
         <template v-if="selectedPlots.length > 0">
-          <q-item tag="label" v-if="plotstations.length > 1">
+          <q-item tag="label" v-if="plotstations.length > 1 && selectedPlotsHaveMultipleStations">
             <q-item-section>
               <q-select v-model="selectedPlotstationsModel" :options="plotstations" option-value="id" for="id" option-label="id" label="Plot-Stations" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
-                <template v-if="selectedPlotstations.length > 1" v-slot:append>
+                <template v-if="selectedPlotstationsModel !== null" v-slot:append>
                   <q-icon name="cancel" @click.stop="selectedPlotstationsModel = null" class="cursor-pointer" />
                 </template>
+                <template v-slot:option="{itemProps, itemEvents, opt}">
+                  <q-item v-bind="itemProps" v-on="itemEvents">
+                    <q-item-section>
+                      <q-item-label v-if="opt.merged"><b>{{opt.plot}}</b> (merged)</q-item-label>
+                      <q-item-label v-else-if="opt.plot === opt.station"><b>{{opt.plot}}</b></q-item-label>
+                      <q-item-label v-else>{{opt.plot}}&nbsp;&nbsp;&nbsp;<b>{{opt.station}}</b></q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>                
               </q-select>                
             </q-item-section>
           </q-item>
@@ -150,17 +159,21 @@ export default {
       }
     },
     selectedPlotstations() {
-      if(this.selectedPlotstationsModel === null) {
-        if(this.plotstations.length === 0) {
-          return [];
-        } else {
-          return [this.plotstations[0]];
+      if(this.selectedPlotsHaveMultipleStations) {
+        if(this.selectedPlotstationsModel === null) {
+          if(this.plotstations.length === 0) {
+            return [];
+          } else {
+            return [this.plotstations[0]];
+          }
         }
-      }
-      if(this.multiTimeseries) {
-        return this.selectedPlotstationsModel;
+        if(this.multiTimeseries) {
+          return this.selectedPlotstationsModel;
+        } else {
+          return [this.selectedPlotstationsModel];
+        }
       } else {
-        return [this.selectedPlotstationsModel];
+        return this.selectedPlots.map(plot => this.plotstations.find(plotstation => plotstation.plot === plot.id));
       }
     },
     selectedSensors() {
@@ -246,8 +259,11 @@ export default {
       });
       return result;
     },
+    selectedPlotsHaveMultipleStations() {
+      return this.selectedPlots.some(plot => plot.stations.length > 1);
+    },
     plotstations() {
-      var ps = [];
+      /*var ps = [];
       for (let plot of this.selectedPlots) {
         switch(plot.stations.length) {
           case 0: {
@@ -264,24 +280,30 @@ export default {
             break;
           }
           default: {
-            ps.push({id: plot.id, plot: plot.id, station: plot.id, sensorSet: plot.sensorSet});
+            ps.push({id: plot.id, plot: plot.id, merged: true, sensorSet: plot.sensorSet});
             for(let stationName of plot.stations) {
               let id = plot.id + ":" + stationName;
               let sensorSet = this.model.stations[stationName].sensorSet;
-              ps.push({id: id, sensorSet: sensorSet});
+              ps.push({id: id, plot: plot.id, station: stationName, sensorSet: sensorSet});
             }
           }
         }
       }
-      return ps;
+      return ps;*/
+      /*var ps = [];
+      for (let plot of this.selectedPlots) {
+        ps = ps.concat(plot.plotstations);
+      }
+      return ps;*/
+      return this.selectedPlots.flatMap(plot => plot.plotstations);
     },
     sensors() {
-      if(this.model === undefined || this.selectedPlots.length === 0) {
+      if(this.model === undefined || this.selectedPlotstations === undefined || this.selectedPlotstations.length === 0) {
         return [];
       }
       var sensorNames = new Set();
-      for (let plot of this.selectedPlots) {
-        for(let sensorName of plot.sensors) {
+      for (let plotstation of this.selectedPlotstations) {
+        for(let sensorName of plotstation.sensorSet) {
           sensorNames.add(sensorName);
         }
       }
@@ -335,19 +357,19 @@ export default {
       immediate: true,  
     },
     plots: {
-      handler() {
+      handler(plots) {
         this.selectedPlotsModel = null;
-        if(this.plots.length === 1) {
+        if(plots.length === 1) {
           if(this.multiTimeseries) {
-            this.selectedPlotsModel = [this.plots[0]];
+            this.selectedPlotsModel = [plots[0]];
           } else {
-            this.selectedPlotsModel = this.plots[0];
+            this.selectedPlotsModel = plots[0];
           }
         }
       },
       immediate: true, 
     },
-    plotstations: {
+    /*plotstations: {
       handler() {
         this.selectedPlotstationsModel = null;
         if(this.plotstations.length === 1) {
@@ -359,21 +381,76 @@ export default {
         }
       },
       immediate: true, 
-    },
+    },*/
     sensors: {
       handler() {
-        this.selectedSensorsModel = null;
-        if(this.sensors.length === 1) {
+        if(this.sensors.length === 0) {
+          this.selectedSensorsModel = null;
+        } else if(this.sensors.length === 1) {
           if(this.multiTimeseries) {
             this.selectedSensorsModel = [this.sensors[0]];
           } else {
             this.selectedSensorsModel = this.sensors[0];
           }
+        } else if(this.selectedSensorsModel !== null) {
+          if(this.multiTimeseries) {
+            this.selectedSensorsModel = this.selectedSensorsModel.filter(selectedSensor => this.sensors.some(sensor => sensor.id === selectedSensor.id));
+            if(this.selectedSensorsModel.length === 0) {
+              this.selectedSensorsModel = null;
+            }
+          } else {
+            this.selectedSensorsModel = this.sensors.some(sensor => sensor.id === this.selectedSensorsModel.id) ? this.selectedSensorsModel : null;
+          }
         }
       },
       immediate: true,
     },
+    selectedPlots: {
+      handler(selectedPlots, oldSelectedPlots) {
+        let stayingSelectedPlots = selectedPlots.filter(selectedPlot => oldSelectedPlots === undefined || oldSelectedPlots.some(oldSelectedPlot => selectedPlot.id === oldSelectedPlot.id));        
+        console.log("stayingSelectedPlots: " + JSON.stringify(stayingSelectedPlots.map(stayingSelectedPlot => stayingSelectedPlot.id)));
+        let newSelectedPlots = selectedPlots.filter(selectedPlot => oldSelectedPlots === undefined || !oldSelectedPlots.some(oldSelectedPlot => selectedPlot.id === oldSelectedPlot.id));
+        console.log("newSelectedPlots: " + JSON.stringify(newSelectedPlots.map(newSelectedPlot => newSelectedPlot.id)));
+        console.log("selectedPlotStations: " + JSON.stringify(this.selectedPlotStations === undefined || this.selectedPlotStations.map(selectedPlotStation => selectedPlotStation.id)));
+        console.log("selectedPlots: " + JSON.stringify(selectedPlots.map(selectedPlot => selectedPlot.id)));
+        console.log("oldSelectedPlots: " + JSON.stringify(oldSelectedPlots === undefined || oldSelectedPlots.map(oldSelectedPlot => oldSelectedPlot.id)));
+        if(this.selectedPlotstationsModel !== null) {
+          if(this.multiTimeseries) {
+            newSelectedPlots = newSelectedPlots.filter(newSelectedPlot => !this.selectedPlotstationsModel.some(selectedPlotstation => selectedPlotstation.plot === newSelectedPlot.id));
+          } else {
+            newSelectedPlots = newSelectedPlots.filter(newSelectedPlot => this.selectedPlotstationsModel.plot !== newSelectedPlot.id);
+          }
+        }
+        let newSelectedPlotStations = newSelectedPlots.map(newSelectedPlot => this.plotstations.find(plotstation => plotstation.plot === newSelectedPlot.id));
+        console.log("newSelectedPlotStations: " + JSON.stringify(newSelectedPlotStations.map(newSelectedPlotStation => newSelectedPlotStation.id)));
+        let currSelectedPlotStations = [];        
+        if(this.selectedPlotstationsModel !== null) {
+          if(this.multiTimeseries) {          
+            currSelectedPlotStations = this.selectedPlotstationsModel.filter(selectedPlotstation => stayingSelectedPlots.some(stayingSelectedPlot => selectedPlotstation.plot === stayingSelectedPlot.id));
+          } else {
+            if(stayingSelectedPlots.some(stayingSelectedPlot => this.selectedPlotstationsModel.plot === stayingSelectedPlot.id)) {
+              currSelectedPlotStations = [this.selectedPlotstationsModel];
+            }
+          }
+        }  
+        console.log("currSelectedPlotStations: " + JSON.stringify(currSelectedPlotStations.map(currSelectedPlotStation => currSelectedPlotStation.id)));      
+        currSelectedPlotStations = currSelectedPlotStations.concat(newSelectedPlotStations);
+        console.log("currSelectedPlotStations: " + JSON.stringify(currSelectedPlotStations.map(currSelectedPlotStation => currSelectedPlotStation.id)));        
+        if(currSelectedPlotStations.length > 0) {
+          if(this.multiTimeseries) {
+            this.selectedPlotstationsModel = currSelectedPlotStations;
+          } else {
+            this.selectedPlotstationsModel = currSelectedPlotStations[0];
+          }        
+        } else {
+          this.selectedPlotstationsModel = null;
+        }
+        //this.selectedPlotstationsModel = null;
+      },
+      immediate: true,
+    },
     selectedPlotstations() {
+      console.log("selectedPlotstations changed");
       this.$nextTick(() => this.onPlotSensorChanged());
     },    
     selectedSensors() {      
