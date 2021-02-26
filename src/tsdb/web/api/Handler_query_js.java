@@ -40,7 +40,7 @@ public class Handler_query_js extends MethodHandler {
 		JSONObject jsonSettings = jsonReq.getJSONObject("settings");
 		String timeAggregation = jsonSettings.getString("timeAggregation");
 		String quality = jsonSettings.getString("quality");
-		boolean interpolation = jsonSettings.getBoolean("interpolation");
+		boolean interpolation = jsonSettings.optBoolean("interpolation", false);
 
 		AggregationInterval agg = AggregationInterval.parse(timeAggregation);
 		DataQuality dataQuality = DataQuality.parse(quality);
@@ -86,7 +86,7 @@ public class Handler_query_js extends MethodHandler {
 				String[] supplementedSchema = tsdb.supplementSchema(schema, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
 				String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, supplementedSchema);
 				tss[i] = tsdb.plot(null, plot, validSchema, agg, dataQuality, interpolation, startTime, endTime);
-				log.info(tss[i].toString());
+				//log.info(tss[i].toString());
 			}
 			resultTs = TimestampSeries.castMerge(tss);
 			resultSchemaCount = resultTs.sensorNames.length;

@@ -12,29 +12,57 @@
 
           <q-item tag="label" >
             <q-item-section>
-              <q-select v-model="timeAggregation" :options="['none', 'hour', 'day', 'week', 'month', 'year']" label="Aggregation by time" stack-label borderless :dense="true" :options-dense="true"/>
+              <q-select 
+                v-model="timeAggregation" 
+                :options="['none', 'hour', 'day', 'week', 'month', 'year']" 
+                label="Aggregation by time" 
+                stack-label 
+                borderless 
+                :dense="true" 
+                :options-dense="true"
+                transition-show="scale"
+                transition-hide="scale"                 
+              />
             </q-item-section>
           </q-item>
 
           <q-item tag="label" >
             <q-item-section>
-              <q-select v-model="quality" :options="['none', 'physical', 'step', 'empirical']" label="Quality checks" stack-label borderless :dense="true" :options-dense="true"/>
+              <q-select 
+                v-model="quality" 
+                :options="qualities" 
+                label="Quality checks" 
+                stack-label 
+                borderless 
+                :dense="true" 
+                :options-dense="true"
+                :option-disable="opt => timeAggregation === 'none' && opt === 'empirical'"
+                transition-show="scale"
+                transition-hide="scale"                 
+              />
             </q-item-section>
           </q-item> 
 
-          <q-item tag="label" style="user-select: none;" v-if="timeAggregation != 'none'">
+          <q-item tag="label" style="user-select: none;" :disable="timeAggregation === 'none'">
             <q-item-section avatar>
-              <q-checkbox v-model="interpolation" color="teal" size="xs"/>
+              <q-checkbox v-model="interpolation" color="teal" size="xs" :disable="timeAggregation === 'none'"/>
             </q-item-section>
-            <q-item-section>
+            <q-item-section v-if="timeAggregation !== 'none'">
               <q-item-label>Interpolation</q-item-label>
+            </q-item-section>
+            <q-item-section v-else>
+              <q-item-label>(Interpolation not available for raw data.)</q-item-label>
             </q-item-section>
           </q-item>
 
           <q-separator />
 
           <q-item>
-            <timeseries-selector :multiTimeseries="multiTimeseries" @plot-sensor-changed="selectedPlots = $event.plots; selectedSensors = $event.sensors;" />            
+            <timeseries-selector 
+              :multiTimeseries="multiTimeseries" 
+              :timeAggregation="timeAggregation" 
+              @plot-sensor-changed="selectedPlots = $event.plots; selectedSensors = $event.sensors;" 
+            />            
           </q-item>
 
           <q-separator />
@@ -69,7 +97,7 @@
         <b>Inspect timeseries values</b>: Move mouse over diagram to show time / measurement values.
         <br><b>Zoom in/out</b>: Place mouse on diagram and rotate the mouse wheel.
       </div>
-      <timeseries-diagram :data="data" />
+      <timeseries-diagram :data="data" :timeAggregation="timeAggregation" />
       </div>
     </q-page-container>
 
@@ -138,6 +166,9 @@ export default {
       apiGET: 'apiGET',
       apiPOST: 'apiPOST',
     }),
+    qualities() {
+      return ['none', 'physical', 'step', 'empirical'];
+    },
     plotSensorList() {
       let list = [];
       for(let selectedSensor of this.selectedSensors) {
@@ -182,12 +213,15 @@ export default {
           var reqConfig = {
             responseType: 'arraybuffer',
           }
+          var settings = {
+            timeAggregation: this.timeAggregation,
+            quality: this.quality,            
+          };
+          if(this.timeAggregation !== 'none') {
+            settings.interpolation = this.interpolation;
+          }
           var reqData = {
-            settings: {
-              timeAggregation: this.timeAggregation,
-              quality: this.quality,
-              interpolation: this.interpolation,
-            },
+            settings: settings,
             timeseries: this.plotSensorList.slice(0, 4),
           };
           var response = await this.apiPOST(['tsdb', 'query_js'], reqData, reqConfig);
@@ -229,8 +263,14 @@ export default {
     async model() {
       this.requestData();
     },
-    timeAggregation() {
-      this.settingsChanged();
+    timeAggregation: {
+      handler() {
+        if(this.quality === undefined || this.quality === null || (this.timeAggregation === 'none' && this.quality === 'empirical')) {
+          this.quality = this.qualities[2];
+        }
+        this.settingsChanged();
+      },
+      immediate: true, 
     },
     quality() {
       this.settingsChanged();

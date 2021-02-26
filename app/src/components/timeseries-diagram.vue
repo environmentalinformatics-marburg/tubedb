@@ -268,6 +268,7 @@ export default {
   name: 'timeseries-diagram',  
   props: [
     'data',
+    'timeAggregation',
   ],  
   components: {
   },
@@ -310,7 +311,7 @@ export default {
       if(this.data.length > 1) {
         series.push({
           show: true,
-          spanGaps: false,
+          spanGaps: (this.timeAggregation === 'none'),
           // in-legend display
           label: "Value",
           value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
@@ -322,7 +323,7 @@ export default {
       if(this.data.length > 2) {
         series.push({
           show: true,
-          spanGaps: false,
+          spanGaps: (this.timeAggregation === 'none'),
           // in-legend display
           label: "Value",
           value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
@@ -334,7 +335,7 @@ export default {
       if(this.data.length > 3) {
         series.push({
           show: true,
-          spanGaps: false,
+          spanGaps: (this.timeAggregation === 'none'),
           // in-legend display
           label: "Value",
           value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
@@ -346,7 +347,7 @@ export default {
       if(this.data.length > 4) {
         series.push({
           show: true,
-          spanGaps: false,
+          spanGaps: (this.timeAggregation === 'none'),
           // in-legend display
           label: "Value",
           value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),

@@ -4,7 +4,22 @@
 
     <q-item tag="label" >
       <q-item-section>
-        <q-select v-model="selectedProjectsModel" :options="projects" option-value="id" for="id" option-label="title" label="Projects" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
+        <q-select 
+          v-model="selectedProjectsModel" 
+          :options="projects" 
+          option-value="id" 
+          for="id" 
+          option-label="title" 
+          label="Projects" 
+          stack-label 
+          borderless 
+          dense 
+          options-dense 
+          options-cover 
+          :multiple="multiTimeseries"
+            transition-show="scale"
+            transition-hide="scale"         
+        >
           <template v-if="selectedProjects.length > 0" v-slot:append>
             <q-icon name="cancel" @click.stop="selectedProjectsModel = null" class="cursor-pointer" />
           </template>
@@ -15,7 +30,22 @@
     <template v-if="selectedProjects.length > 0">
       <q-item tag="label">
         <q-item-section>
-          <q-select v-model="selectedGroupsModel" :options="groups" option-value="id" for="id" option-label="title" label="Groups" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
+          <q-select 
+            v-model="selectedGroupsModel" 
+            :options="groups" 
+            option-value="id" 
+            for="id" 
+            option-label="title" 
+            label="Groups" 
+            stack-label 
+            borderless 
+            dense 
+            options-dense 
+            options-cover 
+            :multiple="multiTimeseries" 
+            transition-show="scale"
+            transition-hide="scale"
+          >
             <template v-if="selectedGroups.length > 0" v-slot:append>
               <q-icon name="cancel" @click.stop="selectedGroupsModel = null" class="cursor-pointer" />
             </template>
@@ -26,7 +56,19 @@
       <template v-if="selectedGroups.length > 0">
         <q-item tag="label" >
           <q-item-section>
-            <q-select v-model="selectedPlotsModel" :options="plots" label="Plots" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
+            <q-select 
+              v-model="selectedPlotsModel" 
+              :options="plots" 
+              label="Plots" 
+              stack-label 
+              borderless 
+              dense 
+              options-dense 
+              options-cover 
+              :multiple="multiTimeseries"
+              transition-show="scale"
+              transition-hide="scale"              
+            >
               <template v-if="selectedPlots.length > 0" v-slot:append>
                 <q-icon name="cancel" @click.stop="selectedPlotsModel = null" class="cursor-pointer" />
               </template>
@@ -40,7 +82,22 @@
         <template v-if="selectedPlots.length > 0">
           <q-item tag="label" v-if="plotstations.length > 1 && selectedPlotsHaveMultipleStations">
             <q-item-section>
-              <q-select v-model="selectedPlotstationsModel" :options="plotstations" option-value="id" for="id" option-label="id" label="Plot-Stations" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
+              <q-select 
+              v-model="selectedPlotstationsModel" 
+              :options="plotstations" 
+              option-value="id" 
+              for="id" 
+              option-label="id" 
+              label="Plot-Stations" 
+              stack-label 
+              borderless 
+              dense 
+              options-dense 
+              options-cover 
+              :multiple="multiTimeseries"
+              transition-show="scale"
+              transition-hide="scale"               
+              >
                 <template v-if="selectedPlotstationsModel !== null" v-slot:append>
                   <q-icon name="cancel" @click.stop="selectedPlotstationsModel = null" class="cursor-pointer" />
                 </template>
@@ -61,10 +118,33 @@
             
             <q-item tag="label" >
               <q-item-section v-if="sensors.length > 0">
-                <q-select v-model="selectedSensorsModel" :options="sensors" option-value="id" for="id" option-label="id" label="Sensors" stack-label borderless dense options-dense options-cover :multiple="multiTimeseries">
+                <q-select 
+                  v-model="selectedSensorsModel" 
+                  :options="sensors" 
+                  option-value="id" 
+                  for="id" 
+                  option-label="id" 
+                  label="Sensors" 
+                  stack-label 
+                  borderless 
+                  dense 
+                  options-dense 
+                  options-cover 
+                  :multiple="multiTimeseries"
+                  transition-show="scale"
+                  transition-hide="scale"                   
+                >
                   <template v-if="selectedSensors.length > 0" v-slot:append>
                     <q-icon name="cancel" @click.stop="selectedSensorsModel = null" class="cursor-pointer" />
                   </template>
+                <template v-slot:option="{itemProps, itemEvents, opt}">
+                  <q-item v-bind="itemProps" v-on="itemEvents" :title="opt.description"  :disable="timeAggregation !== 'none' && opt.aggregation_hour === 'none'">
+                    <q-item-section>
+                      <q-item-label v-if="opt.aggregation_hour === 'none'" color="grey">{{opt.id}} (raw)</q-item-label>
+                      <q-item-label v-else>{{opt.id}}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>                   
                 </q-select>                
               </q-item-section>
               <q-item-section v-if="sensors.length === 0">
@@ -107,6 +187,7 @@ export default {
   name: 'timeseries-selector',
   props: [
     'multiTimeseries',
+    'timeAggregation',
   ],
   data () {
     return {
@@ -236,16 +317,7 @@ export default {
           plotNameSet.add(plotName);
         }
       }
-      //console.log(plotNameSet);
-      /*let result = [...plotNameSet].map(plotName => {
-        let p = this.model.plots[plotName];
-        return {id: p.id};
-      });*/
       let result = [...plotNameSet];
-      /*result = result.filter(plot => {
-        //console.log(plot.id);
-        return plot !== undefined;
-      });*/
       result.sort((a, b) => {
         var nameA = a.toLowerCase();
         var nameB = b.toLowerCase();
@@ -263,38 +335,6 @@ export default {
       return this.selectedPlots.some(plot => plot.stations.length > 1);
     },
     plotstations() {
-      /*var ps = [];
-      for (let plot of this.selectedPlots) {
-        switch(plot.stations.length) {
-          case 0: {
-            let id = plot.id;
-            let sensorSet = plot.sensorSet;
-            ps.push({id: id, plot: plot.id, station: plot.id, sensorSet: sensorSet});
-            break;
-          }
-          case 1: {
-            let stationName = plot.stations[0];
-            let id = plot.id + ":" + stationName;
-            let sensorSet = this.model.stations[stationName].sensorSet;
-            ps.push({id: id, plot: plot.id, station: stationName, sensorSet: sensorSet});
-            break;
-          }
-          default: {
-            ps.push({id: plot.id, plot: plot.id, merged: true, sensorSet: plot.sensorSet});
-            for(let stationName of plot.stations) {
-              let id = plot.id + ":" + stationName;
-              let sensorSet = this.model.stations[stationName].sensorSet;
-              ps.push({id: id, plot: plot.id, station: stationName, sensorSet: sensorSet});
-            }
-          }
-        }
-      }
-      return ps;*/
-      /*var ps = [];
-      for (let plot of this.selectedPlots) {
-        ps = ps.concat(plot.plotstations);
-      }
-      return ps;*/
       return this.selectedPlots.flatMap(plot => plot.plotstations);
     },
     sensors() {
@@ -331,9 +371,9 @@ export default {
     projects: {
       handler() {
         this.selectedProjectsModel = null;
-        console.log("A");
+        //console.log("A");
         if(this.projects.length === 1) {
-          console.log("A");
+          //console.log("A");
           if(this.multiTimeseries) {
             this.selectedProjectsModel = [this.projects[0]];
           } else {
@@ -345,29 +385,49 @@ export default {
     },
     groups: {
       handler() {
-        this.selectedGroupsModel = null;
-        if(this.groups.length === 1) {
+        if(this.groups.length === 0) {
+          this.selectedGroupsModel = null;
+        } else if(this.groups.length === 1) {
           if(this.multiTimeseries) {
             this.selectedGroupsModel = [this.groups[0]];
           } else {
             this.selectedGroupsModel = this.groups[0];
           }
-        }
-      },
-      immediate: true,  
-    },
-    plots: {
-      handler(plots) {
-        this.selectedPlotsModel = null;
-        if(plots.length === 1) {
+        } else if(this.selectedGroupsModel !== null) {
           if(this.multiTimeseries) {
-            this.selectedPlotsModel = [plots[0]];
+            this.selectedGroupsModel = this.selectedGroupsModel.filter(selectedGroup => this.groups.some(group => group.id === selectedGroup.id));
+            if(this.selectedGroupsModel.length === 0) {
+              this.selectedGroupsModel = null;
+            }
           } else {
-            this.selectedPlotsModel = plots[0];
+            this.selectedGroupsModel = this.groups.some(group => group.id === this.selectedGroupsModel.id) ? this.selectedGroupsModel : null;
           }
         }
       },
-      immediate: true, 
+      immediate: true,       
+    },
+    plots: {
+      handler() {
+        if(this.plots.length === 0) {
+          this.selectedPlotsModel = null;
+        } else if(this.plots.length === 1) {
+          if(this.multiTimeseries) {
+            this.selectedPlotsModel = [this.plots[0]];
+          } else {
+            this.selectedPlotsModel = this.plots[0];
+          }
+        } else if(this.selectedPlotsModel !== null) {
+          if(this.multiTimeseries) {
+            this.selectedPlotsModel = this.selectedPlotsModel.filter(selectedPlot => this.plots.some(plot => plot === selectedPlot));
+            if(this.selectedPlotsModel.length === 0) {
+              this.selectedPlotsModel = null;
+            }
+          } else {
+            this.selectedPlotsModel = this.plots.some(plot => plot === this.selectedPlotsModel) ? this.selectedPlotsModel : null;
+          }
+        }
+      },
+      immediate: true,       
     },
     /*plotstations: {
       handler() {
@@ -408,12 +468,12 @@ export default {
     selectedPlots: {
       handler(selectedPlots, oldSelectedPlots) {
         let stayingSelectedPlots = selectedPlots.filter(selectedPlot => oldSelectedPlots === undefined || oldSelectedPlots.some(oldSelectedPlot => selectedPlot.id === oldSelectedPlot.id));        
-        console.log("stayingSelectedPlots: " + JSON.stringify(stayingSelectedPlots.map(stayingSelectedPlot => stayingSelectedPlot.id)));
+        //console.log("stayingSelectedPlots: " + JSON.stringify(stayingSelectedPlots.map(stayingSelectedPlot => stayingSelectedPlot.id)));
         let newSelectedPlots = selectedPlots.filter(selectedPlot => oldSelectedPlots === undefined || !oldSelectedPlots.some(oldSelectedPlot => selectedPlot.id === oldSelectedPlot.id));
-        console.log("newSelectedPlots: " + JSON.stringify(newSelectedPlots.map(newSelectedPlot => newSelectedPlot.id)));
-        console.log("selectedPlotStations: " + JSON.stringify(this.selectedPlotStations === undefined || this.selectedPlotStations.map(selectedPlotStation => selectedPlotStation.id)));
-        console.log("selectedPlots: " + JSON.stringify(selectedPlots.map(selectedPlot => selectedPlot.id)));
-        console.log("oldSelectedPlots: " + JSON.stringify(oldSelectedPlots === undefined || oldSelectedPlots.map(oldSelectedPlot => oldSelectedPlot.id)));
+        //console.log("newSelectedPlots: " + JSON.stringify(newSelectedPlots.map(newSelectedPlot => newSelectedPlot.id)));
+        //console.log("selectedPlotStations: " + JSON.stringify(this.selectedPlotStations === undefined || this.selectedPlotStations.map(selectedPlotStation => selectedPlotStation.id)));
+        //console.log("selectedPlots: " + JSON.stringify(selectedPlots.map(selectedPlot => selectedPlot.id)));
+        //console.log("oldSelectedPlots: " + JSON.stringify(oldSelectedPlots === undefined || oldSelectedPlots.map(oldSelectedPlot => oldSelectedPlot.id)));
         if(this.selectedPlotstationsModel !== null) {
           if(this.multiTimeseries) {
             newSelectedPlots = newSelectedPlots.filter(newSelectedPlot => !this.selectedPlotstationsModel.some(selectedPlotstation => selectedPlotstation.plot === newSelectedPlot.id));
@@ -422,7 +482,7 @@ export default {
           }
         }
         let newSelectedPlotStations = newSelectedPlots.map(newSelectedPlot => this.plotstations.find(plotstation => plotstation.plot === newSelectedPlot.id));
-        console.log("newSelectedPlotStations: " + JSON.stringify(newSelectedPlotStations.map(newSelectedPlotStation => newSelectedPlotStation.id)));
+        //console.log("newSelectedPlotStations: " + JSON.stringify(newSelectedPlotStations.map(newSelectedPlotStation => newSelectedPlotStation.id)));
         let currSelectedPlotStations = [];        
         if(this.selectedPlotstationsModel !== null) {
           if(this.multiTimeseries) {          
@@ -433,9 +493,9 @@ export default {
             }
           }
         }  
-        console.log("currSelectedPlotStations: " + JSON.stringify(currSelectedPlotStations.map(currSelectedPlotStation => currSelectedPlotStation.id)));      
+        //console.log("currSelectedPlotStations: " + JSON.stringify(currSelectedPlotStations.map(currSelectedPlotStation => currSelectedPlotStation.id)));      
         currSelectedPlotStations = currSelectedPlotStations.concat(newSelectedPlotStations);
-        console.log("currSelectedPlotStations: " + JSON.stringify(currSelectedPlotStations.map(currSelectedPlotStation => currSelectedPlotStation.id)));        
+        //console.log("currSelectedPlotStations: " + JSON.stringify(currSelectedPlotStations.map(currSelectedPlotStation => currSelectedPlotStation.id)));        
         if(currSelectedPlotStations.length > 0) {
           if(this.multiTimeseries) {
             this.selectedPlotstationsModel = currSelectedPlotStations;
@@ -450,12 +510,23 @@ export default {
       immediate: true,
     },
     selectedPlotstations() {
-      console.log("selectedPlotstations changed");
+      //console.log("selectedPlotstations changed");
       this.$nextTick(() => this.onPlotSensorChanged());
     },    
     selectedSensors() {      
       this.$nextTick(() => this.onPlotSensorChanged());
-    }
+    },
+    timeAggregation(timeAggregation, prevTimeAggregation) {
+      if(prevTimeAggregation === 'none' && this.selectedSensorsModel !== null) {
+        if(this.multiTimeseries) {
+          this.selectedSensorsModel = this.selectedSensorsModel.filter(selectedSensor => selectedSensor.aggregation_hour !== 'none');          
+        } else {
+          if(this.selectedSensorsModel.aggregation_hour === 'none') {
+            this.selectedSensorsModel = null;
+          }
+        }
+      }
+    },
   },  
   async mounted() {
     this.$store.dispatch('model/init');
