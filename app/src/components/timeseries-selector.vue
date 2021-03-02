@@ -102,7 +102,7 @@
                   <q-icon name="cancel" @click.stop="selectedPlotstationsModel = null" class="cursor-pointer" />
                 </template>
                 <template v-slot:option="{itemProps, itemEvents, opt}">
-                  <q-item v-bind="itemProps" v-on="itemEvents">
+                  <q-item v-bind="itemProps" v-on="itemEvents" class="selection-not-active" active-class="selection-active">
                     <q-item-section>
                       <q-item-label v-if="opt.merged"><b>{{opt.plot}}</b> (merged)</q-item-label>
                       <q-item-label v-else-if="opt.plot === opt.station"><b>{{opt.plot}}</b></q-item-label>
@@ -132,50 +132,53 @@
                   options-cover 
                   :multiple="multiTimeseries"
                   transition-show="scale"
-                  transition-hide="scale"                   
+                  transition-hide="scale"                                   
                 >
                   <template v-if="selectedSensors.length > 0" v-slot:append>
                     <q-icon name="cancel" @click.stop="selectedSensorsModel = null" class="cursor-pointer" />
                   </template>
                 <template v-slot:option="{itemProps, itemEvents, opt}">
-                  <q-item v-bind="itemProps" v-on="itemEvents" :title="opt.description"  :disable="timeAggregation !== 'none' && opt.aggregation_hour === 'none'">
+                  <q-item v-bind="itemProps" v-on="itemEvents" :title="opt.description"  :disable="timeAggregation !== 'none' && opt.aggregation_hour === 'none'" class="selection-not-active" active-class="selection-active">
                     <q-item-section>
-                      <q-item-label v-if="opt.aggregation_hour === 'none'" color="grey">{{opt.id}} (raw)</q-item-label>
-                      <q-item-label v-else>{{opt.id}}</q-item-label>
+                      <q-item-label v-if="opt.aggregation_hour === 'none'" class="text-deep-orange-10">{{opt.id}} (raw)</q-item-label>
+                      <q-item-label v-else-if="opt.derived" class="text-teal-10">{{opt.id}}</q-item-label>
+                      <q-item-label v-else  class="text-black">{{opt.id}}</q-item-label>
                     </q-item-section>
                   </q-item>
                 </template>                   
                 </q-select>                
               </q-item-section>
-              <q-item-section v-if="sensors.length === 0">
-                no sensors              
-              </q-item-section>
+              <q-item-section v-if="sensors.length === 0" avatar ><q-icon name="info" color="blue-14"/></q-item-section>
+              <q-item-section v-if="sensors.length === 0">No sensors available for selected plots / stations.</q-item-section>
             </q-item>
 
-            <template v-if="selectedSensors.length > 0">
-            
+            <template v-if="selectedSensors.length > 0">            
             </template>
-            <div v-else>
-              no sensor selected
-            </div>
+            <q-item v-else-if="sensors.length !== 0">
+              <q-item-section avatar ><q-icon name="error_outline" color="red-14"/></q-item-section>
+              <q-item-section>No sensor selected.</q-item-section>
+            </q-item>            
 
           </template>
-          <div v-else>
-            no plot-station selected
-          </div>         
-
+          <q-item v-else>
+          <q-item-section avatar ><q-icon name="error_outline" color="red-14"/></q-item-section>
+          <q-item-section>No plot-station selected.</q-item-section>
+          </q-item>
         </template>
-        <div v-else>
-          no plot selected
-        </div>
+        <q-item v-else>
+          <q-item-section avatar ><q-icon name="error_outline" color="red-14"/></q-item-section>
+          <q-item-section>No plot selected.</q-item-section>
+        </q-item>        
       </template>
-      <div v-else>
-        no group selected
-      </div>
+      <q-item v-else>
+        <q-item-section avatar ><q-icon name="error_outline" color="red-14"/></q-item-section>
+        <q-item-section>No group selected.</q-item-section>
+      </q-item>
     </template>             
-    <div v-else>
-      no project selected
-    </div>
+    <q-item v-else>
+      <q-item-section avatar ><q-icon name="error_outline" color="red-14"/></q-item-section>
+      <q-item-section>No project selected.</q-item-section>
+    </q-item>    
   </q-list>         
 </q-item-section>
 </template>
@@ -536,6 +539,16 @@ export default {
 
 <style scoped>
 
+.selection-not-active {
+  border-left: 5px solid #fff0;
+  border-right: 5px solid #fff0;
+}
 
+.selection-active {
+  /*font-weight: bold;*/
+  background: #9ed3f867;
+  border-left: 5px solid #0000006e;
+  border-right: 5px solid #0000006e;
+}
 
 </style>

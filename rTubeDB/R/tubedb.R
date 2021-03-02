@@ -219,7 +219,7 @@ query_regions <- function(tubedb) {
   name <- sapply(rs, function(r) {NULLtoNA(r$name)})
   view_year_range_start <- sapply(rs, function(r) {if(is.null(r$view_year_range)) NA else NULLtoNA(r$view_year_range$start)})
   view_year_range_end <- sapply(rs, function(r) {if(is.null(r$view_year_range)) NA else NULLtoNA(r$view_year_range$end)})
-  df <- data.frame(id=id, name=name, view_year_range_start=view_year_range_start, view_year_range_end=view_year_range_end)
+  df <- data.frame(id=id, name=name, view_year_range_start=view_year_range_start, view_year_range_end=view_year_range_end, stringsAsFactors = FALSE)
   return(df)
 }
 
@@ -329,7 +329,7 @@ query_region_info <- function(tubedb, regionID) {
   vyrs <- if(is.null(r$view_year_range)) NA else NULLtoNA(r$view_year_range$start)
   vyre <- if(is.null(r$view_year_range)) NA else NULLtoNA(r$view_year_range$end)
   dgs <- if(is.null(r$default_general_station)) NA else NULLtoNA(r$default_general_station)
-  df <- data.frame(id = r$id, name = r$name, view_year_range_start = vyrs, view_year_range_end = vyre, default_general_station = dgs)
+  df <- data.frame(id = r$id, name = r$name, view_year_range_start = vyrs, view_year_range_end = vyre, default_general_station = dgs, stringsAsFactors = FALSE)
   return(df)
 }
 
@@ -395,7 +395,7 @@ query_region_general_stations <- function(tubedb, regionID) {
   name <- sapply(gsl, function(r) {NULLtoNA(r$name)})
   view_year_range_start <- sapply(gsl, function(r) {if(is.null(r$view_year_range)) NA else NULLtoNA(r$view_year_range$start)})
   view_year_range_end <- sapply(gsl, function(r) {if(is.null(r$view_year_range)) NA else NULLtoNA(r$view_year_range$end)})
-  df <- data.frame(id=id, name=name, view_year_range_start=view_year_range_start, view_year_range_end=view_year_range_end)
+  df <- data.frame(id=id, name=name, view_year_range_start=view_year_range_start, view_year_range_end=view_year_range_end, stringsAsFactors = FALSE)
   return(df)
 }
 
@@ -464,7 +464,7 @@ query_region_plots <- function(tubedb, regionID) {
   latitude <- sapply(pl, function(p) {NULLtoNA(p$latitude)})
   longitude <- sapply(pl, function(p) {NULLtoNA(p$longitude)})
   elevation <- sapply(pl, function(p) {NULLtoNA(p$elevation)})
-  df <- data.frame(id=id, general_station=general_station, logger_type=logger_type, vip=vip, latitude=latitude, longitude=longitude, elevation=elevation)
+  df <- data.frame(id=id, general_station=general_station, logger_type=logger_type, vip=vip, latitude=latitude, longitude=longitude, elevation=elevation, stringsAsFactors = FALSE)
   return(df)
 }
 
@@ -579,7 +579,7 @@ query_region_sensors <- function(tubedb, regionID) {
   raw <- sapply(sl, function(s) {NULLtoNA(s$raw)})
   derived <- sapply(sl, function(s) {NULLtoNA(s$derived)})
   internal <- sapply(sl, function(s) {NULLtoNA(s$internal)})
-  df <- data.frame(id=id, description=description, unit_description=unit_description, raw=raw, derived=derived, internal=internal)
+  df <- data.frame(id=id, description=description, unit_description=unit_description, raw=raw, derived=derived, internal=internal, stringsAsFactors = FALSE)
   return(df)
 }
 
@@ -643,7 +643,7 @@ query_region_stations <- function(tubedb, regionID) {
   sl <- rTubeDB::query_region_stations_list(tubedb, regionID)
   id <- sapply(sl, function(s) {NULLtoNA(s$id)})
   logger_type <- sapply(sl, function(s) {NULLtoNA(s$logger_type)})
-  df <- data.frame(id=id, logger_type=logger_type)
+  df <- data.frame(id=id, logger_type=logger_type, stringsAsFactors = FALSE)
   return(df)
 }
 
