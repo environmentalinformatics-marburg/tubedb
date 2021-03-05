@@ -10,6 +10,58 @@ import { mapState, mapGetters } from 'vuex';
 import uPlot from 'uPlot';
 import 'uPlot/dist/uPlot.min.css';
 
+function dragPlugin(opts) {
+
+  let mouseDownXval;
+  let mouseDownXmin;
+  let mouseDownXmax;
+
+  function ready(u) {
+    let plot = u.root.querySelector(".u-over");
+
+    function initMove() {
+      let xVal = u.posToVal(u.cursor.left, "x");
+      mouseDownXval = xVal;
+      mouseDownXmin = u.scales.x.min;
+      mouseDownXmax = u.scales.x.max;
+    }
+
+    function finishMove() {
+      mouseDownXval = undefined;
+    }
+
+    plot.addEventListener("mousedown", function(e) {
+      initMove();
+    });
+
+    plot.addEventListener("mouseup", function(e) {
+      finishMove();
+    });
+
+    plot.addEventListener("mousemove", function(e) {
+      if(e.buttons === 1) {
+        if(mouseDownXval === undefined) {
+          initMove();
+        } else {
+          let xVal = u.posToVal(u.cursor.left, "x");
+          let xDelta = mouseDownXval - xVal;
+          let nxMin = mouseDownXmin + xDelta;
+          let nxMax = mouseDownXmax + xDelta
+          u.batch(() => {
+            u.setScale("x", {
+              min: nxMin,
+              max: nxMax,
+            });
+          });
+          mouseDownXmin = nxMin;
+          mouseDownXmax = nxMax;
+        }
+      }
+    });
+  }  
+  return {hooks: {ready}};  
+}
+
 function touchZoomPlugin(opts) {
   function init(u, opts, data) {
     let plot = u.root.querySelector(".u-over");
@@ -118,30 +170,6 @@ function touchZoomPlugin(opts) {
 
     plot.addEventListener("touchend", function(e) {
       document.removeEventListener("touchmove", touchmove, {passive: true});
-    });
-
-
-    plot.addEventListener("mousedown", function(e) {
-      console.log("mousedown");
-      rect = plot.getBoundingClientRect();
-
-      storePos(fr, e);
-
-      oxRange = u.scales.x.max - u.scales.x.min;
-      oyRange = u.scales.y.max - u.scales.y.min;
-
-      let left = fr.x;
-      let top = fr.y;
-
-      xVal = u.posToVal(left, "x");
-      yVal = u.posToVal(top, "y");
-
-      document.addEventListener("mousemove", touchmove, {passive: true});
-    });
-
-    plot.addEventListener("mouseup", function(e) {
-      console.log("mouseup");
-      document.removeEventListener("mousemove", touchmove, {passive: true});
     });
   }  
 
@@ -371,6 +399,7 @@ export default {
         plugins: [
           touchZoomPlugin({}),
           wheelZoomPlugin({factor: 0.75}),
+          dragPlugin({}),
         ],        
         series: series,
       };

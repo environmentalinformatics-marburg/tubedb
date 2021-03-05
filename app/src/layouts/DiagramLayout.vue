@@ -87,15 +87,24 @@
 
     <q-page-container>
       <div style="position: relative;">
-      <div v-if="dataRequestSentCounter > dataRequestReceivedCounter" style="position: absolute; top: 50px; left: 50px;">
-        Waiting for data ...
+      <div v-if="dataRequestSentCounter > dataRequestReceivedCounter" style="position: absolute; top: 70px; left: 50px;">        
+        <q-item>
+          <q-item-section avatar ><q-icon name="error_outline" color="blue-14"/></q-item-section>
+          <q-item-section>Waiting for data ...</q-item-section>
+        </q-item>
       </div>
       <div v-if="dataRequestError !== undefined" style="position: absolute; top: 100px; left: 100px;">
-        {{dataRequestError}}
+        <q-item>
+          <q-item-section avatar ><q-icon name="error_outline" color="red-14"/></q-item-section>
+          <q-item-section>{{dataRequestError}}</q-item-section>
+        </q-item>
       </div>
       <div style="margin-top: 10px; margin-left: 10px;">
-        <b>Inspect timeseries values</b>: Move mouse over diagram to show time / measurement values.
-        <br><b>Zoom in/out</b>: Place mouse on diagram and rotate the mouse wheel.
+        <table>
+        <tr><td style="padding-right: 10px; text-align:center"><b>Zoom in/out</b></td><td>Place mouse on diagram and rotate the mouse wheel.</td></tr>
+        <tr><td style="padding-right: 10px; text-align:center"><b>Move in time</b></td><td>Place mouse on diagram, press and hold left mouse button and move mouse left / right on the diagram.</td></tr>
+        <tr><td style="padding-right: 10px; text-align:center"><b>Inspect timeseries values</b></td><td>Move mouse over diagram without mouse buttons pressed to show time / measurement values.</td></tr>        
+        </table>
       </div>
       <timeseries-diagram :data="data" :timeAggregation="timeAggregation" />
       </div>
