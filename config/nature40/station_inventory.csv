@@ -191,6 +191,11 @@ SEW03_C0200130,be_treetalker_logger,tt_5F200064,*,*
 SEW03_C0200130,be_treetalker_logger,tt_5F200065,*,*
 SEW03_C0200130,be_treetalker_logger,tt_5F200066,*,*
 SEW03_C0200130,be_treetalker_logger,tt_5F200067,*,*
+SEW03_1_M,be_treetalker_logger,tt_5F200063,*,*
+SEW03_1_S,be_treetalker_logger,tt_5F200064,*,*
+SEW03_2_M,be_treetalker_logger,tt_5F200065,*,*
+SEW03_2_N,be_treetalker_logger,tt_5F200066,*,*
+SEW03_3_M,be_treetalker_logger,tt_5F200067,2020-12-01,2025-12-31
 SEW04_C0200131_CLOUD,be_treetalker_node,tt_C0200131,*,*
 SEW04_C0200131,be_treetalker_logger,tt_5F200119,*,*
 SEW04_C0200131,be_treetalker_logger,tt_5F200073,*,*
@@ -222,6 +227,11 @@ SEW18_C0200140,be_treetalker_logger,tt_5F200011,*,*
 SEW18_C0200140,be_treetalker_logger,tt_5F200012,*,*
 SEW18_C0200140,be_treetalker_logger,tt_5F200013,*,*
 SEW18_C0200140,be_treetalker_logger,tt_5F200014,*,*
+SEW18_1_M,be_treetalker_logger,tt_5F200011,2020-12-01,2025-12-31
+SEW18_1_N,be_treetalker_logger,tt_5F200012,2020-12-01,2025-12-31
+SEW18_2_M,be_treetalker_logger,tt_5F200013,2020-12-01,2025-12-31
+SEW18_2_S,be_treetalker_logger,tt_5F200014,2020-12-01,2025-12-31
+SEW18_3_M,be_treetalker_logger,tt_5F200015,2020-12-01,2025-12-31
 SEW24_CLOUD,be_treetalker_node,tt_C0200141,*,*
 SEW24_C0200141_CLOUD,be_treetalker_node,tt_C0200141,*,*
 SEW24_C0200141,be_treetalker_logger,tt_5F200016,*,*
@@ -229,6 +239,11 @@ SEW24_C0200141,be_treetalker_logger,tt_5F200017,*,*
 SEW24_C0200141,be_treetalker_logger,tt_5F200018,*,*
 SEW24_C0200141,be_treetalker_logger,tt_5F200019,*,*
 SEW24_C0200141,be_treetalker_logger,tt_5F200020,*,*
+SEW24_1_M,be_treetalker_logger,tt_5F200016,2020-12-01,2025-12-31
+SEW24_1_S,be_treetalker_logger,tt_5F200017,2020-12-01,2025-12-31
+SEW24_2_M,be_treetalker_logger,tt_5F200018,2020-12-01,2025-12-31
+SEW24_2_N,be_treetalker_logger,tt_5F200019,2020-12-01,2025-12-31
+SEW24_3_M,be_treetalker_logger,tt_5F200020,2020-12-01,2025-12-31
 SEW25_C0200159_CLOUD,be_treetalker_node,tt_C0200159,*,*
 SEW25_C0200159,be_treetalker_logger,tt_5F200021,*,*
 SEW25_C0200159,be_treetalker_logger,tt_5F200022,*,*
