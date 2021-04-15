@@ -149,7 +149,7 @@ public class ConfigLoader {
 			}
 
 			for(GeneralStationBuilder e:creationMap.values()) {
-				tsdb.insertGeneralStation(e.build());
+				tsdb.insertGeneralStation(e.build(), configFile);
 			}
 
 		} catch (Exception e) {
@@ -188,7 +188,7 @@ public class ConfigLoader {
 						tsdb.insertSensor(sensor);
 					}
 				}
-				tsdb.insertLoggerType(new LoggerType(typeName, sensorNames));
+				tsdb.insertLoggerType(new LoggerType(typeName, sensorNames), configFile);
 			}
 		} catch (Exception e) {
 			log.error(e);
@@ -600,7 +600,7 @@ public class ConfigLoader {
 				if(Float.isFinite(elevation)) {
 					station.elevation = elevation;
 				}
-				tsdb.insertStation(station);
+				tsdb.insertStation(station, configFile);
 				if(alternative_id != null) {
 					station.addAlias(alternative_id);
 				}
@@ -611,7 +611,7 @@ public class ConfigLoader {
 				if(Float.isFinite(elevation)) {
 					virtualPlot.setElevation(elevation);
 				}
-				tsdb.insertVirtualPlot(virtualPlot);
+				tsdb.insertVirtualPlot(virtualPlot, configFile);
 			}
 		}
 
@@ -701,7 +701,7 @@ public class ConfigLoader {
 				}
 				if(!virtualPlotEntryList.isEmpty()) {
 					Station station = new Station(tsdb,null,virtualPlotEntryList.get(0).b.get_serial(),firstLoggerType,list, false);
-					tsdb.insertStation(station);
+					tsdb.insertStation(station, configFile);
 					for(Pair<VirtualPlot, StationProperties> pair:virtualPlotEntryList) {
 						VirtualPlot virtualPlot = pair.a;
 						StationProperties stationProperties = pair.b;

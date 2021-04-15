@@ -33,7 +33,7 @@ import tsdb.util.Util;
 public class TsDB implements AutoCloseable {
 	private static final Logger log = LogManager.getLogger();
 
-	public static final String tubedb_version = "1.19.25";
+	public static final String tubedb_version = "1.19.26";
 
 	/**
 	 * map regionName -> Region
@@ -307,9 +307,9 @@ public class TsDB implements AutoCloseable {
 		return stationAliasMap.containsKey(stationName);
 	}
 
-	public void insertStation(Station station) {
+	public void insertStation(Station station, String originConfigFile) {
 		if(stationMap.containsKey(station.stationID)) {
-			log.warn("override station (already exists): "+station.stationID);
+			log.warn("override station (already exists): " + station.stationID + "  in " + originConfigFile);
 		}
 		stationMap.put(station.stationID, station);
 	}
@@ -356,10 +356,10 @@ public class TsDB implements AutoCloseable {
 		return generalStationMap.containsKey(generalStationName);
 	}
 
-	public void insertGeneralStation(GeneralStation generalStation) {
+	public void insertGeneralStation(GeneralStation generalStation, String originConfigFile) {
 		//log.info("insert: " + generalStation);
 		if(generalStationExists(generalStation.name)) {
-			log.warn("override general station (already exists): "+generalStation.name);
+			log.warn("override general station (already exists): " + generalStation.name + "  in " + originConfigFile);
 		}
 		generalStationMap.put(generalStation.name, generalStation);
 	}
@@ -462,9 +462,9 @@ public class TsDB implements AutoCloseable {
 		return loggerTypeMap.containsKey(loggerTypeName);
 	}
 
-	public void insertLoggerType(LoggerType loggertype) {
+	public void insertLoggerType(LoggerType loggertype, String originConfigFile) {
 		if(loggerTypeExists(loggertype.typeName)) {
-			log.warn("override logger type (already exists): "+loggertype.typeName);
+			log.warn("override logger type (already exists): " + loggertype.typeName + "  in " + originConfigFile);
 		}
 		loggerTypeMap.put(loggertype.typeName, loggertype);
 	}
@@ -483,9 +483,9 @@ public class TsDB implements AutoCloseable {
 		return virtualplotMap.containsKey(plotID);
 	}
 
-	public void insertVirtualPlot(VirtualPlot virtualPlot) {
+	public void insertVirtualPlot(VirtualPlot virtualPlot, String originConfigFile) {
 		if(virtualPlotExists(virtualPlot.plotID)) {
-			log.warn("overwrite virtual plot (already exists): "+virtualPlot.plotID);
+			log.warn("overwrite virtual plot (already exists): " + virtualPlot.plotID + "  in " + originConfigFile);
 		}
 		virtualplotMap.put(virtualPlot.plotID, virtualPlot);
 	}

@@ -138,7 +138,12 @@ public class Handler_metadata extends MethodHandler {
 				json_output.key("id");
 				json_output.value(plotInfo.name);
 				json_output.key("general_station");
-				json_output.value(plotInfo.generalStationInfo.name);
+				if(region.name.equals(plotInfo.generalStationInfo.region.name)) {
+					json_output.value(plotInfo.generalStationInfo.name);					
+				} else {
+					GeneralStationInfo gsi = assigned_plotMap.get(plotInfo.name);
+					json_output.value(gsi.name);
+				}
 				json_output.key("sensor_names");
 				json_output.array();
 				for(String sensorName:sensorNames) {

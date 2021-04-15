@@ -364,7 +364,7 @@
 
 			</div>
 
-			<div v-show="plots.length!=1" class="interactive" style="display: inline-block;" @mouseover="plotHover = true" @mouseleave="plotHover = false" title="select multiple plots: press and hold key CTRL + left mouse click">
+			<div v-show="plots.length > 0" class="interactive" style="display: inline-block;" @mouseover="plotHover = true" @mouseleave="plotHover = false" title="select multiple plots: press and hold key CTRL + left mouse click">
 				<div class="centered title">Plot</div>
 				
 				<div style="position: relative;">
@@ -406,9 +406,8 @@
 				</div>
 				
 			</div>
-			<div v-show="plots.length==1" style="display: inline-block;">
-				<div class="centered">Plot</div>
-				<div class="centered">{{plotIDs[0]}}{{plotIDs.length>1 && plotIDs[0] != "*" ? " ...":""}}</div>
+			<div v-show="plots.length==0" style="display: inline-block;">
+				<div class="centered">no plots</div>
 			</div>
 			
 			<div v-show="sensors.length>0" class="interactive" style="display: inline-block;" @mouseover="sensorHover = true" @mouseleave="sensorHover = false" title="select multiple parameters: press and hold key CTRL + left mouse click">				
