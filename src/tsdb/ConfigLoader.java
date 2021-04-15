@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -91,7 +92,7 @@ public class ConfigLoader {
 					if(creationMap.containsKey(entry.getKey())) {
 						creationMap.get(entry.getKey()).longName = entry.getValue();
 					} else {
-						log.warn("general station unknown: "+entry.getKey());
+						log.warn("general station unknown: "+entry.getKey() + "   in " + configFile);
 					}
 				}
 			}
@@ -634,7 +635,7 @@ public class ConfigLoader {
 					.map(name->table.createColumnReader(name))
 					.toArray(ColumnReaderString[]::new);
 
-			Map<String, List<StationProperties>> stationPropertiesListMap = new HashMap<String, List<StationProperties>>();
+			Map<String, List<StationProperties>> stationPropertiesListMap = new LinkedHashMap<String, List<StationProperties>>();
 
 			for(String[] row : table.rows) {
 				if(row.length == 0 || (row.length == 1 && row[0].trim().isEmpty())) { // skip empty rows
