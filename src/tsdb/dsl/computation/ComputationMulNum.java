@@ -13,4 +13,8 @@ public class ComputationMulNum extends Computation {
 	public float eval(long timestamp, float[] data) {
 		return a.eval(timestamp, data) * b;
 	}
+	@Override
+	public String toString() {
+		return "MulNum(" + a + ", " + b + ")";
+	}
 }

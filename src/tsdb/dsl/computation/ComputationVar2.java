@@ -7,4 +7,8 @@ public class ComputationVar2 extends Computation {
 	public float eval(long timestamp, float[] data) {
 		return data[2];				
 	}
+	@Override
+	public String toString() {
+		return "Var0";
+	}
 }

@@ -241,7 +241,8 @@ public final class QueryPlanGenerators {
 			int[] unsafeVarIndices = formula.accept(new FormulaCollectUnsafeVarVisitor()).getDataVarIndices(env);
 			log.info("----");
 			log.info(Arrays.toString(varIndices)+"    "+Arrays.toString(unsafeVarIndices));
-			Computation computation = formula.accept(new FormulaCompileVisitor(env));			
+			Computation computation = formula.accept(new FormulaCompileVisitor(env));
+			log.info(computation.toString());
 			return Mutators.getMutator(computation, iTarget, unsafeVarIndices);
 		} catch(Exception e) {
 			e.printStackTrace();

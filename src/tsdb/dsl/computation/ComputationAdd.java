@@ -13,4 +13,8 @@ public class ComputationAdd extends Computation {
 	public float eval(long timestamp, float[] data) {
 		return a.eval(timestamp, data) + b.eval(timestamp, data);
 	}
+	@Override
+	public String toString() {
+		return "Add(" + a + ", " + b + ")";
+	}
 }

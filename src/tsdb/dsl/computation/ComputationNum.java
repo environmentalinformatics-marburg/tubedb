@@ -11,4 +11,8 @@ public class ComputationNum extends Computation {
 	public float eval(long timestamp, float[] data) {
 		return v;
 	}
+	@Override
+	public String toString() {
+		return "Num(" + Float.toString(v) + ")";
+	}
 }

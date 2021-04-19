@@ -15,4 +15,8 @@ public class ComputationConditional extends Computation {
 	public float eval(long timestamp, float[] data) {
 		return p.eval(timestamp, data) ? a.eval(timestamp, data) : b.eval(timestamp, data);
 	}
+	@Override
+	public String toString() {
+		return "IF(" + p.toString() + ", " + a.toString() + ", " + b.toString() + ")";
+	}
 }

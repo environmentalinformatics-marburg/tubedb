@@ -7,4 +7,8 @@ public class ComputationVar0Neg extends Computation {
 	public float eval(long timestamp, float[] data) {
 		return - data[0];				
 	}
+	@Override
+	public String toString() {
+		return "Var0neg";
+	}
 }

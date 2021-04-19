@@ -2,20 +2,18 @@ package tsdb.dsl.computation;
 
 import tsdb.util.Computation;
 
-public class ComputationMulVarNum extends Computation {
-	public final int a;
+public class ComputationMulVar1Num extends Computation {
 	public final float b;
-	public ComputationMulVarNum(int a, float b) {
-		this.a = a;
+	public ComputationMulVar1Num(float b) {
 		this.b = b;
 	}
 	@Override
 	public float eval(long timestamp, float[] data) {
-		return data[a] * b;
+		return data[1] * b;
 	}
 	
 	@Override
 	public String toString() {
-		return "MulVarNum([" + a + "], " + b + ")";
+		return "MulVar1Num(" + b + ")";
 	}
 }

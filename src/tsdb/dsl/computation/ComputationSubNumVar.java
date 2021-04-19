@@ -13,4 +13,9 @@ public class ComputationSubNumVar extends Computation {
 	public float eval(long timestamp, float[] data) {
 		return a - data[b];
 	}
+	
+	@Override
+	public String toString() {
+		return "SubNumVar(" + a + ", [" + b + "])";
+	}
 }

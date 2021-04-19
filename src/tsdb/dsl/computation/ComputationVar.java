@@ -11,4 +11,8 @@ public class ComputationVar extends Computation {
 	public float eval(long timestamp, float[] data) {
 		return data[pos];				
 	}
+	@Override
+	public String toString() {
+		return "Var[" + pos + "]";
+	}	
 }

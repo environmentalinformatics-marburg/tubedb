@@ -28,8 +28,12 @@ import tsdb.dsl.computation.ComputationArctan;
 import tsdb.dsl.computation.ComputationArctanDeg;
 import tsdb.dsl.computation.ComputationArctanDegNeg;
 import tsdb.dsl.computation.ComputationArctanNeg;
+import tsdb.dsl.computation.ComputationCbrt;
+import tsdb.dsl.computation.ComputationCbrtVar;
 import tsdb.dsl.computation.ComputationConditional;
 import tsdb.dsl.computation.ComputationConditionalOneZero;
+import tsdb.dsl.computation.ComputationCube;
+import tsdb.dsl.computation.ComputationCubeVar;
 import tsdb.dsl.computation.ComputationCumsumByYear;
 import tsdb.dsl.computation.ComputationCumsumByYearNeg;
 import tsdb.dsl.computation.ComputationDiv;
@@ -44,17 +48,38 @@ import tsdb.dsl.computation.ComputationExpNeg;
 import tsdb.dsl.computation.ComputationLn;
 import tsdb.dsl.computation.ComputationLnNeg;
 import tsdb.dsl.computation.ComputationMul;
+import tsdb.dsl.computation.ComputationMulCubeNum;
+import tsdb.dsl.computation.ComputationMulCubeVar0Num;
+import tsdb.dsl.computation.ComputationMulCubeVar1Num;
+import tsdb.dsl.computation.ComputationMulCubeVarNum;
 import tsdb.dsl.computation.ComputationMulNum;
+import tsdb.dsl.computation.ComputationMulPow4Num;
+import tsdb.dsl.computation.ComputationMulPow4VarNum;
+import tsdb.dsl.computation.ComputationMulPowVarNumNum;
+import tsdb.dsl.computation.ComputationMulPowNumNum;
+import tsdb.dsl.computation.ComputationMulPowNum_;
+import tsdb.dsl.computation.ComputationMulSquareNum;
+import tsdb.dsl.computation.ComputationMulSquareVar0Num;
+import tsdb.dsl.computation.ComputationMulSquareVar1Num;
+import tsdb.dsl.computation.ComputationMulSquareVarNum;
 import tsdb.dsl.computation.ComputationMulVar;
+import tsdb.dsl.computation.ComputationMulVar0Num;
+import tsdb.dsl.computation.ComputationMulVar1Num;
 import tsdb.dsl.computation.ComputationMulVarNum;
 import tsdb.dsl.computation.ComputationNum;
+import tsdb.dsl.computation.ComputationNum0;
 import tsdb.dsl.computation.ComputationOfTime;
 import tsdb.dsl.computation.ComputationPow;
+import tsdb.dsl.computation.ComputationPow4;
+import tsdb.dsl.computation.ComputationPow4Var;
+import tsdb.dsl.computation.ComputationPow4rt;
+import tsdb.dsl.computation.ComputationPow4rtVar;
 import tsdb.dsl.computation.ComputationPowNum;
 import tsdb.dsl.computation.ComputationSqr;
 import tsdb.dsl.computation.ComputationSqrNeg;
 import tsdb.dsl.computation.ComputationSqrt;
 import tsdb.dsl.computation.ComputationSqrtNeg;
+import tsdb.dsl.computation.ComputationSqrtVar;
 import tsdb.dsl.computation.ComputationSquareVar;
 import tsdb.dsl.computation.ComputationSub;
 import tsdb.dsl.computation.ComputationSubNum;
@@ -72,6 +97,7 @@ import tsdb.dsl.formula.BooleanFormulaLess;
 import tsdb.dsl.formula.BooleanFormulaLessEqual;
 import tsdb.dsl.formula.BooleanFormulaNotEqual;
 import tsdb.dsl.formula.BooleanFormulaOR;
+import tsdb.dsl.formula.Formula;
 import tsdb.dsl.formula.FormulaAdd;
 import tsdb.dsl.formula.FormulaConditional;
 import tsdb.dsl.formula.FormulaDiv;
@@ -338,12 +364,69 @@ public class FormulaCompileVisitor implements FormulaVisitor1<Computation>, Bool
 				FormulaVar b = (FormulaVar) formulaMul.b;
 				int bPos = env.getSensorIndex(b.name);
 				if(b.positive) {
-					return new ComputationMulVarNum(bPos, a.value );
+					if(bPos == 0) {
+						return new ComputationMulVar0Num(a.value);
+					}
+					if(bPos == 1) {
+						return new ComputationMulVar1Num(a.value);
+					}
+					return new ComputationMulVarNum(bPos, a.value);
 				} else {
-					return new ComputationMulVarNum(bPos, a.negative().value );
+					if(bPos == 0) {
+						return new ComputationMulVar0Num(a.negative().value);
+					}
+					if(bPos == 1) {
+						return new ComputationMulVar1Num(a.negative().value);
+					}
+					return new ComputationMulVarNum(bPos, a.negative().value);
 				}
 			}
-			return new ComputationMulNum(formulaMul.b.accept(this), a.value );
+			if(formulaMul.b instanceof FormulaPow) {
+				FormulaPow b = (FormulaPow) formulaMul.b;
+				if(b.b instanceof FormulaNum) {
+					FormulaNum exponent = (FormulaNum) b.b;					
+					if(b.a instanceof FormulaVar) {
+						FormulaVar var = (FormulaVar) b.a;
+						int varPos = env.getSensorIndex(var.name);
+						if(var.positive) {
+							if(exponent == FormulaNum.TWO) {
+								if(varPos == 0) {
+									return new ComputationMulSquareVar0Num(a.value);
+								}
+								if(varPos == 1) {
+									return new ComputationMulSquareVar1Num(a.value);
+								}
+								return new ComputationMulSquareVarNum(varPos, a.value);
+							}
+							if(exponent == FormulaNum.THREE) {
+								if(varPos == 0) {
+									return new ComputationMulCubeVar0Num(a.value);
+								}
+								if(varPos == 1) {
+									return new ComputationMulCubeVar1Num(a.value);
+								}
+								return new ComputationMulCubeVarNum(varPos, a.value);
+							}
+							if(exponent == FormulaNum.FOUR) {
+								return new ComputationMulPow4VarNum(varPos, a.value);
+							}
+							return new ComputationMulPowVarNumNum(varPos, exponent.value, a.value);
+						}						
+					}					
+					if(exponent == FormulaNum.TWO) {
+						return new ComputationMulSquareNum(b.a.accept(this), a.value);
+					}
+					if(exponent == FormulaNum.THREE) {
+						return new ComputationMulCubeNum(b.a.accept(this), a.value);
+					}
+					if(exponent == FormulaNum.FOUR) {
+						return new ComputationMulPow4Num(b.a.accept(this), a.value);
+					}
+					return new ComputationMulPowNumNum(b.a.accept(this), exponent.value, a.value);
+				}
+				return new ComputationMulPowNum_(b.a.accept(this), b.b.accept(this), a.value);
+			}
+			return new ComputationMulNum(formulaMul.b.accept(this), a.value);
 		}
 		if(formulaMul.b instanceof FormulaNum) {
 			FormulaNum b = (FormulaNum) formulaMul.b;
@@ -431,6 +514,43 @@ public class FormulaCompileVisitor implements FormulaVisitor1<Computation>, Bool
 				}
 				return new ComputationSqr(formulaPow.a.accept(this));
 			}
+			if(b == FormulaNum.THREE) {
+				if(formulaPow.a instanceof FormulaVar) {
+					int aPos = env.getSensorIndex(((FormulaVar)formulaPow.a).name);
+					return new ComputationCubeVar(aPos);
+				}
+				return new ComputationCube(formulaPow.a.accept(this));
+			}
+			if(b == FormulaNum.FOUR) {
+				if(formulaPow.a instanceof FormulaVar) {
+					int aPos = env.getSensorIndex(((FormulaVar)formulaPow.a).name);
+					return new ComputationPow4Var(aPos);
+				}
+				return new ComputationPow4(formulaPow.a.accept(this));
+			}			
+			if(b == FormulaNum.ONE_HALF) {
+				if(formulaPow.a instanceof FormulaVar) {
+					int aPos = env.getSensorIndex(((FormulaVar)formulaPow.a).name);
+					return new ComputationSqrtVar(aPos);
+				}
+				return new ComputationSqrt(formulaPow.a.accept(this));
+			}
+			if(b == FormulaNum.ONE_THIRD) {
+				if(formulaPow.a instanceof FormulaVar) {
+					int aPos = env.getSensorIndex(((FormulaVar)formulaPow.a).name);
+					return new ComputationCbrtVar(aPos);
+				}
+				return new ComputationCbrt(formulaPow.a.accept(this));
+			}
+			if(b == FormulaNum.ONE_QUARTER) {
+				if(formulaPow.a instanceof FormulaVar) {
+					int aPos = env.getSensorIndex(((FormulaVar)formulaPow.a).name);
+					return new ComputationPow4rtVar(aPos);
+				}
+				return new ComputationPow4rt(formulaPow.a.accept(this));
+			}
+			
+			
 			return new ComputationPowNum(formulaPow.a.accept(this), b.value);
 		}
 		return new ComputationPow(formulaPow.a.accept(this), formulaPow.b.accept(this));
@@ -505,6 +625,9 @@ public class FormulaCompileVisitor implements FormulaVisitor1<Computation>, Bool
 
 	@Override
 	public Computation visitNum(FormulaNum formulaNum) {
+		if(formulaNum == FormulaNum.ZERO) {
+			return ComputationNum0.DEFUALT;
+		}
 		return new ComputationNum(formulaNum.value);
 	}
 }

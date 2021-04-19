@@ -11,4 +11,9 @@ public class BooleanComputationLessVarNum extends BooleanComputation {
 	public boolean eval(long timestamp, float[] data) {
 		return data[a] < b;
 	}
+	
+	@Override
+	public String toString() {
+		return "LessVarNum([" + a + "], " + b + ")";
+	}
 }

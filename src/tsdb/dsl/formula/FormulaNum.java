@@ -9,6 +9,11 @@ public class FormulaNum extends Formula {
 	public static final FormulaNum ZERO = new FormulaNum(0f);
 	public static final FormulaNum ONE = new FormulaNum(1f);
 	public static final FormulaNum TWO = new FormulaNum(2f);
+	public static final FormulaNum THREE = new FormulaNum(3f);
+	public static final FormulaNum FOUR = new FormulaNum(4f);	
+	public static final FormulaNum ONE_HALF = new FormulaNum(1f/2f);
+	public static final FormulaNum ONE_THIRD = new FormulaNum(1f/3f);
+	public static final FormulaNum ONE_QUARTER = new FormulaNum(1f/4f);
 
 	private FormulaNum(float value) {
 		this.value = value;
@@ -26,6 +31,21 @@ public class FormulaNum extends Formula {
 		}
 		if(value == 2f) {
 			return TWO;
+		}
+		if(value == 3f) {
+			return THREE;
+		}
+		if(value == 4f) {
+			return FOUR;
+		}
+		if(value == (1f/2f)) {
+			return ONE_HALF;
+		}
+		if(value == (1f/3f)) {
+			return ONE_THIRD;
+		}
+		if(value == (1f/4f)) {
+			return ONE_QUARTER;
 		}
 		return new FormulaNum(value);
 	}
