@@ -24,6 +24,7 @@ public class StartServerTsDB {
 	private static final Logger log = LogManager.getLogger();
 
 	public static void main(String[] args) throws RemoteException {
+		DeserializationConfig.setDeserializationFilterIfNecessary();
 
 		log.info("open database...");
 		TsDB tsdb = TsDBFactory.createDefault();
