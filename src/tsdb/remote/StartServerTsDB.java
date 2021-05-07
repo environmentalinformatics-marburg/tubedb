@@ -24,7 +24,11 @@ public class StartServerTsDB {
 	private static final Logger log = LogManager.getLogger();
 
 	public static void main(String[] args) throws RemoteException {
-		DeserializationConfig.setDeserializationFilterIfNecessary();
+		try {
+			DeserializationConfig.setDeserializationFilterIfNecessary(); // serialization filter is applied to Java 9 or newer
+		} catch(Exception e) {
+			log.warn(e);
+		}
 
 		log.info("open database...");
 		TsDB tsdb = TsDBFactory.createDefault();

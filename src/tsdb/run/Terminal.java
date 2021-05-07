@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 
 import tsdb.experiment.Experiment;
+import tsdb.remote.StartServerTsDB;
 import tsdb.run.command.ClearMasks;
 import tsdb.run.command.Command;
 import tsdb.run.command.CommandMain;
@@ -110,7 +111,7 @@ public class Terminal {
 		//server commands
 
 		addCommand("server", "start web server", tsdb.web.Main::main);
-		addInternalCommand("server_rmi", "start web and rmi server", Terminal::command_interactive);
+		addInternalCommand("server_rmi", "start web and rmi server", StartServerTsDB::main);
 
 		try {
 			//addCommand("explorer", "run TubeDB desktop application", tsdb.explorer.Explorer::main);
