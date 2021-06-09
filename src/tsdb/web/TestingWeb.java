@@ -40,7 +40,7 @@ public class TestingWeb {
 		HttpConfiguration https_config = new HttpConfiguration(http_config);
 		https_config.addCustomizer(new SecureRequestCustomizer());
 
-		SslContextFactory sslContextFactory = new SslContextFactory();
+		SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
 		sslContextFactory.setKeyStorePath("keystore.jks");
 		sslContextFactory.setKeyStorePassword("password");
 		sslContextFactory.setKeyManagerPassword("password");

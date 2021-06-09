@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.Base64;
 
 import javax.security.auth.Subject;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +27,7 @@ import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.security.AbstractLoginService;
 import org.eclipse.jetty.security.DefaultUserIdentity;
 import org.eclipse.jetty.security.UserAuthentication;
+import org.eclipse.jetty.security.UserPrincipal;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
@@ -241,7 +242,7 @@ public class JWSAuthentication extends AbstractHandler {
 			String userName = claims.getSubject();
 			JwsConfig jwsConfig = jwsConfigList.get(0);
 			Subject subject = new Subject();
-			Principal principal = new AbstractLoginService.UserPrincipal(userName, null);
+			Principal principal = new UserPrincipal(userName, null);
 			UserIdentity userIdentity = new DefaultUserIdentity(subject, principal, jwsConfig.roles);
 			Authentication authentication = new UserAuthentication("jws", userIdentity);
 			session.setAttribute("authentication", authentication);
@@ -318,7 +319,7 @@ public class JWSAuthentication extends AbstractHandler {
 			JwsConfig jwsConfig = jwsConfigList.get(0);
 
 			Subject subject = new Subject();
-			Principal principal = new AbstractLoginService.UserPrincipal(userName, null);
+			Principal principal = new UserPrincipal(userName, null);
 			UserIdentity userIdentity = new DefaultUserIdentity(subject, principal, jwsConfig.roles);
 			Authentication authentication = new UserAuthentication("jws", userIdentity);
 			request.setAuthentication(authentication);
@@ -352,7 +353,7 @@ public class JWSAuthentication extends AbstractHandler {
 			JwsConfig jwsConfig = jwsConfigList.get(0);
 
 			Subject subject = new Subject();
-			Principal principal = new AbstractLoginService.UserPrincipal(userName, null);
+			Principal principal = new UserPrincipal(userName, null);
 			UserIdentity userIdentity = new DefaultUserIdentity(subject, principal, jwsConfig.roles);
 			Authentication authentication = new UserAuthentication("jws", userIdentity);
 			request.setAuthentication(authentication);

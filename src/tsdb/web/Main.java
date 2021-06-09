@@ -18,10 +18,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletException;
-import javax.servlet.SessionCookieConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.SessionCookieConfig;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -148,7 +148,7 @@ public class Main {
 
 	private static ServerConnector createHttpsConnector(Server server, int https_port, String keystore_password, HttpConfiguration https_config) {
 
-		SslContextFactory sslContextFactory = new SslContextFactory.Server();
+		SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
 		sslContextFactory.setKeyStorePath(WEB_SERVER_HTTPS_KEY_STORE_FILENAME);
 		sslContextFactory.setKeyStorePassword(keystore_password);
 
@@ -226,7 +226,7 @@ public class Main {
 		};
 
 		ContextHandlerCollection contextCollection = new ContextHandlerCollection();
-		contextCollection.setStopTimeout(DATA_TRANSFER_TIMEOUT_MILLISECONDS);
+		//contextCollection.setStopTimeout(DATA_TRANSFER_TIMEOUT_MILLISECONDS); // removed in nex jetty version
 		contextCollection.setHandlers(contexts);
 		//GzipHandler gzipHandler = new GzipHandler(); // GzipHandler (of new Jetty version?) breaks network text output
 		//gzipHandler.setHandler(contextCollection);
@@ -302,8 +302,8 @@ public class Main {
 		System.out.println("Web sever stopped.");		
 	}
 
-	private static UserStore openUserStore() {
-		PropertyUserStore userStore = new PropertyUserStore();
+	private static OpenPropertyUserStore openUserStore() {
+		OpenPropertyUserStore userStore = new OpenPropertyUserStore();
 		userStore.setConfig(WEB_SERVER_LOGIN_PROPERTIES_FILENAME);
 		try {
 			userStore.start();
@@ -319,7 +319,7 @@ public class Main {
 		}
 
 		HashLoginService loginService = new HashLoginService("Web Server Login");
-		UserStore userStore = openUserStore();
+		OpenPropertyUserStore userStore = openUserStore();
 		loginService.setUserStore(userStore);
 
 		Map<String, String> ipMap = new HashMap<String, String>();
@@ -385,7 +385,7 @@ public class Main {
 		ResourceHandler resource_handler = new ResourceHandler();
 		//resource_handler.setStopTimeout(FILE_DOWNLOAD_TIMEOUT_MILLISECONDS);
 		//resource_handler.setMinAsyncContentLength(-1); //no async
-		resource_handler.setMinMemoryMappedContentLength(-1); // not memory mapped to prevent file locking
+		//resource_handler.setMinMemoryMappedContentLength(-1); // not memory mapped to prevent file locking, removed in new jetty version
 		//resource_handler.setDirectoriesListed(true);
 		resource_handler.setDirectoriesListed(false); // don't show directory content
 		//resource_handler.setWelcomeFiles(new String[]{ "helllo.html" });
@@ -507,7 +507,8 @@ public class Main {
 
 	private static ContextHandler createContextShutdown() {
 		ContextHandler contextShutdown = new ContextHandler();
-		Handler handler = new ShutdownHandler("stop", false, true);
+		//Handler handler = new ShutdownHandler("stop", false, true);
+		Handler handler = new ShutdownHandler("stop", false, false); // workaround (at new jetty version) for server freezing when trying to send shutdown request to (not existing) running TubeDB instance at server start.
 		contextShutdown.setHandler(handler);
 		return contextShutdown;
 	}
