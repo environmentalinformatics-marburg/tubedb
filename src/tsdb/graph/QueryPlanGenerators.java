@@ -211,7 +211,7 @@ public final class QueryPlanGenerators {
 		try {
 			int iTarget = Util.getIndexInArray(sensor.name, schema);
 
-			log.info("parse formula: "+func);
+			//log.info("parse formula: "+func);
 			Formula formula_org = FormulaBuilder.parseFormula(func);
 			HashMap<String, Integer> sensorMap = new HashMap<String, Integer>();
 			String[] dependencies = sensor.dependency;
@@ -228,21 +228,21 @@ public final class QueryPlanGenerators {
 					}
 				}
 			}
-			log.info(sensorMap);
+			//log.info(sensorMap);
 			Environment env = plot == null ? new Environment(sensorMap) : new PlotEnvironment(plot, sensorMap);
 			Formula formula = formula_org.accept(new FormulaResolveUnifyVisitor(env));
 			try {
 				FormulaJavaVisitor v = new FormulaJavaVisitor(env);
-				log.info("formula: "+formula.accept(v));
+				//log.info("formula: "+formula.accept(v));
 			} catch(Exception e) {
 				log.warn(e);
 			}
 			int[] varIndices = formula.accept(new FormulaCollectVarVisitor()).getDataVarIndices(env);
 			int[] unsafeVarIndices = formula.accept(new FormulaCollectUnsafeVarVisitor()).getDataVarIndices(env);
-			log.info("----");
-			log.info(Arrays.toString(varIndices)+"    "+Arrays.toString(unsafeVarIndices));
+			//log.info("----");
+			//log.info(Arrays.toString(varIndices)+"    "+Arrays.toString(unsafeVarIndices));
 			Computation computation = formula.accept(new FormulaCompileVisitor(env));
-			log.info(computation.toString());
+			//log.info(computation.toString());
 			return Mutators.getMutator(computation, iTarget, unsafeVarIndices);
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -310,7 +310,7 @@ public final class QueryPlanGenerators {
 				mutators.add(mutator);
 			}
 		}
-		log.info("funcs "+mutators.size()+"     "+funcs.toString());
+		//log.info("funcs "+mutators.size()+"     "+funcs.toString());
 		return Mutators.bundle(mutators);
 	}
 }
