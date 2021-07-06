@@ -10,14 +10,11 @@ masks: |
 references: |
  (Re)Creates reference time series needed for empirical check.
  Note: It's recommended to run "clear_import" or "import" instead.
-compact: |
- Removes free space clusters in TubeDB.
- Note: It's recommended to run "clear_import" or "import" instead.
 import: |
  Imports time series data files and runs additional tasks:
- "load", "masks", "references", "compact"
+ "load", "masks", "references"
 clear_import: |
   Imports time series data files in empty TubeDB and runs additional tasks:
   "clear", "import"
   corresponds to:
-  "clear", "load", "masks", "references", "compact"
+  "clear", "load", "masks", "references"

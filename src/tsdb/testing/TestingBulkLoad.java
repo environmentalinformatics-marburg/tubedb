@@ -36,9 +36,9 @@ public class TestingBulkLoad {
 		
 		System.out.println("commit...");
 		db.commit();
-		System.out.println("compact...");
+		/*System.out.println("compact...");
 		log.warn("ignore db compact: unfixed bug in compact");
-		//db.compact();		
+		//db.compact();*/		
 		System.out.println("...end");
 		db.close();
 		

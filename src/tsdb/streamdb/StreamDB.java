@@ -113,7 +113,7 @@ public class StreamDB {
 		}
 		stationMetaMap.clear();		
 		commit();
-		compact();
+		//compact(); // 'compact' not usable because of bug in MapDB.
 	}	
 
 	@Override

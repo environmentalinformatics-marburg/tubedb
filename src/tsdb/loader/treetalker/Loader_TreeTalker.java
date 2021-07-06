@@ -116,7 +116,11 @@ public class Loader_TreeTalker {
 				for (int i = 0; i < tabeRows.length; i++) {
 					String[] row = tabeRows[i];
 					if(row.length == 0 || row[0].isEmpty()) {
-						log.info("skip empty line");
+						//log.info("skip empty line");
+						continue;
+					}
+					if(row.length < 5) {
+						//log.info("skip header/footer line");
 						continue;
 					}
 					String timeID = row[0];
@@ -132,20 +136,20 @@ public class Loader_TreeTalker {
 						//log.info(tt_Type);					
 						int timestamp = toTimestamp(row[3]);
 						float[] data = new float[]{
-								Float.parseFloat(row[4]),
-								Float.parseFloat(row[5]),
-								Float.parseFloat(row[6]),
-								Float.parseFloat(row[7]),
-								Float.parseFloat(row[8]),
-								Float.parseFloat(row[9]),
-								Float.parseFloat(row[10]),
-								Float.parseFloat(row[11]),
-								Float.parseFloat(row[12]),
-								Float.parseFloat(row[13]),
-								Float.parseFloat(row[14]),
-								Float.parseFloat(row[15]),
-								Float.parseFloat(row[16]),
-								Float.parseFloat(row[17])};
+								parseFloat(row[4]),
+								parseFloat(row[5]),
+								parseFloat(row[6]),
+								parseFloat(row[7]),
+								parseFloat(row[8]),
+								parseFloat(row[9]),
+								parseFloat(row[10]),
+								parseFloat(row[11]),
+								parseFloat(row[12]),
+								parseFloat(row[13]),
+								parseFloat(row[14]),
+								parseFloat(row[15]),
+								parseFloat(row[16]),
+								parseFloat(row[17])};
 						ArrayList<DataRow> tt49_data = tt49_dataMap.get(tt_ID);
 						if(tt49_data == null) {
 							tt49_data = new ArrayList<DataRow>();
@@ -158,14 +162,14 @@ public class Loader_TreeTalker {
 						//log.info(tt_Type);					
 						int timestamp = toTimestamp(row[3]);
 						float[] data = new float[]{
-								Float.parseFloat(row[4]),
-								Float.parseFloat(row[5]),
-								Float.parseFloat(row[6]),
-								Float.parseFloat(row[7]),
-								Float.parseFloat(row[8]),
-								Float.parseFloat(row[9]),
-								Float.parseFloat(row[10])};
-						//Float.parseFloat(row[11]) // Firmware Version is not a number							
+								parseFloat(row[4]),
+								parseFloat(row[5]),
+								parseFloat(row[6]),
+								parseFloat(row[7]),
+								parseFloat(row[8]),
+								parseFloat(row[9]),
+								parseFloat(row[10])};
+						//parseFloat(row[11]) // Firmware Version is not a number							
 						ArrayList<DataRow> tt4B_data = tt4B_dataMap.get(tt_ID);
 						if(tt4B_data == null) {
 							tt4B_data = new ArrayList<DataRow>();
@@ -178,32 +182,32 @@ public class Loader_TreeTalker {
 						//log.info(tt_Type);					
 						int timestamp = toTimestamp(row[3]);
 						float[] data = new float[]{
-								Float.parseFloat(row[4]),
-								Float.parseFloat(row[5]),
-								Float.parseFloat(row[6]),
-								Float.parseFloat(row[7]),
-								Float.parseFloat(row[8]),
-								Float.parseFloat(row[9]),
-								Float.parseFloat(row[10]),
-								Float.parseFloat(row[11]),
-								Float.parseFloat(row[12]),
-								Float.parseFloat(row[13]),
-								Float.parseFloat(row[14]),
-								Float.parseFloat(row[15]),
-								Float.parseFloat(row[16]),
-								Float.parseFloat(row[17]),
-								Float.parseFloat(row[18]),
-								Float.parseFloat(row[19]),
-								Float.parseFloat(row[20]),
-								Float.parseFloat(row[21]),
-								Float.parseFloat(row[22]),
-								Float.parseFloat(row[23]),
-								Float.parseFloat(row[24]),
-								Float.parseFloat(row[25]),
-								Float.parseFloat(row[26]),
-								//Float.parseFloat(row[27]), // Not connected device 
-								//Float.parseFloat(row[28]), // Not connected device
-								//Float.parseFloat(row[29]), // Not connected device
+								parseFloat(row[4]),
+								parseFloat(row[5]),
+								parseFloat(row[6]),
+								parseFloat(row[7]),
+								parseFloat(row[8]),
+								parseFloat(row[9]),
+								parseFloat(row[10]),
+								parseFloat(row[11]),
+								parseFloat(row[12]),
+								parseFloat(row[13]),
+								parseFloat(row[14]),
+								parseFloat(row[15]),
+								parseFloat(row[16]),
+								parseFloat(row[17]),
+								parseFloat(row[18]),
+								parseFloat(row[19]),
+								parseFloat(row[20]),
+								parseFloat(row[21]),
+								parseFloat(row[22]),
+								parseFloat(row[23]),
+								parseFloat(row[24]),
+								parseFloat(row[25]),
+								parseFloat(row[26]),
+								//parseFloat(row[27]), // Not connected device 
+								//parseFloat(row[28]), // Not connected device
+								//parseFloat(row[29]), // Not connected device
 						};
 						ArrayList<DataRow> tt4C_data = tt4C_dataMap.get(tt_ID);
 						if(tt4C_data == null) {
@@ -217,23 +221,23 @@ public class Loader_TreeTalker {
 						//log.info(tt_Type);					
 						int timestamp = toTimestamp(row[3]);
 						float[] data = new float[]{
-								Float.parseFloat(row[4]),
-								Float.parseFloat(row[5]),
-								Float.parseFloat(row[6]),
-								Float.parseFloat(row[7]),
-								Float.parseFloat(row[8]),
-								Float.parseFloat(row[9]),
-								Float.parseFloat(row[10]),
-								Float.parseFloat(row[11]),
-								Float.parseFloat(row[12]),
-								Float.parseFloat(row[13]),
-								Float.parseFloat(row[14]),
-								Float.parseFloat(row[15]),
-								Float.parseFloat(row[16]),
-								Float.parseFloat(row[17]),
-								Float.parseFloat(row[18]),
-								Float.parseFloat(row[19]),
-								Float.parseFloat(row[20])};
+								parseFloat(row[4]),
+								parseFloat(row[5]),
+								parseFloat(row[6]),
+								parseFloat(row[7]),
+								parseFloat(row[8]),
+								parseFloat(row[9]),
+								parseFloat(row[10]),
+								parseFloat(row[11]),
+								parseFloat(row[12]),
+								parseFloat(row[13]),
+								parseFloat(row[14]),
+								parseFloat(row[15]),
+								parseFloat(row[16]),
+								parseFloat(row[17]),
+								parseFloat(row[18]),
+								parseFloat(row[19]),
+								parseFloat(row[20])};
 						ArrayList<DataRow> tt4D_data = tt4D_dataMap.get(tt_ID);
 						if(tt4D_data == null) {
 							tt4D_data = new ArrayList<DataRow>();
@@ -246,23 +250,23 @@ public class Loader_TreeTalker {
 						//log.info(tt_Type);					
 						int timestamp = toTimestamp(row[3]);
 						float[] data = new float[]{
-								Float.parseFloat(row[4]),
-								Float.parseFloat(row[5]),
-								Float.parseFloat(row[6]),
-								Float.parseFloat(row[7]),
-								Float.parseFloat(row[8]),
-								Float.parseFloat(row[9]),
-								Float.parseFloat(row[10]),
-								Float.parseFloat(row[11]),
-								Float.parseFloat(row[12]),
-								Float.parseFloat(row[13]),
-								Float.parseFloat(row[14]),
-								Float.parseFloat(row[15]),
-								Float.parseFloat(row[16]),
-								Float.parseFloat(row[17]),
-								Float.parseFloat(row[18]),
-								Float.parseFloat(row[19]),
-								Float.parseFloat(row[20])};
+								parseFloat(row[4]),
+								parseFloat(row[5]),
+								parseFloat(row[6]),
+								parseFloat(row[7]),
+								parseFloat(row[8]),
+								parseFloat(row[9]),
+								parseFloat(row[10]),
+								parseFloat(row[11]),
+								parseFloat(row[12]),
+								parseFloat(row[13]),
+								parseFloat(row[14]),
+								parseFloat(row[15]),
+								parseFloat(row[16]),
+								parseFloat(row[17]),
+								parseFloat(row[18]),
+								parseFloat(row[19]),
+								parseFloat(row[20])};
 						ArrayList<DataRow> tt53_data = tt53_dataMap.get(tt_ID);
 						if(tt53_data == null) {
 							tt53_data = new ArrayList<DataRow>();
@@ -467,5 +471,9 @@ public class Loader_TreeTalker {
 			}			
 		}
 
+	}
+	
+	private static float parseFloat(String s) {
+		return s.isEmpty() ? Float.NaN : Float.parseFloat(s);
 	}
 }

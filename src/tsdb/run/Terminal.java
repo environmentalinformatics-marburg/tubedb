@@ -126,12 +126,13 @@ public class Terminal {
 		addCommand("clear_masks", "clear all masks", ClearMasks::main);
 		addCommand("masks", "load masks", LoadMasks::main);
 		addCommand("references", "refresh time series references", CreateStationGroupAverageCache::main);
-		addCommand("compact", "defragment free space", RunCompact::main);
+		//addCommand("compact", "defragment free space", RunCompact::main); // 'compact' not usable because of bug in MapDB.
 		addCommand("count", "count values in database", CountTsDBValues::main);
 		addCommand("export_tsa", "export time series - 1 or 2 parameters: output filename and optional region name", Command_export_tsa::main);
 		addCommand("export_csv", "export time series to one CSV file per station in raw format", Command_export_csv::main);
 
-		addCommandSequence("import", "composite of: load - masks - references - compact", "load", "masks", "references", "compact");
+		//addCommandSequence("import", "composite of: load - masks - references - compact", "load", "masks", "references", "compact");  // 'compact' not usable because of bug in MapDB.
+		addCommandSequence("import", "composite of: load - masks - references", "load", "masks", "references");
 
 		addCommandSequence("clear_import", "composite of: clear - import", "clear", "import");
 		addCommandSequence("clear_load_masks", "composite of: clear_masks - masks", "clear_masks", "masks");
@@ -147,9 +148,11 @@ public class Terminal {
 		if(command!=null) {
 			String[] parameters = removeFirst(args);
 			command.run(parameters);
+			//System.out.println("Command run done.");			
 		} else {
 			System.out.println("unknown command: "+name);
 		}
+		LogManager.shutdown(); // Workaround: manually shutdown log4j async appender
 	}
 
 	public static void command_commands(String[] parameters) {

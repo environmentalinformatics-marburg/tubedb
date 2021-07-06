@@ -195,9 +195,9 @@ public class ClearImportSources {
 		CreateStationGroupAverageCache.main(new String[0]);
 		long timeEndAvg = System.currentTimeMillis();
 		System.gc();
-		long timeStartCompact = System.currentTimeMillis();
-		RunCompact.main(new String[0]);
-		long timeEndCompact = System.currentTimeMillis();
+		/*long timeStartCompact = System.currentTimeMillis();
+		RunCompact.main(new String[0]); // 'compact' not usable because of bug in MapDB.
+		long timeEndCompact = System.currentTimeMillis();*/
 
 		log.info(msToText(timeStartClear,timeEndClear)+" Clear");
 		log.info(msToText(timeStartOpen,timeEndOpen)+" Open");
@@ -212,7 +212,7 @@ public class ClearImportSources {
 		log.info(msToText(timeStart,timeEnd)+" total import");
 		log.info("");
 		log.info(msToText(timeStartAvg,timeEndAvg)+" create averages");
-		log.info(msToText(timeStartCompact,timeEndCompact)+" compact streamDB");
+		//log.info(msToText(timeStartCompact,timeEndCompact)+" compact streamDB");
 	}
 
 
