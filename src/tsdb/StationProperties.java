@@ -67,7 +67,7 @@ public class StationProperties implements Serializable{
 			return null;
 		}
 	}
-	
+
 	public float getFloatProperty(String key) {
 		return getFloatProperty(key, "-");
 	}
@@ -91,18 +91,28 @@ public class StationProperties implements Serializable{
 		if(startText==null || startText.equals("*") || startText.equals("1999-01-01")) {
 			return null;
 		}
-		LocalDate startDate = LocalDate.parse(startText,DateTimeFormatter.ISO_DATE);
-		LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.of(00, 00));
-		return TimeUtil.dateTimeToOleMinutes(startDateTime);
+		try {
+			LocalDate startDate = LocalDate.parse(startText,DateTimeFormatter.ISO_LOCAL_DATE);
+			LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.of(00, 00));
+			return TimeUtil.dateTimeToOleMinutes(startDateTime);
+		} catch(Exception e) {
+			LocalDateTime startDateTime = LocalDateTime.parse(startText,DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+			return TimeUtil.dateTimeToOleMinutes(startDateTime);
+		}
 	}
 
 	private static Long parseConfigDateEnd(String endText) {
 		if(endText==null || endText.equals("*") || endText.equals("2099-12-31")) {
 			return null;
 		}
-		LocalDate endDate = LocalDate.parse(endText,DateTimeFormatter.ISO_DATE);
-		LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.of(23, 59));
-		return TimeUtil.dateTimeToOleMinutes(endDateTime);
+		try {
+			LocalDate endDate = LocalDate.parse(endText,DateTimeFormatter.ISO_LOCAL_DATE);
+			LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.of(23, 59));
+			return TimeUtil.dateTimeToOleMinutes(endDateTime);
+		} catch(Exception e) {
+			LocalDateTime startDateTime = LocalDateTime.parse(endText,DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+			return TimeUtil.dateTimeToOleMinutes(startDateTime);
+		}
 	}
 
 	public Long get_date_start() {
@@ -140,9 +150,9 @@ public class StationProperties implements Serializable{
 	public String get_serial() {
 		return propertyMap.get(PROPERTY_SERIAL);
 	}
-	
+
 	private static final String[] NO_ALIASES = new String[0];
-	
+
 	public String[] get_aliases() {
 		String aliasText = propertyMap.get(PROPERTY_ALIAS);
 		if(aliasText == null) {
