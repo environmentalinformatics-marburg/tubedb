@@ -35,7 +35,7 @@ public class VirtualPlot {
 	public double geoPosLatitude;
 	public double geoPosLongitude;
 
-	public float elevation;
+	public double elevation;
 	public float elevationTemperature;
 
 	public final boolean isFocalPlot;
@@ -55,7 +55,7 @@ public class VirtualPlot {
 		this.generalStation = generalStation;
 		this.geoPosEasting = geoPosEasting;
 		this.geoPosNorthing = geoPosNorthing;
-		this.elevation = Float.NaN;
+		this.elevation = Double.NaN;
 		this.elevationTemperature = Float.NaN;
 		this.isFocalPlot = isFocalPlot;
 		this.intervalList = new ArrayList<TimestampInterval<StationProperties>>();
@@ -332,22 +332,22 @@ public class VirtualPlot {
 		return true;
 	}
 
-	public void setElevation(float elevation) {
-		if(Float.isNaN(elevation)) {
+	public void setElevation(double elevation) {
+		if(Double.isNaN(elevation)) {
 			log.warn("elevation not set: nan");
 			return;
 		}
-		if(!Float.isNaN(this.elevation)) {
+		if(!Double.isNaN(this.elevation)) {
 			log.warn("elevation already set, overwriting");
 		}
 
 		this.elevation = elevation;
 
-		if(!Float.isNaN(this.elevation)) {
+		if(!Double.isNaN(this.elevation)) {
 			if(elevation<=2321.501) {
-				elevationTemperature = elevation*-0.008443f+31.560182f;
+				elevationTemperature = (float) (elevation*-0.008443f+31.560182f);
 			} else {
-				elevationTemperature = elevation*-0.004174f+21.648931f;	
+				elevationTemperature = (float) (elevation*-0.004174f+21.648931f);	
 			}
 		} else {
 			elevationTemperature = Float.NaN;

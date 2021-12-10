@@ -23,7 +23,7 @@ public class VirtualPlotInfo implements Serializable {
 	public final int geoPosNorthing;
 	public final double geoPosLatitude;
 	public final double geoPosLongitude;	
-	public final float elevation;
+	public final double elevation;
 	public final float elevationTemperature;
 	public final List<TimestampInterval<StationProperties>> intervalList;
 	

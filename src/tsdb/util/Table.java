@@ -122,6 +122,18 @@ public class Table {
 			return missing;
 		}		
 	}
+	
+	public static class ColumnReaderDoubleMissing extends ColumnReaderDouble {
+		private double missing;
+		public ColumnReaderDoubleMissing(double missing) {
+			super(MISSING_COLUMN);
+			this.missing = missing;
+		}
+		@Override
+		public double get(String[] row, boolean warnIfEmpty) {
+			return missing;
+		}		
+	}
 
 	public static class ColumnReaderDouble extends ColumnReader {
 		public ColumnReaderDouble(int rowIndex) {
@@ -130,12 +142,15 @@ public class Table {
 		public double get(String[] row, boolean warnIfEmpty) {			
 			try {
 				String textValue = row[rowIndex];
-				if(!warnIfEmpty&&textValue.isEmpty()) {
+				if(textValue.isEmpty()) {
+					if(warnIfEmpty) {
+						log.warn("empty");
+					}
 					return Double.NaN;
 				}
 				return Double.parseDouble(row[rowIndex]);
 			} catch(NumberFormatException e) {
-				if(row[rowIndex].toLowerCase().equals("na")||row[rowIndex].toLowerCase().equals("null")) {
+				if(row[rowIndex].toLowerCase().equals("na")||row[rowIndex].toLowerCase().equals("null")||row[rowIndex].toLowerCase().equals("nan")) {
 					return Double.NaN;
 				} else {
 					log.warn(row[rowIndex]+" not parsed");
@@ -143,6 +158,15 @@ public class Table {
 					return Double.NaN;
 				}
 			}
+		}
+		public ColumnReaderDouble then(UnaryOperator<Double> func) {
+			ColumnReaderDouble outher = this;
+			return new ColumnReaderDouble(rowIndex) {				
+				@Override
+				public double get(String[] row, boolean warnIfEmpty) {	
+					return func.apply(outher.get(row, warnIfEmpty));
+				}				
+			};
 		}
 	}
 
@@ -612,6 +636,14 @@ public class Table {
 		int columnIndex = getColumnIndex(name);
 		if(columnIndex<0) {
 			return null;
+		}
+		return new ColumnReaderDouble(columnIndex);
+	}
+	
+	public ColumnReaderDouble createColumnReaderDouble(String name, double missing) {
+		int columnIndex = getColumnIndex(name);
+		if(columnIndex<0) {
+			return new ColumnReaderDoubleMissing(missing);
 		}
 		return new ColumnReaderDouble(columnIndex);
 	}

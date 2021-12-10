@@ -92,9 +92,9 @@ public class Station {
 		this.generalStation = generalStation;
 		this.stationID = stationID;
 		this.propertiesList = StationProperties.createIntervalList(propertyMapList);
-		this.geoPosLongitude = Float.NaN;
-		this.geoPosLatitude = Float.NaN;
-		this.elevation = Float.NaN;
+		this.geoPosLongitude = Double.NaN;
+		this.geoPosLatitude = Double.NaN;
+		this.elevation = Double.NaN;
 		this.loggerType = loggerType;
 		this.sensorNameTranlationMap = new HashMap<String, String>();
 		if(isPlot) {

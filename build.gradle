@@ -91,8 +91,9 @@ dependencies {
 }
 
 jar {
-	from file('src/log4j2.xml')
-	from file('src/command_descriptions.yaml')
+	from file('src/log4j2.component.properties') // log4j system config
+	from file('src/log4j2.xml') // log4j logger config
+	from file('src/command_descriptions.yaml') // terminal command descriptions
 	destinationDirectory = project.layout.projectDirectory.dir('package')
 	
 	manifest {

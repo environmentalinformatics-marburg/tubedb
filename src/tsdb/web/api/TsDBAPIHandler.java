@@ -251,7 +251,7 @@ public class TsDBAPIHandler extends AbstractHandler {
 					json_output.key("lon");
 					json_output.value(plotInfo.geoPosLongitude);
 				}
-				if(Float.isFinite(plotInfo.elevation)) {
+				if(Double.isFinite(plotInfo.elevation)) {
 					json_output.key("elevation");
 					json_output.value(plotInfo.elevation);
 				}

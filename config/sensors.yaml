@@ -2511,5 +2511,100 @@ tt_gms_vwc_s8:
   dependency: [tt_gms_delta_ECf_3] 
   raw_func: "-6.4510246e-9 * tt_gms_delta_ECf_3^3 + 2.819836e-5 * tt_gms_delta_ECf_3^2 - 0.063075682 * tt_gms_delta_ECf_3 + 72.8730459"  
   aggregation: average
-  category: other   
+  category: other
+
+# 2021-10-20 special JIG301 sensors
+
+rh_200:
+  description: Relative air humidity at 2 meters above ground (special rh_200)
+  unit: '% (percentage of relative humidity, 0-100)'
+  aggregation: average
+  physical_range: [15.0, 100.0]
+  step_range: [0.0, 100.0] #high fluctuation possible
+  empirical_diff: 50
+  interpolation_mse: 100 
+
+rH_200_a+i:
+  description: Relative air humidity at 2 meters above ground (special rH_200_a+i)
+  unit: '% (percentage of relative humidity, 0-100)'
+  aggregation: average
+  physical_range: [15.0, 100.0]
+  step_range: [0.0, 100.0] #high fluctuation possible
+  empirical_diff: 50
+  interpolation_mse: 100 
+
+rH_200_IAK:
+  description: Relative air humidity at 2 meters above ground (special rH_200_IAK)
+  unit: '% (percentage of relative humidity, 0-100)'
+  aggregation: average
+  physical_range: [15.0, 100.0]
+  step_range: [0.0, 100.0] #high fluctuation possible
+  empirical_diff: 50
+  interpolation_mse: 100
+  
+Ta_200_ana:
+  description: Air temperature at 2 meters above ground (special Ta_200_ana)
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+  
+Ta_200_a+i:
+  description: Air temperature at 2 meters above ground (special Ta_200_a+i)
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+  
+Ta_200_IAK:
+  description: Air temperature at 2 meters above ground (special Ta_200_IAK)
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+  
+PAR_300_02:
+  description: Photosynthetically activ radiation at 3 meters height (special PAR_300_02)
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 610.46
+  interpolation_mse: 10000
+
+PAR_300_02_T:
+  description: Photosynthetically activ radiation at 3 meters height (special PAR_300_02_T)
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 610.46
+  interpolation_mse: 10000
+
+PAR_300_02_T2:
+  description: Photosynthetically activ radiation at 3 meters height (special PAR_300_02_T2)
+  unit: µmol/(m^2*s) (micromol photons per square meter per second) 
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 610.46
+  interpolation_mse: 10000
+
+RG_300:
+  description: (special RG_300)
+  unit: (special RG_300)
+  aggregation: average
+  physical_range: [0.0, 3000.0]
+  step_range: [0.0, 1000.0]
+  empirical_diff: 610.46
+  interpolation_mse: 10000 
   

@@ -44,6 +44,7 @@ import tsdb.util.NamedInterval;
 import tsdb.util.Pair;
 import tsdb.util.Table;
 import tsdb.util.Table.ColumnReaderBoolean;
+import tsdb.util.Table.ColumnReaderDouble;
 import tsdb.util.Table.ColumnReaderFloat;
 import tsdb.util.Table.ColumnReaderString;
 import tsdb.util.TimeUtil;
@@ -546,11 +547,11 @@ public class ConfigLoader {
 		ColumnReaderString cr_plot = table.createColumnReader("plot");
 		ColumnReaderString cr_general = table.createColumnReader("general");
 		ColumnReaderBoolean cr_focal = table.createColumnReaderBooleanYN("focal", false);
-		ColumnReaderFloat cr_lat = table.createColumnReaderFloat("lat", Float.NaN);
-		ColumnReaderFloat cr_lon = table.createColumnReaderFloat("lon", Float.NaN);
+		ColumnReaderDouble cr_lat = table.createColumnReaderDouble("lat", Double.NaN);
+		ColumnReaderDouble cr_lon = table.createColumnReaderDouble("lon", Double.NaN);
 		ColumnReaderFloat cr_easting = table.createColumnReaderFloat("easting", Float.NaN);
 		ColumnReaderFloat cr_northing = table.createColumnReaderFloat("northing", Float.NaN);
-		ColumnReaderFloat cr_elevation = table.createColumnReaderFloat("elevation", Float.NaN);
+		ColumnReaderDouble cr_elevation = table.createColumnReaderDouble("elevation", Double.NaN);
 		ColumnReaderBoolean cr_is_station = table.createColumnReaderBooleanYN("is_station", false); // if plot is station
 		ColumnReaderString cr_logger = table.containsColumn("logger")?table.createColumnReader("logger"):cr_general.then(g->g+"_logger"); // only for plots that are stations
 		ColumnReaderString cr_alternative_id = table.createColumnReader("alternative_id", null);  // only for plots that are stations
@@ -570,11 +571,11 @@ public class ConfigLoader {
 				log.error("GeneralStation not found "+generalStationName);
 				continue;
 			}			
-			float lat = cr_lat.get(row,false);
-			float lon = cr_lon.get(row,false);
+			double lat = cr_lat.get(row,false);
+			double lon = cr_lon.get(row,false);
 			float easting = cr_easting.get(row,false);
 			float northing = cr_northing.get(row,false);
-			float elevation = cr_elevation.get(row,false);
+			double elevation = cr_elevation.get(row,false);
 			boolean isFocalPlot = cr_focal.get(row);
 			boolean is_station = cr_is_station.get(row);
 			if(is_station) {
@@ -597,7 +598,7 @@ public class ConfigLoader {
 				Station station = new Station(tsdb, generalStation, plotID, loggerType, propertyList, true);
 				station.geoPosLatitude = lat;
 				station.geoPosLongitude = lon;
-				if(Float.isFinite(elevation)) {
+				if(Double.isFinite(elevation)) {
 					station.elevation = elevation;
 				}
 				tsdb.insertStation(station, configFile);
@@ -608,7 +609,7 @@ public class ConfigLoader {
 				VirtualPlot virtualPlot = new VirtualPlot(tsdb, plotID, generalStation, easting, northing, isFocalPlot);
 				virtualPlot.geoPosLatitude = lat;
 				virtualPlot.geoPosLongitude = lon;
-				if(Float.isFinite(elevation)) {
+				if(Double.isFinite(elevation)) {
 					virtualPlot.setElevation(elevation);
 				}
 				tsdb.insertVirtualPlot(virtualPlot, configFile);

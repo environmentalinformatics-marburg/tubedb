@@ -172,6 +172,9 @@ public class Main {
 	}
 
 	public static void run(RemoteTsDB tsdb) throws Exception {
+		/*System.getProperties().forEach((key, value) -> {
+			log.info(key.toString() + "  |" + value.toString() + "|");
+		});*/
 
 		boolean use_https = TsDBFactory.WEB_SERVER_HTTPS;
 

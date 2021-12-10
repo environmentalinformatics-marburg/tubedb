@@ -23,7 +23,7 @@ public class PlotInfo implements Serializable {
 	public final boolean isVIP;
 	public final double geoPosLatitude;
 	public final double geoPosLongitude;
-	public final float elevation;
+	public final double elevation;
 	public final String loggerTypeName;
 	
 	public PlotInfo(VirtualPlot virtualPlot) {
@@ -46,7 +46,7 @@ public class PlotInfo implements Serializable {
 		this.isVIP = station.isVIP();
 		this.geoPosLatitude = station.geoPosLatitude;
 		this.geoPosLongitude = station.geoPosLongitude;
-		this.elevation = (float) station.elevation;
+		this.elevation = station.elevation;
 		if(station.loggerType!=null) {
 			this.loggerTypeName = station.loggerType.typeName;
 		} else {
