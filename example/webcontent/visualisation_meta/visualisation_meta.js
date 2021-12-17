@@ -938,7 +938,7 @@ watch: {
 		this.updateViews();
 	},
 	plots: function() {
-		this.plotIDs = this.metadata.plots.length==0 ? ["*"] : [this.plots[0].id];
+		this.plotIDs = this.plots.length==0 ? ["*"] : [this.plots[0].id];
 		this.updateViews();
 	},
 	plotIDs: function() {

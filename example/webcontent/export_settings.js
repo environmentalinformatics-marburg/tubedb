@@ -1,9 +1,10 @@
+/* *** settings that may need to be changed at different runtime environments *** */
 var url_base = "../";
+var url_result_page = "export.html";
+/* ***   *** */
 
 var url_export_settings = url_base + "export/settings";
 var url_export_apply_settings = url_base + "export/apply_settings";
-var url_result_page = "export.html";
-
 
 var tasks = 0;
 
