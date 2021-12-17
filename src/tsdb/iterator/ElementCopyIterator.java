@@ -15,7 +15,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class ElementCopyIterator extends InputIterator {
-	//private static final Logger log = LogManager.getLogger();
+	//
 
 	/**
 	 * Action defines one copy operation from one column to an other column for all entries in iterator.
@@ -105,14 +105,14 @@ public class ElementCopyIterator extends InputIterator {
 	 */
 	public ElementCopyIterator(TsIterator input_iterator, Action[] actions) {
 		super(input_iterator, input_iterator.getSchema());
-		//log.info(input_iterator + "  " + Arrays.toString(actions));
+		//Logger.info(input_iterator + "  " + Arrays.toString(actions));
 		this.actions = actions;	
 	}
 
 	@Override
 	public TsEntry next() {
 		TsEntry entry = input_iterator.next();
-		//log.info("pre " + entry);
+		//Logger.info("pre " + entry);
 		float[] data = Arrays.copyOf(entry.data, entry.data.length);
 		for(Action action:actions) {
 			data[action.targetIndex] = data[action.sourceIndex];
@@ -145,7 +145,7 @@ public class ElementCopyIterator extends InputIterator {
 			inter = null;
 		}
 		TsEntry e = new TsEntry(entry.timestamp, data, qf, qc, inter);
-		//log.info("post " + e);
+		//Logger.info("post " + e);
 		return e;
 	}
 }

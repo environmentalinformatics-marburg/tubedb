@@ -13,8 +13,8 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDBFactory;
 import tsdb.util.Table;
@@ -28,12 +28,12 @@ import tsdb.util.Util;
 import tsdb.util.iterator.TimestampSeries;
 
 public class SouthAfricaPreImport_sasscal_2016_11_13 {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private static long too_small_timestamp = TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(2000, 01, 01, 0, 0));
 
 	public static void main(String[] args) {
-		log.info("start...");
+		Logger.info("start...");
 
 		try {
 			String outFile = TsDBFactory.OUTPUT_PATH+"/"+"sa_tsa"+"/"+"south_africa_sasscal_2016_11_13.tsa";
@@ -46,7 +46,7 @@ public class SouthAfricaPreImport_sasscal_2016_11_13 {
 					readOneFile(filepath,tsaWriter);
 				} catch(Exception e) {
 					e.printStackTrace();
-					log.error("error reading "+filepath+"  "+e);
+					Logger.error("error reading "+filepath+"  "+e);
 				}
 			}			
 			tsaWriter.close();
@@ -54,7 +54,7 @@ public class SouthAfricaPreImport_sasscal_2016_11_13 {
 			e.printStackTrace();
 		}		
 
-		log.info("...end");
+		Logger.info("...end");
 	}
 
 	private static void readOneFile(Path filepath, TimeSeriesArchivWriter tsaWriter) throws IOException {
@@ -78,11 +78,11 @@ public class SouthAfricaPreImport_sasscal_2016_11_13 {
 		sensorIgnore.add("Hour");
 		sensorIgnore.add("SolarIrra2"); //MJ/m²
 
-		log.info("read "+filepath);
+		Logger.info("read "+filepath);
 		Table table = Table.readCSV(filepath, ';');
 
 		if(table.rows.length==0) {
-			log.warn("empty");
+			Logger.warn("empty");
 			return;
 		}
 
@@ -112,7 +112,7 @@ public class SouthAfricaPreImport_sasscal_2016_11_13 {
 					}
 					sensorNameReaderList.add(cr_value);
 				} else {
-					log.warn("ignored unknown column "+name);
+					Logger.warn("ignored unknown column "+name);
 				}
 			}
 		}
@@ -144,9 +144,9 @@ public class SouthAfricaPreImport_sasscal_2016_11_13 {
 				currentStationTimeSeries.add(TsEntry.of(timestamp, values));
 			}catch(Exception e) {
 				errorRowCount++;
-				log.warn("row not read "+Arrays.toString(row)+"    "+e);
+				Logger.warn("row not read "+Arrays.toString(row)+"    "+e);
 				if(errorRowCount>=20) {
-					log.warn("abort reading data rows: too much errors "+filepath);
+					Logger.warn("abort reading data rows: too much errors "+filepath);
 					break;
 				}
 			}
@@ -156,17 +156,17 @@ public class SouthAfricaPreImport_sasscal_2016_11_13 {
 
 		for(Entry<String, ArrayList<TsEntry>> entry:stationMap.entrySet()) {
 			String stationID = entry.getKey();
-			log.info("process "+stationID);
+			Logger.info("process "+stationID);
 			ArrayList<TsEntry> tsList = entry.getValue();
 			Iterator<TsEntry> it = tsList.iterator();
 			if(it.hasNext()) {
 				ArrayList<TsEntry> tsListResult = new ArrayList<TsEntry>(tsList.size());
 				TsEntry currentTsEntry = it.next();
-				//log.info(currentTsEntry);
+				//Logger.info(currentTsEntry);
 				while(it.hasNext()) {
 					TsEntry nextTsEntry = it.next();
 					if(currentTsEntry.timestamp<too_small_timestamp) {
-						log.warn("ignore too small timestamp "+TimeUtil.oleMinutesToText(currentTsEntry.timestamp)+"  "+stationID+"  "+filepath);
+						Logger.warn("ignore too small timestamp "+TimeUtil.oleMinutesToText(currentTsEntry.timestamp)+"  "+stationID+"  "+filepath);
 						currentTsEntry = nextTsEntry;
 					} else if(currentTsEntry.timestamp < nextTsEntry.timestamp) { // timestamp ascending ==> add
 						tsListResult.add(currentTsEntry);
@@ -174,11 +174,11 @@ public class SouthAfricaPreImport_sasscal_2016_11_13 {
 					} else if(currentTsEntry.timestamp == nextTsEntry.timestamp) { // same timestamp ==> overwrite
 						currentTsEntry = nextTsEntry;
 					} else { // timestamp descending ==> warning and ignore entry
-						log.warn("timestamps not in order "+currentTsEntry+" "+nextTsEntry+"  "+filepath);
+						Logger.warn("timestamps not in order "+currentTsEntry+" "+nextTsEntry+"  "+filepath);
 					}
 				}
 				if(currentTsEntry.timestamp<too_small_timestamp) {
-					log.warn("ignore too small timestamp "+TimeUtil.oleMinutesToText(currentTsEntry.timestamp)+"  "+stationID+"  "+filepath);
+					Logger.warn("ignore too small timestamp "+TimeUtil.oleMinutesToText(currentTsEntry.timestamp)+"  "+stationID+"  "+filepath);
 				} else {
 					tsListResult.add(currentTsEntry);
 				}

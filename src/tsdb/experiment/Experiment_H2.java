@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.h2.jdbcx.JdbcDataSource;
 
 import tsdb.util.DataRow;
 
 public class Experiment_H2 extends Experiment {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final Connection connection;
 
@@ -31,7 +31,7 @@ public class Experiment_H2 extends Experiment {
 		try(Statement statement = connection.createStatement()) { // clear database
 			statement.execute("DROP ALL OBJECTS");
 		} catch(SQLException sqle) {
-			log.error("not dropping "+sqle);
+			Logger.error("not dropping "+sqle);
 		}		
 	}
 
@@ -45,7 +45,7 @@ public class Experiment_H2 extends Experiment {
 		String vars = String.join(",", sn);
 		String fields = String.join(",", sensorNames);
 		String q = "INSERT INTO " + stationName + " (timestamp," + fields + ")" +  " VALUES (?," + vars + ")";
-		log.info(q);
+		Logger.info(q);
 		try(PreparedStatement preparedStatement = connection.prepareStatement(q)) {
 			int sensorNamesLen = sensorNames.length;
 			for(DataRow dataRow:dataRows) {
@@ -57,7 +57,7 @@ public class Experiment_H2 extends Experiment {
 			}
 			preparedStatement.executeBatch();
 		} catch (SQLException e) {
-			log.error(e);
+			Logger.error(e);
 		}
 
 	}
@@ -70,7 +70,7 @@ public class Experiment_H2 extends Experiment {
 				createStation = false;
 			}
 		} catch (Exception e) {
-			log.warn("get table " + e);
+			Logger.warn("get table " + e);
 		}
 
 		if(createStation) {
@@ -78,36 +78,36 @@ public class Experiment_H2 extends Experiment {
 				String[] sn = Arrays.stream(sensorNames).map(s -> " " + s + " FLOAT4").toArray(String[]::new);
 				String fields = String.join(",", sn);
 				String q = "CREATE TABLE " +stationName + " (timestamp INT4 PRIMARY KEY," + fields + ")";
-				log.info(q);
+				Logger.info(q);
 				statement.execute(q);
 			} catch (Exception e) {
-				log.warn("at create table "+e);
+				Logger.warn("at create table "+e);
 			}
 		} else {
 			HashSet<String> tableSensors = new HashSet<String>();
 			try(Statement statement = connection.createStatement()) {
 				String q = "SHOW COLUMNS FROM " + stationName;
-				//log.info(q);
+				//Logger.info(q);
 				ResultSet resultSet = statement.executeQuery(q);
 				while(resultSet.next()) {
 					tableSensors.add(resultSet.getString(1));
 				}
 			} catch (Exception e) {
-				log.warn("at create table "+e);
+				Logger.warn("at create table "+e);
 			}
-			log.info("existing: "+ tableSensors);
+			Logger.info("existing: "+ tableSensors);
 			for(String sensorName:sensorNames) {
 				if(!tableSensors.contains(sensorName.toUpperCase())) {
-					//log.info("ADD " + sensorName);
+					//Logger.info("ADD " + sensorName);
 					try(Statement statement = connection.createStatement()) {
 						String q = "ALTER TABLE " +stationName + " ADD " + sensorName + " FLOAT4";
-						log.info(q);
+						Logger.info(q);
 						statement.execute(q);
 					} catch (Exception e) {
-						log.warn("at create table "+e);
+						Logger.warn("at create table "+e);
 					}
 				} else {
-					//log.info("EXISTING " + sensorName);
+					//Logger.info("EXISTING " + sensorName);
 				}
 			}
 		}
@@ -123,13 +123,13 @@ public class Experiment_H2 extends Experiment {
 		long rowCount = 0;
 		try(Statement statement = connection.createStatement()) {
 			String q = "SHOW TABLES";
-			//log.info(q);
+			//Logger.info(q);
 			ResultSet resultSet = statement.executeQuery(q);
 			while(resultSet.next()) {
 				rowCount += full_read_station(resultSet.getString(1));
 			}
 		} catch (Exception e) {
-			log.warn(e);
+			Logger.warn(e);
 		}
 
 		return rowCount;
@@ -139,13 +139,13 @@ public class Experiment_H2 extends Experiment {
 		ArrayList<String> tableSensors = new ArrayList<String>();
 		try(Statement statement = connection.createStatement()) {
 			String q = "SHOW COLUMNS FROM " + stationName;
-			//log.info(q);
+			//Logger.info(q);
 			ResultSet resultSet = statement.executeQuery(q);
 			while(resultSet.next()) {
 				tableSensors.add(resultSet.getString(1));
 			}
 		} catch (Exception e) {
-			log.warn(e);
+			Logger.warn(e);
 		}
 		if(!tableSensors.isEmpty()) {
 			return full_read_station_data(stationName, tableSensors);
@@ -159,13 +159,13 @@ public class Experiment_H2 extends Experiment {
 		try(Statement statement = connection.createStatement()) {
 			String fields = String.join(",", fieldNames);
 			String q = "SELECT " + fields + " FROM " + stationName;
-			log.info(q);
+			Logger.info(q);
 			ResultSet resultSet = statement.executeQuery(q);
 			while(resultSet.next()) {
 				rowCount++;
 			}
 		} catch (Exception e) {
-			log.warn(e);
+			Logger.warn(e);
 		}
 		return rowCount;		
 	}

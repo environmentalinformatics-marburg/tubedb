@@ -23,7 +23,7 @@ import tsdb.util.TimeUtil;
  *
  */
 public final class ChunkSerializer implements Serializer<Chunk>, Serializable {
-	//private static final Logger log = LogManager.getLogger();
+	//
 	private static final long serialVersionUID = 0;
 	
 	public static final Serializer<Chunk> DEFAULT = new ChunkSerializer();

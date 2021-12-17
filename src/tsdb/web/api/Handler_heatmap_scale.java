@@ -7,8 +7,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 
 import tsdb.remote.RemoteTsDB;
@@ -24,7 +24,7 @@ import tsdb.util.gui.TimeSeriesPainterGraphics2D;
  *
  */
 public class Handler_heatmap_scale extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_heatmap_scale(RemoteTsDB tsdb) {
 		super(tsdb, "heatmap_scale");
@@ -38,7 +38,7 @@ public class Handler_heatmap_scale extends MethodHandler {
 		String sensorName = request.getParameter("sensor");
 
 		if(sensorName==null) {
-			log.warn("wrong call");
+			Logger.warn("wrong call");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}	
@@ -66,12 +66,12 @@ public class Handler_heatmap_scale extends MethodHandler {
 				ImageRGBA.ofBufferedImage(bufferedImage).writePngCompressed(response.getOutputStream());
 				response.setStatus(HttpServletResponse.SC_OK);
 			} catch (IOException e) {
-				log.error(e);
+				Logger.error(e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(e);
+			Logger.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}

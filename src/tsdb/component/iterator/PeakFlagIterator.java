@@ -3,8 +3,8 @@ package tsdb.component.iterator;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.component.Sensor;
 import tsdb.util.DataQuality;
@@ -17,7 +17,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class PeakFlagIterator extends TimeWindowIterator {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final int SchemaLen;
 	private long[] cleanTimestamp;
@@ -27,39 +27,39 @@ public class PeakFlagIterator extends TimeWindowIterator {
 		super(input_iterator, 180, input_iterator.getSchema());
 		this.SchemaLen = schema.length;
 		cleanTimestamp = new long[input_iterator.getNames().length];
-		//log.info("PeakFlagIterator schema " + Arrays.toString(input_iterator.getNames()));
+		//Logger.info("PeakFlagIterator schema " + Arrays.toString(input_iterator.getNames()));
 		steps = Arrays.stream(sensors).mapToDouble(Sensor::getStepMax).toArray();
 	}
 
 	@Override
 	protected TsEntry processElement(TsEntry current) {
-		//log.info("processElement " + current.toString());
-		/*log.info("---");
-		log.info("current: "  + TimeUtil.oleMinutesToText(current.timestamp));
+		//Logger.info("processElement " + current.toString());
+		/*Logger.info("---");
+		Logger.info("current: "  + TimeUtil.oleMinutesToText(current.timestamp));
 		{
 			Iterator<TsEntry> it = past.descendingIterator();
 			while(it.hasNext()) {
 				TsEntry e = it.next();
-				log.info("past: "  + TimeUtil.oleMinutesToText(e.timestamp));	
+				Logger.info("past: "  + TimeUtil.oleMinutesToText(e.timestamp));	
 			}
 		}
 		{
 			Iterator<TsEntry> it = future.iterator();
 			while(it.hasNext()) {
 				TsEntry e = it.next();
-				log.info("future: "  + TimeUtil.oleMinutesToText(e.timestamp));	
+				Logger.info("future: "  + TimeUtil.oleMinutesToText(e.timestamp));	
 			}
 		}
-		log.info("---");*/
+		Logger.info("---");*/
 
-		//log.info(TimeUtil.oleMinutesToText(current.timestamp));
+		//Logger.info(TimeUtil.oleMinutesToText(current.timestamp));
 
 		float[] prev = new float[SchemaLen];
 		for(int columnIndex = 0; columnIndex < SchemaLen; columnIndex++) {
 			prev[columnIndex] = Float.NaN;
 		}
 		
-		//log.info("pastFilled " + isPastFilled());
+		//Logger.info("pastFilled " + isPastFilled());
 		if(past.isEmpty()){
 			float[] currentData = current.data;
 			DataQuality[] currentQf = current.qualityFlag;
@@ -80,7 +80,7 @@ public class PeakFlagIterator extends TimeWindowIterator {
 						prev[columnIndex] = data[columnIndex];
 						fillCount++;
 						if(fillCount == SchemaLen) {
-							//log.info("break");
+							//Logger.info("break");
 							break pastLoop;
 						}
 					}
@@ -107,10 +107,10 @@ public class PeakFlagIterator extends TimeWindowIterator {
 					currQ = DataQuality.STEP;	
 				} else {  // step check
 					if(cleanTimestamp[columnIndex] <= current.timestamp && Float.isFinite(prevV)) {
-						//log.info("check " + current.toString() +  "prev " + prevV);
+						//Logger.info("check " + current.toString() +  "prev " + prevV);
 						currQ = DataQuality.STEP;
 						float diff = Math.abs(prevV - currV);
-						//log.info("diff " + diff);
+						//Logger.info("diff " + diff);
 						if(diff > steps[columnIndex]) {
 							for(TsEntry e : future) {
 								float f = e.data[columnIndex];
@@ -131,18 +131,18 @@ public class PeakFlagIterator extends TimeWindowIterator {
 
 			/*if(current.timestamp < cleanTimestamp[columnIndex]) {
 				currQ = DataQuality.NO;
-				log.info(TimeUtil.oleMinutesToText(current.timestamp) + " L " + currV);
+				Logger.info(TimeUtil.oleMinutesToText(current.timestamp) + " L " + currV);
 			} else if(Float.isFinite(currV) && Float.isFinite(prevV)) {
 				float diff = Math.abs(prevV - currV);
 				if(diff >= 10) {
-					//log.info(TimeUtil.oleMinutesToText(current.timestamp) + " d " + diff);
+					//Logger.info(TimeUtil.oleMinutesToText(current.timestamp) + " d " + diff);
 					for(TsEntry e : future) {
 						float f = e.data[columnIndex];
 						if(Float.isFinite(f)) {
 							float fdiff = Math.abs(prevV - f);
 							if(fdiff <= 10) {
 								currQuality = DataQuality.NO;
-								log.info(TimeUtil.oleMinutesToText(e.timestamp) + " f " + fdiff);
+								Logger.info(TimeUtil.oleMinutesToText(e.timestamp) + " f " + fdiff);
 								cleanTimestamp[columnIndex] = e.timestamp;
 								break;
 							}

@@ -2,12 +2,13 @@ package tsdb.graph.node;
 
 import static tsdb.util.AssumptionCheck.throwNull;
 
+import org.tinylog.Logger;
+
 import tsdb.Plot;
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.VirtualPlot;
 import tsdb.util.BaseAggregationTimeUtil;
-import tsdb.util.Util;
 import tsdb.util.iterator.TsIterator;
 
 /**
@@ -65,7 +66,7 @@ public interface Node {
 	public default boolean writeCSV(Long start, Long end, String filename) {
 		TsIterator it = get(start,end);
 		if(TsIterator.isNotLive(it)) {
-			Util.log.error("produced no iterator -> no file written "+filename+"  in "+this.getClass());
+			Logger.error("produced no iterator -> no file written "+filename+"  in "+this.getClass());
 			return false;
 		}
 		it.writeCSV(filename);

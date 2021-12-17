@@ -2,8 +2,8 @@ package tsdb.graph.processing;
 
 import static tsdb.util.AssumptionCheck.throwNulls;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -24,7 +24,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class Aggregated extends Continuous.Abstract {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final Continuous source; //not null
 	private final AggregationInterval aggregationInterval; //not null
@@ -84,7 +84,7 @@ public class Aggregated extends Continuous.Abstract {
 			return year_iterator;
 		}
 		new RuntimeException().printStackTrace();
-		log.warn("unknown aggregation: "+aggregationInterval);
+		Logger.warn("unknown aggregation: "+aggregationInterval);
 		return null;
 	}
 

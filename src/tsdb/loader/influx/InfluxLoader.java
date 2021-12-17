@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Query;
@@ -23,12 +23,12 @@ import tsdb.util.DataEntry;
 import tsdb.util.TimeUtil;
 
 public class InfluxLoader {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 
 	public InfluxLoader(TsDB tsdb) {
-		log.info("ImportInflux");
+		Logger.info("ImportInflux");
 		AssumptionCheck.throwNull(tsdb);
 		this.tsdb = tsdb;
 	}
@@ -37,7 +37,7 @@ public class InfluxLoader {
 		InfluxDB influxDB = InfluxDBFactory.connect(config.url, config.user, config.password);
 
 		{
-			log.info("--- get measurements");
+			Logger.info("--- get measurements");
 			Query query = new Query("SHOW MEASUREMENTS ON " + config.database);	
 			QueryResult queryResult = influxDB.query(query);
 			List<Result> results = queryResult.getResults();
@@ -47,19 +47,19 @@ public class InfluxLoader {
 					List<List<Object>> values = series.getValues();
 					for(List<Object> value:values) {
 						for(Object v:value) {
-							log.info(v);
+							Logger.info(v);
 						}
 					}
 				}
 			}
-			log.info("---");
+			Logger.info("---");
 		}
 
 		for(Sensor sensor:config.sensors) {
 			ArrayList<String> stations = new ArrayList<String>();
 			{
 				{
-					log.info("--- get stations of " + sensor.loggerName);
+					Logger.info("--- get stations of " + sensor.loggerName);
 					Query query = new Query("SHOW TAG VALUES FROM \"" + sensor.loggerName + "\" WITH KEY = id", config.database);	
 					QueryResult queryResult = influxDB.query(query);
 					List<Result> results = queryResult.getResults();
@@ -72,16 +72,16 @@ public class InfluxLoader {
 							}
 						}
 					}
-					log.info("---  " + stations);
+					Logger.info("---  " + stations);
 				}
 			}
 
 			for(String stationName:stations){
-				log.info("--- get station " + stationName);
+				Logger.info("--- get station " + stationName);
 				ArrayList<DataEntry> dataEntryList = new ArrayList<DataEntry>();
 				int prevTimestamp = -1;
 				String q = "SELECT \"" + sensor.srcName + "\" FROM \"" + sensor.loggerName + "\" WHERE id='" + stationName + "'";
-				//log.info(q);
+				//Logger.info(q);
 				Query query = new Query(q, config.database);	
 				QueryResult queryResult = influxDB.query(query);
 				List<Result> results = queryResult.getResults();
@@ -89,7 +89,7 @@ public class InfluxLoader {
 					List<Series> seriess = result.getSeries();
 					if(seriess != null) {
 						for(Series series:seriess) {
-							//log.info("series " + series.getName() + "   " + series.getColumns());
+							//Logger.info("series " + series.getName() + "   " + series.getColumns());
 							List<List<Object>> values = series.getValues();
 
 
@@ -100,7 +100,7 @@ public class InfluxLoader {
 								LocalDateTime datetime = LocalDateTime.parse(timestampText);
 								int timestamp = (int) TimeUtil.dateTimeToOleMinutes(datetime);
 								if(timestamp==prevTimestamp) {
-									//log.warn("skip duplicate timestamp ");
+									//Logger.warn("skip duplicate timestamp ");
 									continue;
 								}
 								Object vObject = value.get(1);
@@ -117,9 +117,9 @@ public class InfluxLoader {
 					}
 				}
 				if(!dataEntryList.isEmpty()) {
-					log.info("insert " + stationName + " " +  sensor.loggerName + " " + sensor.srcName + " -> "  + sensor.dstName + " "  + dataEntryList.size());
+					Logger.info("insert " + stationName + " " +  sensor.loggerName + " " + sensor.srcName + " -> "  + sensor.dstName + " "  + dataEntryList.size());
 					if(tsdb.getStation(stationName) == null) {
-						log.warn("station not found: " + stationName);
+						Logger.warn("station not found: " + stationName);
 					}
 					tsdb.streamStorage.insertDataEntryArray(stationName, sensor.dstName, dataEntryList.toArray(new DataEntry[0]));
 					Path path = Paths.get("influx", stationName + "__" + sensor.loggerName + "__" + sensor.dstName);

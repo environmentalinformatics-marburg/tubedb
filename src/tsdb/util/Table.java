@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import com.opencsv.CSVReader;
 
@@ -32,7 +32,7 @@ import tsdb.util.Table.ColumnReaderIntFunc.IntegerParser;
  *
  */
 public class Table {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 	private static final String UTF8_BOM = "\uFEFF";
@@ -85,7 +85,7 @@ public class Table {
 				String textValue = row[rowIndex];
 				if(textValue.isEmpty()) {
 					if(warnIfEmpty) {
-						log.warn("empty");
+						Logger.warn("empty");
 					}
 					return Float.NaN;
 				}
@@ -94,7 +94,7 @@ public class Table {
 				if(row[rowIndex].toLowerCase().equals("na")||row[rowIndex].toLowerCase().equals("null")||row[rowIndex].toLowerCase().equals("nan")) {
 					return Float.NaN;
 				} else {
-					log.warn(row[rowIndex]+" not parsed");
+					Logger.warn(row[rowIndex]+" not parsed");
 					e.printStackTrace();
 					return Float.NaN;
 				}
@@ -144,7 +144,7 @@ public class Table {
 				String textValue = row[rowIndex];
 				if(textValue.isEmpty()) {
 					if(warnIfEmpty) {
-						log.warn("empty");
+						Logger.warn("empty");
 					}
 					return Double.NaN;
 				}
@@ -153,7 +153,7 @@ public class Table {
 				if(row[rowIndex].toLowerCase().equals("na")||row[rowIndex].toLowerCase().equals("null")||row[rowIndex].toLowerCase().equals("nan")) {
 					return Double.NaN;
 				} else {
-					log.warn(row[rowIndex]+" not parsed");
+					Logger.warn(row[rowIndex]+" not parsed");
 					e.printStackTrace();
 					return Double.NaN;
 				}
@@ -228,7 +228,7 @@ public class Table {
 			if(text.length()!=1) {
 				text = text.trim();
 				if(text.length()!=1) {
-					log.warn("boolean not parsed "+text);
+					Logger.warn("boolean not parsed "+text);
 					return missing;
 				}
 			}
@@ -239,7 +239,7 @@ public class Table {
 			if(c=='N') {
 				return false;
 			}
-			log.warn("boolean not parsed "+text);
+			Logger.warn("boolean not parsed "+text);
 			return missing;
 		}		
 	}
@@ -261,7 +261,7 @@ public class Table {
 			try {
 				return TimeUtil.parseTimestamp(row[rowIndexDate], row[rowIndexTime], true);				
 			} catch(NumberFormatException e) {
-				log.warn(row[rowIndexDate]+"  "+row[rowIndexTime]+"not parsed");
+				Logger.warn(row[rowIndexDate]+"  "+row[rowIndexTime]+"not parsed");
 				return -1;
 			}
 		}
@@ -276,7 +276,7 @@ public class Table {
 			try {
 				return TimeUtil.parseTimestampSlashFormat(row[rowIndexDateTime]);				
 			} catch(NumberFormatException e) {
-				log.warn(row[rowIndexDateTime]+"  not parsed");
+				Logger.warn(row[rowIndexDateTime]+"  not parsed");
 				return -1;
 			}
 		}
@@ -291,7 +291,7 @@ public class Table {
 			try {
 				return TimeUtil.parseTimestampSpaceFormat(row[rowIndexDateTime]);				
 			} catch(NumberFormatException e) {
-				log.warn(row[rowIndexDateTime]+"  not parsed");
+				Logger.warn(row[rowIndexDateTime]+"  not parsed");
 				return -1;
 			}
 		}
@@ -311,7 +311,7 @@ public class Table {
 					return TimeUtil.parseTimestampMonthFirstFormat(text);	
 				}
 			} catch(NumberFormatException e) {
-				log.warn(row[rowIndexDateTime]+"  not parsed");
+				Logger.warn(row[rowIndexDateTime]+"  not parsed");
 				return -1;
 			}
 		}
@@ -326,7 +326,7 @@ public class Table {
 			try {
 				return TimeUtil.parseTimestampMonthNameFormat(row[rowIndexDateTime]);				
 			} catch(NumberFormatException e) {
-				log.warn(row[rowIndexDateTime]+"  not parsed");
+				Logger.warn(row[rowIndexDateTime]+"  not parsed");
 				return -1;
 			}
 		}
@@ -344,7 +344,7 @@ public class Table {
 			try {
 				return TimeUtil.parseTimestampDateFullHourFormat(row[columnIndexDate], Integer.parseInt(row[columnIndexFullHour]));		
 			} catch(NumberFormatException e) {
-				log.warn(row[columnIndexDate]+"  not parsed");
+				Logger.warn(row[columnIndexDate]+"  not parsed");
 				return -1;
 			}
 		}
@@ -382,7 +382,7 @@ public class Table {
 				LocalTime time = LocalTime.of(hour,Integer.parseInt(row[columnIndexMinute]));
 				return TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(date,time));		
 			} catch(NumberFormatException e) {
-				log.warn(row[columnIndexDate]+"  not parsed");
+				Logger.warn(row[columnIndexDate]+"  not parsed");
 				return -1;
 			}
 		}
@@ -428,7 +428,7 @@ public class Table {
 				}
 			}			
 			table.updateNames(columnsNames);
-			//log.info("names: "+Arrays.toString(table.names)+"   in "+filename);
+			//Logger.info("names: "+Arrays.toString(table.names)+"   in "+filename);
 			
 			ArrayList<String[]> dataRowList = new ArrayList<String[]>();
 			curRow = reader.readNext();
@@ -467,7 +467,7 @@ public class Table {
 					}
 				}			
 				table.updateNames(columnsNames);
-				//log.info("names: "+Arrays.toString(table.names)+"   in "+filename);
+				//Logger.info("names: "+Arrays.toString(table.names)+"   in "+filename);
 				
 				ArrayList<String[]> dataRowList = new ArrayList<String[]>();
 				curRow = reader.readNext();
@@ -481,7 +481,7 @@ public class Table {
 			reader.close();
 			return table;
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 			return null;
 		}
 	}
@@ -517,7 +517,7 @@ public class Table {
 					nameNumber++;
 					name2 = columnNames[i]+nameNumber;
 				}
-				log.warn("dublicate name: "+columnNames[i]+ " replaced with "+name2);
+				Logger.warn("dublicate name: "+columnNames[i]+ " replaced with "+name2);
 				columnNames[i] = name2;
 				map.put(columnNames[i], i);
 			} else {
@@ -547,7 +547,7 @@ public class Table {
 
 			return table;
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 			return null;
 		}
 	}
@@ -570,7 +570,7 @@ public class Table {
 		Integer index = nameMap.get(name);
 		if(index==null) {			
 			if(warn) {
-				log.error("name not found in table: "+name);
+				Logger.error("name not found in table: "+name);
 			}
 			return -1;
 		}

@@ -3,8 +3,8 @@ package tsdb.graph;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Plot;
 import tsdb.Station;
@@ -34,7 +34,7 @@ import tsdb.util.Util;
  *
  */
 public final class QueryPlan {
-	private static final Logger log = LogManager.getLogger();	
+		
 	private QueryPlan(){}
 
 	public static Node plots_aggregate(TsDB tsdb, String[] plotIDs, String[] schema, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated) {
@@ -103,16 +103,16 @@ public final class QueryPlan {
 	 * @return
 	 */
 	public static Node plot(TsDB tsdb, String plotID, String[] schema, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated) {
-		//log.info("schema "+Arrays.toString(schema));
+		//Logger.info("schema "+Arrays.toString(schema));
 		if(plotID.indexOf(':') < 0) { //plotID
 			if(aggregationInterval != AggregationInterval.RAW) { //plotID aggregated
 				return plotWithoutSubStation(tsdb, plotID, schema, aggregationInterval, dataQuality, interpolated);
 			} else { //plotID raw
 				if(dataQuality==DataQuality.EMPIRICAL) {
-					log.warn("raw query empirical quality check not supported");
+					Logger.warn("raw query empirical quality check not supported");
 				}
 				if(interpolated) {
-					log.warn("raw query interpolation not supported");
+					Logger.warn("raw query interpolation not supported");
 				}
 				Station station = tsdb.getStation(plotID);
 				if(station!=null) {
@@ -126,28 +126,28 @@ public final class QueryPlan {
 			if(aggregationInterval != AggregationInterval.RAW) { // plotID:stationID aggregated
 				if(dataQuality==DataQuality.EMPIRICAL) {
 					dataQuality = DataQuality.STEP;
-					log.warn("query of plotID:stationID: DataQuality.EMPIRICAL not supported");
+					Logger.warn("query of plotID:stationID: DataQuality.EMPIRICAL not supported");
 				}
 				if(interpolated) {
 					interpolated = false;
-					log.warn("query of plotID:stationID: interpolation not supported");
+					Logger.warn("query of plotID:stationID: interpolation not supported");
 				}
 				String[] parts = plotID.split(":");
 				if(parts.length!=2) {
-					log.error("not valid name: "+plotID);
+					Logger.error("not valid name: "+plotID);
 					return null;
 				}
 				return plotWithSubStation(tsdb, parts[0], parts[1], schema, aggregationInterval, dataQuality);
 			} else { // plotID:stationID raw
 				if(dataQuality == DataQuality.EMPIRICAL) {
-					log.warn("raw query empirical quality check not supported");
+					Logger.warn("raw query empirical quality check not supported");
 				}
 				if(interpolated) {
-					log.warn("raw query interpolation not supported");
+					Logger.warn("raw query interpolation not supported");
 				}
 				String[] parts = plotID.split(":");
 				if(parts.length!=2) {
-					log.error("not valid name: "+plotID);
+					Logger.error("not valid name: "+plotID);
 					return null;
 				}
 				Node rawSource =  VirtualPlotStationRawSource.of(tsdb, parts[0], parts[1], schema);
@@ -174,7 +174,7 @@ public final class QueryPlan {
 			continuous = InterpolatedAverageLinear.of(tsdb, plotID, schema, continuousGen, AggregationInterval.HOUR);
 		} else {
 			continuous = continuousGen.get(plotID, schema);
-			//log.info("continuous "+continuous);
+			//Logger.info("continuous "+continuous);
 		}
 		if(continuous == null) {
 			return null;

@@ -9,8 +9,8 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
@@ -36,7 +36,7 @@ import tsdb.util.iterator.TsIterator;
 
 @SuppressWarnings("unused")
 public class EmpiricalMinDiffAnalysis {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) {
 		TsDB tsdb = TsDBFactory.createDefault();
@@ -77,7 +77,7 @@ public class EmpiricalMinDiffAnalysis {
 		List<Continuous> compares = source.getSourcePlot().getNearestPlots()
 				.limit(6)
 				.map(p->{
-					log.info(p.getPlotID());				
+					Logger.info(p.getPlotID());				
 					String[] validSensorNames = p.getValidSchemaEntries(new String[]{sensorName});
 					if(validSensorNames.length==0) {
 						return null;

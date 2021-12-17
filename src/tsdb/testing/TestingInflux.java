@@ -3,8 +3,8 @@ package tsdb.testing;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.BatchPoints;
@@ -16,7 +16,7 @@ import org.influxdb.dto.QueryResult.Result;
 import org.influxdb.dto.QueryResult.Series;
 
 public class TestingInflux {
-	private static final Logger log = LogManager.getLogger();
+	
 
 
 	public static void main(String[] args) {
@@ -26,7 +26,7 @@ public class TestingInflux {
 		influxDB.query(new Query("DROP DATABASE " + dbName));
 		influxDB.query(new Query("CREATE DATABASE " + dbName));
 
-		log.info("create batch");
+		Logger.info("create batch");
 		BatchPoints batchPoints = BatchPoints
 				.database(dbName)
 				.tag("async", "true")
@@ -40,15 +40,15 @@ public class TestingInflux {
 			batchPoints.point(b.build());
 		}
 
-		log.info("write batch");
+		Logger.info("write batch");
 		influxDB.write(batchPoints);
 
-		log.info("read");
+		Logger.info("read");
 		QueryResult result = influxDB.query(new Query("SELECT a,b,c FROM cpu", dbName));
 		for(Result r:result.getResults()) {
 			for(Series s:r.getSeries()) {
 				for(List<Object> v:s.getValues()) {
-					log.info(v);
+					Logger.info(v);
 				}
 			}
 		}

@@ -9,8 +9,8 @@ import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
@@ -28,7 +28,7 @@ import tsdb.util.iterator.TsIterator;
  */
 public class StreamDB {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private DB db;
 
@@ -44,7 +44,7 @@ public class StreamDB {
 			File dir = new File(streamdbPathPrefix);			
 			dir.getParentFile().mkdirs();
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 
 		db = DBMaker.newFileDB(new File(pathName))
@@ -83,11 +83,11 @@ public class StreamDB {
 	public void close() {
 		synchronized (db) {
 			if(!db.isClosed()) {
-				log.info("commit...");
+				Logger.info("commit...");
 				db.commit();
-				log.info("close...");
+				Logger.info("close...");
 				db.close();
-				log.trace("closed");
+				Logger.trace("closed");
 			}
 		}		
 	}
@@ -166,7 +166,7 @@ public class StreamDB {
 		}
 		if(stationMeta==null) {
 			//new Throwable().printStackTrace();
-			log.warn("no station: "+stationName);
+			Logger.warn("no station: "+stationName);
 		}
 		return stationMeta;
 	}
@@ -196,7 +196,7 @@ public class StreamDB {
 		}
 		if(sensorMeta==null) {
 			//new Throwable().printStackTrace();
-			log.trace("no sensor: "+sensorName+"  in station: "+stationMeta.stationName);
+			Logger.trace("no sensor: "+sensorName+"  in station: "+stationMeta.stationName);
 		}
 		return sensorMeta;
 	}
@@ -230,7 +230,7 @@ public class StreamDB {
 			maskMap.put(sensorName, mask);
 		}
 		if(mask==null) {
-			//log.info("no time series mask: "+sensorName+"  in station: "+stationMeta.stationName);
+			//Logger.info("no time series mask: "+sensorName+"  in station: "+stationMeta.stationName);
 		}
 		return mask;		
 	}	
@@ -270,12 +270,12 @@ public class StreamDB {
 
 
 	public void insertSensorData(String stationName, String sensorName, DataEntry[] data) {	
-		//log.info("streamDB insert data "+stationName+" "+sensorName+" "+data.length);
+		//Logger.info("streamDB insert data "+stationName+" "+sensorName+" "+data.length);
 		throwNull(stationName);
 		throwNull(sensorName);
 		throwNull(data);
 		if(data.length==0) {
-			log.warn("no data to insert");
+			Logger.warn("no data to insert");
 			return;
 		}
 		SensorMeta sensorMeta = getSensorMeta(stationName,sensorName,true);
@@ -309,7 +309,7 @@ public class StreamDB {
 	public void removeSensorData(String stationName, String sensorName, int start, int end) {
 		SensorMeta sensorMeta = getSensorMeta(stationName,sensorName,false);
 		if(sensorMeta==null) {
-			log.info("no sensor: "+stationName+" "+sensorName+" ->  nothing removed");
+			Logger.info("no sensor: "+stationName+" "+sensorName+" ->  nothing removed");
 			return;
 		}
 		BTreeMap<Integer, ChunkMeta> chunkMetaMap = getSensorChunkMetaMap(sensorMeta);
@@ -326,9 +326,9 @@ public class StreamDB {
 				if(newChunk!=null) {
 					removeChunk(chunkMetaMap,chunkMap,chunkMeta);
 					insertChunk(chunkMetaMap,chunkMap,newChunk);
-					log.trace("chunk part reinserted");
+					Logger.trace("chunk part reinserted");
 				} else {
-					log.error("chunk not removed (internal error): "+chunkMeta);
+					Logger.error("chunk not removed (internal error): "+chunkMeta);
 				}
 
 			}
@@ -423,12 +423,12 @@ public class StreamDB {
 		throwNull(chunkMetaMap);
 		throwNull(chunkMap);
 		throwNull(oldChunkMeta);
-		//log.info("remove chunk "+oldChunkMeta);
+		//Logger.info("remove chunk "+oldChunkMeta);
 		if(chunkMetaMap.remove(oldChunkMeta.firstTimestamp)==null) {
-			log.error("could not remove oldChunkMeta");
+			Logger.error("could not remove oldChunkMeta");
 		}
 		if(chunkMap.remove(oldChunkMeta.firstTimestamp)==null) {
-			log.error("could not remove old Chunk");
+			Logger.error("could not remove old Chunk");
 		}
 	}
 
@@ -448,7 +448,7 @@ public class StreamDB {
 		throwNull(stationName);
 		StationMeta stationMeta = stationMetaMap.get(stationName);		
 		if(stationMeta==null){
-			log.warn("no station: "+stationName);
+			Logger.warn("no station: "+stationName);
 			return new TreeSet<String>();
 		}
 		BTreeMap<String, SensorMeta> sensorMap = db.getTreeMap(stationMeta.db_name_sensor_map);
@@ -497,7 +497,7 @@ public class StreamDB {
 		throwNull(stationName);
 		throwNullArray(sensorNames);
 		if(sensorNames==null||sensorNames.length<1) {
-			log.error("no sensors");
+			Logger.error("no sensors");
 			return null;
 		}
 		if(sensorNames.length==1) {
@@ -595,18 +595,18 @@ public class StreamDB {
 	}
 
 	public void compact() {
-		log.warn("ignore db compact: unfixed bug in compact");
+		Logger.warn("ignore db compact: unfixed bug in compact");
 		//db.compact();
 	}
 
 	public void removeInterval(String stationName, int start, int end) {//TODO remove empty streams and stations
 		NavigableSet<String> sensorNames = getSensorNames(stationName);
 		if(sensorNames.isEmpty()) {
-			log.info("no sensors in station -> nothing removed: "+stationName);
+			Logger.info("no sensors in station -> nothing removed: "+stationName);
 			return;
 		}
 		for(String sensorName:sensorNames) {
-			log.trace("remove "+stationName+"/"+sensorName+"  "+start+"  "+end);
+			Logger.trace("remove "+stationName+"/"+sensorName+"  "+start+"  "+end);
 			removeSensorData(stationName, sensorName, start, end);
 		}
 	}
@@ -614,7 +614,7 @@ public class StreamDB {
 	public void clearMaskOfStation(String stationName) {
 		StationMeta stationMeta = getStationMeta(stationName, false);
 		if(stationMeta==null) {
-			//log.warn("station not found "+stationName);
+			//Logger.warn("station not found "+stationName);
 			return;
 		}
 		BTreeMap<String, TimeSeriesMask> maskMap = db.getTreeMap(stationMeta.db_name_sensor_time_series_mask_map);

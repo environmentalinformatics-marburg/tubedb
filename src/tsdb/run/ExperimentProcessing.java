@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
@@ -17,11 +17,11 @@ import tsdb.util.TimeUtil;
 import tsdb.util.Timer;
 
 public class ExperimentProcessing {
-	private static final Logger log = LogManager.getLogger();
+	
 
 
 	public static void main(String[] args) throws RemoteException {
-		log.info("start...");
+		Logger.info("start...");
 		try(TsDB tsdb = TsDBFactory.createDefault()) {
 			RemoteTsDB remoteTsdb = new ServerTsDB(tsdb);
 			//Region region = remoteTsdb.getRegionByName("BE");
@@ -95,7 +95,7 @@ public class ExperimentProcessing {
 			}
 		}
 
-		log.info("end");
+		Logger.info("end");
 	}
 
 

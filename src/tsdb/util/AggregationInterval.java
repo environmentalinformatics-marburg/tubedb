@@ -1,7 +1,7 @@
 package tsdb.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.TsSchema.Aggregation;
 
@@ -13,7 +13,7 @@ public enum AggregationInterval {
 	MONTH, 
 	YEAR;
 	
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	public static AggregationInterval getBaseAggregation() {
 		return HOUR;
@@ -34,7 +34,7 @@ public enum AggregationInterval {
 		case YEAR:
 			return "year";
 		default:
-			log.warn("aggregation unknown");
+			Logger.warn("aggregation unknown");
 			return "unknown";
 		}		
 	}
@@ -54,7 +54,7 @@ public enum AggregationInterval {
 		case YEAR:
 			return Aggregation.YEAR;
 		default:
-			log.warn("aggregation unknown");
+			Logger.warn("aggregation unknown");
 			return Aggregation.NO;
 		}			
 	}
@@ -74,14 +74,14 @@ public enum AggregationInterval {
 		case YEAR:
 			return TsSchema.NO_CONSTANT_TIMESTEP;
 		default:
-			log.warn("aggregation unknown");
+			Logger.warn("aggregation unknown");
 			return TsSchema.NO_CONSTANT_TIMESTEP;
 		}			
 	}
 	
 	public static AggregationInterval parse(String text) {
 		if(text==null) {
-			log.warn("aggregation text null");
+			Logger.warn("aggregation text null");
 			return null;
 		}
 		switch(text.trim().toLowerCase()) {
@@ -99,7 +99,7 @@ public enum AggregationInterval {
 		case "year":
 			return AggregationInterval.YEAR;
 		default:
-			log.warn("aggregation unknown: "+text);
+			Logger.warn("aggregation unknown: "+text);
 			return null;
 		}		
 	}

@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 public class ParseReceiverLogFile {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Map<String, PlotMessage> plotMap = new TreeMap<>();
 	public LocalDateTime lastDateTime = LocalDateTime.of(1900, 1, 1, 0, 0);
@@ -29,11 +29,11 @@ public class ParseReceiverLogFile {
 		try {
 			DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory,p->(!p.toFile().isDirectory())&&p.toString().endsWith(".log"));
 			for(Path file:directoryStream) {
-				log.info("read "+file);
+				Logger.info("read "+file);
 				insertFile(file);
 			}
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -70,7 +70,7 @@ public class ParseReceiverLogFile {
 							//System.out.println(currPlot+"  "+currDateTime+" "+message);
 							insertEntry(new PlotMessage(currPlot, currDateTime, message));
 						} catch(Exception e1) {
-							log.warn(e1+"  "+line);
+							Logger.warn(e1+"  "+line);
 							insertEntry(new PlotMessage(currPlot, currDateTime, "error"));
 						}
 					}
@@ -82,7 +82,7 @@ public class ParseReceiverLogFile {
 				insertEntry(new PlotMessage(currPlot, currDateTime, "OK"));
 			}
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -101,10 +101,10 @@ public class ParseReceiverLogFile {
 		ParseReceiverLogFile prlf = new ParseReceiverLogFile();
 		prlf.insertDirectory(Paths.get("C:/temp/logs"));
 
-		log.info("last "+prlf.lastDateTime);
-		log.info("plots "+prlf.plotMap.size());
+		Logger.info("last "+prlf.lastDateTime);
+		Logger.info("plots "+prlf.plotMap.size());
 		for(PlotMessage v:prlf.plotMap.values()) {
-			log.info(v.plot+"  "+v.dateTime+"  "+v.message);
+			Logger.info(v.plot+"  "+v.dateTime+"  "+v.message);
 		}
 	}
 

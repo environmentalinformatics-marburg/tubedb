@@ -1,13 +1,13 @@
 package tsdb.component.iterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.TsIterator;
 
 public class FillIterator extends PrevLookaheadIterator {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public FillIterator(TsIterator input_iterator) {
 		super(input_iterator, 3, input_iterator.getSchema());
@@ -39,8 +39,8 @@ public class FillIterator extends PrevLookaheadIterator {
 						result[i] = ((a2TimeRange * prevValue[i]) + (a1TimeRange * f.data[i])) / gapTimeRange;
 						interpolated[i] = true;
 						isInterpolated = true;
-						//log.info("filled " + TimeUtil.oleMinutesToText(current.timestamp) + "     " + TimeUtil.oleMinutesToText(prevTimestamp[i]) + " " + TimeUtil.oleMinutesToText(f.timestamp));
-						//log.info("ranges " + gapTimeRange + "  " + a1TimeRange + "  " + a2TimeRange+"    "+a1+" "+a2+" "+ar+"        " + prevValue[i] + " " + f.data[i] +"  " + result[i]);
+						//Logger.info("filled " + TimeUtil.oleMinutesToText(current.timestamp) + "     " + TimeUtil.oleMinutesToText(prevTimestamp[i]) + " " + TimeUtil.oleMinutesToText(f.timestamp));
+						//Logger.info("ranges " + gapTimeRange + "  " + a1TimeRange + "  " + a2TimeRange+"    "+a1+" "+a2+" "+ar+"        " + prevValue[i] + " " + f.data[i] +"  " + result[i]);
 						break;
 					}
 				}

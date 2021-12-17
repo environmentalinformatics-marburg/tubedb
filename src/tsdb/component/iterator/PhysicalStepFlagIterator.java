@@ -14,7 +14,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class PhysicalStepFlagIterator extends InputProcessingIterator {
-	//private static final Logger log = LogManager.getLogger();
+	//
 
 	private static final int MAX_TIME_STEP = 60;
 	
@@ -75,7 +75,7 @@ public class PhysicalStepFlagIterator extends InputProcessingIterator {
 				flags[columnIndex] = currQuality;
 			}
 			TsEntry e = new TsEntry(currTimestamp, currData, flags);
-			//log.info("qf"+"  "+e+"  "+e.qualityFlagToString());
+			//Logger.info("qf"+"  "+e+"  "+e.qualityFlagToString());
 			return e;
 		} else {
 			return null; // no elements left

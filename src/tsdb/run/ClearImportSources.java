@@ -3,8 +3,8 @@ package tsdb.run;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
@@ -29,7 +29,7 @@ import static tsdb.util.Util.msToText;
  */
 @Deprecated
 public class ClearImportSources {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) {
 		boolean import_BE = true;
@@ -71,23 +71,23 @@ public class ClearImportSources {
 				import_BA = true;
 				break;				
 			default:
-				log.error("unknown region "+oneRegion);
+				Logger.error("unknown region "+oneRegion);
 				return;
 			}
 		}
 
 		long timeStart = System.currentTimeMillis();
-		log.info("begin import");
+		Logger.info("begin import");
 
-		log.info("open database");
+		Logger.info("open database");
 		long timeStartClear = System.currentTimeMillis();
 		TsDB tsdb = TsDBFactory.createDefault();
-		log.info("clear database");
+		Logger.info("clear database");
 		tsdb.clear();
 		tsdb.close();
 		long timeEndClear = System.currentTimeMillis();
 
-		log.info("reopen database");
+		Logger.info("reopen database");
 		long timeStartOpen = System.currentTimeMillis();
 		tsdb = TsDBFactory.createDefault();
 		long timeEndOpen = System.currentTimeMillis();		
@@ -109,20 +109,20 @@ public class ClearImportSources {
 
 		System.gc();
 		if(import_BE) { //*** BE
-			log.info("import BE tsm");
-			log.info("from "+TsDBFactory.SOURCE_BE_TSM_PATH);
+			Logger.info("import BE tsm");
+			Logger.info("from "+TsDBFactory.SOURCE_BE_TSM_PATH);
 			timeStartBE = System.currentTimeMillis();
 			long minTimestamp = TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(2008, 01, 01, 00, 00));
 			TimeSeriesLoaderBE timeseriesloaderBE = new TimeSeriesLoaderBE(tsdb, minTimestamp);
 			timeseriesloaderBE.loadDirectory_with_stations_flat(Paths.get(TsDBFactory.SOURCE_BE_TSM_PATH));
-			log.info("from "+TsDBFactory.SOURCE_BE_GEN_PATH);
+			Logger.info("from "+TsDBFactory.SOURCE_BE_GEN_PATH);
 			new ImportGenericCSV(tsdb).load(TsDBFactory.SOURCE_BE_GEN_PATH);	
 			timeEndBE = System.currentTimeMillis();
 			System.gc();
 		}
 		if(import_KI) { //*** KI
-			log.info("import KI tsm");
-			log.info("from "+TsDBFactory.SOURCE_KI_TSM_PATH);
+			Logger.info("import KI tsm");
+			Logger.info("from "+TsDBFactory.SOURCE_KI_TSM_PATH);
 			timeStartKI = System.currentTimeMillis();
 			TimeSeriesLoaderKiLi timeseriesloaderKiLi = new TimeSeriesLoaderKiLi(tsdb);
 			timeseriesloaderKiLi.loadDirectory_with_stations_recursive(Paths.get(TsDBFactory.SOURCE_KI_TSM_PATH), true, 2*60);
@@ -130,8 +130,8 @@ public class ClearImportSources {
 			System.gc();
 		}
 		if(import_KI_tfi) { //*** KI tfi			
-			log.info("import KI tfi");
-			log.info("from "+TsDBFactory.SOURCE_KI_TFI_PATH);
+			Logger.info("import KI tfi");
+			Logger.info("from "+TsDBFactory.SOURCE_KI_TFI_PATH);
 			timeStartKItfi = System.currentTimeMillis();
 			TimeSeriesLoaderKiLi_manual_tfi TimeSerieaLoaderKiLi_manual_tfi = new TimeSeriesLoaderKiLi_manual_tfi(tsdb);
 			TimeSerieaLoaderKiLi_manual_tfi.loadOneDirectory_structure_kili_tfi(Paths.get(TsDBFactory.SOURCE_KI_TFI_PATH));
@@ -139,41 +139,41 @@ public class ClearImportSources {
 			System.gc();
 		}
 		if(import_SA) { //*** SA
-			log.info("import SA dat");
-			log.info("from "+TsDBFactory.SOURCE_SA_DAT_PATH);
+			Logger.info("import SA dat");
+			Logger.info("from "+TsDBFactory.SOURCE_SA_DAT_PATH);
 			timeStartSA = System.currentTimeMillis();
 			new SouthAfricaImport(tsdb);
 			timeEndSA = System.currentTimeMillis();
 			System.gc();
 		}
 		if(import_SA_OWN) { //*** SA_OWN
-			log.info("import SA_OWN");
-			log.info("from "+TsDBFactory.SOURCE_SA_OWN_PATH);
+			Logger.info("import SA_OWN");
+			Logger.info("from "+TsDBFactory.SOURCE_SA_OWN_PATH);
 			timeStartSA_OWN = System.currentTimeMillis();
 			new ImportSaOwn(tsdb).load(TsDBFactory.SOURCE_SA_OWN_PATH);
 			try {
-				log.info("*remove South Africa Own Stations first measure days*");
+				Logger.info("*remove South Africa Own Stations first measure days*");
 				RemoveSouthAfricaStationBeginings.run(tsdb);
 			} catch (Exception e) {
-				log.error(e);
+				Logger.error(e);
 			}
 			timeEndSA_OWN = System.currentTimeMillis();
 			System.gc();
 		}
 		if(import_MM) { //*** MM
-			log.info("import MM");
-			log.info("from "+TsDBFactory.SOURCE_MM_PATH);
+			Logger.info("import MM");
+			Logger.info("from "+TsDBFactory.SOURCE_MM_PATH);
 			timeStartMM = System.currentTimeMillis();
 			new ImportGenericASC(tsdb).load(TsDBFactory.SOURCE_MM_PATH);
 			timeEndMM = System.currentTimeMillis();
 			System.gc();
 		}
 		if(import_BA) { //*** BA
-			log.info("import BA");
-			log.info("from "+TsDBFactory.SOURCE_BA_PATH);
+			Logger.info("import BA");
+			Logger.info("from "+TsDBFactory.SOURCE_BA_PATH);
 			timeStartBA = System.currentTimeMillis();
 			new ImportGenericASC(tsdb).load(TsDBFactory.SOURCE_BA_PATH);
-			log.info("from "+TsDBFactory.SOURCE_BA_REF_PATH);
+			Logger.info("from "+TsDBFactory.SOURCE_BA_REF_PATH);
 			new ImportGenericCSV(tsdb).load(TsDBFactory.SOURCE_BA_REF_PATH);			
 			timeEndBA = System.currentTimeMillis();
 			System.gc();
@@ -187,7 +187,7 @@ public class ClearImportSources {
 		long timeEndClose = System.currentTimeMillis();
 		long timeEnd = System.currentTimeMillis();
 
-		log.info("end import");
+		Logger.info("end import");
 		
 		ClearLoadMasks.main(new String[0]);
 
@@ -199,20 +199,20 @@ public class ClearImportSources {
 		RunCompact.main(new String[0]); // 'compact' not usable because of bug in MapDB.
 		long timeEndCompact = System.currentTimeMillis();*/
 
-		log.info(msToText(timeStartClear,timeEndClear)+" Clear");
-		log.info(msToText(timeStartOpen,timeEndOpen)+" Open");
-		log.info(msToText(timeStartBE,timeEndBE)+" BE import");
-		log.info(msToText(timeStartKI,timeEndKI)+" KI import");
-		log.info(msToText(timeStartKItfi,timeEndKItfi)+" KI tfi import");
-		log.info(msToText(timeStartSA,timeEndSA)+" SA import");
-		log.info(msToText(timeStartSA_OWN,timeEndSA_OWN)+" SA_OWN import");
-		log.info(msToText(timeStartMM,timeEndMM)+" MM import");
-		log.info(msToText(timeStartBA,timeEndBA)+" BA import");		
-		log.info(msToText(timeStartClose,timeEndClose)+" Close");
-		log.info(msToText(timeStart,timeEnd)+" total import");
-		log.info("");
-		log.info(msToText(timeStartAvg,timeEndAvg)+" create averages");
-		//log.info(msToText(timeStartCompact,timeEndCompact)+" compact streamDB");
+		Logger.info(msToText(timeStartClear,timeEndClear)+" Clear");
+		Logger.info(msToText(timeStartOpen,timeEndOpen)+" Open");
+		Logger.info(msToText(timeStartBE,timeEndBE)+" BE import");
+		Logger.info(msToText(timeStartKI,timeEndKI)+" KI import");
+		Logger.info(msToText(timeStartKItfi,timeEndKItfi)+" KI tfi import");
+		Logger.info(msToText(timeStartSA,timeEndSA)+" SA import");
+		Logger.info(msToText(timeStartSA_OWN,timeEndSA_OWN)+" SA_OWN import");
+		Logger.info(msToText(timeStartMM,timeEndMM)+" MM import");
+		Logger.info(msToText(timeStartBA,timeEndBA)+" BA import");		
+		Logger.info(msToText(timeStartClose,timeEndClose)+" Close");
+		Logger.info(msToText(timeStart,timeEnd)+" total import");
+		Logger.info("");
+		Logger.info(msToText(timeStartAvg,timeEndAvg)+" create averages");
+		//Logger.info(msToText(timeStartCompact,timeEndCompact)+" compact streamDB");
 	}
 
 

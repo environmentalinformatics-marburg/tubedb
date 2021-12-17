@@ -3,8 +3,8 @@ package tsdb.component;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.AggregationType;
 import tsdb.util.yaml.YamlList;
@@ -16,7 +16,7 @@ import tsdb.util.yaml.YamlMap;
  *
  */
 public class Sensor implements Serializable {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private static final long serialVersionUID = -4139931796468207965L;
 
@@ -102,7 +102,7 @@ public class Sensor implements Serializable {
 	 * @return if false value should not be included in further processing
 	 */
 	public boolean checkPhysicalRange(float value) {
-		//log.info("check physical "+physicalMin+"  "+physicalMax);
+		//Logger.info("check physical "+physicalMin+"  "+physicalMax);
 		if(Float.isNaN(value)) {
 			return false;
 		}
@@ -116,7 +116,7 @@ public class Sensor implements Serializable {
 	 * @return
 	 */
 	public boolean checkStepRange(float prevValue, float value) {
-		//log.info("check step "+stepMin+"  "+stepMax);
+		//Logger.info("check step "+stepMin+"  "+stepMax);
 		float step = Math.abs(value-prevValue);		
 		return stepMin<=step&&step<=stepMax;
 	}
@@ -181,7 +181,7 @@ public class Sensor implements Serializable {
 				physicalMax = range[1];
 			}
 		} catch(Exception e) {
-			log.warn("could not read physical range of "+sensorName+"   "+e);
+			Logger.warn("could not read physical range of "+sensorName+"   "+e);
 		}
 
 		float stepMin = -Float.MAX_VALUE;
@@ -194,14 +194,14 @@ public class Sensor implements Serializable {
 				stepMax = range[1];
 			}
 		} catch(Exception e) {
-			log.warn("could not read step range of "+sensorName+"   "+e);
+			Logger.warn("could not read step range of "+sensorName+"   "+e);
 		}
 
 		Float empiricalDiff = null;
 		try {
 			empiricalDiff = yamlMap.optFloat("empirical_diff", null);
 		} catch(Exception e) {
-			log.warn("could not read empirical_diff of "+sensorName+"   "+e);
+			Logger.warn("could not read empirical_diff of "+sensorName+"   "+e);
 		}
 
 		boolean[] useInterpolation = new boolean[]{false};
@@ -209,7 +209,7 @@ public class Sensor implements Serializable {
 
 		yamlMap.funDouble("interpolation_mse", 
 				mse -> {useInterpolation[0] = true; interpolation_mse[0] = mse;}, 
-				e -> log.warn("could not read interpolation_mse of "+sensorName+"   "+e)
+				e -> Logger.warn("could not read interpolation_mse of "+sensorName+"   "+e)
 				);
 
 		SensorCategory category = SensorCategory.parse(yamlMap.optString("category", "other"));

@@ -5,8 +5,8 @@ import static tsdb.util.AssumptionCheck.throwNulls;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.StationProperties;
@@ -26,7 +26,7 @@ import tsdb.util.iterator.TsIterator;
  */
 public class VirtualRawSource extends RawSource.Abstract {
 	@SuppressWarnings("unused")
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final VirtualPlot virtualPlot;
 	private final String[] schema;

@@ -16,7 +16,7 @@ import tsdb.util.processingchain.ProcessingChain;
  *
  */
 public class EmpiricalIterator extends TsIterator {
-	//private static final Logger log = LogManager.getLogger();
+	//
 
 	private TsIterator input_iterator;
 	private TsIterator compare_iterator;
@@ -57,7 +57,7 @@ public class EmpiricalIterator extends TsIterator {
 	public TsEntry next() {
 		TsEntry element = input_iterator.next();
 		TsEntry compareElement = compare_iterator.next();
-		//log.info("ec "+element.toString()+"  "+element.qualityFlagToString());
+		//Logger.info("ec "+element.toString()+"  "+element.qualityFlagToString());
 		long timestamp = element.timestamp;
 		if(timestamp!= compareElement.timestamp) {
 			throw new RuntimeException("iterator error");
@@ -69,9 +69,9 @@ public class EmpiricalIterator extends TsIterator {
 			if(element.qualityFlag[colIndex]==DataQuality.STEP) {
 				float value = element.data[colIndex];
 				if(maxDiff[colIndex]!=null&&!Float.isNaN(compareElement.data[colIndex])) {
-					//log.info("check " + value + " corr " + (value - refValues[colIndex]) + " cmp " + compareElement.data[colIndex] + " diff " + Math.abs((value - refValues[colIndex])-compareElement.data[colIndex]));
+					//Logger.info("check " + value + " corr " + (value - refValues[colIndex]) + " cmp " + compareElement.data[colIndex] + " diff " + Math.abs((value - refValues[colIndex])-compareElement.data[colIndex]));
 					if(Math.abs((value - refValues[colIndex]) - compareElement.data[colIndex]) <= maxDiff[colIndex]) { // check successful
-						//log.info("OK");
+						//Logger.info("OK");
 						resultQf[colIndex] = DataQuality.EMPIRICAL;
 						result[colIndex] = value;
 					} else { // remains STEP
@@ -83,14 +83,14 @@ public class EmpiricalIterator extends TsIterator {
 					result[colIndex] = value;
 				}
 			} else {
-				//log.info("no "+element);
+				//Logger.info("no "+element);
 				resultQf[colIndex] = element.qualityFlag[colIndex]; // Na, NO or PYSICAL 
 				result[colIndex] = Float.NaN;
 			}
 			//System.out.println(element.qualityFlag[colIndex]+"  "+element.data[colIndex]+":  "+genElement.data[colIndex]+"  "+maxDiff[colIndex]+" -> "+Math.abs(result[colIndex]-genElement.data[colIndex])+"  "+resultQf[colIndex]+"  "+result[colIndex]);
 		}
 		TsEntry r = new TsEntry(timestamp,result,resultQf);
-		//log.info("r "+r);
+		//Logger.info("r "+r);
 		return r;
 	}
 

@@ -2,8 +2,8 @@ package tsdb.graph.processing;
 
 import static tsdb.util.AssumptionCheck.throwNulls;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -20,7 +20,7 @@ import tsdb.util.iterator.TsIterator;
  */
 public class EmpiricalFiltered_NEW extends Continuous.Abstract {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final Continuous source; //not null
 	private final Continuous compareSource; //not null	
@@ -46,7 +46,7 @@ public class EmpiricalFiltered_NEW extends Continuous.Abstract {
 		if(compareSource!=null) {
 			return new EmpiricalFiltered_NEW(tsdb,continuous,compareSource, plotID);
 		} else {
-			log.warn("no compare average source");
+			Logger.warn("no compare average source");
 			return continuous;
 		}
 	}
@@ -71,13 +71,13 @@ public class EmpiricalFiltered_NEW extends Continuous.Abstract {
 		}
 		TsIterator compare_iterator = compareSource.get(start, end);
 		if(compare_iterator==null||!compare_iterator.hasNext()) {
-			log.info("no reference compare iterator");
+			Logger.info("no reference compare iterator");
 			return input_iterator;
 		}		
 		Float[] maxDiff = tsdb.getEmpiricalDiff(source.getSchema());
-		//log.info("maxDiff "+Arrays.toString(maxDiff));
+		//Logger.info("maxDiff "+Arrays.toString(maxDiff));
 		float[] refValues = tsdb.getReferenceValues(stationName,source.getSchema());
-		//log.info("refValues "+Arrays.toString(refValues));
+		//Logger.info("refValues "+Arrays.toString(refValues));
 		EmpiricalIterator empirical_iterator = new EmpiricalIterator(input_iterator, compare_iterator, maxDiff, refValues);
 		return empirical_iterator;
 	}

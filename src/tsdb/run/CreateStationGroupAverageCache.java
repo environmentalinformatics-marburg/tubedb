@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Plot;
 import tsdb.TsDB;
@@ -31,7 +31,7 @@ import tsdb.util.iterator.TsIterator;
  */
 public class CreateStationGroupAverageCache {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public interface CbPrint {
 		public void println(String text);
@@ -41,15 +41,15 @@ public class CreateStationGroupAverageCache {
 	private CbPrint cbPrint;
 
 	public static void main(String[] args) {
-		log.info("create averages...");
+		Logger.info("create averages...");
 		TsDB tsdb = TsDBFactory.createDefault();
 		new CreateStationGroupAverageCache(tsdb).run();
 		tsdb.close();
-		log.info("...end");
+		Logger.info("...end");
 	}
 
 	public CreateStationGroupAverageCache(TsDB tsdb) {
-		this(tsdb,text->log.info(text));
+		this(tsdb,text->Logger.info(text));
 	}
 
 	public CreateStationGroupAverageCache(TsDB tsdb, CbPrint cbPrint) {
@@ -65,7 +65,7 @@ public class CreateStationGroupAverageCache {
 		ContinuousGen continuousGen = QueryPlanGenerators.getContinuousGen(tsdb, DataQuality.STEP);
 
 		for(String group:tsdb.getGeneralStationGroups()) {
-			log.info("create average of group "+group);
+			Logger.info("create average of group "+group);
 			List<String> plotList = tsdb.getStationAndVirtualPlotNames(group).collect(Collectors.toList());
 
 			TreeSet<String> sensorNameSet = new TreeSet<String>(); 
@@ -81,7 +81,7 @@ public class CreateStationGroupAverageCache {
 				}
 				sensorNameSet.addAll(Arrays.asList(sensorNames));
 			}			
-			//log.info(sensorNameSet);
+			//Logger.info(sensorNameSet);
 
 			for(String processingSensorName:sensorNameSet) {
 				Sensor sensor = tsdb.getSensor(processingSensorName);
@@ -89,7 +89,7 @@ public class CreateStationGroupAverageCache {
 					continue;
 				}
 				
-				//log.info(processingSensorName);
+				//Logger.info(processingSensorName);
 
 				long groupMinTimestamp = Long.MAX_VALUE;
 				long groupMaxTimestamp = Long.MIN_VALUE;
@@ -128,7 +128,7 @@ public class CreateStationGroupAverageCache {
 					continue;
 				}
 
-				//log.info(group+"  "+processingSensorName+" ********************************* "+TimeUtil.oleMinutesToLocalDateTime(groupMinTimestamp)+"\t - \t"+TimeUtil.oleMinutesToLocalDateTime(groupMaxTimestamp)+" **************************************************************** "+groupMinTimestamp+"\t-\t"+groupMaxTimestamp);
+				//Logger.info(group+"  "+processingSensorName+" ********************************* "+TimeUtil.oleMinutesToLocalDateTime(groupMinTimestamp)+"\t - \t"+TimeUtil.oleMinutesToLocalDateTime(groupMaxTimestamp)+" **************************************************************** "+groupMinTimestamp+"\t-\t"+groupMaxTimestamp);
 				List<Continuous> sources = new ArrayList<Continuous>();
 				List<Continuous> additions = new ArrayList<Continuous>();
 				for(String plotID:plotList) {
@@ -154,12 +154,12 @@ public class CreateStationGroupAverageCache {
 						if(plot!=null && plot.existData()) {
 							String[] schema = new String[]{processingSensorName};
 							schema = tsdb.supplementSchema(schema, tsdb.includeVirtualSensorNames(plot.getSensorNames()));
-							//log.info(Arrays.toString(schema)+"of "+Arrays.toString(plot.getSensorNames()));
+							//Logger.info(Arrays.toString(schema)+"of "+Arrays.toString(plot.getSensorNames()));
 							Continuous continuous = continuousGen.get(plotID, schema);
 							if(continuous!=null) {
 								Subtraction subtraction = Subtraction.createWithElevationTemperature(tsdb,continuous,plotID);
 								if(subtraction!=null) {
-									//log.info("with ref " + plotID + " " + processingSensorName);
+									//Logger.info("with ref " + plotID + " " + processingSensorName);
 									additions.add(subtraction);
 								}
 								sources.add(continuous);
@@ -167,7 +167,7 @@ public class CreateStationGroupAverageCache {
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
-						log.warn(e);
+						Logger.warn(e);
 					}
 				}
 
@@ -189,12 +189,12 @@ public class CreateStationGroupAverageCache {
 						//tsdb.cacheStorage.writeNew(group, averaged.get(groupMinTimestamp, groupMaxTimestamp));
 						TimestampSeries timestampSeries = it.toTimestampSeries(group);
 						tsdb.streamCache.insertTimestampSeries(timestampSeries);
-					    log.info(group+"/"+processingSensorName+" <- "+averaged.getSourceText());
+					    Logger.info(group+"/"+processingSensorName+" <- "+averaged.getSourceText());
 					} else {
-						log.warn("averages: "+group);
+						Logger.warn("averages: "+group);
 					}
 				} else {
-					log.trace(group+"/"+processingSensorName+" not enough sources for average");
+					Logger.trace(group+"/"+processingSensorName+" not enough sources for average");
 				}
 			}
 			//cbPrint.println(group+" -> "+list);

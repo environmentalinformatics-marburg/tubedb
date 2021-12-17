@@ -3,8 +3,8 @@ package tsdb.loader.ki.type;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.StationProperties;
 import tsdb.util.DataRow;
@@ -18,7 +18,7 @@ import tsdb.util.iterator.TimestampSeries;
  */
 class Loader_wxt extends AbstractLoader {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private enum ProcessingType {
 		NONE,
@@ -72,7 +72,7 @@ class Loader_wxt extends AbstractLoader {
 					resultSchema[schemaIndex] = "LWUR_300";
 					break;
 				default:
-					log.warn("no real name for column "+schemaIndex+"  "+inputSchema[schemaIndex]);
+					Logger.warn("no real name for column "+schemaIndex+"  "+inputSchema[schemaIndex]);
 					resultSchema[schemaIndex] = inputSchema[schemaIndex];
 				}
 				break;
@@ -105,7 +105,7 @@ class Loader_wxt extends AbstractLoader {
 						translateWithProperty(schemaIndex,"SERIAL_PAR02");
 						break;
 					default:
-						log.warn("no real name for column "+schemaIndex+"  "+inputSchema[schemaIndex]);
+						Logger.warn("no real name for column "+schemaIndex+"  "+inputSchema[schemaIndex]);
 						resultSchema[schemaIndex] = inputSchema[schemaIndex];
 					}
 					break;
@@ -136,7 +136,7 @@ class Loader_wxt extends AbstractLoader {
 			if(name!=null) {
 				resultSchema[schemaIndex] = name;	
 			} else {
-				log.warn("no real name for column "+schemaIndex+"  "+inputSchema[schemaIndex]+"  propery "+prop+"    "+sourceInfo);
+				Logger.warn("no real name for column "+schemaIndex+"  "+inputSchema[schemaIndex]+"  propery "+prop+"    "+sourceInfo);
 				resultSchema[schemaIndex] = inputSchema[schemaIndex];
 			}
 		}
@@ -161,7 +161,7 @@ class Loader_wxt extends AbstractLoader {
 					break;
 				}
 				default:
-					log.warn("no real name for column "+schemaIndex+"  "+inputSchema[schemaIndex]);
+					Logger.warn("no real name for column "+schemaIndex+"  "+inputSchema[schemaIndex]);
 					resultSchema[schemaIndex] = inputSchema[schemaIndex];
 				}
 				break;
@@ -176,7 +176,7 @@ class Loader_wxt extends AbstractLoader {
 					break;
 				}
 				default:
-					log.warn("no real name for column "+schemaIndex+"  "+inputSchema[schemaIndex]);
+					Logger.warn("no real name for column "+schemaIndex+"  "+inputSchema[schemaIndex]);
 					resultSchema[schemaIndex] = inputSchema[schemaIndex];
 				}
 				break;
@@ -349,7 +349,7 @@ class Loader_wxt extends AbstractLoader {
 							eventData[schemaIndex] = (entry.data[sourceIndex]*1000f)/calib_coefficient_LWUR_300 + (5.672E-08f*((float)Math.pow(entry.data[pos_T_CNR] + 273.15, 4)));
 							break;							
 						default:
-							log.warn("processingType unknown: "+processingTypes[sourceIndex]);
+							Logger.warn("processingType unknown: "+processingTypes[sourceIndex]);
 							eventData[schemaIndex] = Float.NaN;
 						}						
 					}

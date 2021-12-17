@@ -3,8 +3,8 @@ package tsdb.loader.sa;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
@@ -16,7 +16,7 @@ import tsdb.loader.tsa.TsaImport;
  *
  */
 public class SouthAfricaImport {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) {
 
@@ -28,9 +28,9 @@ public class SouthAfricaImport {
 			DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("C:/timeseriesdatabase_source/sa/south_africa_saws_acs"));
 			for(Path filepath:ds) {
 				if(Files.isDirectory(filepath)) {
-					log.info("read directory "+filepath);
+					Logger.info("read directory "+filepath);
 				}
-				log.info("read "+filepath);
+				Logger.info("read "+filepath);
 				readOneFile(tsdb, filepath);
 			}
 		} catch (IOException e) {
@@ -49,7 +49,7 @@ public class SouthAfricaImport {
 			Path root = Paths.get(TsDBFactory.SOURCE_SA_DAT_PATH);
 			TsaImport.readDirectoryRecursive(tsdb,root);
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 	}
 }

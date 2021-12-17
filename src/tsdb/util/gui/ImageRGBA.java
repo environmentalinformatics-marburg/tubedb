@@ -12,8 +12,8 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import ar.com.hjg.pngj.FilterType;
 import ar.com.hjg.pngj.IImageLine;
@@ -28,7 +28,7 @@ import ar.com.hjg.pngj.PngWriter;
  */
 public class ImageRGBA implements PureImage {
 	@SuppressWarnings("unused")
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	protected final int width;
 	protected final int height;

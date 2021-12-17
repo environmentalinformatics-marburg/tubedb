@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.StationProperties;
 import tsdb.TsDB;
@@ -37,7 +37,7 @@ import tsdb.util.iterator.TimestampSeries;
  */
 public class TimeSeriesLoaderKiLi_manual_tfi {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb; //not null
 
@@ -54,40 +54,40 @@ public class TimeSeriesLoaderKiLi_manual_tfi {
 		try {
 			if(Files.exists(kiliTfiPath)) {
 				DirectoryStream<Path> stream = Files.newDirectoryStream(kiliTfiPath);
-				log.trace("load directory of manual tfi files    "+kiliTfiPath);
+				Logger.trace("load directory of manual tfi files    "+kiliTfiPath);
 				for(Path path:stream) {
 					try {
 						if(!path.toFile().isDirectory()) {
 							String filename = path.getName(path.getNameCount()-1).toString();
 							if(filename.endsWith(".csv")) {
 								if(filename.startsWith("iso_tfi")) {
-									log.trace("load iso tfi  "+path);
+									Logger.trace("load iso tfi  "+path);
 									loadOneFile_structure_kili_iso_tfi(path);
 								} else if(filename.indexOf("_tfi")==4) {
 									String plotID = filename.substring(0, 4);
-									log.trace("load plot tfi  "+plotID+"   from  "+path.getFileName());
+									Logger.trace("load plot tfi  "+plotID+"   from  "+path.getFileName());
 									VirtualPlot virtualPlot = tsdb.getVirtualPlot(plotID);
 									if(virtualPlot!=null) {
 										loadOneFile_structure_kili_tfi(virtualPlot,path);
 									} else {
-										log.warn("unknown plotID: "+plotID);
+										Logger.warn("unknown plotID: "+plotID);
 									}
 								} else {
-									log.warn("no csv tfi file: "+filename);
+									Logger.warn("no csv tfi file: "+filename);
 								}
 								//ascCollectorMap.putIfAbsent(fileKey, path);
 							} else {
-								log.warn("no csv file: "+filename);
+								Logger.warn("no csv file: "+filename);
 							}
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
-						log.error("error in load tfi file: "+e+"  "+path);
+						Logger.error("error in load tfi file: "+e+"  "+path);
 					}
 				}
 
 			} else {
-				log.warn("directory not found: "+kiliTfiPath);
+				Logger.warn("directory not found: "+kiliTfiPath);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -104,10 +104,10 @@ public class TimeSeriesLoaderKiLi_manual_tfi {
 						if(serial==null) {
 							serial = interval.value.get_serial();
 						} else {
-							log.warn("multiple entries");
+							Logger.warn("multiple entries");
 						}
 					} else {
-						log.error("plotIDs not consistent");
+						Logger.error("plotIDs not consistent");
 					}						
 				}
 			}
@@ -135,13 +135,13 @@ public class TimeSeriesLoaderKiLi_manual_tfi {
 					tsdb.streamStorage.insertDataRows(serial, events, start, end, targetSchema);
 					tsdb.sourceCatalog.insert(new SourceEntry(path,serial,start,end,events.size(),timestampSeries.sensorNames, loader.docuTranslation, TsSchema.NO_CONSTANT_TIMESTEP));
 				} else {
-					log.warn("no events inserted: "+path);
+					Logger.warn("no events inserted: "+path);
 				}
 			} else {
-				log.warn("no serial found for tfi: "+virtualPlot.plotID+"   "+path);
+				Logger.warn("no serial found for tfi: "+virtualPlot.plotID+"   "+path);
 			}
 		} else {
-			log.warn("empty file: "+path);
+			Logger.warn("empty file: "+path);
 		}
 	}
 
@@ -184,7 +184,7 @@ public class TimeSeriesLoaderKiLi_manual_tfi {
 					map = tfMap;
 					break;
 				default:
-					log.warn("unknown type "+type);			
+					Logger.warn("unknown type "+type);			
 				}
 
 				if(map!=null) {
@@ -225,10 +225,10 @@ public class TimeSeriesLoaderKiLi_manual_tfi {
 						TimestampSeries timestampSeries = new TimestampSeries(stationID,sensorNames ,mapEntry.getValue());
 						tsdb.streamStorage.insertTimestampSeries(timestampSeries);
 					} else {
-						log.warn("stationID not found of plot "+plotID);	
+						Logger.warn("stationID not found of plot "+plotID);	
 					}
 				} else {
-					log.warn("unknown plotID: "+plotID+"   in  "+filePath);
+					Logger.warn("unknown plotID: "+plotID+"   in  "+filePath);
 				}
 			}
 		}

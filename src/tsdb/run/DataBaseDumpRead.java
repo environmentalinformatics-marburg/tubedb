@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDBFactory;
 import tsdb.streamdb.StreamDB;
@@ -22,7 +22,7 @@ import tsdb.util.DataEntry;
 @Deprecated
 public class DataBaseDumpRead {
 
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	public static void printHelp() {
 		System.out.println("*** database dumb reader ***");
@@ -98,7 +98,7 @@ public class DataBaseDumpRead {
 
 			long timeEndImport = System.currentTimeMillis();
 
-			log.info((timeEndImport-timeStartImport)/1000+" s Import");
+			Logger.info((timeEndImport-timeStartImport)/1000+" s Import");
 
 			dataInput.close();
 

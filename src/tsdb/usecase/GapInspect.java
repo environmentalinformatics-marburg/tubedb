@@ -11,8 +11,8 @@ import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.StationProperties;
@@ -36,7 +36,7 @@ public class GapInspect {
 	int offsetX = 100;
 
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private static class StationGapInfo {
 		public final String stationID;
@@ -61,7 +61,7 @@ public class GapInspect {
 	}
 
 	public void run() {
-		log.info("start");
+		Logger.info("start");
 
 		TsDB tsdb = TsDBFactory.createDefault();
 
@@ -235,9 +235,9 @@ public class GapInspect {
 		}
 
 
-		log.info("gap count "+gapMap.size());
+		Logger.info("gap count "+gapMap.size());
 
-		log.info("end");
+		Logger.info("end");
 	}
 
 }

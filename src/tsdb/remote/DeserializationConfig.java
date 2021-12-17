@@ -2,14 +2,14 @@ package tsdb.remote;
 
 import java.security.Security;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 /**
  * This class helps to configure deserialization.
  */
 public class DeserializationConfig {
-	private static final Logger log = LogManager.getLogger();
+	
 
     /**
      * This filter specifies classes that are allowed for
@@ -47,7 +47,7 @@ public class DeserializationConfig {
         String filter = getSerialFilter();
         if (filter == null) {
         	//System.out.printf("Use the following filter for deserialization:%n%s%n", DEFAULT_DESERIALIZATION_FILTER);
-            log.info("inserting deserialization filter, used on Java 9 or newer only");
+            Logger.info("inserting deserialization filter, used on Java 9 or newer only");
             System.setProperty("jdk.serialFilter", DEFAULT_DESERIALIZATION_FILTER);
         }
     }

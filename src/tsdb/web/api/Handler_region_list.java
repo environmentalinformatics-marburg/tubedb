@@ -8,8 +8,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
 
@@ -26,7 +26,7 @@ import tsdb.web.util.Web;
  *
  */
 public class Handler_region_list extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_region_list(RemoteTsDB tsdb) {
 		super(tsdb, "region_list");
@@ -62,11 +62,11 @@ public class Handler_region_list extends MethodHandler {
 					}
 				}
 			} else {
-				log.error("regions null");
+				Logger.error("regions null");
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}		
 	}

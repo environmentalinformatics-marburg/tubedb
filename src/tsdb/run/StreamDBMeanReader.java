@@ -2,8 +2,8 @@ package tsdb.run;
 
 import java.util.NavigableSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
@@ -11,7 +11,7 @@ import tsdb.streamdb.StreamIterator;
 import tsdb.util.DataEntry;
 
 public class StreamDBMeanReader {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 
@@ -42,17 +42,17 @@ public class StreamDBMeanReader {
 				try {
 					readSeries(stationName,"Ta_200");
 				} catch(Exception e) {
-					log.error(e);
+					Logger.error(e);
 				}
 				if(isValidStation) {
 					station_count++;
 				}
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 		long timeEndImport = System.currentTimeMillis();
-		log.info((timeEndImport-timeStartImport)/1000+" s "+(timeEndImport-timeStartImport)+" ms "+total_count+" total_count    "+series_count+" series_count"+"  "+station_count+" station_count");
+		Logger.info((timeEndImport-timeStartImport)/1000+" s "+(timeEndImport-timeStartImport)+" ms "+total_count+" total_count    "+series_count+" series_count"+"  "+station_count+" station_count");
 	}
 
 	private void readSeries(String stationName, String sensorName) {
@@ -70,7 +70,7 @@ public class StreamDBMeanReader {
 			cnt++;
 			sum+=v;
 		}
-		log.info(sum/cnt);
+		Logger.info(sum/cnt);
 	}
 
 }

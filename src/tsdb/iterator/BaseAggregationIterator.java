@@ -2,8 +2,8 @@ package tsdb.iterator;
 
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.component.Sensor;
@@ -23,7 +23,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class BaseAggregationIterator extends InputProcessingIterator {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final Sensor[] sensors;
 	private final AggregationType[] aggregation;
@@ -80,14 +80,14 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 				if(wind_direction_pos==-1) {
 					wind_direction_pos = i;
 				} else {
-					log.error("just one wind_direction sensor can be aggregated");
+					Logger.error("just one wind_direction sensor can be aggregated");
 				}				
 			}
 			if(aggregation[i]==AggregationType.AVERAGE_WIND_VELOCITY) {
 				if(wind_velocity_pos==-1) {
 					wind_velocity_pos = i;
 				} else {
-					log.error("just one wind_velocity sensor can be aggregated");
+					Logger.error("just one wind_velocity sensor can be aggregated");
 				}				
 			}			
 		}
@@ -96,7 +96,7 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 			if(wind_velocity_pos>-1) {
 				aggregate_wind_direction = true;
 			} else {
-				log.warn("wind_velocity sensor for wind_direction aggregation is missing");
+				Logger.warn("wind_velocity sensor for wind_direction aggregation is missing");
 			}
 		}
 	}	
@@ -167,7 +167,7 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 						}
 						break;
 					default:
-						log.warn("quality not found");
+						Logger.warn("quality not found");
 					}
 				}
 			}
@@ -303,7 +303,7 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 					break;
 				default:
 					resultData[i] = Float.NaN;
-					log.warn("aggration type unknown: "+aggregation[i]);
+					Logger.warn("aggration type unknown: "+aggregation[i]);
 				}							
 			} else {// no entry in this aggregation time period
 				resultData[i] = Float.NaN;

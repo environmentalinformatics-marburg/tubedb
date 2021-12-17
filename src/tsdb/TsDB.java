@@ -11,8 +11,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.component.LoggerType;
 import tsdb.component.Region;
@@ -31,9 +31,8 @@ import tsdb.util.Util;
  *
  */
 public class TsDB implements AutoCloseable {
-	private static final Logger log = LogManager.getLogger();
-
-	public static final String tubedb_version = "1.20.5";
+	
+	public static final String tubedb_version = "1.20.7";
 
 	/**
 	 * map regionName -> Region
@@ -110,7 +109,7 @@ public class TsDB implements AutoCloseable {
 	 * @param configDirectory 
 	 */
 	public TsDB(String databasePath, String cachePath, String streamdbPathPrefix, String configDirectory) {		
-		log.info("TubeDB v"+ TsDB.tubedb_version);		
+		Logger.info("TubeDB v"+ TsDB.tubedb_version);		
 
 		this.regionMap = new TreeMap<String,Region>();
 
@@ -151,17 +150,17 @@ public class TsDB implements AutoCloseable {
 		try {
 			streamStorage.close();
 		} catch(Exception e) {
-			log.error("error in streamStorage.close: "+e);
+			Logger.error("error in streamStorage.close: "+e);
 		}
 		try {
 			streamCache.close();
 		}  catch(Exception e) {
-			log.error("error in streamCache.close: "+e);
+			Logger.error("error in streamCache.close: "+e);
 		}
 		try {
 			sourceCatalog.close();
 		} catch(Exception e) {
-			log.error("error in sourceCatalog.close: "+e);
+			Logger.error("error in sourceCatalog.close: "+e);
 		}
 	}	
 
@@ -200,7 +199,7 @@ public class TsDB implements AutoCloseable {
 		for(int i=0;i<names.length;i++) {
 			sensors[i] = sensorMap.get(names[i]);
 			if(sensors[i]==null) {
-				log.warn("sensor "+names[i]+" not found");
+				Logger.warn("sensor "+names[i]+" not found");
 				if(createMissing) {
 					sensors[i] = new Sensor(names[i]);
 					sensors[i].internal = true; // sensors that do not exist in config are marked as internal
@@ -233,7 +232,7 @@ public class TsDB implements AutoCloseable {
 				if(generalStation!=null) {
 					generalStation.stationList.add(station);
 				} else {
-					log.warn("no general station in "+station.stationID);
+					Logger.warn("no general station in "+station.stationID);
 				}
 			}
 		}
@@ -242,7 +241,7 @@ public class TsDB implements AutoCloseable {
 			if(virtualplot.generalStation != null) {
 				virtualplot.generalStation.virtualPlots.add(virtualplot);
 			} else {
-				log.warn("no general station in "+virtualplot.plotID);
+				Logger.warn("no general station in "+virtualplot.plotID);
 			}
 
 		}
@@ -288,7 +287,7 @@ public class TsDB implements AutoCloseable {
 		for(Station station:getStations()) {
 			for(String alias : station.getAliases()) {
 				if(stationAliasMap.containsKey(alias)) {
-					log.warn("alias already in map: "+alias +" with "+stationAliasMap.get(alias).stationID+" overwrite with "+station.stationID);
+					Logger.warn("alias already in map: "+alias +" with "+stationAliasMap.get(alias).stationID+" overwrite with "+station.stationID);
 				}
 				stationAliasMap.put(alias, station);
 			}
@@ -309,7 +308,7 @@ public class TsDB implements AutoCloseable {
 
 	public void insertStation(Station station, String originConfigFile) {
 		if(stationMap.containsKey(station.stationID)) {
-			log.warn("override station (already exists): " + station.stationID + "  in " + originConfigFile);
+			Logger.warn("override station (already exists): " + station.stationID + "  in " + originConfigFile);
 		}
 		stationMap.put(station.stationID, station);
 	}
@@ -318,7 +317,7 @@ public class TsDB implements AutoCloseable {
 		if(stationMap.containsKey(station.stationID)) {
 			stationMap.put(station.stationID, station);
 		} else {
-			log.warn("station does not exist already no insert: "+station.stationID);			
+			Logger.warn("station does not exist already no insert: "+station.stationID);			
 		}
 	}
 
@@ -357,9 +356,9 @@ public class TsDB implements AutoCloseable {
 	}
 
 	public void insertGeneralStation(GeneralStation generalStation, String originConfigFile) {
-		//log.info("insert: " + generalStation);
+		//Logger.info("insert: " + generalStation);
 		if(generalStationExists(generalStation.name)) {
-			log.warn("override general station (already exists): " + generalStation.name + "  in " + originConfigFile);
+			Logger.warn("override general station (already exists): " + generalStation.name + "  in " + originConfigFile);
 		}
 		generalStationMap.put(generalStation.name, generalStation);
 	}
@@ -392,7 +391,7 @@ public class TsDB implements AutoCloseable {
 	public Stream<GeneralStation> getGeneralStationsByRegion(String regionName) {
 		return generalStationMap.values().stream().filter(generalStation -> {
 			if(generalStation.region == null) {
-				log.warn("missing region for " + generalStation );
+				Logger.warn("missing region for " + generalStation );
 				return false;
 			}
 			return regionName.equals(generalStation .region.name);
@@ -425,7 +424,7 @@ public class TsDB implements AutoCloseable {
 
 	public void insertSensor(Sensor sensor) {
 		if(sensorExists(sensor.name)) {
-			log.warn("override sensor (already exists): "+sensor.name);
+			Logger.warn("override sensor (already exists): "+sensor.name);
 		}
 		sensorMap.put(sensor.name, sensor);
 		if(sensor.isAggregable()) {
@@ -464,7 +463,7 @@ public class TsDB implements AutoCloseable {
 
 	public void insertLoggerType(LoggerType loggertype, String originConfigFile) {
 		if(loggerTypeExists(loggertype.typeName)) {
-			log.warn("override logger type (already exists): " + loggertype.typeName + "  in " + originConfigFile);
+			Logger.warn("override logger type (already exists): " + loggertype.typeName + "  in " + originConfigFile);
 		}
 		loggerTypeMap.put(loggertype.typeName, loggertype);
 	}
@@ -485,7 +484,7 @@ public class TsDB implements AutoCloseable {
 
 	public void insertVirtualPlot(VirtualPlot virtualPlot, String originConfigFile) {
 		if(virtualPlotExists(virtualPlot.plotID)) {
-			log.warn("overwrite virtual plot (already exists): " + virtualPlot.plotID + "  in " + originConfigFile);
+			Logger.warn("overwrite virtual plot (already exists): " + virtualPlot.plotID + "  in " + originConfigFile);
 		}
 		virtualplotMap.put(virtualPlot.plotID, virtualPlot);
 	}
@@ -508,7 +507,7 @@ public class TsDB implements AutoCloseable {
 
 	public void insertIgnoreSensorName(String sensorName) {
 		if(containsIgnoreSensorName(sensorName)) {
-			log.warn("sensor name already ignored: "+sensorName);
+			Logger.warn("sensor name already ignored: "+sensorName);
 		}
 		ignoreSensorNameSet.add(sensorName);
 	}
@@ -526,7 +525,7 @@ public class TsDB implements AutoCloseable {
 
 	public void insertRegion(Region region) {
 		if(regionExists(region.name)) {
-			log.warn("overwrite region (already exists): "+region.name);
+			Logger.warn("overwrite region (already exists): "+region.name);
 			//new Throwable().printStackTrace();
 		}
 		regionMap.put(region.name, region);
@@ -581,13 +580,13 @@ public class TsDB implements AutoCloseable {
 	public void insertRawSensor(String sensorName) { // not used
 		Sensor sensor = getSensor(sensorName);
 		if(sensor==null) {
-			log.trace("created new sensor "+sensorName);
+			Logger.trace("created new sensor "+sensorName);
 			sensor = new Sensor(sensorName);
 			sensor.internal = true; // sensors that do not exist in config are marked as internal
 			insertSensor(sensor);
 		}			
 		if(baseAggregationExists(sensorName)) {
-			log.error("base aggregation for raw exists: "+sensorName);
+			Logger.error("base aggregation for raw exists: "+sensorName);
 		}
 		sensor.setAllAggregations(AggregationType.NONE);		
 	}
@@ -734,7 +733,7 @@ public class TsDB implements AutoCloseable {
 				}
 			}
 		}
-		//log.info("ref " + Arrays.toString(result));
+		//Logger.info("ref " + Arrays.toString(result));
 		return result;
 	}
 
@@ -820,7 +819,7 @@ public class TsDB implements AutoCloseable {
 						}
 					}
 					if(!found) {
-						log.warn("no source for target "+list.target);
+						Logger.warn("no source for target "+list.target);
 					}
 				}
 			}
@@ -834,14 +833,14 @@ public class TsDB implements AutoCloseable {
 							additionalSensorNames.add(sensorName);
 							schemaSet.add(sensorName);
 						} else {
-							log.warn("dependency for "+list.target+" not found "+sensorName+"  in schema "+Arrays.toString(schema)+" of full   "+Arrays.toString(availableSchema));
+							Logger.warn("dependency for "+list.target+" not found "+sensorName+"  in schema "+Arrays.toString(schema)+" of full   "+Arrays.toString(availableSchema));
 						}
 					}
 				}
 			}
 
 			if(additionalSensorNames.size()>prevAddSize) {
-				log.trace("round "+additionalSensorNames.size()+"  "+Arrays.toString(schema)+" -> "+schemaSet);
+				Logger.trace("round "+additionalSensorNames.size()+"  "+Arrays.toString(schema)+" -> "+schemaSet);
 			}
 		}
 
@@ -872,7 +871,7 @@ public class TsDB implements AutoCloseable {
 	public void insertLabeledProperty(LabeledProperty property) {
 		Station station = getStation(property.station);
 		if(station==null) {
-			log.warn("station not found property not inserted: "+property);
+			Logger.warn("station not found property not inserted: "+property);
 		} else {
 			station.labeledProperties.insert(property);
 		}
@@ -880,13 +879,13 @@ public class TsDB implements AutoCloseable {
 
 	public String[] getSensorNamesOfPlotWithVirtual(String plotID) {
 		if(plotID==null) {
-			log.warn("plotID null");
+			Logger.warn("plotID null");
 			return null;
 		}
 		int sep = plotID.indexOf(':');
 		if(sep>0) {
 			String stationID = plotID.substring(sep+1);
-			log.info("stationID "+stationID);
+			Logger.info("stationID "+stationID);
 			Station station = getStation(stationID);
 			if(station!=null) {
 				return includeVirtualSensorNames(station.getSensorNames());
@@ -902,7 +901,7 @@ public class TsDB implements AutoCloseable {
 			return includeVirtualSensorNames(station.getSensorNames());
 
 		}
-		log.warn("plotID not found "+plotID);
+		Logger.warn("plotID not found "+plotID);
 		return null;
 	}
 
@@ -917,18 +916,18 @@ public class TsDB implements AutoCloseable {
 			String[] source = sensor.raw_source;
 			if(source != null) {
 				if(source.length == 0) {
-					log.warn("source empty");
+					Logger.warn("source empty");
 				} else {
-					//log.info("raw_source "+Arrays.toString(sensor.raw_source)+" -> "+sensor.name);
+					//Logger.info("raw_source "+Arrays.toString(sensor.raw_source)+" -> "+sensor.name);
 					raw_copy_list_list.add(VirtualCopyList.of(sensor.raw_source, sensor.name));
 				}
 			}
 			String[] dependency = sensor.dependency;
 			if(dependency != null) {
 				if(dependency.length == 0) {
-					log.warn("dependency empty");
+					Logger.warn("dependency empty");
 				} else {
-					//log.info("dependency "+Arrays.toString(sensor.dependency)+" -> "+sensor.name);
+					//Logger.info("dependency "+Arrays.toString(sensor.dependency)+" -> "+sensor.name);
 					sensor_dependency_list_list.add(VirtualCopyList.of(sensor.dependency, sensor.name));
 				}
 			}
@@ -994,12 +993,12 @@ public class TsDB implements AutoCloseable {
 			}
 		}
 		if(!waitingSensors.isEmpty()) {
-			log.warn("dependencies not fulfilled for "+Arrays.toString(waitingSensors.stream().map(s->s.name).toArray())+"  in  "+Arrays.toString(schema));
+			Logger.warn("dependencies not fulfilled for "+Arrays.toString(waitingSensors.stream().map(s->s.name).toArray())+"  in  "+Arrays.toString(schema));
 			for(Sensor s:waitingSensors) {
 				includedSensors.add(s.name);
 			}
 		}
-		//log.info("sort "+Arrays.toString(schema)+"   ->   "+includedSensors.toString());
+		//Logger.info("sort "+Arrays.toString(schema)+"   ->   "+includedSensors.toString());
 		return this.getSensors(includedSensors.toArray(new String[0]));
 	}	
 }

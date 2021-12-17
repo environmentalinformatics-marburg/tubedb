@@ -23,8 +23,8 @@ import jakarta.servlet.SessionCookieConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.io.Connection;
 import org.eclipse.jetty.security.ConstraintMapping;
@@ -78,7 +78,7 @@ import tsdb.web.api.TsDBExportAPIHandler;
  *
  */
 public class Main {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private static final long DATA_TRANSFER_TIMEOUT_MILLISECONDS = 2*60*60*1000; // set timeout to 2 hours
 
@@ -173,7 +173,7 @@ public class Main {
 
 	public static void run(RemoteTsDB tsdb) throws Exception {
 		/*System.getProperties().forEach((key, value) -> {
-			log.info(key.toString() + "  |" + value.toString() + "|");
+			Logger.info(key.toString() + "  |" + value.toString() + "|");
 		});*/
 
 		boolean use_https = TsDBFactory.WEB_SERVER_HTTPS;
@@ -244,7 +244,7 @@ public class Main {
 		mod.setHandler(gzipHandler);*/
 		RequestLogHandler requestLogHandler = new RequestLogHandler();
 		requestLogHandler.setRequestLog((Request request, Response response)->{
-			log.trace("*** request   "+request.getRequestURL()+"  "+request.getQueryString());
+			Logger.trace("*** request   "+request.getRequestURL()+"  "+request.getQueryString());
 		});
 		//requestLogHandler.setHandler(gzipHandler); // GzipHandler (of new Jetty version?) breaks network text output
 		requestLogHandler.setHandler(contextCollection);
@@ -285,7 +285,7 @@ public class Main {
 
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 		System.out.println();
 		System.out.println("Stop web server:");
@@ -311,7 +311,7 @@ public class Main {
 		try {
 			userStore.start();
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 		return userStore;
 	}
@@ -334,7 +334,7 @@ public class Main {
 				String ip = ipReader.get(row);
 				String user = userReader.get(row);
 				if(ipMap.containsKey(ip)) {
-					log.warn("overwrite existing entry of"+ip+"  "+ipMap.get(ip)+" with "+user+"    in "+REALM_IP_CSV_FILENAME);
+					Logger.warn("overwrite existing entry of"+ip+"  "+ipMap.get(ip)+" with "+user+"    in "+REALM_IP_CSV_FILENAME);
 				}
 				ipMap.put(ip, user);
 			}
@@ -487,7 +487,7 @@ public class Main {
 			}
 			TimeSeriesPainterGraphics2D.setIndexedColors("round_rainbow",indexedColors);
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}	
 
 
@@ -502,7 +502,7 @@ public class Main {
 			}
 			TimeSeriesPainterGraphics2D.setIndexedColors("rainbow",indexedColors);
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 
 

@@ -10,8 +10,8 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDBFactory;
 import tsdb.streamdb.ChunkMeta;
@@ -31,7 +31,7 @@ public class DataBaseDumpWrite {
 	public final static int TIME_SERIES_STREAM_HEADER_MARKER = 0x54535348; //TSSH
 	public final static int TIME_SERIES_STREAM_ENTRY_MARKER = 0x54535345;  //TSSE
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) throws IOException {
 
@@ -114,30 +114,30 @@ public class DataBaseDumpWrite {
 			}
 
 			long timeEndExport = System.currentTimeMillis();
-			log.info((timeEndExport-timeStartExport)/1000+" s Export");
+			Logger.info((timeEndExport-timeStartExport)/1000+" s Export");
 
 			System.out.println("db  "+dbValues+ " values in "+dbStationCount+" stations and "+dbSensorCount+" sensors and "+dbChunkCount+" chunks");
 
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 
 		try {
 			streamdb.close();
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 
 		try {
 			dataOutput.close();
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 
 		try {
 			fileOutputStream.close();
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 
 	}

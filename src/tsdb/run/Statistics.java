@@ -2,8 +2,8 @@ package tsdb.run;
 
 import java.util.Iterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.GeneralStation;
 import tsdb.TsDB;
@@ -18,7 +18,7 @@ import tsdb.util.TsEntry;
 import tsdb.util.iterator.TsIterator;
 
 public class Statistics {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private static final String[] generalStationNames = new String[]{"AEG", "AEW", "HEG", "HEW", "SEG", "SEW"};
 	//private static final String[] generalStationNames = new String[]{"SEG"};
@@ -73,19 +73,19 @@ public class Statistics {
 							String[] plotColumnNames = tsdb.supplementSchema(plotID, columnNames);
 							
 							if(tsdb.getValidSchema(plotID, plotColumnNames).length>0) {
-								//log.info(plotID+"  "+Arrays.toString(plotColumnNames));
+								//Logger.info(plotID+"  "+Arrays.toString(plotColumnNames));
 								try {								
 									Node node = QueryPlan.plot(tsdb, plotID, plotColumnNames, aggregationInterval, dataQuality, interpolated);
 									TsIterator it = node.get(TimeUtil.ofDateStartHour(year), TimeUtil.ofDateEndHour(year));
 									if(it!=null) {
-										//log.info(it);
+										//Logger.info(it);
 										int whole_count = 0;
 										int real_count = 0;
 										int interpolated_count = 0;
 										while(it.hasNext()) {										
 											TsEntry e = it.next();
 											whole_count++;
-											//log.info(e);
+											//Logger.info(e);
 											if(Float.isFinite(e.data[0])) {
 												if(e.interpolated!=null && e.interpolated[0]) {
 													interpolated_count++;
@@ -102,7 +102,7 @@ public class Statistics {
 										csv.writeLong(real_count);
 										csv.writeLong(interpolated_count);
 										csv.finishRow();
-										log.info(plotID+"/"+sensorName+":"+year+"  "+whole_count+"  "+real_count+"  "+interpolated_count);
+										Logger.info(plotID+"/"+sensorName+":"+year+"  "+whole_count+"  "+real_count+"  "+interpolated_count);
 										summary_plot_count++;
 										summary_whole_count += whole_count;
 										summary_real_count += real_count;
@@ -110,7 +110,7 @@ public class Statistics {
 									}
 								} catch(Exception e) {
 									//e.printStackTrace();
-									log.warn(plotID+"/"+sensorName+"  "+e);
+									Logger.warn(plotID+"/"+sensorName+"  "+e);
 								}
 							}
 						}
@@ -130,7 +130,7 @@ public class Statistics {
 			csvSummary.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(e);
+			Logger.error(e);
 		} finally {
 			tsdb.close();
 		}

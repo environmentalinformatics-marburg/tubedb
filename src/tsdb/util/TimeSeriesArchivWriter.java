@@ -8,8 +8,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.NavigableSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.mapdb.DataOutput2;
 
 import tsdb.TsDB;
@@ -23,7 +23,7 @@ import tsdb.util.iterator.TimestampSeries;
  *
  */
 public class TimeSeriesArchivWriter {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	final static String TOC_HEAD = "Time_Series_Archiv_v_1_0_0";
 
@@ -154,20 +154,20 @@ public class TimeSeriesArchivWriter {
 					for(String sensorName:sensorNames) {
 						StreamIterator it = tsdb.streamStorage.getRawSensorIterator(stationName, sensorName, null, null);
 						if(it!=null&&it.hasNext()) {
-							//log.info(it);
+							//Logger.info(it);
 							tsaWriter.writeStreamIterator(it);
 						}
 					}
 				} catch(Exception e) {
-					log.error(e);
+					Logger.error(e);
 				}
 			}
 			tsaWriter.close();
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 		long timeEndImport = System.currentTimeMillis();
-		log.info((timeEndImport-timeStartImport)/1000+" s Export");
+		Logger.info((timeEndImport-timeStartImport)/1000+" s Export");
 
 	}
 

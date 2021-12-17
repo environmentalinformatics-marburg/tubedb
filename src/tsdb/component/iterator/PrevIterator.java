@@ -1,14 +1,14 @@
 package tsdb.component.iterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.TsEntry;
 import tsdb.util.TsSchema;
 import tsdb.util.iterator.TsIterator;
 
 public class PrevIterator extends PrevLookaheadIterator {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final int len;
 	private float[] prevValue;

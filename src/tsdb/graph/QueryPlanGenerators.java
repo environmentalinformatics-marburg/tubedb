@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Plot;
 import tsdb.Station;
@@ -55,7 +55,7 @@ import tsdb.util.Mutators;
 import tsdb.util.Util;
 
 public final class QueryPlanGenerators {
-	private static final Logger log = LogManager.getLogger();	
+		
 	private QueryPlanGenerators(){} 
 
 	/**
@@ -66,7 +66,7 @@ public final class QueryPlanGenerators {
 	 */
 	public static NodeGen getStationGen(TsDB tsdb, DataQuality dataQuality) {
 		return (String stationID, String[] schema)->{
-			//log.info("gen "+stationID+"  "+Arrays.toString(schema));
+			//Logger.info("gen "+stationID+"  "+Arrays.toString(schema));
 			Station station = tsdb.getStation(stationID);
 			if(station==null) {
 				throw new RuntimeException("station not found: "+stationID);
@@ -117,7 +117,7 @@ public final class QueryPlanGenerators {
 	 */
 	public static Node elementRawCopy(TsDB tsdb, Node source) {
 		String[] schema = source.getSchema();
-		//log.info("elementRawCopy schema " + Arrays.toString(schema));
+		//Logger.info("elementRawCopy schema " + Arrays.toString(schema));
 		if(Util.containsOneString(schema, tsdb.raw_copy_sensor_names)) {
 			List<Action> actions = new ArrayList<>();
 			for(VirtualCopyList p:tsdb.raw_copy_lists) { 
@@ -143,11 +143,11 @@ public final class QueryPlanGenerators {
 					}
 					counter++;
 					if(counter>100) {
-						log.error("elementRawCopy: could not reorder copy actions");
+						Logger.error("elementRawCopy: could not reorder copy actions");
 						break;
 					}
 				}
-				//log.info(finalActions);
+				//Logger.info(finalActions);
 				source = ElementRawCopy.of(source, finalActions.toArray(new Action[0]));
 			}
 		}
@@ -168,7 +168,7 @@ public final class QueryPlanGenerators {
 				String[] realSchema = Util.getSensorNamesWithoutRefs(schema);
 				base = BaseFactory.of(tsdb, plotID, realSchema, stationGen);
 			} catch(Exception e) {				
-				log.warn(e);
+				Logger.warn(e);
 				e.printStackTrace();
 				return null;
 			}
@@ -177,7 +177,7 @@ public final class QueryPlanGenerators {
 			}
 			Continuous continuous = Continuous.of(base);
 			if(dataQuality.isStep()) {
-				//log.info("NocCheck");
+				//Logger.info("NocCheck");
 				continuous = NocCheck.of(tsdb, continuous);
 			}
 			if(DataQuality.EMPIRICAL==dataQuality) {
@@ -211,7 +211,7 @@ public final class QueryPlanGenerators {
 		try {
 			int iTarget = Util.getIndexInArray(sensor.name, schema);
 
-			//log.info("parse formula: "+func);
+			//Logger.info("parse formula: "+func);
 			Formula formula_org = FormulaBuilder.parseFormula(func);
 			HashMap<String, Integer> sensorMap = new HashMap<String, Integer>();
 			String[] dependencies = sensor.dependency;
@@ -220,7 +220,7 @@ public final class QueryPlanGenerators {
 					String dep = dependencies[i];
 					int pos = Util.getIndexInArray(dep, schema);
 					if(pos<0) {
-						log.warn("dependency not found: "+dep);
+						Logger.warn("dependency not found: "+dep);
 					} else {
 						sensorMap.put(dep, pos);
 						String dependencyName = "dependency"+(i+1);
@@ -228,25 +228,25 @@ public final class QueryPlanGenerators {
 					}
 				}
 			}
-			//log.info(sensorMap);
+			//Logger.info(sensorMap);
 			Environment env = plot == null ? new Environment(sensorMap) : new PlotEnvironment(plot, sensorMap);
 			Formula formula = formula_org.accept(new FormulaResolveUnifyVisitor(env));
 			try {
 				FormulaJavaVisitor v = new FormulaJavaVisitor(env);
-				//log.info("formula: "+formula.accept(v));
+				//Logger.info("formula: "+formula.accept(v));
 			} catch(Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 			int[] varIndices = formula.accept(new FormulaCollectVarVisitor()).getDataVarIndices(env);
 			int[] unsafeVarIndices = formula.accept(new FormulaCollectUnsafeVarVisitor()).getDataVarIndices(env);
-			//log.info("----");
-			//log.info(Arrays.toString(varIndices)+"    "+Arrays.toString(unsafeVarIndices));
+			//Logger.info("----");
+			//Logger.info(Arrays.toString(varIndices)+"    "+Arrays.toString(unsafeVarIndices));
 			Computation computation = formula.accept(new FormulaCompileVisitor(env));
-			//log.info(computation.toString());
+			//Logger.info(computation.toString());
 			return Mutators.getMutator(computation, iTarget, unsafeVarIndices);
 		} catch(Exception e) {
 			e.printStackTrace();
-			log.error("could not create mutator: "+func+"    "+e);
+			Logger.error("could not create mutator: "+func+"    "+e);
 			return null;
 		}
 	}
@@ -310,7 +310,7 @@ public final class QueryPlanGenerators {
 				mutators.add(mutator);
 			}
 		}
-		//log.info("funcs "+mutators.size()+"     "+funcs.toString());
+		//Logger.info("funcs "+mutators.size()+"     "+funcs.toString());
 		return Mutators.bundle(mutators);
 	}
 }

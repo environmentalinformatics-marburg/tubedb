@@ -8,8 +8,8 @@ import java.rmi.registry.Registry;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.UnicastRemoteObject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
@@ -21,16 +21,16 @@ import tsdb.TsDBFactory;
  */
 public class StartServerTsDB {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) throws RemoteException {
 		try {
 			DeserializationConfig.setDeserializationFilterIfNecessary(); // serialization filter is applied to Java 9 or newer
 		} catch(Exception e) {
-			log.warn(e);
+			Logger.warn(e);
 		}
 
-		log.info("open database...");
+		Logger.info("open database...");
 		TsDB tsdb = TsDBFactory.createDefault();
 		ServerTsDB servertsdb = new ServerTsDB(tsdb);
 		RemoteTsDB remoteTsDB = servertsdb;
@@ -66,7 +66,7 @@ public class StartServerTsDB {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		log.info("server IP is " + hostname);
+		Logger.info("server IP is " + hostname);
 
 		//if(hostname.equals("127.0.1.1")) {
 		final String localhost_prefix = "127";
@@ -76,24 +76,24 @@ public class StartServerTsDB {
 			if(ip!=null) {
 				hostname = ip;
 			}
-			log.info("set server IP to " + hostname);
+			Logger.info("set server IP to " + hostname);
 			System.setProperty("java.rmi.server.hostname", hostname);
 		}		
 
 		String server_url = "rmi://"+hostname+":"+RemoteTsDBFactory.RMI_SERVER_PORT+"/"+RemoteTsDBFactory.RMI_SERVER_NAME;
-		log.info("server url: "+server_url);
+		Logger.info("server url: "+server_url);
 
 		RemoteServer.setLog(System.out);
 		Thread.setDefaultUncaughtExceptionHandler((t,e) -> System.out.println(e));
 
 
-		log.info("create registry...");
+		Logger.info("create registry...");
 		Registry registry = LocateRegistry.createRegistry(RemoteTsDBFactory.RMI_REGISTRY_PORT);
-		log.info("bind remote...");
+		Logger.info("bind remote...");
 		RemoteTsDB stub = (RemoteTsDB) UnicastRemoteObject.exportObject( remoteTsDB, 0 ); 
 		//registry.rebind(server_url, stub);
 		registry.rebind(RemoteTsDBFactory.RMI_SERVER_NAME, stub);
-		log.info("ready...");
+		Logger.info("ready...");
 
 
 

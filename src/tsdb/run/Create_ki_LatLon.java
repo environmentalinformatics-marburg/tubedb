@@ -11,7 +11,7 @@ import tsdb.TsDBFactory;
 import tsdb.VirtualPlot;
 
 public class Create_ki_LatLon {	
-	//private static final Logger log = LogManager.getLogger();
+	//
 
 	public static void main(String[] args) throws FileNotFoundException {
 

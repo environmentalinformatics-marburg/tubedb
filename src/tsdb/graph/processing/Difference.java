@@ -2,8 +2,8 @@ package tsdb.graph.processing;
 
 import static tsdb.util.AssumptionCheck.throwNulls;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -20,7 +20,7 @@ import tsdb.util.iterator.TsIterator;
  */
 public class Difference extends Continuous.Abstract {
 	
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	private final Continuous source;
 	private final Continuous compareSource;
@@ -62,7 +62,7 @@ public class Difference extends Continuous.Abstract {
 		TsIterator compare_iterator = compareSource.get(start, end);
 		//TimeSeriesIterator compare_iterator = new ProjectionIterator(compareSource.get(start, end),source.getSchema());
 		if(compare_iterator==null||!compare_iterator.hasNext()) {
-			log.warn("no compare iterator");
+			Logger.warn("no compare iterator");
 			return null;
 		}
 		float[] refValues = tsdb.getReferenceValues(stationName,source.getSchema());

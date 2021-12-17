@@ -15,8 +15,8 @@ import java.time.temporal.WeekFields;
 import java.util.Comparator;
 import java.util.Locale;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 /**
  * This class converts between date and time systems and keeps timestamp info from a UDBF-File.
@@ -28,7 +28,7 @@ public final class TimeUtil implements Serializable {
 	private TimeUtil(){}
 
 	private static final long serialVersionUID = 4232805611076305334L;
-	private static final Logger log = LogManager.getLogger();	
+		
 
 	public static final LocalDateTime OLE_AUTOMATION_TIME_START = LocalDateTime.of(1899,12,30,0,0);
 
@@ -236,7 +236,7 @@ public final class TimeUtil implements Serializable {
 			minute = 10*(timeText.charAt(3)-'0')+(timeText.charAt(4)-'0');
 			second = 10*(timeText.charAt(6)-'0')+(timeText.charAt(7)-'0');
 		} else {
-			log.trace("no time at "+dateText+"  -> set time to 12:00:00");
+			Logger.trace("no time at "+dateText+"  -> set time to 12:00:00");
 			hour = 12;
 			minute = 00;
 			second = 00;
@@ -592,7 +592,7 @@ public final class TimeUtil implements Serializable {
 					}
 				}
 			case YEAR:
-				log.warn("correct month for end date not checked");
+				Logger.warn("correct month for end date not checked");
 				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-01T00:00"));
 				try {
 					return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-31T23:00"));
@@ -623,11 +623,11 @@ public final class TimeUtil implements Serializable {
 			case WEEK:
 				throw new RuntimeException("week aggregation can not be applied to shortened end date");
 			case MONTH:
-				log.warn("correct day for end date not checked");
+				Logger.warn("correct day for end date not checked");
 				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T00:00"));
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T23:00"));
 			case YEAR:
-				log.warn("correct month and day for end date not checked");
+				Logger.warn("correct month and day for end date not checked");
 				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T00:00"));
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T23:00"));
 			default:
@@ -641,15 +641,15 @@ public final class TimeUtil implements Serializable {
 			case HOUR:
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+":00"));
 			case DAY:
-				log.warn("correct hour for end date not checked");
+				Logger.warn("correct hour for end date not checked");
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+":00"));
 			case WEEK:
 				throw new RuntimeException("week aggregation can not be applied to shortened end date");
 			case MONTH:
-				log.warn("correct day and hour for end date not checked");
+				Logger.warn("correct day and hour for end date not checked");
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+":00"));
 			case YEAR:
-				log.warn("correct month, day and hour for end date not checked");
+				Logger.warn("correct month, day and hour for end date not checked");
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+":00"));
 			default:
 				throw new RuntimeException("unknown aggregation");
@@ -660,18 +660,18 @@ public final class TimeUtil implements Serializable {
 			case RAW:
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text));
 			case HOUR:
-				log.warn("correct minute for end date not checked");
+				Logger.warn("correct minute for end date not checked");
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text));
 			case DAY:
-				log.warn("correct hour and minute for end date not checked");
+				Logger.warn("correct hour and minute for end date not checked");
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text));
 			case WEEK:
 				throw new RuntimeException("week aggregation can not be applied to shortened end date");
 			case MONTH:
-				log.warn("correct day, hour and minute for end date not checked");
+				Logger.warn("correct day, hour and minute for end date not checked");
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text));
 			case YEAR:
-				log.warn("correct month, day, hour and minute for end date not checked");
+				Logger.warn("correct month, day, hour and minute for end date not checked");
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text));
 			default:
 				throw new RuntimeException("unknown aggregation");

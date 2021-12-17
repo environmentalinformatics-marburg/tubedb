@@ -1,7 +1,7 @@
 package tsdb.usecase;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
@@ -15,7 +15,7 @@ import tsdb.util.iterator.TsIterator;
 
 @SuppressWarnings("unused")
 public class TestingGroupAverageSource_NEW {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) {
 
@@ -36,7 +36,7 @@ public class TestingGroupAverageSource_NEW {
 				TsEntry e = it.next();
 				System.out.println(e);
 			}
-			log.info(it.getProcessingChain().getText());
+			Logger.info(it.getProcessingChain().getText());
 		}
 
 	}

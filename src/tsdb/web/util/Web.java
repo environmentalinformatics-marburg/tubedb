@@ -8,8 +8,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.server.Authentication.User;
 
@@ -17,10 +15,9 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
 
 public class Web {
-	//private static final Logger log = LogManager.getLogger();
 
-	public static final Marker webMarker = MarkerManager.getMarker("web");
-	public static final Marker requestMarker = MarkerManager.getMarker("request").addParents(webMarker);
+	public static final String WEB_MARKER = "web";
+	public static final String REQUEST_MARKER = "request";	
 	
 	public static final String ROLE_ADMIN = "admin";
 	
@@ -148,7 +145,7 @@ public class Web {
 		if(userIdentity.isUserInRole(ROLE_ADMIN, null)) {
 			return true;
 		}
-		//log.info("check "+region+"   "+userIdentity.isUserInRole(region, null)+"   "+userIdentity);
+		//Logger.info("check "+region+"   "+userIdentity.isUserInRole(region, null)+"   "+userIdentity);
 		return userIdentity.isUserInRole(region, null);
 	}
 	

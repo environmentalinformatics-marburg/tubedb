@@ -1,7 +1,7 @@
 package tsdb.util.iterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.DataQuality;
 import tsdb.util.TsEntry;
@@ -13,7 +13,7 @@ import tsdb.util.TsEntry;
  */
 public class LowQualityToNanIterator extends InputIterator {
 	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private DataQuality targetDataQuality;
 
@@ -58,7 +58,7 @@ public class LowQualityToNanIterator extends InputIterator {
 				}
 				break;
 			default:
-				log.warn("flag unknown: "+targetDataQuality);	
+				Logger.warn("flag unknown: "+targetDataQuality);	
 			}
 			if(isValid) {
 				resultData[i] = data[i]; 
@@ -67,8 +67,8 @@ public class LowQualityToNanIterator extends InputIterator {
 			}
 		}
 		TsEntry f = new TsEntry(next.timestamp,resultData,qualityFlag);
-		//log.info("e "+next+" "+next.qualityFlagToString());
-		//log.info("f "+f+" "+f.qualityFlagToString());
+		//Logger.info("e "+next+" "+next.qualityFlagToString());
+		//Logger.info("f "+f+" "+f.qualityFlagToString());
 		return f;
 	}
 }

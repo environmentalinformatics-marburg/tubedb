@@ -3,8 +3,8 @@ package tsdb.run;
 import java.util.ArrayList;
 import java.util.NavigableSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
@@ -13,7 +13,7 @@ import tsdb.streamdb.StreamStorageStreamDB;
 import tsdb.util.DataEntry;
 
 public class StreamDBDataWriter {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 
@@ -58,16 +58,16 @@ public class StreamDBDataWriter {
 						}
 					} catch(Exception e) {
 						e.printStackTrace();
-						log.error(e);
+						Logger.error(e);
 					}
 				}
 			} catch (Exception e) {
-				log.error(e);
+				Logger.error(e);
 			}
 			long timeEndImport = System.currentTimeMillis();
-			log.info((timeEndImport-timeStartImport)/1000+" s Export");
+			Logger.info((timeEndImport-timeStartImport)/1000+" s Export");
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		} finally {
 			target.close();
 		}

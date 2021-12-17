@@ -21,8 +21,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -52,7 +52,7 @@ import tsdb.web.util.Web;
  */
 public class TsDBExportAPIHandler extends AbstractHandler {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final RemoteTsDB tsdb;
 
@@ -89,13 +89,13 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 				}
 			}
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		log.info(Web.requestMarker,Web.getRequestLogString("export", target, baseRequest));
+		Logger.tag(Web.REQUEST_MARKER).info(Web.getRequestLogString("export", target, baseRequest));
 
 		//response.setHeader("Server", "");
 		//response.setHeader("Date", null);
@@ -104,10 +104,10 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 		response.setContentType("text/plain;charset=utf-8");
 
 		HttpSession session = request.getSession();
-		log.info("export session id " + session.getId());
+		Logger.info("export session id " + session.getId());
 		ExportModel model = (ExportModel) session.getAttribute("ExportModel");
 		if(model == null) {
-			log.info("create new model");
+			Logger.info("create new model");
 			model = new ExportModel();
 			session.setAttribute("ExportModel", model);
 			resetModel(model, Web.getUserIdentity(baseRequest));
@@ -131,7 +131,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 				lines.add(line);
 				line = reader.readLine();
 			}
-			log.info("lines " + lines);
+			Logger.info("lines " + lines);
 			ret = apply_plots(response.getWriter(),model,lines);
 			break;
 		}
@@ -143,7 +143,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 				lines.add(line);
 				line = reader.readLine();
 			}
-			log.info("lines " + lines);
+			Logger.info("lines " + lines);
 			ret = apply_sensors(response.getWriter(),model,lines);
 			break;
 		}
@@ -160,7 +160,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 				long id = fromJsonID(request.getParameter("id"));
 				ret = handle_create_get_output(response,model,id);
 			} catch(Exception e) {
-				log.error(e);
+				Logger.error(e);
 			}
 			break;
 		}
@@ -169,7 +169,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 				long id = Long.parseLong(request.getParameter("id"));			
 				ret = handle_create_download(response,model,id);
 			} catch(Exception e) {
-				log.error(e);
+				Logger.error(e);
 			}
 			break;
 		}*/
@@ -267,7 +267,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 					model.sensors = lines.toArray(new String[0]);
 				}
 			} catch (RemoteException e) {
-				log.warn(e);
+				Logger.warn(e);
 				model.sensors = lines.toArray(new String[0]);
 			}
 		}
@@ -416,7 +416,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 				model.timespanType = timespanType;
 				break;
 			default:
-				log.error("unknown timespantype: "+model.timespanType);
+				Logger.error("unknown timespantype: "+model.timespanType);
 			}
 
 
@@ -517,7 +517,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 			ZipExportProxy zipExportProxy = new ZipExportProxy(tsdb,model);
 			final long id = storeEntry(zipExportProxy);
 
-			log.info("new export create id: "+toJsonID(id));
+			Logger.info("new export create id: "+toJsonID(id));
 
 			//zipExportProxyMap.put(id, zipExportProxy);			
 
@@ -534,7 +534,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 
 			return true;
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 			return false;
 		}
 	}
@@ -558,7 +558,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 		try {
 			ZipExportProxy zipExportProxy = zipExportProxyMap.get(id);
 			if(zipExportProxy==null) {
-				log.info("id not found "+id);
+				Logger.info("id not found "+id);
 				return false;
 			}
 
@@ -597,7 +597,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 			json.endObject();
 			return true;
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 			return false;
 		}		
 	}
@@ -608,7 +608,7 @@ public class TsDBExportAPIHandler extends AbstractHandler {
 			response.setContentType("application/zip");
 			return true;
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 			return false;
 		}
 	}*/

@@ -9,8 +9,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 
 import tsdb.remote.RemoteTsDB;
@@ -26,7 +26,7 @@ import tsdb.web.util.Web;
  *
  */
 public class Handler_iot_sensor extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_iot_sensor(RemoteTsDB tsdb) {
 		super(tsdb, "sensor");
@@ -37,7 +37,7 @@ public class Handler_iot_sensor extends MethodHandler {
 	@Override
 	public void handle(String target, Request request, HttpServletRequest req, HttpServletResponse response) throws IOException, ServletException {		
 		request.setHandled(true);
-		log.info("target " + target);
+		Logger.info("target " + target);
 		int i = target.indexOf("/");
 		String sensorID = target;
 		String stationID = "";
@@ -45,10 +45,10 @@ public class Handler_iot_sensor extends MethodHandler {
 			stationID = target.substring(i + 1);
 			sensorID = target.substring(0, i);
 		}
-		log.info("sensorID: " + sensorID);
-		log.info("stationID: " + stationID);
+		Logger.info("sensorID: " + sensorID);
+		Logger.info("stationID: " + stationID);
 		String httpMethod = request.getMethod();
-		log.info("Method: " + httpMethod);
+		Logger.info("Method: " + httpMethod);
 
 		switch(httpMethod) {
 		case "POST":
@@ -59,16 +59,16 @@ public class Handler_iot_sensor extends MethodHandler {
 				PrintWriter writer = response.getWriter();
 				String req_data = Web.requestContentToString(request);
 				String[] lines = req_data.split("\n");
-				log.info("req " + req_data);
+				Logger.info("req " + req_data);
 				for(String rawLine:lines) {
 					String line = rawLine.trim();
 					if(!line.isEmpty()) {
 						String[] data = line.split(",");
-						log.info(Arrays.toString(data));
+						Logger.info(Arrays.toString(data));
 						if(data.length != 3 && data.length != 4) {
 							response.setContentType("text/plain;charset=utf-8");
 							response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-							log.warn("unknown sensor_type: " + sensorID);
+							Logger.warn("unknown sensor_type: " + sensorID);
 							writer.println("expected three or four columns: " + Arrays.toString(data));
 							return;
 						}
@@ -77,7 +77,7 @@ public class Handler_iot_sensor extends MethodHandler {
 						int timestamp = (int) TimeUtil.dateTimeToOleMinutes(datetime);
 						float value_lon = Float.parseFloat(data[1]);
 						float value_lat = Float.parseFloat(data[2]);
-						log.info("insert " + timestamp + "   " + value_lon + " " + value_lat);
+						Logger.info("insert " + timestamp + "   " + value_lon + " " + value_lat);
 						tsdb.insertOneValue(stationID, "location_lon", timestamp, value_lon * lat_lon_add_factor);
 						tsdb.insertOneValue(stationID, "location_lat", timestamp, value_lat * lat_lon_add_factor);
 						writer.println("inserted " + stationID + "/" + "location_lon" + "@" + TimeUtil.oleMinutesToText(timestamp) + "  " + value_lon);
@@ -100,11 +100,11 @@ public class Handler_iot_sensor extends MethodHandler {
 					String line = rawLine.trim();
 					if(!line.isEmpty()) {
 						String[] data = line.split(",");
-						log.info(Arrays.toString(data));
+						Logger.info(Arrays.toString(data));
 						if(data.length != 2) {
 							response.setContentType("text/plain;charset=utf-8");
 							response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-							log.warn("unknown sensor_type: " + sensorID);
+							Logger.warn("unknown sensor_type: " + sensorID);
 							response.getWriter().println("expected two columns: " + Arrays.toString(data));
 							return;
 						}
@@ -112,7 +112,7 @@ public class Handler_iot_sensor extends MethodHandler {
 						LocalDateTime datetime = TimeUtil.unixTimeToLocalDateTime(unixTime);
 						int timestamp = (int) TimeUtil.dateTimeToOleMinutes(datetime);
 						float value = Float.parseFloat(data[1]);
-						log.info("insert " + timestamp + "   " + value);
+						Logger.info("insert " + timestamp + "   " + value);
 						tsdb.insertOneValue(stationID, sensorID, timestamp, value);
 						writer.println("inserted " + stationID + "/" + sensorID + "@" + TimeUtil.oleMinutesToText(timestamp) + "  " + value);
 					}
@@ -122,7 +122,7 @@ public class Handler_iot_sensor extends MethodHandler {
 			/*default:			
 				response.setContentType("text/plain;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				log.warn("unknown sensor_type: " + sensorID);
+				Logger.warn("unknown sensor_type: " + sensorID);
 				response.getWriter().println("unknown sensor_type: " + sensorID);
 				return;*/
 			}
@@ -167,7 +167,7 @@ public class Handler_iot_sensor extends MethodHandler {
 			default:			
 				response.setContentType("text/plain;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				log.warn("unknown sensor_type: " + sensorID);
+				Logger.warn("unknown sensor_type: " + sensorID);
 				response.getWriter().println("unknown sensor_type: " + sensorID);
 				return;
 			}
@@ -175,7 +175,7 @@ public class Handler_iot_sensor extends MethodHandler {
 		default:
 			response.setContentType("text/plain;charset=utf-8");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			log.warn("unknown HTTP method: " + httpMethod);
+			Logger.warn("unknown HTTP method: " + httpMethod);
 			response.getWriter().println("unknown HTTP method: " + httpMethod);
 			return;
 		}

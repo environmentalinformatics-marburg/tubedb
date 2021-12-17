@@ -11,16 +11,16 @@ import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.stream.StreamSupport;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.Util;
 
 public class DirectoryDuplicateDataChecker {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) throws Exception {
-		log.info("start...");
+		Logger.info("start...");
 		String baseRoot = "C:/timeseriesdatabase_source/be_tsm";
 		String compareRoot = "C:/timeseriesdatabase_source/be_tsm_hd";
 		String targetRoot = "C:/timeseriesdatabase_source/be_tsm_target";
@@ -33,21 +33,21 @@ public class DirectoryDuplicateDataChecker {
 				String dir = subPath.getFileName().toString();
 				String baseDir = baseRoot+'/'+dir;
 				if(Files.exists(Paths.get(baseDir))) {
-					//log.info("check "+baseDir+" -> "+compareDir);
+					//Logger.info("check "+baseDir+" -> "+compareDir);
 					String targetDir = targetRoot+'/'+dir;
 					DirectoryDuplicateDataChecker checker = new DirectoryDuplicateDataChecker(baseDir, compareDir, targetDir);
 					checker.loadBase();
 					checker.compare();
 					checker.copy();
 				} else {
-					log.warn("dir does not exist in base: skip "+compareDir);
+					Logger.warn("dir does not exist in base: skip "+compareDir);
 				}
 			} else {
-				log.warn("not checked: "+subPath);
+				Logger.warn("not checked: "+subPath);
 			}
 			System.gc();
 		}
-		log.info("...end");
+		Logger.info("...end");
 	}	
 
 	private final String baseDir;
@@ -81,7 +81,7 @@ public class DirectoryDuplicateDataChecker {
 			} else {
 				Long c = baseMap.get(md5);
 				baseMap.put(md5,c+1);
-				//log.warn("duplicate md5 in base "+baseMap.get(md5)+" new "+filename);				
+				//Logger.warn("duplicate md5 in base "+baseMap.get(md5)+" new "+filename);				
 			}
 		}
 	}
@@ -103,7 +103,7 @@ public class DirectoryDuplicateDataChecker {
 					//String f = filename.getFileName().toString();
 					//String targetFile = targetDir+'/'+f;
 				} else {
-					log.info("skip duplicate "+filename);
+					Logger.info("skip duplicate "+filename);
 				}
 			}
 		}		
@@ -111,24 +111,24 @@ public class DirectoryDuplicateDataChecker {
 
 	private void copy() throws Exception {
 		if(Files.exists(Paths.get(targetDir))) {
-			log.warn("target dir already exits "+targetDir);
+			Logger.warn("target dir already exits "+targetDir);
 		}
 
 		compareMap.values().stream().sorted().forEach(filename -> {
 			Path source = filename;
 			String f = filename.getFileName().toString();
 			if(f.toLowerCase().endsWith(".csv")) {
-				log.info("skip csv file "+filename);
+				Logger.info("skip csv file "+filename);
 			} else {
 				if(!f.toLowerCase().endsWith(".dat")) {
-					log.warn("no .dat file "+filename);
+					Logger.warn("no .dat file "+filename);
 				}
 				Path target = Paths.get(targetDir+'/'+"hd_"+f);
 				if(Files.exists(target)) {
-					log.warn("target already exits "+target);
+					Logger.warn("target already exits "+target);
 				}
 				createPathOfFile(target.toFile());
-				log.info("copy "+source+" -> "+target);	
+				Logger.info("copy "+source+" -> "+target);	
 				try {
 					Files.copy(source, target, StandardCopyOption.COPY_ATTRIBUTES);
 				} catch (Exception e) {
@@ -144,7 +144,7 @@ public class DirectoryDuplicateDataChecker {
 			filename.getParentFile().mkdirs();
 			return true;
 		} catch(Exception e) {
-			log.error("path not created: "+filename+"    "+e);
+			Logger.error("path not created: "+filename+"    "+e);
 			return false;
 		}		
 	}

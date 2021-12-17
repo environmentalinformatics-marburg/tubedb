@@ -14,7 +14,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class PhysicalFlagIterator extends InputIterator {
-	//private static final Logger log = LogManager.getLogger();
+	//
 
 	private final Sensor[] sensors;
 	private final int len; 

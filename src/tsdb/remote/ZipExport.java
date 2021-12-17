@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -47,7 +47,7 @@ import tsdb.util.iterator.TimestampSeriesCSVwriter;
  *
  */
 public class ZipExport extends TimestampSeriesCSVwriter{
-	private static final Logger log = LogManager.getLogger();
+	
 	private static final Charset charset = Charset.forName("UTF-8");
 
 	private final RemoteTsDB tsdb;
@@ -101,7 +101,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 					this.sensorNames = sensorNames;
 				}
 			} catch (RemoteException e) {
-				log.warn(e);
+				Logger.warn(e);
 				this.sensorNames = sensorNames;
 			}
 		}
@@ -132,7 +132,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 			printLine("...finished");
 			return ret;
 		} catch (IOException e) {
-			log.error(e);
+			Logger.error(e);
 			return false;
 		}
 
@@ -180,7 +180,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					log.error(e);
+					Logger.error(e);
 					printLine("ERROR "+e);
 				}
 			}
@@ -241,7 +241,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					log.error(e);
+					Logger.error(e);
 					printLine("ERROR "+e);
 				}
 				bufferedWriter.flush();
@@ -260,7 +260,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 							String plots_casted_name = "casted";
 							if(timeseries != null) {
 								String[] castedSensorNames = timeseries.sensorNames;
-								log.info("casted " + Arrays.toString(castedSensorNames));
+								Logger.info("casted " + Arrays.toString(castedSensorNames));
 								if(write_header) {
 									writeCSVHeader(bufferedWriter, castedSensorNames, false);
 								}
@@ -270,7 +270,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
-							log.error(e);
+							Logger.error(e);
 							printLine("ERROR "+e);
 						}
 						bufferedWriter.flush();
@@ -297,7 +297,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 								}
 							} catch (Exception e) {
 								e.printStackTrace();
-								log.error(e);
+								Logger.error(e);
 								printLine("ERROR "+e);
 							}
 							processedPlots++;
@@ -329,7 +329,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
-							log.error(e);
+							Logger.error(e);
 							printLine("ERROR "+e);
 						}
 						processedPlots++;
@@ -341,7 +341,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 			printLine("...finished");
 			return true;
 		} catch (IOException e) {
-			log.warn(e);
+			Logger.warn(e);
 			printLine("ERROR "+e);
 			return false;
 		}		
@@ -376,7 +376,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 				}
 				map.put("groups", generalList);
 			} catch(Exception e) {
-				log.error(e);
+				Logger.error(e);
 			}
 
 			map.put("plots", plotIDs);
@@ -432,7 +432,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 			Yaml yaml = new Yaml(options);
 			yaml.dump(map, bufferedWriter);
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 
 	}
@@ -462,12 +462,12 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 						sensorUnit = sensor.unitDescription;
 					}
 				} catch (Exception e) {
-					log.error(e);
+					Logger.error(e);
 				}
 				csvWriter.writeNext(new String[]{sensorName, sensorDescription, sensorUnit}, false);
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -475,7 +475,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 		try {
 			bufferedWriter.write(region.description);
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -506,7 +506,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 				}, false);
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 

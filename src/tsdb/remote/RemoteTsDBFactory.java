@@ -7,8 +7,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 
 
@@ -25,7 +25,7 @@ import tsdb.util.Util;
  *
  */
 public class RemoteTsDBFactory {
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	public static final String RMI_SERVER_NAME = "ServerTsDB";
 	public static final int RMI_REGISTRY_PORT = 16825;
@@ -39,7 +39,7 @@ public class RemoteTsDBFactory {
 			serverTsDB = new ServerTsDB(tsdb);
 			return serverTsDB;
 		} catch (RemoteException e) {
-			log.error(e);
+			Logger.error(e);
 			return null;
 		}
 	}
@@ -65,12 +65,12 @@ public class RemoteTsDBFactory {
 			try {
 				try{
 
-					log.info("available RMI servers: "+Util.arrayToString(registry.list()));
+					Logger.info("available RMI servers: "+Util.arrayToString(registry.list()));
 
 					String hostname = InetAddress.getLocalHost().getHostAddress();
-					log.info("IP of this client: " + hostname);
+					Logger.info("IP of this client: " + hostname);
 				} catch(Exception e) {
-					log.warn(e);
+					Logger.warn(e);
 				}
 
 
@@ -78,7 +78,7 @@ public class RemoteTsDBFactory {
 					//if(entry.endsWith(RMI_SERVER_NAME)) {
 					if(entry.equals(RMI_SERVER_NAME)) {
 						if(serverUrl != null) {
-							log.warn("multiple server entries: "+serverUrl+"   "+entry);
+							Logger.warn("multiple server entries: "+serverUrl+"   "+entry);
 						}
 						serverUrl = entry;
 					}
@@ -86,17 +86,17 @@ public class RemoteTsDBFactory {
 
 
 			} catch (Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 			if(serverUrl==null) {
 				serverUrl = get_rmi_server_url(server_ip);
 			}
-			log.info("conntect to "+serverUrl+ " with registry at "+server_ip+":"+RMI_REGISTRY_PORT);
+			Logger.info("conntect to "+serverUrl+ " with registry at "+server_ip+":"+RMI_REGISTRY_PORT);
 			RemoteTsDB remoteTsDB = (RemoteTsDB) registry.lookup(serverUrl);
-			log.info("connected remoteTsDB: "+remoteTsDB.toString());
+			Logger.info("connected remoteTsDB: "+remoteTsDB.toString());
 			return remoteTsDB;
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 			return null;
 		}	
 	}
@@ -108,7 +108,7 @@ public class RemoteTsDBFactory {
 			socket.close();
 			return ip;			
 		} catch (IOException e) {
-			log.error(e);
+			Logger.error(e);
 			return null;
 		}
 	}

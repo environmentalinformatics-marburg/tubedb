@@ -1,7 +1,7 @@
 package tsdb.iterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.TsEntry;
 import tsdb.util.TsSchema;
@@ -14,7 +14,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class LinearIterpolationIterator extends InputProcessingIterator {
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	TsEntry prev = null;
 	TsEntry curr = null;
@@ -76,8 +76,8 @@ public class LinearIterpolationIterator extends InputProcessingIterator {
 				}
 			}
 			TsEntry res = new TsEntry(curr.timestamp, result);
-			log.info("-"+curr);
-			log.info("+"+res);			
+			Logger.info("-"+curr);
+			Logger.info("+"+res);			
 			return res;
 		} else { // curr is first or last in iterator
 			return curr;

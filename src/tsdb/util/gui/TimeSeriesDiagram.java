@@ -6,8 +6,8 @@ import static tsdb.util.AssumptionCheck.throwNulls;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.component.SensorCategory;
 import tsdb.util.AggregationInterval;
@@ -29,7 +29,7 @@ public class TimeSeriesDiagram {
 	private static final int ELEMENT_INDEX_Q3 = 4;
 	private static final int ELEMENT_INDEX_MEDIAN = 3;
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private static final float MIN_VALUE_RANGE = 0.01f;
 
@@ -132,7 +132,7 @@ public class TimeSeriesDiagram {
 			aggregationTimeInterval=365*24*60;
 			break;
 		default:
-			log.warn("error in agg");
+			Logger.warn("error in agg");
 		}
 
 		dataMinValue = Float.MAX_VALUE;
@@ -250,7 +250,7 @@ public class TimeSeriesDiagram {
 		if(aggregationTimeInterval>0) {
 			diagramMaxTimestamp += aggregationTimeInterval-1;
 		}
-		log.trace(TimeUtil.oleMinutesToText(dataMaxTimestamp)+"  "+TimeUtil.oleMinutesToText((long) diagramMaxTimestamp));
+		Logger.trace(TimeUtil.oleMinutesToText(dataMaxTimestamp)+"  "+TimeUtil.oleMinutesToText((long) diagramMaxTimestamp));
 		diagramTimestampRange = diagramMaxTimestamp-diagramMinTimestamp;
 	}
 
@@ -386,7 +386,7 @@ public class TimeSeriesDiagram {
 			lowestGranularity = TimeGranularity.YEAR;
 			break;
 		default:
-			log.warn("error in agg");
+			Logger.warn("error in agg");
 		}
 
 
@@ -500,7 +500,7 @@ public class TimeSeriesDiagram {
 			tsp.setColor(180,220,180);
 			break;
 		default:
-			log.error("unknown diagram type: "+diagramType);
+			Logger.error("unknown diagram type: "+diagramType);
 		}*/
 
 		tsp.setColor(100,220,100);
@@ -540,7 +540,7 @@ public class TimeSeriesDiagram {
 			tsp.setColor(220,220,220);
 			break;
 		default:
-			log.error("unknown diagram type: "+diagramType);
+			Logger.error("unknown diagram type: "+diagramType);
 		}
 
 		for(TsEntry entry:timestampseries) {
@@ -576,7 +576,7 @@ public class TimeSeriesDiagram {
 			tsp.setColor(160, 160, 160);
 			break;
 		default:
-			log.error("unknown diagram type: "+diagramType);
+			Logger.error("unknown diagram type: "+diagramType);
 		}		
 
 		//tsp.setColorValueLineTemperature();
@@ -615,7 +615,7 @@ public class TimeSeriesDiagram {
 			tsp.setColor(30, 30, 30);
 			break;
 		default:
-			log.error("unknown diagram type: "+diagramType);
+			Logger.error("unknown diagram type: "+diagramType);
 		}
 
 
@@ -710,7 +710,7 @@ public class TimeSeriesDiagram {
 				//}
 				break;
 			default:
-				log.error("unknown diagram type: "+diagramType);
+				Logger.error("unknown diagram type: "+diagramType);
 			}
 		} else { // raw
 
@@ -765,7 +765,7 @@ public class TimeSeriesDiagram {
 
 		public static AggregatedConnectionType parse(String text) {
 			if(text==null) {
-				log.warn("aggregation connection type text null");
+				Logger.warn("aggregation connection type text null");
 				return null;
 			}
 			switch(text.trim().toLowerCase()) {
@@ -778,7 +778,7 @@ public class TimeSeriesDiagram {
 			case "curve":
 				return CURVE;
 			default:
-				log.warn("aggregation connection type unknown: "+text);
+				Logger.warn("aggregation connection type unknown: "+text);
 				return null;
 			}		
 		}
@@ -791,7 +791,7 @@ public class TimeSeriesDiagram {
 
 		public static RawConnectionType parse(String text) {
 			if(text==null) {
-				log.warn("raw connection type text null");
+				Logger.warn("raw connection type text null");
 				return null;
 			}
 			switch(text.trim().toLowerCase()) {
@@ -802,7 +802,7 @@ public class TimeSeriesDiagram {
 			case "curve":
 				return CURVE;
 			default:
-				log.warn("raw connection type unknown: "+text);
+				Logger.warn("raw connection type unknown: "+text);
 				return null;
 			}		
 		}
@@ -815,7 +815,7 @@ public class TimeSeriesDiagram {
 
 		public static AggregatedValueType parse(String text) {
 			if(text==null) {
-				log.warn("aggregation value type text null");
+				Logger.warn("aggregation value type text null");
 				return null;
 			}
 			switch(text.trim().toLowerCase()) {
@@ -826,7 +826,7 @@ public class TimeSeriesDiagram {
 			case "line":
 				return LINE;
 			default:
-				log.warn("aggregation value type unknown: "+text);
+				Logger.warn("aggregation value type unknown: "+text);
 				return null;
 			}		
 		}
@@ -838,7 +838,7 @@ public class TimeSeriesDiagram {
 
 		public static RawValueType parse(String text) {
 			if(text==null) {
-				log.warn("raw value type text null");
+				Logger.warn("raw value type text null");
 				return null;
 			}
 			switch(text.trim().toLowerCase()) {
@@ -847,7 +847,7 @@ public class TimeSeriesDiagram {
 			case "point":
 				return POINT;
 			default:
-				log.warn("raw value type unknown: "+text);
+				Logger.warn("raw value type unknown: "+text);
 				return null;
 			}		
 		}

@@ -3,8 +3,8 @@ package tsdb.util.iterator;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.Table;
 import tsdb.util.TimeUtil;
@@ -42,7 +42,7 @@ import tsdb.util.TsSchema;
  */
 public class CSVIterator extends TsIterator {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static TsSchema createSchema(String[] sensorNames) {
 		return new TsSchema(sensorNames);
@@ -95,7 +95,7 @@ public class CSVIterator extends TsIterator {
 				}
 			} catch (Exception e) {
 				data[colIndex] = Float.NaN;
-				log.warn(e+ "   csv line "+(currIndex+1)+"  col "+(colIndex+2)+"   in "+filename+"   ->|"+row[colIndex+2]+"|<-");
+				Logger.warn(e+ "   csv line "+(currIndex+1)+"  col "+(colIndex+2)+"   in "+filename+"   ->|"+row[colIndex+2]+"|<-");
 			}
 		}
 		return new TsEntry(timestamp,data);

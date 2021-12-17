@@ -4,15 +4,15 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.yaml.snakeyaml.Yaml;
 
 import tsdb.util.yaml.YamlMap;
 
 
 public class InfluxLoaderConfig {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public final String url;
 	public final String user;
@@ -49,7 +49,7 @@ public class InfluxLoaderConfig {
 			database = configMap.getString("database");			
 			sensors = configMap.getList("sensors").asMaps().stream().map(Sensor::ofYaml).toArray(Sensor[]::new);						
 		} catch (Exception e) {
-			log.error("config YAML file error in "+path+"  "+e);
+			Logger.error("config YAML file error in "+path+"  "+e);
 			throw new RuntimeException(e);
 		}
 	}

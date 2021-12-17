@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDB.ConsistencyLevel;
 import org.influxdb.InfluxDBFactory;
@@ -23,7 +23,7 @@ import tsdb.util.DataRow;
 import tsdb.util.TimeUtil;
 
 public class Experiment_InfluxDB_OLD extends Experiment {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	//00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970
 	private static final long INFLUXDB_TIME_START_OLE_MINUTES = TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(1970,01,01,0,0));
@@ -88,11 +88,11 @@ public class Experiment_InfluxDB_OLD extends Experiment {
 				}
 				written = true;
 			} catch (Exception e) {
-				log.warn(stationName + " write failed, try again " + tryCount);
+				Logger.warn(stationName + " write failed, try again " + tryCount);
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e1) {	
-					log.warn(e1);
+					Logger.warn(e1);
 				}
 			}
 		}
@@ -108,7 +108,7 @@ public class Experiment_InfluxDB_OLD extends Experiment {
 			pointNr++;
 			if(points.size() == 20_000) {
 				batchNr++;
-				log.info(stationName + " batch " + batchNr + "   p " + pointNr);
+				Logger.info(stationName + " batch " + batchNr + "   p " + pointNr);
 				writePointsBatch(stationName, sensorNames, points);
 				points.clear();
 			}
@@ -116,7 +116,7 @@ public class Experiment_InfluxDB_OLD extends Experiment {
 
 
 
-		/*log.info("create batch");
+		/*Logger.info("create batch");
 		org.influxdb.dto.BatchPoints.Builder batchPointsBuilder = BatchPoints
 				.database(DB_NAME)
 				.precision(TimeUnit.MINUTES)
@@ -145,7 +145,7 @@ public class Experiment_InfluxDB_OLD extends Experiment {
 				batchPointsCount++;
 				totalPointsCount++;
 				if(batchPointsCount >= 1_000) {
-					log.info("write batch " + batchNr + "  " + totalPointsCount);
+					Logger.info("write batch " + batchNr + "  " + totalPointsCount);
 
 					boolean written = false;
 					long tryCount = 0;
@@ -155,9 +155,9 @@ public class Experiment_InfluxDB_OLD extends Experiment {
 							written = true;
 						} catch (Exception e) {
 							tryCount++;
-							log.warn("write failed " + batchNr + "  " + totalPointsCount + ", try again"+ tryCount +": " + e);
+							Logger.warn("write failed " + batchNr + "  " + totalPointsCount + ", try again"+ tryCount +": " + e);
 
-							log.info("--- get measurements");
+							Logger.info("--- get measurements");
 							Query query = new Query("SHOW MEASUREMENTS ON " + DB_NAME);	
 							QueryResult queryResult = influxDB.query(query);
 							List<Result> results = queryResult.getResults();
@@ -167,17 +167,17 @@ public class Experiment_InfluxDB_OLD extends Experiment {
 									List<List<Object>> values = series.getValues();
 									for(List<Object> value:values) {
 										for(Object v:value) {
-											log.info(v);
+											Logger.info(v);
 										}
 									}
 								}
 							}
-							log.info("---");
+							Logger.info("---");
 
 							try {
 								Thread.sleep(1000);
 							} catch (InterruptedException e1) {	
-								log.warn(e1);
+								Logger.warn(e1);
 							}
 
 							influxDB.write(DB_NAME, "autogen", Point.measurement("check").time(1, TimeUnit.MINUTES).addField("try", tryCount).build());
@@ -191,18 +191,18 @@ public class Experiment_InfluxDB_OLD extends Experiment {
 		}
 
 		if(batchPointsCount > 0) {
-			log.info("write final batch " + batchNr);
+			Logger.info("write final batch " + batchNr);
 			boolean written = false;
 			while(!written) {
 				try {
 					influxDB.writeWithRetry(batchPoints);
 					written = true;
 				} catch (Exception e) {
-					log.warn("write failed, try again: " + e);
+					Logger.warn("write failed, try again: " + e);
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e1) {	
-						log.warn(e1);
+						Logger.warn(e1);
 					}
 				}
 			}
@@ -238,7 +238,7 @@ public class Experiment_InfluxDB_OLD extends Experiment {
 	}
 
 	private long full_read_station(String stationName) {
-		//log.info(stationName);
+		//Logger.info(stationName);
 		long rowCount = 0;
 		Query query = new Query("SHOW FIELD KEYS ON " + DB_NAME + " FROM " + stationName);	
 		QueryResult queryResult = influxDB.query(query);
@@ -258,10 +258,10 @@ public class Experiment_InfluxDB_OLD extends Experiment {
 
 	private long full_read_station_data(String stationName, String[] sensorNames) {
 		long rowCount = 0;
-		log.info(stationName + " " + Arrays.toString(sensorNames));
+		Logger.info(stationName + " " + Arrays.toString(sensorNames));
 		String fields = String.join(",", sensorNames);
 		String q = "SELECT "+ fields +" FROM " + stationName;
-		log.info(q);
+		Logger.info(q);
 		Query query = new Query(q, DB_NAME);	
 		QueryResult queryResult = influxDB.query(query);
 		List<Result> results = queryResult.getResults();
@@ -269,12 +269,12 @@ public class Experiment_InfluxDB_OLD extends Experiment {
 			List<Series> seriess = result.getSeries();
 			for(Series series:seriess) {
 				List<List<Object>> values = series.getValues();
-				log.info("series " + values.size());
+				Logger.info("series " + values.size());
 				for(List<Object> value:values) {
-					//log.info("entry " + value.get(0));
+					//Logger.info("entry " + value.get(0));
 					rowCount++;
 					/*for(Object v:value) {
-						log.info("v " + v);
+						Logger.info("v " + v);
 					}*/
 				}
 			}

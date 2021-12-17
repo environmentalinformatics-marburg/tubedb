@@ -23,8 +23,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.ini4j.Profile.Section;
 import org.ini4j.Wini;
 import org.json.JSONArray;
@@ -58,7 +58,7 @@ import tsdb.util.yaml.YamlMap;
  *
  */
 public class ConfigLoader {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb; //not null
 
@@ -82,7 +82,7 @@ public class ConfigLoader {
 				String regionName = entry.getValue();
 				generalStationBuilder.region = tsdb.getRegion(regionName);
 				if(generalStationBuilder.region == null) {
-					log.warn("region not found: "+regionName);
+					Logger.warn("region not found: "+regionName);
 				}
 				creationMap.put(generalStationBuilder.name, generalStationBuilder);
 			}
@@ -93,7 +93,7 @@ public class ConfigLoader {
 					if(creationMap.containsKey(entry.getKey())) {
 						creationMap.get(entry.getKey()).longName = entry.getValue();
 					} else {
-						log.warn("general station unknown: "+entry.getKey() + "   in " + configFile);
+						Logger.warn("general station unknown: "+entry.getKey() + "   in " + configFile);
 					}
 				}
 			}
@@ -104,7 +104,7 @@ public class ConfigLoader {
 					if(creationMap.containsKey(entry.getKey())) {
 						creationMap.get(entry.getKey()).group = entry.getValue();
 					} else {
-						log.warn("general station unknown: "+entry.getKey());
+						Logger.warn("general station unknown: "+entry.getKey());
 					}
 				}
 			}
@@ -121,13 +121,13 @@ public class ConfigLoader {
 								int endTime = (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(interval.end, 12, 31, 23, 0));
 								creationMap.get(entry.getKey()).viewTimeRange = Interval.of(startTime,endTime);
 							} else {
-								log.warn("general_station_view_time_ranges section invalid year range "+range);
+								Logger.warn("general_station_view_time_ranges section invalid year range "+range);
 							}
 						}
 
 
 					} else {
-						log.warn("general station unknown: "+entry.getKey());
+						Logger.warn("general station unknown: "+entry.getKey());
 					}
 				}
 			}
@@ -144,7 +144,7 @@ public class ConfigLoader {
 							builder.addAssigned_plots(plots);												
 						}
 					} else {
-						log.warn("general station unknown: "+entry.getKey());
+						Logger.warn("general station unknown: "+entry.getKey());
 					}
 				}
 			}
@@ -155,7 +155,7 @@ public class ConfigLoader {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(e);
+			Logger.error(e);
 		}		
 	}
 
@@ -166,7 +166,7 @@ public class ConfigLoader {
 	 */
 	public void readLoggerTypeSchema(String configFile) {
 		if(!new File(configFile).exists()) {
-			log.warn("missing config file: " + configFile);
+			Logger.warn("missing config file: " + configFile);
 			return;
 		}
 		try {
@@ -182,7 +182,7 @@ public class ConfigLoader {
 					String sensorName = names.get(i);
 					sensorNames[i] = sensorName;
 					if(tsdb.sensorExists(sensorName)) {
-						// log.info("sensor already exists: "+sensorName+" new in "+typeName);
+						// Logger.info("sensor already exists: "+sensorName+" new in "+typeName);
 					} else {
 						Sensor sensor = new Sensor(sensorName);
 						sensor.internal = true; // sensors that do not exist in config are marked as internal
@@ -192,7 +192,7 @@ public class ConfigLoader {
 				tsdb.insertLoggerType(new LoggerType(typeName, sensorNames), configFile);
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -218,11 +218,11 @@ public class ConfigLoader {
 						readStationSensorTranslation(sectionName.substring(0,index),section, iniFile);
 						continue;
 					}
-					log.warn("section unknown: "+sectionName+"  at "+iniFile);
+					Logger.warn("section unknown: "+sectionName+"  at "+iniFile);
 				}
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -233,7 +233,7 @@ public class ConfigLoader {
 	public void readOptionalSensorNameCorrection(String jsonFile) {
 		Path filename = Paths.get(jsonFile);
 		if(!Files.isRegularFile(filename)) {
-			//log.error("ConfigJson file not found "+filename);
+			//Logger.error("ConfigJson file not found "+filename);
 			//throw new RuntimeException("file not found: "+filename);
 			return;
 		}
@@ -257,7 +257,7 @@ public class ConfigLoader {
 
 					Station station = tsdb.getStation(plotText);
 					if(station==null) {
-						log.warn("plot not found "+plotText+" at "+obj+" in "+jsonFile);
+						Logger.warn("plot not found "+plotText+" at "+obj+" in "+jsonFile);
 						continue;
 					}
 					if(station.sensorNameCorrectionMap==null) {
@@ -267,12 +267,12 @@ public class ConfigLoader {
 					NamedInterval[] new_corrections = Util.addEntryToArray(corrections, entry);
 					station.sensorNameCorrectionMap.put(rawText, new_corrections);					
 				} catch(Exception e) {
-					log.warn(e);
+					Logger.warn(e);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error("readSensorNameCorrection ConfigJson file error "+e+"  in "+jsonFile);
+			Logger.error("readSensorNameCorrection ConfigJson file error "+e+"  in "+jsonFile);
 			//throw new RuntimeException(e);
 		}		
 	}
@@ -280,16 +280,16 @@ public class ConfigLoader {
 	private void readLoggerTypeSensorTranslation(String loggerTypeName, Section section, String traceText) {
 		LoggerType loggerType = tsdb.getLoggerType(loggerTypeName);
 		if(loggerType==null) {
-			log.error("logger not found: "+loggerTypeName+"  at "+traceText);
+			Logger.error("logger not found: "+loggerTypeName+"  at "+traceText);
 			return;
 		}
 		Map<String, String> translationMap = Util.readIniSectionMap(section);
 		for(Entry<String, String> entry:translationMap.entrySet()) {
 			if(loggerType.sensorNameTranlationMap.containsKey(entry.getKey())) {
-				log.warn("overwriting"+"  at "+traceText);
+				Logger.warn("overwriting"+"  at "+traceText);
 			}
 			if(entry.getKey().equals(entry.getValue())) {
-				log.info("redundant entry "+entry+" in "+section.getName()+"  at "+traceText);
+				Logger.info("redundant entry "+entry+" in "+section.getName()+"  at "+traceText);
 			}
 			loggerType.sensorNameTranlationMap.put(entry.getKey(), entry.getValue());
 		}
@@ -298,16 +298,16 @@ public class ConfigLoader {
 	private void readGeneralStationSensorTranslation(String generalStationName, Section section, String traceText) {
 		GeneralStation generalStation = tsdb.getGeneralStation(generalStationName);
 		if(generalStation==null) {
-			log.error("generalStation not found: "+generalStationName+"  at "+traceText);
+			Logger.error("generalStation not found: "+generalStationName+"  at "+traceText);
 			return;
 		}
 		Map<String, String> translationMap = Util.readIniSectionMap(section);
 		for(Entry<String, String> entry:translationMap.entrySet()) {
 			if(generalStation.sensorNameTranlationMap.containsKey(entry.getKey())) {
-				log.warn("overwriting"+"  at "+traceText);
+				Logger.warn("overwriting"+"  at "+traceText);
 			}
 			if(entry.getKey().equals(entry.getValue())) {
-				log.info("redundant entry "+entry+" in "+section.getName()+"  at "+traceText);
+				Logger.info("redundant entry "+entry+" in "+section.getName()+"  at "+traceText);
 			}
 			generalStation.sensorNameTranlationMap.put(entry.getKey(), entry.getValue());
 		}
@@ -316,13 +316,13 @@ public class ConfigLoader {
 	private void readStationSensorTranslation(String stationName, Section section, String traceText) {
 		Station station = tsdb.getStation(stationName);
 		if(station==null) {
-			log.error("station not found: "+stationName+"  at "+traceText);
+			Logger.error("station not found: "+stationName+"  at "+traceText);
 			return;
 		}
 		Map<String, String> translationMap = Util.readIniSectionMap(section);
 		for(Entry<String, String> entry:translationMap.entrySet()) {
 			if(station.sensorNameTranlationMap.containsKey(entry.getKey())) {
-				log.warn("overwriting"+"  at "+traceText);
+				Logger.warn("overwriting"+"  at "+traceText);
 			}
 			station.sensorNameTranlationMap.put(entry.getKey(), entry.getValue());
 		}
@@ -421,7 +421,7 @@ public class ConfigLoader {
 			}
 
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}	
 	}
 
@@ -448,7 +448,7 @@ public class ConfigLoader {
 					}
 				}
 			} else {
-				log.warn("region section not found");
+				Logger.warn("region section not found");
 			}
 
 			section = ini.get("region_view_time_range");
@@ -467,16 +467,16 @@ public class ConfigLoader {
 								if(region1!=null) {
 									region1.viewTimeRange = Interval.of(startTime,endTime);
 								} else {
-									log.warn("region not found: "+regionName);
+									Logger.warn("region not found: "+regionName);
 								}
 							} else {
-								log.warn("region_view_time_range section invalid year range "+range);
+								Logger.warn("region_view_time_range section invalid year range "+range);
 							}
 						}
 					}
 				}
 			} else {
-				log.warn("region_view_time_range section not found");
+				Logger.warn("region_view_time_range section not found");
 			}
 
 			section = ini.get("region_default_general_station");
@@ -490,7 +490,7 @@ public class ConfigLoader {
 						if(region1 != null) {
 							region1.defaultGeneralStation = name;
 						} else {
-							log.warn("region not found: "+regionName);
+							Logger.warn("region not found: "+regionName);
 						}
 					}
 				}
@@ -505,11 +505,11 @@ public class ConfigLoader {
 						String name = entry.getValue();
 						Region region1 = tsdb.getRegion(regionName);
 						if(region1 != null) {
-							//log.info("len "+regionName+"  "+section.length(regionName));
+							//Logger.info("len "+regionName+"  "+section.length(regionName));
 							List<String> yy = section.getAll(regionName);
 							String desc = null;
 							for(String y:yy) {
-								//log.info("get "+y);
+								//Logger.info("get "+y);
 								if(desc == null) {
 									desc = y;
 								} else {
@@ -520,10 +520,10 @@ public class ConfigLoader {
 								desc = desc.replace("\\n", "\n");
 							}
 							region1.description = desc;
-							//log.info("set description for " + region1.name);
-							//log.info(region.description);
+							//Logger.info("set description for " + region1.name);
+							//Logger.info(region.description);
 						} else {
-							log.warn("region not found: "+regionName);
+							Logger.warn("region not found: "+regionName);
 						}
 					}
 				}
@@ -531,7 +531,7 @@ public class ConfigLoader {
 
 			return region;
 		} catch (IOException e) {
-			log.warn("error at read region " + configFile + "   " + e);
+			Logger.warn("error at read region " + configFile + "   " + e);
 			e.printStackTrace();
 			return null;
 		}
@@ -539,7 +539,7 @@ public class ConfigLoader {
 
 	public void readPlotInventory(String configFile) {
 		if(!new File(configFile).exists()) {
-			log.warn("missing config file: " + configFile);
+			Logger.warn("missing config file: " + configFile);
 			return;
 		}
 		
@@ -568,7 +568,7 @@ public class ConfigLoader {
 			String generalStationName = cr_general.get(row);
 			GeneralStation generalStation = tsdb.getGeneralStation(generalStationName);
 			if(generalStation==null) {
-				log.error("GeneralStation not found "+generalStationName);
+				Logger.error("GeneralStation not found "+generalStationName);
 				continue;
 			}			
 			double lat = cr_lat.get(row,false);
@@ -583,8 +583,8 @@ public class ConfigLoader {
 				String loggerTypeName = cr_logger.get(row);
 				LoggerType loggerType = tsdb.getLoggerType(loggerTypeName);
 				if(loggerType==null) {
-					log.error("logger type not found: "+loggerTypeName+"  at "+plotID);
-					log.info(tsdb.getLoggerTypes());
+					Logger.error("logger type not found: "+loggerTypeName+"  at "+plotID);
+					Logger.info(tsdb.getLoggerTypes());
 					continue;
 				}
 				Map<String, String> propertyMap = new TreeMap<String, String>();
@@ -683,19 +683,19 @@ public class ConfigLoader {
 					String plotID = stationProperties.get_plotid();
 					VirtualPlot virtualPlot = tsdb.getVirtualPlot(plotID);
 					if(virtualPlot==null) {
-						log.error("virtualPlot not found "+plotID);
+						Logger.error("virtualPlot not found "+plotID);
 						continue;
 					}
 					String loggerTypeName = stationProperties.get_logger_type_name();
 					LoggerType loggerType = tsdb.getLoggerType(loggerTypeName);
 					if(loggerType==null) {
-						log.error("logger not found "+loggerTypeName);
+						Logger.error("logger not found "+loggerTypeName);
 						continue;
 					}
 					if(firstLoggerType==null) {
 						firstLoggerType = loggerType;
 					} else if(firstLoggerType != loggerType) {
-						log.error("loggers need to be same type for one station "+firstLoggerType+"  "+loggerType);
+						Logger.error("loggers need to be same type for one station "+firstLoggerType+"  "+loggerType);
 						continue;
 					}
 					virtualPlotEntryList.add(Pair.of(virtualPlot, stationProperties));
@@ -722,7 +722,7 @@ public class ConfigLoader {
 	}
 
 	public void readOptionalStationProperties(String yamlFile) {
-		log.trace("read yaml");
+		Logger.trace("read yaml");
 		try {
 			File file = new File(yamlFile);
 			if(file.exists()) {
@@ -738,12 +738,12 @@ public class ConfigLoader {
 				}
 			}
 		} catch (Exception e) {
-			log.error("could not read station properties yaml file: "+e);
+			Logger.error("could not read station properties yaml file: "+e);
 		}		
 	}
 
 	public void readSensorMetaData(String yamlFile) {
-		log.trace("read sensors yaml");
+		Logger.trace("read sensors yaml");
 		try {
 			File file = new File(yamlFile);
 			if(file.exists()) {
@@ -756,17 +756,17 @@ public class ConfigLoader {
 						YamlMap sensorYaml = yamlMap.getMap(sensorName);
 						Sensor sensor = Sensor.ofYaml(sensorName, sensorYaml);
 						tsdb.insertSensor(sensor);
-						//log.info(sensorName+" "+sensor.baseAggregationType);
+						//Logger.info(sensorName+" "+sensor.baseAggregationType);
 					} catch(Exception e) {
-						log.warn("could not read sensor yaml of: "+sensorName+"   in "+yamlFile);
+						Logger.warn("could not read sensor yaml of: "+sensorName+"   in "+yamlFile);
 					}
 				}
 			} else {
-				log.warn("missing sensors yaml file: "+yamlFile);
+				Logger.warn("missing sensors yaml file: "+yamlFile);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error("could not read sensors yaml file: "+e);
+			Logger.error("could not read sensors yaml file: "+e);
 		}		
 	}	
 }

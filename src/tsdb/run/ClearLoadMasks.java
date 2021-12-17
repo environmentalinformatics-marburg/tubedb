@@ -1,17 +1,17 @@
 package tsdb.run;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.run.command.LoadMasks;
 
 public class ClearLoadMasks {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) {
-		log.info("load masks");
+		Logger.info("load masks");
 		
 		TsDB tsdb = TsDBFactory.createDefault();
 

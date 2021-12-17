@@ -6,8 +6,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
 import org.json.JSONException;
@@ -24,7 +24,7 @@ import tsdb.web.util.Web;
  *
  */
 public class Handler_region_json extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_region_json(RemoteTsDB tsdb) {
 		super(tsdb, "region.json");
@@ -50,7 +50,7 @@ public class Handler_region_json extends MethodHandler {
 			if(Web.isAllowed(userIdentity, regionName)) {
 				Region region = tsdb.getRegionByName(regionName);
 				if(region==null) {
-					log.warn("region not found");
+					Logger.warn("region not found");
 					response.getWriter().write("region not found");
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				} else {
@@ -59,7 +59,7 @@ public class Handler_region_json extends MethodHandler {
 					response.setStatus(HttpServletResponse.SC_OK);
 				}
 			} else {
-				log.warn("no access to region "+regionName);
+				Logger.warn("no access to region "+regionName);
 				response.getWriter().write("no access to region "+regionName);
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			}

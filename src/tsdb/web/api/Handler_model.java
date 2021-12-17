@@ -13,8 +13,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
 import org.json.JSONWriter;
@@ -38,7 +38,7 @@ import tsdb.remote.StationInfo;
 import tsdb.web.util.Web;
 
 public class Handler_model extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_model(RemoteTsDB tsdb) {
 		super(tsdb, "model");
@@ -272,7 +272,7 @@ public class Handler_model extends MethodHandler {
 						printFormula.accept(new PrintFormulaToJsonVisitor(json));
 					}
 				} catch(Exception e) {
-					log.warn(e);
+					Logger.warn(e);
 				}
 			}
 			if(sensor.post_hour_func != null) {
@@ -294,7 +294,7 @@ public class Handler_model extends MethodHandler {
 					}
 				} catch(Exception e) {
 					e.printStackTrace();
-					log.warn(e + " at " + sensor.post_hour_func);
+					Logger.warn(e + " at " + sensor.post_hour_func);
 				}
 			}
 			if(sensor.post_day_func != null) {
@@ -315,7 +315,7 @@ public class Handler_model extends MethodHandler {
 						printFormula.accept(new PrintFormulaToJsonVisitor(json));
 					}
 				} catch(Exception e) {
-					log.warn(e);
+					Logger.warn(e);
 				}				
 			}
 			json.endObject(); // end sensor

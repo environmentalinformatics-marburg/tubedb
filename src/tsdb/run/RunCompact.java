@@ -1,7 +1,7 @@
 package tsdb.run;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDBFactory;
 import tsdb.streamdb.StreamDB;
@@ -12,7 +12,7 @@ import tsdb.streamdb.StreamDB;
  *
  */
 public class RunCompact {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) {
 		System.out.println("start compacting streamDB...");
@@ -22,7 +22,7 @@ public class RunCompact {
 		try {
 			streamDB.compact();		
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 
 		streamDB.close();

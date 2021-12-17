@@ -8,8 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.BaseAggregationTimeUtil;
 import tsdb.util.TimestampInterval;
@@ -22,7 +22,7 @@ import tsdb.util.Util;
  */
 public class VirtualPlot {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	protected final TsDB tsdb; //not null
 
@@ -77,12 +77,12 @@ public class VirtualPlot {
 		for(TimestampInterval<StationProperties> interval:intervalList) {
 			String stationName = interval.value.get_serial();
 			if(stationName==null) {
-				log.warn("no station in interval: "+interval);
+				Logger.warn("no station in interval: "+interval);
 				continue;
 			}
 			Station station = tsdb.getStation(stationName);
 			if(station==null) {
-				log.warn("station not found "+stationName);
+				Logger.warn("station not found "+stationName);
 				continue;
 			}
 			String[] sensorNames = station.getSensorNames();
@@ -127,7 +127,7 @@ public class VirtualPlot {
 		try {
 			intervalList.add(new TimestampInterval<StationProperties>(properties, properties.get_date_start(), properties.get_date_end()));
 		} catch(Exception e) {
-			log.warn(e+" with "+station.stationID+"   "+properties.getProperty(StationProperties.PROPERTY_START)+"  "+properties.getProperty(StationProperties.PROPERTY_END));
+			Logger.warn(e+" with "+station.stationID+"   "+properties.getProperty(StationProperties.PROPERTY_START)+"  "+properties.getProperty(StationProperties.PROPERTY_END));
 		}
 	}
 
@@ -210,10 +210,10 @@ public class VirtualPlot {
 						}
 					}
 				} else {
-					log.warn("station not found "+stationID);
+					Logger.warn("station not found "+stationID);
 				}
 			} else {
-				log.warn("no stationID");
+				Logger.warn("no stationID");
 			}
 
 		}
@@ -277,7 +277,7 @@ public class VirtualPlot {
 					interval[1] = partEnd;
 				}
 				if(interval[0]>interval[1]) {
-					log.info("interval[0]>interval[1]"+interval[0]+"  "+interval[1]+"    "+entry.value.get_date_start()+"  "+entry.value.get_date_end());
+					Logger.info("interval[0]>interval[1]"+interval[0]+"  "+interval[1]+"    "+entry.value.get_date_start()+"  "+entry.value.get_date_end());
 				}
 				if(result==null) {
 					result = interval;
@@ -334,11 +334,11 @@ public class VirtualPlot {
 
 	public void setElevation(double elevation) {
 		if(Double.isNaN(elevation)) {
-			log.warn("elevation not set: nan");
+			Logger.warn("elevation not set: nan");
 			return;
 		}
 		if(!Double.isNaN(this.elevation)) {
-			log.warn("elevation already set, overwriting");
+			Logger.warn("elevation already set, overwriting");
 		}
 
 		this.elevation = elevation;

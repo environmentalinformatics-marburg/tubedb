@@ -7,8 +7,8 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.yaml.snakeyaml.Yaml;
 
 import tsdb.experiment.Experiment;
@@ -28,7 +28,7 @@ import tsdb.run.command.LoadMasks;
 import tsdb.util.yaml.YamlMap;
 
 public class Terminal {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private static final String COMMAND_DESCRIPTIONS_FILENAME = "/command_descriptions.yaml";
 	private static YamlMap commandDetailDescriptionMap = YamlMap.EMPTY_MAP;
@@ -47,7 +47,7 @@ public class Terminal {
 		for(int i=0;i<commands.length;i++) {
 			commands[i] = commandMap.get(commandNames[i]);
 			if(commands[i] == null) {
-				log.error("command not found: "+commandNames[i]);
+				Logger.error("command not found: "+commandNames[i]);
 				return;
 			}
 		}
@@ -116,7 +116,7 @@ public class Terminal {
 		try {
 			//addCommand("explorer", "run TubeDB desktop application", tsdb.explorer.Explorer::main);
 		} catch (NoClassDefFoundError e) {
-			log.info("JavaFX not available");
+			Logger.info("JavaFX not available");
 		}
 
 		//administrative commands
@@ -152,7 +152,6 @@ public class Terminal {
 		} else {
 			System.out.println("unknown command: "+name);
 		}
-		LogManager.shutdown(); // Workaround: manually shutdown log4j async appender
 	}
 
 	public static void command_commands(String[] parameters) {

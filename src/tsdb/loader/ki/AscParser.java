@@ -12,8 +12,8 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.Pair;
 import tsdb.util.TimeUtil;
@@ -26,7 +26,7 @@ import tsdb.util.iterator.TimestampSeries;
  *
  */
 public class AscParser {
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	private static final Charset ASC_CHARSET = Charset.forName("windows-1252");
 
@@ -50,21 +50,21 @@ public class AscParser {
 			if(currentLine.startsWith("Serialnumber")||currentLine.startsWith("Logger Seriennummer")) {
 				int valueStartIndex = currentLine.indexOf(":")+1;
 				if(valueStartIndex<1&&valueStartIndex<currentLine.length()) {
-					log.warn("could not get serialnumber: "+currentLine);
+					Logger.warn("could not get serialnumber: "+currentLine);
 					break;
 				}
 				serial = currentLine.substring(valueStartIndex).trim();
 				try {
 					serial = Long.toString(Long.parseUnsignedLong(serial));
 				} catch (Exception e) {
-					log.warn("could not long parse serialnumber: "+serial);
+					Logger.warn("could not long parse serialnumber: "+serial);
 				}
 				break;
 			}
 		}
 
 		if(serial==null) {
-			log.warn("no serial found: "+filename);
+			Logger.warn("no serial found: "+filename);
 			return null;
 		}
 
@@ -80,13 +80,13 @@ public class AscParser {
 			}
 		}
 		if(sensorNames==null) {
-			log.warn("no sensornames found: "+filename);
+			Logger.warn("no sensornames found: "+filename);
 			return null;
 		}
 
 		sensorNames = correctSensorNames(sensorNames, sensorUnits);
-		//log.info(Arrays.toString(sensorNames));
-		//log.info(Arrays.toString(sensorUnits));
+		//Logger.info(Arrays.toString(sensorNames));
+		//Logger.info(Arrays.toString(sensorUnits));
 
 		try {
 			ArrayList<TsEntry> resultList = new ArrayList<TsEntry>(lines.length-currentLineIndex);
@@ -139,13 +139,13 @@ public class AscParser {
 				String[] columns = currentLine.split("(\\s|;)+");
 
 				if(columns.length==0) {
-					//log.info("empty line : "+currentLineIndex+" in "+filename);
+					//Logger.info("empty line : "+currentLineIndex+" in "+filename);
 					continue;
 				}
 
 				if(columns.length!=sensorNames.length+2) {					
 					String endoffile = currentLineIndex==lines.length?"at end of file":"at line within file";					
-					log.warn("different column count "+endoffile+" : "+currentLine+"  in "+filename+"   header columns: "+(sensorNames.length+2)+"  row colunmns:"+columns.length);
+					Logger.warn("different column count "+endoffile+" : "+currentLine+"  in "+filename+"   header columns: "+(sensorNames.length+2)+"  row colunmns:"+columns.length);
 					break rowLoop;
 				}
 
@@ -165,7 +165,7 @@ public class AscParser {
 					try {
 						data[i] = Float.parseFloat(columns[i+2]);
 					} catch (Exception e) {
-						log.warn(e+" in "+filename);
+						Logger.warn(e+" in "+filename);
 						data[i] = Float.NaN;
 					}
 				}
@@ -178,18 +178,18 @@ public class AscParser {
 					if(ignoreSeconds) {
 						if(!entrySkipped) {
 							entrySkipped = true;
-							log.warn("skip row: timestamp==prevTimestamp  "+filename+"  "+TimeUtil.oleMinutesToText(prevTimestamp, timestamp));
+							Logger.warn("skip row: timestamp==prevTimestamp  "+filename+"  "+TimeUtil.oleMinutesToText(prevTimestamp, timestamp));
 						}
 					} else {
-						log.warn("skip row: timestamp==prevTimestamp  "+filename+"  "+TimeUtil.oleMinutesToText(prevTimestamp, timestamp));
+						Logger.warn("skip row: timestamp==prevTimestamp  "+filename+"  "+TimeUtil.oleMinutesToText(prevTimestamp, timestamp));
 					}
 				} else {
-					log.warn("skip row: timestamp<prevTimestamp  "+filename+"  "+TimeUtil.oleMinutesToText(prevTimestamp, timestamp));
+					Logger.warn("skip row: timestamp<prevTimestamp  "+filename+"  "+TimeUtil.oleMinutesToText(prevTimestamp, timestamp));
 				}
 			}
 			return new TimestampSeries(serial, sensorNames, resultList);
 		} catch (Exception e) {
-			log.error(e+"  "+filename);
+			Logger.error(e+"  "+filename);
 			return null;
 		}
 	}

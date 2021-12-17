@@ -1,14 +1,14 @@
 package tsdb.testing;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtNewMethod;
 
 public class TestingClassGeneration {
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	public interface Evaluator {
 	    public double eval (double x);
@@ -19,7 +19,7 @@ public class TestingClassGeneration {
 	}
 
 	public static void main(String[] args) throws Exception {
-		log.info(Evaluator.class.getName());
+		Logger.info(Evaluator.class.getName());
 		
 		/*ClassPool pool = ClassPool.getDefault();
 		CtClass evalClass = pool.makeClass("Eval");
@@ -27,7 +27,7 @@ public class TestingClassGeneration {
 		evalClass.setInterfaces(new CtClass[] { pool.makeClass(Evaluator.class.getName()) });
 		Class<?> clazz = evalClass.toClass();
 		Evaluator obj = (Evaluator) clazz.newInstance();
-		log.info(obj.eval(100));*/
+		Logger.info(obj.eval(100));*/
 		
 		
 		ClassPool pool = ClassPool.getDefault();
@@ -36,7 +36,7 @@ public class TestingClassGeneration {
 		@SuppressWarnings("unchecked")
 		Class<? extends AbstractEvaluator> clazz = (Class<? extends AbstractEvaluator>) evalClass.toClass();
 		AbstractEvaluator obj = clazz.newInstance();
-		log.info(obj.eval(100));
+		Logger.info(obj.eval(100));
 
 	}
 

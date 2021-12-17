@@ -3,14 +3,14 @@ package tsdb.component.labeledproperty;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.TimeUtil;
 import tsdb.util.yaml.YamlMap;
 
 public class LabeledProperty {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public final String station;
 	public final String label;
@@ -44,7 +44,7 @@ public class LabeledProperty {
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
-			log.error(e);
+			Logger.error(e);
 			return null;
 		}
 	}
@@ -55,8 +55,8 @@ public class LabeledProperty {
 		String endObject = entry.optString("end", "*");
 		int start = TimeUtil.parseStartTimestamp(startObject);
 		int end = TimeUtil.parseEndTimestamp(endObject);
-		log.trace(startObject);
-		log.trace(endObject);
+		Logger.trace(startObject);
+		Logger.trace(endObject);
 
 		List<LabeledProperty> result = new ArrayList<LabeledProperty>();
 		for(YamlMap map:entry.getList("content").asMaps()) {
@@ -64,9 +64,9 @@ public class LabeledProperty {
 				String label = map.getString("label");
 				LabeledProperty labeledProperty = new LabeledProperty(station, label, start, end, map);
 				result.add(labeledProperty);
-				log.trace(labeledProperty);
+				Logger.trace(labeledProperty);
 			} catch (Exception e) {
-				log.warn("could not parse entry "+entry+"  "+e);
+				Logger.warn("could not parse entry "+entry+"  "+e);
 			}
 		}
 

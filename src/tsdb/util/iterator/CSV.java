@@ -6,8 +6,8 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Locale;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.AggregationInterval;
 import tsdb.util.TimeUtil;
@@ -20,7 +20,7 @@ import tsdb.util.TsEntry;
  */
 public class CSV {	
 	@SuppressWarnings("unused")
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	private static final String NEW_LINE = "\r\n"; // windows new line
 

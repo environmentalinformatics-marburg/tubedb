@@ -1,12 +1,12 @@
 package tsdb.dsl.printformula;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.dsl.FormulaVisitor1;
 
 public class PrintFormulaFunc extends PrintFormula {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public final String name;
 	public final PrintFormula param;

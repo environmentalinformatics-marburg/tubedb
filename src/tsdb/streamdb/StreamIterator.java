@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.mapdb.BTreeMap;
 
 import tsdb.util.DataEntry;
@@ -20,7 +20,7 @@ import tsdb.util.processingchain.ProcessingChainNode;
  */
 public class StreamIterator implements Iterator<DataEntry>, ProcessingChainNode {	
 	@SuppressWarnings("unused")
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final BTreeMap<Integer, Chunk> sensorChunkMap;
 	public final int minQueryTimestamp;
@@ -59,7 +59,7 @@ public class StreamIterator implements Iterator<DataEntry>, ProcessingChainNode 
 		this.stationName = sensorMeta.stationName;
 		this.sensorName = sensorMeta.sensorName;
 		
-		//log.info("query stream " + TimeUtil.oleMinutesToText(minQueryTimestamp, maxQueryTimestamp));
+		//Logger.info("query stream " + TimeUtil.oleMinutesToText(minQueryTimestamp, maxQueryTimestamp));
 		
 		int min = getDataMinTimestamp(chunkMetaMap,minQueryTimestamp);
 		int max = getDataMaxTimestamp(chunkMetaMap,maxQueryTimestamp);
@@ -72,7 +72,7 @@ public class StreamIterator implements Iterator<DataEntry>, ProcessingChainNode 
 			this.maxQueryTimestamp = -1;
 		}
 		
-		//log.info("get stream " + TimeUtil.oleMinutesToText(minQueryTimestamp, maxQueryTimestamp));
+		//Logger.info("get stream " + TimeUtil.oleMinutesToText(minQueryTimestamp, maxQueryTimestamp));
 		
 		this.chunkMetaIterator = ChunkMeta.createIterator(chunkMetaMap, minQueryTimestamp, maxQueryTimestamp);
 		if(chunkMetaIterator.hasNext()) {
@@ -84,7 +84,7 @@ public class StreamIterator implements Iterator<DataEntry>, ProcessingChainNode 
 
 	private void nextChunk() {
 		ChunkMeta chunkMeta = chunkMetaIterator.next();
-		//log.info("chunk " + TimeUtil.oleMinutesToText(chunkMeta.firstTimestamp,chunkMeta.lastTimestamp));
+		//Logger.info("chunk " + TimeUtil.oleMinutesToText(chunkMeta.firstTimestamp,chunkMeta.lastTimestamp));
 		Chunk chunk = sensorChunkMap.get(chunkMeta.firstTimestamp);
 		if(minQueryTimestamp <= chunkMeta.firstTimestamp) {
 			if(chunkMeta.lastTimestamp <= maxQueryTimestamp) {
@@ -152,7 +152,7 @@ public class StreamIterator implements Iterator<DataEntry>, ProcessingChainNode 
 			while(currentPos != chunk.length && chunk[currentPos].timestamp < minTimestamp) {
 				currentPos++;
 			}
-			//log.info("clip " + TimeUtil.oleMinutesToText(minTimestamp, maxTimestamp) + "   start " + currentPos);
+			//Logger.info("clip " + TimeUtil.oleMinutesToText(minTimestamp, maxTimestamp) + "   start " + currentPos);
 		}
 		@Override
 		public boolean hasNext() {

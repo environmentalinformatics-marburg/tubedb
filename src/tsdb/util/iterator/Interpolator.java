@@ -6,8 +6,8 @@ import java.util.List;
 import org.apache.commons.math3.linear.SingularMatrixException;
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.TimeUtil;
 
@@ -18,7 +18,7 @@ import tsdb.util.TimeUtil;
  */
 public class Interpolator {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	/**
 	 * count of values for training to fill one gap
@@ -139,7 +139,7 @@ public class Interpolator {
 							interpolatedgapCount++;
 							//***
 						} catch(SingularMatrixException e) {
-							log.warn("multilinear interpolation not possible: "+e.toString()+" at "+gapPos);
+							Logger.warn("multilinear interpolation not possible: "+e.toString()+" at "+gapPos);
 						}
 					}
 				}
@@ -168,15 +168,15 @@ public class Interpolator {
 		for(int i=0;i<sourceTimeSeries.length;i++) {
 			if(sourceTimeSeries[i]!=null && sourceTimeSeries[i].containsParamterName(interpolationName)) {
 				if(startTimestamp!=sourceTimeSeries[i].getFirstTimestamp()) {
-					log.error("all sources need to have same startTimestamp");
+					Logger.error("all sources need to have same startTimestamp");
 					return 0;
 				}
 				if(endTimestamp!=sourceTimeSeries[i].getLastTimestamp()) {
-					log.error("all sources need to have same endTimestamp: "+TimeUtil.oleMinutesToText(endTimestamp)+"  "+TimeUtil.oleMinutesToText(sourceTimeSeries[i].getLastTimestamp()));
+					Logger.error("all sources need to have same endTimestamp: "+TimeUtil.oleMinutesToText(endTimestamp)+"  "+TimeUtil.oleMinutesToText(sourceTimeSeries[i].getLastTimestamp()));
 					return 0;
 				}
 				if(timeStep!=sourceTimeSeries[i].timeStep) {
-					log.error("all sources need to have same time step");
+					Logger.error("all sources need to have same time step");
 					return 0;
 				}
 				sourceList.add(sourceTimeSeries[i].getValues(interpolationName));
@@ -216,15 +216,15 @@ public class Interpolator {
 		for(int i=0;i<interpolationTimeSeries.length;i++) {
 			if(interpolationTimeSeries[i].containsParamterName(interpolationName)) {
 				if(startTimestamp!=interpolationTimeSeries[i].getFirstTimestamp()) {
-					log.error("all sources need to have same startTimestamp");
+					Logger.error("all sources need to have same startTimestamp");
 					return 0;
 				}
 				if(endTimestamp!=interpolationTimeSeries[i].getLastTimestamp()) {
-					log.error("all sources need to have same endTimestamp: "+TimeUtil.oleMinutesToText(endTimestamp)+"  "+TimeUtil.oleMinutesToText(interpolationTimeSeries[i].getLastTimestamp()));
+					Logger.error("all sources need to have same endTimestamp: "+TimeUtil.oleMinutesToText(endTimestamp)+"  "+TimeUtil.oleMinutesToText(interpolationTimeSeries[i].getLastTimestamp()));
 					return 0;
 				}
 				if(timeStep!=interpolationTimeSeries[i].timeStep) {
-					log.error("all sources need to have same time step");
+					Logger.error("all sources need to have same time step");
 					return 0;
 				}
 				xss[i] = interpolationTimeSeries[i].getValues(interpolationName);
@@ -248,7 +248,7 @@ public class Interpolator {
 					double slope = simpleRegression.getSlope();
 					intercepts[i] = intercept;
 					slopes[i] = slope;
-					log.info("linear regression "+intercept+" "+slope+" "+simpleRegression.getMeanSquareError());
+					Logger.info("linear regression "+intercept+" "+slope+" "+simpleRegression.getMeanSquareError());
 				} else {
 					intercepts[i] = Float.NaN;
 					slopes[i] = Float.NaN;

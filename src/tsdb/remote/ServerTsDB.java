@@ -11,8 +11,8 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.GeneralStation;
 import tsdb.Station;
@@ -51,7 +51,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class ServerTsDB implements RemoteTsDB {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb; //not null
 
@@ -70,12 +70,12 @@ public class ServerTsDB implements RemoteTsDB {
 	@Override
 	public String[] getSensorNamesOfGeneralStationWithVirtual(String generalStationName) {
 		if(generalStationName==null) {
-			log.warn("generalStationName null");
+			Logger.warn("generalStationName null");
 			return null;
 		}		
 		GeneralStation generalStation = tsdb.getGeneralStation(generalStationName);
 		if(generalStation==null) {
-			log.warn("generalStation not found");
+			Logger.warn("generalStation not found");
 			return null;
 		}
 
@@ -160,7 +160,7 @@ public class ServerTsDB implements RemoteTsDB {
 					virtualPlot = tsdb.getVirtualPlot(mainPlotID);
 				}
 			} catch (Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 		}
 		if(virtualPlot!=null) {
@@ -297,7 +297,7 @@ public class ServerTsDB implements RemoteTsDB {
 		ArrayList<TimestampInterval<String>> result = new ArrayList<TimestampInterval<String>>();
 		GeneralStation generalStation = tsdb.getGeneralStation(generalStationName);
 		if(generalStation==null) {
-			log.warn("generalStationName not found: "+generalStationName);
+			Logger.warn("generalStationName not found: "+generalStationName);
 			return null;
 		}
 		generalStation.getStationAndVirtualPlotNames().forEach(plotID->{
@@ -334,7 +334,7 @@ public class ServerTsDB implements RemoteTsDB {
 	public ArrayList<PlotStatus> getPlotStatusesOfGeneralStation(String generalStationName) {		
 		GeneralStation generalStation = tsdb.getGeneralStation(generalStationName);
 		if(generalStation==null) {
-			log.warn("generalStationName not found: "+generalStationName);
+			Logger.warn("generalStationName not found: "+generalStationName);
 			return null;
 		}		
 		return collectPlotStatuses(generalStation.getStationAndVirtualPlotNames());
@@ -356,7 +356,7 @@ public class ServerTsDB implements RemoteTsDB {
 			prlf.insertDirectory(TsDBFactory.WEBFILES_PATH+"/supplement/log");
 			m = prlf.plotMap;
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 		Map<String, PlotMessage> messageMap = m;
 
@@ -398,7 +398,7 @@ public class ServerTsDB implements RemoteTsDB {
 						//if(e.timestamp==ub[1]) {
 						voltage = e.value;
 						//} else {
-						//	log.warn("timestamp error");
+						//	Logger.warn("timestamp error");
 						//}
 					}
 				} else {
@@ -412,7 +412,7 @@ public class ServerTsDB implements RemoteTsDB {
 						String[] schema = new String[] {sensorName};
 						if(tsdb.isValidSchemaWithVirtualSensors(plotID, schema)) {
 							schema = tsdb.supplementSchema(plotID, schema);
-							log.info("status get: " + Arrays.toString(schema));
+							Logger.info("status get: " + Arrays.toString(schema));
 							node = QueryPlan.plot(tsdb, plotID, schema, AggregationInterval.RAW, DataQuality.Na, false);
 						}
 					}
@@ -428,7 +428,7 @@ public class ServerTsDB implements RemoteTsDB {
 						String[] schema = new String[] {sensorName};
 						if(tsdb.isValidSchemaWithVirtualSensors(plotID, schema)) {
 							schema = tsdb.supplementSchema(schema, getSensorNamesOfPlotWithVirtual(plotID));
-							log.info("status get: " + Arrays.toString(schema));
+							Logger.info("status get: " + Arrays.toString(schema));
 							node = QueryPlan.plot(tsdb, plotID, schema, AggregationInterval.RAW, DataQuality.Na, false);
 						}
 					}
@@ -450,7 +450,7 @@ public class ServerTsDB implements RemoteTsDB {
 						plotMessage = messageMap.get(plotID);
 					}
 				} catch(Exception e) {
-					log.error(e);
+					Logger.error(e);
 				}
 				result.add(new PlotStatus(plotID, (int)interval[0], (int)interval[1], voltage / scale, voltage_min_watch, voltage_min_good, voltage_min_error, plotMessage));
 			}
@@ -534,7 +534,7 @@ public class ServerTsDB implements RemoteTsDB {
 		if(it==null||!it.hasNext()) {
 			return null;
 		}
-		log.trace(it.getProcessingChain().getText());
+		Logger.trace(it.getProcessingChain().getText());
 		return it.toTimestampSeries(Arrays.toString(plotIDs));
 	}
 
@@ -548,21 +548,21 @@ public class ServerTsDB implements RemoteTsDB {
 		if(it==null||!it.hasNext()) {
 			return null;
 		}
-		log.trace(it.getProcessingChain().getText());
+		Logger.trace(it.getProcessingChain().getText());
 		return it.toTimestampSeries(Arrays.toString(plotIDs));
 	}
 
 	@Override
 	public TimestampSeries plot(String queryType, String plotID, String[] columnNames, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated, Long start, Long end) {
 		Node node = null;
-		//log.info("query " + TimeUtil.oleMinutesToText(start, end));
+		//Logger.info("query " + TimeUtil.oleMinutesToText(start, end));
 		if(queryType==null||queryType.equals("standard")) {		
 			node = QueryPlan.plot(tsdb, plotID, columnNames, aggregationInterval, dataQuality, interpolated);
 		} else if(queryType.equals("difference")) {
 			return null; //TODO remove
 			//node = QueryPlan.plotDifference(tsdb, plotID, columnNames, aggregationInterval, dataQuality, interpolated);
 		} else {
-			log.error("queryType unknown");
+			Logger.error("queryType unknown");
 		}
 		if(node==null) {
 			return null;
@@ -571,7 +571,7 @@ public class ServerTsDB implements RemoteTsDB {
 		if(it==null||!it.hasNext()) {
 			return null;
 		}
-		//log.info(it.getProcessingChain().getText());
+		//Logger.info(it.getProcessingChain().getText());
 		return it.toTimestampSeries(plotID);
 	}
 
@@ -614,7 +614,7 @@ public class ServerTsDB implements RemoteTsDB {
 		if(eai==null||!eai.hasNext()) {
 			return null;
 		}
-		log.info(eai.getProcessingChain().getText());
+		Logger.info(eai.getProcessingChain().getText());
 		return eai.toTimestampSeries(plotID);
 	}	
 

@@ -11,8 +11,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -27,7 +27,7 @@ import tsdb.web.generator.Tag;
  *
  */
 public class SupplementHandler extends AbstractHandler {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -42,7 +42,7 @@ public class SupplementHandler extends AbstractHandler {
 
 		String vis_tsm_path = TsDBFactory.WEBFILES_PATH+"/supplement";
 		Path rootDirectory = Paths.get(vis_tsm_path,page);
-		log.info(rootDirectory);
+		Logger.info(rootDirectory);
 
 		response.setContentType("text/html;charset=utf-8");
 
@@ -161,7 +161,7 @@ public class SupplementHandler extends AbstractHandler {
 				tr.addTag("td").addLink("../files/supplement/"+subPage, fileText);
 			}			
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 		html.write(response.getWriter());
 	}

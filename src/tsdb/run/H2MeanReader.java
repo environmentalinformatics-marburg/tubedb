@@ -6,34 +6,34 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.NavigableSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.h2.jdbcx.JdbcDataSource;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 
 public class H2MeanReader {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	/*public static void main(String[] args) {
 		JdbcDataSource ds = new JdbcDataSource();
 		ds.setURL("jdbc:h2:c:/h2_storage/h2_storage");
 
 		try(Connection connection = ds.getConnection()) {
-			log.info("connected");
+			Logger.info("connected");
 			Statement statement = connection.createStatement();
 			String tsName = "AEG01"+"_"+"Ta_200";
 			ResultSet rs = statement.executeQuery("SELECT * FROM "+tsName);
 			while(rs.next()) {
-				//log.info(rs.getInt(1));
+				//Logger.info(rs.getInt(1));
 			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			log.error(e);
+			Logger.error(e);
 		}
-		log.info("closed");
+		Logger.info("closed");
 	}*/
 
 	private final TsDB tsdb;
@@ -74,29 +74,29 @@ public class H2MeanReader {
 						}
 					} catch(Exception e) {
 						e.printStackTrace();
-						log.error(e);
+						Logger.error(e);
 					}
 				}
 			} catch (Exception e) {
-				log.error(e);
+				Logger.error(e);
 			}
 			long timeEndImport = System.currentTimeMillis();
-			log.info((timeEndImport-timeStartImport)/1000+" s Export "+total_count+" count");
+			Logger.info((timeEndImport-timeStartImport)/1000+" s Export "+total_count+" count");
 
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		} 
 	}
 
 	private void readSeries(Statement statement, String stationName, String sensorName) throws SQLException {		
 		String tsName = stationName+"_"+sensorName;
-		log.info("read "+tsName);
+		Logger.info("read "+tsName);
 		try(ResultSet rs = statement.executeQuery("SELECT AVG(m) FROM "+tsName)) {
 			while(rs.next()) {
 				float v = rs.getFloat(1);
-				log.info(v);
+				Logger.info(v);
 				total_count++;
-				//log.info(rs.getInt(1));
+				//Logger.info(rs.getInt(1));
 			}
 		}
 

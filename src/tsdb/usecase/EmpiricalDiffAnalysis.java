@@ -7,8 +7,8 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
@@ -30,7 +30,7 @@ import tsdb.util.iterator.TsIterator;
 
 @SuppressWarnings("unused")
 public class EmpiricalDiffAnalysis {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) {
 		
@@ -69,7 +69,7 @@ public class EmpiricalDiffAnalysis {
 		
 		List<Continuous> compares = source.getSourceStation().nearestStations.stream()
 				.limit(3)
-				.map(s->{log.info(s.stationID);
+				.map(s->{Logger.info(s.stationID);
 					float[] lin = linMap.get(s.stationID);
 					Continuous con = continuousGen.getWithSensorNames(s.stationID, sensorName);
 					//con = TransformLinear.of(con,lin[0],lin[1]);

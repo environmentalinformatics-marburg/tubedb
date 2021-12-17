@@ -5,8 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -21,7 +21,7 @@ import tsdb.util.iterator.TimestampSeries;
  *
  */
 public class ImportSaOwn {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 
@@ -31,7 +31,7 @@ public class ImportSaOwn {
 			ImportSaOwn importSaOwn = new ImportSaOwn(tsdb);			
 			importSaOwn.load(rootPath);
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}*/
 
@@ -54,13 +54,13 @@ public class ImportSaOwn {
 		try(DirectoryStream<Path> rootStream = Files.newDirectoryStream(rootPath)) {
 			for(Path sub:rootStream) {
 				if(Files.isDirectory(sub)) {
-					//log.info("dir "+sub);
+					//Logger.info("dir "+sub);
 					load(sub);
 				}
 
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -68,31 +68,31 @@ public class ImportSaOwn {
 		try(DirectoryStream<Path> rootStream = Files.newDirectoryStream(rootPath)) {
 			for(Path sub:rootStream) {
 				if(!Files.isDirectory(sub)) {
-					//log.info("file "+sub);
+					//Logger.info("file "+sub);
 					loadFile(sub);
 				}
 
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 	}
 
 	public void loadFile(Path filePath) {
 		try {
-			log.trace("load file "+filePath);
+			Logger.trace("load file "+filePath);
 			TimestampSeries timestampseries = AscParser.parse(filePath, true);
 			if(timestampseries==null) {
-				log.error("timestampseries null");
+				Logger.error("timestampseries null");
 				return;
 			}
 			Station station = tsdb.getStation(timestampseries.name);
 			if(station==null) {
-				log.error("station not found "+timestampseries.name+"   in "+filePath);
+				Logger.error("station not found "+timestampseries.name+"   in "+filePath);
 				return;
 			}
 			
-			//log.info(timestampseries);
+			//Logger.info(timestampseries);
 
 			/*HashMap<String,String> translationMap = new HashMap<String, String>();
 			translationMap.put("Temperature", "Ta_200");			
@@ -118,7 +118,7 @@ public class ImportSaOwn {
 						DataEntry[] data = timestampseries.toDataEntyArray(sensorName);
 						
 						if(targetName.equals("P_RT_NRT")) {
-							log.trace("P_RT_NRT corrected");
+							Logger.trace("P_RT_NRT corrected");
 							DataEntry[] corrected_data =  new DataEntry[data.length];
 							for(int i=0;i<data.length;i++) {
 								corrected_data[i] = new DataEntry(data[i].timestamp,data[i].value*0.2f);
@@ -128,16 +128,16 @@ public class ImportSaOwn {
 						if(data!=null&&data.length>0) {
 							//System.out.println("insert in station "+stationName+" sensor "+sensorName+"  elements "+data.length);
 							//streamdb.insertSensorData(stationName, sensorName, data);
-							//log.info("insert in station "+timestampseries.name+" sensor "+targetName+"  elements "+data.length);
+							//Logger.info("insert in station "+timestampseries.name+" sensor "+targetName+"  elements "+data.length);
 							tsdb.streamStorage.insertDataEntryArray(timestampseries.name, targetName, data);
 							
 							if(targetName.equals("DecagonECH2O")) {
-								log.trace("DecagonECH2O translated");
+								Logger.trace("DecagonECH2O translated");
 								DataEntry[] transformed_data =  new DataEntry[data.length];
 								for(int i=0;i<data.length;i++) {
 									final float x = data[i].value / 1000f; // mV to V
 									float y = ((56.8366f*(x-0.81f)-7.58579f)*(x-0.28f)+52.6316f)*(x-0.09f);
-									//log.info(y);
+									//Logger.info(y);
 									transformed_data[i] = new DataEntry(data[i].timestamp,y);
 								}
 								tsdb.streamStorage.insertDataEntryArray(timestampseries.name, "SM_10", transformed_data);
@@ -145,13 +145,13 @@ public class ImportSaOwn {
 						}
 					}
 				} else {
-					log.warn("sensor not found '"+sensorName+"' in "+filePath);
+					Logger.warn("sensor not found '"+sensorName+"' in "+filePath);
 				}
 			}
-			//log.info(timestampseries);
+			//Logger.info(timestampseries);
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 

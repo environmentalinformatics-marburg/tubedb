@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -18,7 +18,7 @@ import tsdb.util.Util;
 import tsdb.util.iterator.TsIterator;
 
 public class DataCastedRaw extends Node.Abstract {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final String[] schema; //not null
 	private final List<Node> sources; //not null
@@ -64,9 +64,9 @@ public class DataCastedRaw extends Node.Abstract {
 		}
 		ArrayList<String> schemaList = new ArrayList<String>();
 		int outputPos = 0;
-		//log.info(schemaSet);
+		//Logger.info(schemaSet);
 		for(String name : outputSensorNames) {
-			//log.info("sensor: " + name);
+			//Logger.info("sensor: " + name);
 			for (int i = 0; i < sources.size(); i++) {
 				Node source = sources.get(i);
 				String sourceName = source.getSourceName();
@@ -75,12 +75,12 @@ public class DataCastedRaw extends Node.Abstract {
 					inputIndices[i][inputPos] = outputPos++;
 					String outputName = sourceName + "." + name; 
 					schemaList.add(outputName);
-					//log.info("it " + i + ":   " + inputPos + " " + name +" -> " + inputIndices[i][inputPos] + " " + outputName + "  " + Arrays.toString(inputIndices[i]));
+					//Logger.info("it " + i + ":   " + inputPos + " " + name +" -> " + inputIndices[i][inputPos] + " " + outputName + "  " + Arrays.toString(inputIndices[i]));
 				}
 			}
 		}
 		/*for (int i = 0; i < sources.size(); i++) {
-			log.info("source " + i + "   " + Arrays.toString(inputIndices[i]) + " " + Arrays.toString(sources.get(i).getSchema()));
+			Logger.info("source " + i + "   " + Arrays.toString(inputIndices[i]) + " " + Arrays.toString(sources.get(i).getSchema()));
 		}*/
 		return new DataCastedRaw(tsdb, schemaList.toArray(new String[0]), sources, inputIndices);
 	}

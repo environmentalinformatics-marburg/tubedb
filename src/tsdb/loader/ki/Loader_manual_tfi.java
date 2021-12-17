@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.DataRow;
 import tsdb.util.TsEntry;
@@ -19,7 +19,7 @@ import tsdb.util.iterator.TimestampSeries;
  */
 class Loader_manual_tfi {
 	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TimestampSeries timestampSeries;
 	private String[] inputSchema = null;
@@ -50,10 +50,10 @@ class Loader_manual_tfi {
 					docuTranslation[sourceIndex] = sensorName;
 					containsValidColumns = true;
 				} else {
-					log.warn("sensor name not in target schema '"+sensorName+"' "+getClass().toGenericString()+"   "+timestampSeries.name);
+					Logger.warn("sensor name not in target schema '"+sensorName+"' "+getClass().toGenericString()+"   "+timestampSeries.name);
 				}
 			} else {
-				log.warn("no sensor translation: "+inputSchema[sourceIndex]);
+				Logger.warn("no sensor translation: "+inputSchema[sourceIndex]);
 			}
 
 		}

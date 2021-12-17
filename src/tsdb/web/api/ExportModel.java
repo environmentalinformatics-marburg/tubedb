@@ -2,8 +2,8 @@ package tsdb.web.api;
 
 import java.time.LocalDateTime;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.component.Region;
 import tsdb.util.AggregationInterval;
@@ -13,7 +13,7 @@ import tsdb.util.TimeUtil;
 
 public class ExportModel{
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 
 	public enum TimespanType{
@@ -21,7 +21,7 @@ public class ExportModel{
 
 		public static TimespanType parseText(String text) {
 			if(text==null) {
-				log.warn("unknown TimespanType null");
+				Logger.warn("unknown TimespanType null");
 				return ALL;
 			}
 			switch(text.toLowerCase()) {
@@ -34,7 +34,7 @@ public class ExportModel{
 			case "dates":
 				return DATES;					
 			default:
-				log.warn("unknown TimespanType: "+text);
+				Logger.warn("unknown TimespanType: "+text);
 				return ALL;
 			}
 		}
@@ -49,7 +49,7 @@ public class ExportModel{
 			case DATES:
 				return "dates";							
 			default:
-				log.warn("unknown TimespanType: "+this);
+				Logger.warn("unknown TimespanType: "+this);
 				return "all";
 			}
 		}
@@ -60,7 +60,7 @@ public class ExportModel{
 
 		public static SpatialAggregation parseText(String text) {
 			if(text==null) {
-				log.warn("unknown SpatialAggregation null");
+				Logger.warn("unknown SpatialAggregation null");
 				return SEPARATE;
 			}
 			switch(text.toLowerCase()) {
@@ -71,7 +71,7 @@ public class ExportModel{
 			case "separate_and_aggregated":
 				return SEPARATE_AND_AGGREGATED;	
 			default:
-				log.warn("unknown SpatialAggregation: "+text);
+				Logger.warn("unknown SpatialAggregation: "+text);
 				return SEPARATE;
 			}
 		}
@@ -85,7 +85,7 @@ public class ExportModel{
 			case SEPARATE_AND_AGGREGATED:
 				return "separate_and_aggregated";					
 			default:
-				log.warn("unknown SpatialAggregation: " + this);
+				Logger.warn("unknown SpatialAggregation: " + this);
 				return "separate plots";
 			}
 		}
@@ -184,7 +184,7 @@ public class ExportModel{
 			endTimestamp = parseDateTo(timespanDatesTo);
 			break;
 		default:
-			log.error("unknown timespan");
+			Logger.error("unknown timespan");
 		}
 		return new Pair<Long, Long>(startTimestamp,endTimestamp);
 	}

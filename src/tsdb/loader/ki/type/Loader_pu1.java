@@ -3,8 +3,8 @@ package tsdb.loader.ki.type;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.StationProperties;
 import tsdb.util.DataRow;
@@ -18,7 +18,7 @@ import tsdb.util.iterator.TimestampSeries;
  */
 class Loader_pu1 extends AbstractLoader {
 	
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	private enum ProcessingType {NONE,COPY,P_RT_NRT};
 
@@ -79,7 +79,7 @@ class Loader_pu1 extends AbstractLoader {
 						eventData[schemaIndex] = entry.data[sourceIndex];
 						break;
 					default:
-						log.warn("processingType unknown: "+processingTypes[sourceIndex]);
+						Logger.warn("processingType unknown: "+processingTypes[sourceIndex]);
 						eventData[schemaIndex] = Float.NaN;
 					}						
 				}

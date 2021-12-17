@@ -18,7 +18,7 @@ import tsdb.util.TsEntry;
 import tsdb.util.iterator.TimestampSeries;
 
 public class TestingTOA5import {
-	//private static final Logger log = LogManager.getLogger();
+	//
 
 
 	public static void main(String[] args) throws IOException {
@@ -97,7 +97,7 @@ public class TestingTOA5import {
 					}
 
 					TimestampSeries timestampSeries = new TimestampSeries(stationNameReader.get(t.rows[0]), valueNames, tsList);
-					//log.info(timestampSeries);
+					//Logger.info(timestampSeries);
 					DataEntry[][] dataEntryArrays = new DataEntry[vLen][];
 					for (int i = 0; i < vLen; i++) {
 						dataEntryArrays[i] = timestampSeries.toDataEntyArray(valueNames[i]);

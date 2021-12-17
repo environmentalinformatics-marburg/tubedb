@@ -9,13 +9,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class Html {
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	public final Document document;
 	public final Tag html;
@@ -45,7 +45,7 @@ public class Html {
 			transformer.setOutputProperty(OutputKeys.INDENT, "no");
 			transformer.transform(new DOMSource(document), new StreamResult(writer));
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 }

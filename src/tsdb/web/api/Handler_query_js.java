@@ -10,8 +10,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,7 +25,7 @@ import tsdb.util.TsEntry;
 import tsdb.util.iterator.TimestampSeries;
 
 public class Handler_query_js extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_query_js(RemoteTsDB tsdb) {
 		super(tsdb, "query_js");
@@ -52,7 +52,7 @@ public class Handler_query_js extends MethodHandler {
 		int resultSchemaCount = -1;
 
 		JSONArray jsonTimeseries = jsonReq.getJSONArray("timeseries");
-		log.info(jsonTimeseries);
+		Logger.info(jsonTimeseries);
 		int jsonTimeseriesLen = jsonTimeseries.length();
 
 		switch(jsonTimeseriesLen) {
@@ -86,16 +86,16 @@ public class Handler_query_js extends MethodHandler {
 				String[] supplementedSchema = tsdb.supplementSchema(schema, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
 				String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, supplementedSchema);
 				tss[i] = tsdb.plot(null, plot, validSchema, agg, dataQuality, interpolation, startTime, endTime);
-				//log.info(tss[i].toString());
+				//Logger.info(tss[i].toString());
 			}
 			resultTs = TimestampSeries.castMerge(tss);
 			resultSchemaCount = resultTs.sensorNames.length;
 		}
 		}
 		
-		//log.info(Arrays.toString(resultTs.sensorNames));
+		//Logger.info(Arrays.toString(resultTs.sensorNames));
 		
-		//log.info(resultTs.toString());
+		//Logger.info(resultTs.toString());
 		
 		String[] schema = resultTs.sensorNames;
 
@@ -105,7 +105,7 @@ public class Handler_query_js extends MethodHandler {
 		/*if(entryCount > 1) {
 			TsEntry a = entries.get(0);
 			TsEntry b = entries.get(entryCount - 1);
-			log.info(entryCount + " entries  " + TimeUtil.oleMinutesToText(a.timestamp, b.timestamp) + "   " + a.timestamp + " - " + b.timestamp);
+			Logger.info(entryCount + " entries  " + TimeUtil.oleMinutesToText(a.timestamp, b.timestamp) + "   " + a.timestamp + " - " + b.timestamp);
 		}*/
 
 		int INT_SIZE = 4;
@@ -124,7 +124,7 @@ public class Handler_query_js extends MethodHandler {
 			if(sensorNameIndex >= 0) {
 				for(TsEntry entry : entries) {
 					float value = entry.data[sensorNameIndex];
-					//log.info("put " + value);
+					//Logger.info("put " + value);
 					byteBuffer.putFloat(value);
 				}
 			} else {

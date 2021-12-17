@@ -12,8 +12,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.mapdb.Serializer;
 
 /**
@@ -24,7 +24,7 @@ import org.mapdb.Serializer;
  *
  */
 public class TimeSeriesMask implements Externalizable {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private ArrayList<Interval> intervals;
 
@@ -59,8 +59,8 @@ public class TimeSeriesMask implements Externalizable {
 	 * @param interval
 	 */
 	public void addInterval(Interval interval) {
-		log.trace("add "+interval);
-		log.trace("in "+intervals);
+		Logger.trace("add "+interval);
+		Logger.trace("in "+intervals);
 		throwNull(interval);
 		ArrayList<Interval> result = new ArrayList<Interval>(intervals.size()+1);
 		Iterator<Interval> it = intervals.iterator();
@@ -72,7 +72,7 @@ public class TimeSeriesMask implements Externalizable {
 		}
 
 		while(interval!=null||current!=null) {
-			//log.info("now intverval "+interval+" current  "+current);
+			//Logger.info("now intverval "+interval+" current  "+current);
 
 			if(interval==null) { // current!=null
 				result.add(current);
@@ -109,7 +109,7 @@ public class TimeSeriesMask implements Externalizable {
 			}
 		}		
 		intervals = result;
-		log.trace("intervals "+intervals.size());
+		Logger.trace("intervals "+intervals.size());
 	}
 
 	public Iterator<Interval> getIterator() {

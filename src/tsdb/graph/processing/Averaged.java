@@ -8,8 +8,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -24,7 +24,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class Averaged extends Continuous.Abstract {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final List<Continuous> sources; //not null
 	private final String[] schema; //not null
@@ -39,11 +39,11 @@ public class Averaged extends Continuous.Abstract {
 			throw new RuntimeException("no sources");	
 		}
 		if(minCount<1) {
-			log.warn("no senseful min count= "+minCount);
+			Logger.warn("no senseful min count= "+minCount);
 		}
 		this.withQualityMeasures = withQualityMeasures;
 		if(sources.size()<minCount) {
-			log.warn("insufficient sources with min count= "+minCount+"  "+sources.size());
+			Logger.warn("insufficient sources with min count= "+minCount+"  "+sources.size());
 		}
 		this.minCount = minCount;
 		this._constant_timestep = sources.get(0).isConstantTimestep();

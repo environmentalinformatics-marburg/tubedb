@@ -3,8 +3,8 @@ package tsdb.iterator;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataQuality;
@@ -14,7 +14,7 @@ import tsdb.util.iterator.InputIterator;
 import tsdb.util.iterator.TsIterator;
 
 public class SunshineOlivieriIterator extends InputIterator {
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	private static final double MIN_SOLAR_ELEVATION_ANGLE_DEG = 3d;
 	private static final double MIN_SOLAR_ELEVATION_ANGLE_RAD = Math.toRadians(MIN_SOLAR_ELEVATION_ANGLE_DEG);
@@ -98,7 +98,7 @@ public class SunshineOlivieriIterator extends InputIterator {
 		double G0 = 1080d * Math.pow(sin_solar_elevation_angle, 1.25d);
 		double ref = G0 * F[day];
 		float res = value < ref ? 0f : 1f;
-		//log.info(ref+"   v "+value+"  ->  "+res+"    "+Double.isNaN(G0));
+		//Logger.info(ref+"   v "+value+"  ->  "+res+"    "+Double.isNaN(G0));
 		
 		//return (float) F; // OK
 		//return (float) Math.toDegrees(solar_declination_RAD); // OK

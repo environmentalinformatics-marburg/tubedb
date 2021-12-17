@@ -10,8 +10,8 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 
 import tsdb.iterator.ProjectionFillIterator;
@@ -52,7 +52,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class Handler_query_csv extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_query_csv(RemoteTsDB tsdb) {
 		super(tsdb, "query_csv");
@@ -66,7 +66,7 @@ public class Handler_query_csv extends MethodHandler {
 		CSVTimeType csvTimeType = CSVTimeType.DATETIME;
 		{
 			String datetime_fomat = request.getParameter("datetime_format");
-			//log.info("dt " + datetime_fomat);
+			//Logger.info("dt " + datetime_fomat);
 			if(datetime_fomat != null) {
 				switch(datetime_fomat) {
 				case "timestamp":
@@ -76,13 +76,13 @@ public class Handler_query_csv extends MethodHandler {
 					csvTimeType = CSVTimeType.CUSTOM;
 					break;
 				default:
-					log.warn("unknown datetime_fomat");
+					Logger.warn("unknown datetime_fomat");
 				}
 			}
 		}
 
 		if(request.getParameter("plot") == null) {
-			log.warn("wrong call no plot parameter");
+			Logger.warn("wrong call no plot parameter");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -99,7 +99,7 @@ public class Handler_query_csv extends MethodHandler {
 				col_plot = false;
 				break;
 			default:
-				log.warn("unknown input");
+				Logger.warn("unknown input");
 				col_plot = false;				
 			}
 		}
@@ -108,7 +108,7 @@ public class Handler_query_csv extends MethodHandler {
 		String[] sensorNames = request.getParameterValues("sensor");
 
 		if(sensorNames==null) {
-			log.warn("wrong call no sensor");
+			Logger.warn("wrong call no sensor");
 			response.getWriter().println("wrong call no sensor");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
@@ -123,7 +123,7 @@ public class Handler_query_csv extends MethodHandler {
 					agg = AggregationInterval.HOUR;
 				}
 			} catch (Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 		}
 
@@ -138,7 +138,7 @@ public class Handler_query_csv extends MethodHandler {
 				casted = false;
 				break;
 			default:
-				log.warn("unknown input");
+				Logger.warn("unknown input");
 				casted = false;				
 			}
 		}
@@ -154,7 +154,7 @@ public class Handler_query_csv extends MethodHandler {
 				spatial_aggregated = false;
 				break;
 			default:
-				log.warn("unknown input");
+				Logger.warn("unknown input");
 				spatial_aggregated = false;				
 			}
 		}
@@ -168,7 +168,7 @@ public class Handler_query_csv extends MethodHandler {
 					dataQuality = DataQuality.STEP;
 				}
 			} catch (Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 		}
 
@@ -183,7 +183,7 @@ public class Handler_query_csv extends MethodHandler {
 				isInterpolated = false;
 				break;
 			default:
-				log.warn("unknown input");
+				Logger.warn("unknown input");
 				isInterpolated = false;				
 			}
 		}
@@ -195,7 +195,7 @@ public class Handler_query_csv extends MethodHandler {
 			try {
 				int year = Integer.parseInt(timeYear);
 				if(year<Handler_query_image.MIN_YEAR||year>Handler_query_image.MAX_YEAR) {
-					log.error("year out of range "+year);
+					Logger.error("year out of range "+year);
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
@@ -207,7 +207,7 @@ public class Handler_query_csv extends MethodHandler {
 					try {
 						int month = Integer.parseInt(timeMonth);
 						if(month<1||month>12) {
-							log.error("month out of range "+month);
+							Logger.error("month out of range "+month);
 							response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 							return;
 						}
@@ -220,7 +220,7 @@ public class Handler_query_csv extends MethodHandler {
 							try {
 								int day = Integer.parseInt(timeDay);
 								if(day < 1 || day > 31) {
-									log.error("day out of range "+day);
+									Logger.error("day out of range "+day);
 									response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 									return;
 								}
@@ -228,19 +228,19 @@ public class Handler_query_csv extends MethodHandler {
 								startTime = TimeUtil.dateTimeToOleMinutes(dateDay);
 								endTime = TimeUtil.dateTimeToOleMinutes(dateDay.plusDays(1));
 							} catch (Exception e) {
-								log.error(e);
+								Logger.error(e);
 								response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 								return;
 							}	
 						}
 					} catch (Exception e) {
-						log.error(e);
+						Logger.error(e);
 						response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 						return;
 					}	
 				}				
 			} catch (Exception e) {
-				log.error(e);
+				Logger.error(e);
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return;
 			}
@@ -251,7 +251,7 @@ public class Handler_query_csv extends MethodHandler {
 			try {
 				int year = Integer.parseInt(timeEndYear);
 				if(year < Handler_query_image.MIN_YEAR || year > Handler_query_image.MAX_YEAR) {
-					log.error("end_year out of range "+year);
+					Logger.error("end_year out of range "+year);
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
@@ -262,7 +262,7 @@ public class Handler_query_csv extends MethodHandler {
 					try {
 						int month = Integer.parseInt(timeEndMonth);
 						if(month<1||month>12) {
-							log.error("end_month out of range "+month);
+							Logger.error("end_month out of range "+month);
 							response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 							return;
 						}
@@ -274,26 +274,26 @@ public class Handler_query_csv extends MethodHandler {
 							try {
 								int day = Integer.parseInt(timeEndDay);
 								if(day < 1 || day > 31) {
-									log.error("end_day out of range "+day);
+									Logger.error("end_day out of range "+day);
 									response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 									return;
 								}
 								LocalDateTime dateDay = LocalDateTime.of(year, month, day, 0, 0);
 								endTime = TimeUtil.dateTimeToOleMinutes(dateDay.plusDays(1));
 							} catch (Exception e) {
-								log.error(e);
+								Logger.error(e);
 								response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 								return;
 							}	
 						}
 					} catch (Exception e) {
-						log.error(e);
+						Logger.error(e);
 						response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 						return;
 					}	
 				}
 			} catch (Exception e) {
-				log.error(e);
+				Logger.error(e);
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return;
 			}
@@ -342,7 +342,7 @@ public class Handler_query_csv extends MethodHandler {
 						sensorNames = tsdb.supplementSchema(sensorNames, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
 						String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, sensorNames);
 						try {
-							log.info("load of "+Arrays.toString(validSchema));
+							Logger.info("load of "+Arrays.toString(validSchema));
 							TimestampSeries ts = tsdb.plot(null, plot, validSchema, agg, dataQuality, isInterpolated, startTime, endTime);
 							if(ts != null) {					
 								ProjectionFillIterator it = new ProjectionFillIterator(ts.tsIterator(), processingSensorNames);
@@ -352,7 +352,7 @@ public class Handler_query_csv extends MethodHandler {
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
-							log.error(e);
+							Logger.error(e);
 						}
 					}
 				}
@@ -360,7 +360,7 @@ public class Handler_query_csv extends MethodHandler {
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(e);
+			Logger.error(e);
 			response.getWriter().println(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}

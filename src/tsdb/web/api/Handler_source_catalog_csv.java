@@ -9,8 +9,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 
 import com.opencsv.CSVWriter;
@@ -33,7 +33,7 @@ import tsdb.web.util.Web;
  *
  */
 public class Handler_source_catalog_csv extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_source_catalog_csv(RemoteTsDB tsdb) {
 		super(tsdb, "source_catalog.csv");
@@ -46,7 +46,7 @@ public class Handler_source_catalog_csv extends MethodHandler {
 
 		String plot = request.getParameter("plot");
 		if(plot==null && !Web.isAllowed(baseRequest, Web.ROLE_ADMIN)) {
-			log.warn("no admin access");
+			Logger.warn("no admin access");
 			response.getWriter().write("no admin access");
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return;
@@ -59,7 +59,7 @@ public class Handler_source_catalog_csv extends MethodHandler {
 			VirtualPlotInfo virtualPlotInfo = tsdb.getVirtualPlot(plot);
 			if(virtualPlotInfo==null) {
 				catalog = Arrays.stream(catalog).filter(entry->{
-					//log.info(entry.stationName+ "=="+plot);
+					//Logger.info(entry.stationName+ "=="+plot);
 					if(entry.stationName.equals(plot)) {
 						return true;
 					}

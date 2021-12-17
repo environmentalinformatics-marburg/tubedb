@@ -1,7 +1,7 @@
 package tsdb.dsl;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.dsl.formula.BooleanFormula;
 import tsdb.dsl.formula.BooleanFormulaAND;
@@ -24,7 +24,7 @@ import tsdb.dsl.formula.FormulaVar;
 public class FormulaToStringVisitor implements FormulaVisitor1<String>, BooleanFormulaVisitor1<String>  {
 	public final static FormulaToStringVisitor DEFAULT = new FormulaToStringVisitor();
 	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	@Override
 	public String visitAND(BooleanFormulaAND booleanFormulaAND) {

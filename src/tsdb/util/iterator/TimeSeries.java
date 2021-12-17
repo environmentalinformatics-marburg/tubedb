@@ -3,8 +3,8 @@ package tsdb.util.iterator;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.DataQuality;
 import tsdb.util.TsEntry;
@@ -25,7 +25,7 @@ import tsdb.util.processingchain.ProcessingChainSupplier;
  */
 public class TimeSeries implements TsIterable, ProcessingChainNode {
 	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	//used for metadata, may be null
 	//private final NewProcessingChain processingChain;
@@ -104,11 +104,11 @@ public class TimeSeries implements TsIterable, ProcessingChainNode {
 	public static TimeSeries create(TsIterator input_iterator) {
 		TsSchema tsSchema = input_iterator.getSchema();
 		if(tsSchema.aggregation!=Aggregation.CONSTANT_STEP) {
-			log.error("time series needs to have constant aggregated timesteps");
+			Logger.error("time series needs to have constant aggregated timesteps");
 			return null;
 		}
 		if(!tsSchema.isContinuous) {
-			log.error("time series needs to have constant timesteps and continuous entries");
+			Logger.error("time series needs to have constant timesteps and continuous entries");
 			return null;
 		}
 		String[] schema = tsSchema.names;
@@ -131,7 +131,7 @@ public class TimeSeries implements TsIterable, ProcessingChainNode {
 					data[column][i] = entry.data[column];
 				}
 			} else {
-				log.error("timestamps are not in timestep intervals");
+				Logger.error("timestamps are not in timestep intervals");
 				return null;
 			}
 			timestamp = entry.timestamp;
@@ -168,15 +168,15 @@ public class TimeSeries implements TsIterable, ProcessingChainNode {
 		}
 
 		if(timestampSeries.timeinterval==null) {
-			log.error("TimeSeries needs to be aggregated for BaseTimeSeries creation");
+			Logger.error("TimeSeries needs to be aggregated for BaseTimeSeries creation");
 			return null;
 		}		
 		int timeStep = timestampSeries.timeinterval;
 		if(endTimestamp<startTimestamp) {
-			log.error("error");
+			Logger.error("error");
 		}
 		if((endTimestamp-startTimestamp)%timeStep!=0) {
-			log.error("error");
+			Logger.error("error");
 		}
 
 		Iterator<TsEntry> it = timestampSeries.entryList.iterator();
@@ -184,7 +184,7 @@ public class TimeSeries implements TsIterable, ProcessingChainNode {
 		if(it.hasNext()) {
 			nextEntry = it.next();
 			if(nextEntry.timestamp%timeStep!=0) {
-				log.error("wrong data");
+				Logger.error("wrong data");
 			}
 		} else {
 			nextEntry = null;
@@ -194,7 +194,7 @@ public class TimeSeries implements TsIterable, ProcessingChainNode {
 			if(it.hasNext()) {
 				nextEntry = it.next();
 				if(nextEntry.timestamp%timeStep!=0) {
-					log.error("wrong data");
+					Logger.error("wrong data");
 				}
 			} else {
 				nextEntry = null;
@@ -211,14 +211,14 @@ public class TimeSeries implements TsIterable, ProcessingChainNode {
 					if(it.hasNext()) {
 						nextEntry = it.next();
 						if(nextEntry.timestamp%timeStep!=0) {
-							log.error("wrong data");
+							Logger.error("wrong data");
 						}
 					} else {
 						nextEntry = null;
 					}
 				}
 			} else if(nextEntry!=null&&nextEntry.timestamp<timestamp) {
-				log.error("error: nextEntry.timestamp "+nextEntry.timestamp+"\t timestamp"+timestamp);
+				Logger.error("error: nextEntry.timestamp "+nextEntry.timestamp+"\t timestamp"+timestamp);
 			} else {
 				// insert NaN
 				for(int columnIndex=0;columnIndex<timestampSeries.sensorNames.length;columnIndex++) {
@@ -279,11 +279,11 @@ public class TimeSeries implements TsIterable, ProcessingChainNode {
 		long clipEndTimestamp = clipEnd==null?this.startTimestamp+((this.data[0].length-1)*this.timeStep):clipEnd;	
 
 		if(clipStartTimestamp>clipEndTimestamp) {
-			log.error("wrong data");
+			Logger.error("wrong data");
 			return null;
 		}
 		if(clipStartTimestamp%timeStep!=0||clipEndTimestamp%timeStep!=0) {
-			log.error("timeststamps not alligned");
+			Logger.error("timeststamps not alligned");
 			return null;			
 		}
 		float[][] resultData = new float[parameterNames.length][(int) (((clipEndTimestamp-clipStartTimestamp)/timeStep)+1)];

@@ -7,8 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDBFactory;
 import tsdb.util.Table;
@@ -27,7 +27,7 @@ import tsdb.util.Util;
  */
 public class SouthAfricaPreImport_saws_acs {
 	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) {
 		System.out.println("start...");
@@ -40,7 +40,7 @@ public class SouthAfricaPreImport_saws_acs {
 			//DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("C:/timeseriesdatabase_source/sa/TESTING"));
 			DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("C:/timeseriesdatabase_source/sa/SAWS/ACS"));
 			for(Path filepath:ds) {
-				log.info("read "+filepath);
+				Logger.info("read "+filepath);
 				readOneFile(filepath, tsaWriter);
 			}
 			tsaWriter.close();
@@ -91,7 +91,7 @@ public class SouthAfricaPreImport_saws_acs {
 		
 		
 		if(table.rows.length==0) {
-			log.warn("empty");
+			Logger.warn("empty");
 			return;
 		}
 		

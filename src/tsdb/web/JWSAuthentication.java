@@ -21,8 +21,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.security.AbstractLoginService;
 import org.eclipse.jetty.security.DefaultUserIdentity;
@@ -47,7 +47,7 @@ import io.jsonwebtoken.SigningKeyResolver;
  *
  */
 public class JWSAuthentication extends AbstractHandler {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final ArrayList<JwsConfig> jwsConfigList;
 
@@ -142,11 +142,11 @@ public class JWSAuthentication extends AbstractHandler {
 
 			HttpSession session = request.getSession(false);
 			if(session != null) {
-				log.info("jws session id " + session.getId());
+				Logger.info("jws session id " + session.getId());
 				Authentication authentication = (Authentication) session.getAttribute("authentication");
 				if(authentication == null) {
 					//throw new RuntimeException("missing authentication");
-					log.info("missing authentication");
+					Logger.info("missing authentication");
 				} else {
 					request.setAuthentication(authentication);
 					return;
@@ -155,7 +155,7 @@ public class JWSAuthentication extends AbstractHandler {
 
 			/*Cookie jwsCooky = getCooky(request, "jws");
 			if(jwsCooky != null) {
-				log.info("handle jws cooky");
+				Logger.info("handle jws cooky");
 				handleCooky(jwsCooky, request, response);
 				return;
 			}*/
@@ -167,7 +167,7 @@ public class JWSAuthentication extends AbstractHandler {
 	private void hanndleAuthenticationRequired(Request request, HttpServletResponse response) throws IOException {
 		String reqUrl = request.getRequestURL().toString();
 		String reqUrlQs = request.getQueryString();
-		log.info("reqUrlQs " + reqUrlQs);
+		Logger.info("reqUrlQs " + reqUrlQs);
 		String req = reqUrl;
 		if(reqUrlQs != null) {
 			req += '?' + reqUrlQs;
@@ -209,12 +209,12 @@ public class JWSAuthentication extends AbstractHandler {
 	}
 
 	public void handleJwsParameterRedirect(String compactJws, Request request, HttpServletResponse response) throws IOException {
-		log.info("handleJwsParameterRedirect: " + compactJws);
+		Logger.info("handleJwsParameterRedirect: " + compactJws);
 		request.setHandled(true);
 
 		String redirect_target = request.getRequestURL().toString();
 		String qs = request.getQueryString();
-		log.info("qs " + qs);
+		Logger.info("qs " + qs);
 		int jwsIndex = qs.indexOf("jws=");
 		if(jwsIndex < 0) {
 			throw new RuntimeException("url JWS error");
@@ -267,7 +267,7 @@ public class JWSAuthentication extends AbstractHandler {
 				return;
 			} else {
 				e.printStackTrace();
-				log.warn(e);
+				Logger.warn(e);
 				/*Cookie cookie = new Cookie("jws", null);
 				cookie.setPath(COOKIE_PATH);
 				cookie.setMaxAge(0);

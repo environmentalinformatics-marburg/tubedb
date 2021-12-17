@@ -4,29 +4,29 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.util.TimeSeriesArchivReader;
 
 public class TsaImport {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void readDirectoryRecursive(TsDB tsdb, Path rootDirectory) {
 		try {
 			DirectoryStream<Path> ds = Files.newDirectoryStream(rootDirectory);
 			for(Path subPath:ds) {
 				if(Files.isDirectory(subPath)) {
-					log.info("read directory "+subPath);
+					Logger.info("read directory "+subPath);
 					readDirectoryRecursive(tsdb,subPath);
 				} else {
-					log.info("read file "+subPath);
+					Logger.info("read file "+subPath);
 					readOneFile(tsdb, subPath);
 				}
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -35,7 +35,7 @@ public class TsaImport {
 			TimeSeriesArchivReader.importStationsFromFile(tsdb, filepath.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 }

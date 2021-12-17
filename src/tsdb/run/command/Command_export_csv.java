@@ -5,8 +5,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.NavigableSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
@@ -17,7 +17,7 @@ import tsdb.util.iterator.CSVTimeType;
 import tsdb.util.iterator.TsIterator;
 
 public class Command_export_csv {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 
@@ -28,7 +28,7 @@ public class Command_export_csv {
 			export_region.run(path);
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(e);
+			Logger.error(e);
 		}			
 	}
 
@@ -43,21 +43,21 @@ public class Command_export_csv {
 		Timer.start("csv export");
 		try {
 			for(String stationName:stationNames) {
-				log.info(stationName);
+				Logger.info(stationName);
 				try {
 					String[] sensorNames = tsdb.streamStorage.getSensorNames(stationName);
 					if(sensorNames != null) {
-						log.info(stationName + "/" + Arrays.toString(sensorNames));
+						Logger.info(stationName + "/" + Arrays.toString(sensorNames));
 						TsIterator it = tsdb.streamStorage.getRawIterator(stationName, sensorNames, null, null);
 						CSV.write(it, path + "/" + stationName + ".csv", ",", "", CSVTimeType.DATETIME, AggregationInterval.RAW);
 					}
 				} catch(Exception e) {
-					log.error(e);
+					Logger.error(e);
 				}
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
-		log.info(Timer.stop("csv export"));
+		Logger.info(Timer.stop("csv export"));
 	}
 }

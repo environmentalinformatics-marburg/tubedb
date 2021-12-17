@@ -3,8 +3,8 @@ package tsdb.loader.ki.type;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.StationProperties;
@@ -18,7 +18,7 @@ import tsdb.util.iterator.TimestampSeries;
  *
  */
 public abstract class AbstractLoader {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	protected final String[] inputSchema;
 	protected final StationProperties properties;
@@ -53,10 +53,10 @@ public abstract class AbstractLoader {
 					sourcePos[targetIndexMap.get(sensorName)] = sourceIndex;
 					containsValidColumns = true;
 				} else {
-					log.warn("sensor name not in target schema "+sensorName+" "+getClass().toGenericString());
+					Logger.warn("sensor name not in target schema "+sensorName+" "+getClass().toGenericString());
 				}
 			} else {
-				log.warn("no sensor translation: "+inputSchema[sourceIndex]+" in "+sourceInfo);
+				Logger.warn("no sensor translation: "+inputSchema[sourceIndex]+" in "+sourceInfo);
 			}
 
 		}

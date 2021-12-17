@@ -3,8 +3,8 @@ package tsdb.iterator;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.DataQuality;
 import tsdb.util.Interval;
@@ -20,7 +20,7 @@ import tsdb.util.iterator.TsIterator;
  */
 public class MaskIterator extends InputIterator {
 		@SuppressWarnings("unused")
-		private static final Logger log = LogManager.getLogger();
+		
 
 		private Iterator<Interval>[] maskIterators;
 		private Interval[] currIntervals;

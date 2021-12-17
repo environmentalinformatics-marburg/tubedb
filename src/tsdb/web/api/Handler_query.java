@@ -9,8 +9,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 
 import tsdb.remote.RemoteTsDB;
@@ -30,7 +30,7 @@ import tsdb.util.iterator.TsIterator;
  */
 @Deprecated
 public class Handler_query extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_query(RemoteTsDB tsdb) {
 		super(tsdb, "query");
@@ -43,14 +43,14 @@ public class Handler_query extends MethodHandler {
 
 		String plot = request.getParameter("plot");
 		if(plot==null) {
-			log.warn("wrong call no plot");
+			Logger.warn("wrong call no plot");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
 		String sensorName = request.getParameter("sensor");
 
 		if(sensorName==null) {
-			log.warn("wrong call no sensor");
+			Logger.warn("wrong call no sensor");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -64,7 +64,7 @@ public class Handler_query extends MethodHandler {
 					agg = AggregationInterval.HOUR;
 				}
 			} catch (Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 		}
 
@@ -77,7 +77,7 @@ public class Handler_query extends MethodHandler {
 					dataQuality = DataQuality.STEP;
 				}
 			} catch (Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 		}
 
@@ -92,7 +92,7 @@ public class Handler_query extends MethodHandler {
 				isInterpolated = false;
 				break;
 			default:
-				log.warn("unknown input");
+				Logger.warn("unknown input");
 				isInterpolated = false;				
 			}
 		}
@@ -104,7 +104,7 @@ public class Handler_query extends MethodHandler {
 			try {
 				int year = Integer.parseInt(timeYear);
 				if(year<Handler_query_image.MIN_YEAR||year>Handler_query_image.MAX_YEAR) {
-					log.error("year out of range "+year);
+					Logger.error("year out of range "+year);
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
@@ -116,7 +116,7 @@ public class Handler_query extends MethodHandler {
 					try {
 						int month = Integer.parseInt(timeMonth);
 						if(month<1||month>12) {
-							log.error("month out of range "+month);
+							Logger.error("month out of range "+month);
 							response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 							return;
 						}
@@ -124,13 +124,13 @@ public class Handler_query extends MethodHandler {
 						startTime = TimeUtil.dateTimeToOleMinutes(dateMonth);
 						endTime = TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, dateMonth.toLocalDate().lengthOfMonth(), 23, 0));
 					} catch (Exception e) {
-						log.error(e);
+						Logger.error(e);
 						response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 						return;
 					}	
 				}				
 			} catch (Exception e) {
-				log.error(e);
+				Logger.error(e);
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return;
 			}
@@ -145,13 +145,13 @@ public class Handler_query extends MethodHandler {
 			}
 			String[] validSchema =  tsdb.getValidSchema(plot, sensorNames);
 			if(sensorNames.length!=validSchema.length) {
-				log.info("sensorName not in plot: "+plot+"  "+sensorName);
+				Logger.info("sensorName not in plot: "+plot+"  "+sensorName);
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);				
 				return;
 			}
 			TimestampSeries ts = tsdb.plot(null, plot, sensorNames, agg, dataQuality, isInterpolated, startTime, endTime);
 			if(ts==null) {
-				log.error("TimestampSeries null: "+plot);
+				Logger.error("TimestampSeries null: "+plot);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);				
 				return;
 			}
@@ -173,7 +173,7 @@ public class Handler_query extends MethodHandler {
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}

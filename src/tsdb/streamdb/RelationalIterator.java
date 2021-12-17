@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.DataEntry;
 import tsdb.util.TsEntry;
@@ -26,7 +26,7 @@ import tsdb.util.processingchain.ProcessingChainEntry;
  */
 public class RelationalIterator extends TsIterator {
 	@SuppressWarnings("unused")
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final StreamIterator[] iterators;
 	private TsEntry curr;

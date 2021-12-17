@@ -1,7 +1,7 @@
 package tsdb.loader.ki.type;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.StationProperties;
 
@@ -11,7 +11,7 @@ import tsdb.StationProperties;
  *
  */
 public class LoaderFactory {	
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	private LoaderFactory(){}
 	
@@ -27,14 +27,14 @@ public class LoaderFactory {
 			return new Loader_rad(input_schema, properties, sourceInfo);
 		case "tfi":
 			//return new Loader_tfi(input_schema, properties, csvtimeSeries);
-			log.warn("don't load generated tfi files");
+			Logger.warn("don't load generated tfi files");
 			return null;
 		case "gp1":
 			return new Loader_gp1(input_schema, properties, sourceInfo);
 		case "rug":
 			return new Loader_rug(input_schema, properties, sourceInfo);					
 		default:
-			log.warn("no loader found");
+			Logger.warn("no loader found");
 			return null;
 		}
 	}

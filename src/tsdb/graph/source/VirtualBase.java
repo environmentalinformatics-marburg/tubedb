@@ -7,8 +7,8 @@ import static tsdb.util.AssumptionCheck.throwNulls;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.StationProperties;
@@ -29,7 +29,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class VirtualBase extends Base.Abstract  {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final VirtualPlot virtualPlot; //not null	
 	private final String[] schema; // not null
@@ -68,24 +68,24 @@ public class VirtualBase extends Base.Abstract  {
 			}
 			querySchema = tsdb.getBaseSchema(schema);
 			if(querySchema==null) {
-				log.warn("empty base schema in VirtualPlot: "+virtualPlot.plotID);
+				Logger.warn("empty base schema in VirtualPlot: "+virtualPlot.plotID);
 				return null;
 			}
 		}
-		//log.info("virtualPlot.getSensorNames() "+virtualPlot.getSensorNames());
+		//Logger.info("virtualPlot.getSensorNames() "+virtualPlot.getSensorNames());
 		querySchema = tsdb.supplementSchema(querySchema, virtualPlot.getSensorNames());
 		return new VirtualBase(tsdb, virtualPlot, querySchema, stationGen);		
 	}
 
 	@Override
 	public TsIterator get(Long start, Long end) {
-		//log.info("get "+Arrays.toString(schema));
+		//Logger.info("get "+Arrays.toString(schema));
 		List<TimestampInterval<StationProperties>> intervalList = virtualPlot.getStationList(start, end, schema);			 
 		List<TsIterator> processing_iteratorList = new ArrayList<TsIterator>();				
 		for(TimestampInterval<StationProperties> interval:intervalList) {
 			String stationID = interval.value.get_serial();
 			String[] stationSchema = tsdb.getValidSchemaWithVirtualSensors(stationID, schema);
-			//log.info("valid "+Arrays.toString(stationSchema)+"   of "+stationSchema);
+			//Logger.info("valid "+Arrays.toString(stationSchema)+"   of "+stationSchema);
 			if(stationSchema.length>0) {				
 				TimestampInterval<StationProperties> filteredInterval = interval.filterByInterval(start, end);
 				if(filteredInterval!=null) {
@@ -106,10 +106,10 @@ public class VirtualBase extends Base.Abstract  {
 		if(processing_iteratorList.size()==1) {			
 			TsIterator it = processing_iteratorList.get(0);
 			if(Arrays.equals(it.getSchema().names,schema)) {
-				//log.info("one iterator no projection");
+				//Logger.info("one iterator no projection");
 				return it;
 			} else {
-				//log.info("one iterator with projection");
+				//Logger.info("one iterator with projection");
 				return new ProjectionFillIterator(it, schema);
 			}
 		}

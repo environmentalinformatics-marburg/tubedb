@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.dsl.Environment;
 import tsdb.dsl.FormulaBuilder;
@@ -22,7 +22,7 @@ import tsdb.util.Util;
 import tsdb.util.yaml.YamlMap;
 
 public class PropertyComputation {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public final String target;
 	public final Formula formula_org;
@@ -33,7 +33,7 @@ public class PropertyComputation {
 
 	public static PropertyComputation parse(String target, String formulaText) {
 		if(target==null) {
-			log.error("missing target");
+			Logger.error("missing target");
 			return null;
 		}
 		Formula formula = FormulaBuilder.parseFormula(formulaText);

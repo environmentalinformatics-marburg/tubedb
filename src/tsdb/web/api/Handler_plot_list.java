@@ -13,8 +13,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
 
@@ -54,7 +54,7 @@ import tsdb.web.util.Web;
  *
  */
 public class Handler_plot_list extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_plot_list(RemoteTsDB tsdb) {
 		super(tsdb, "plot_list");
@@ -68,12 +68,12 @@ public class Handler_plot_list extends MethodHandler {
 		String generalstationName = request.getParameter("generalstation");
 		String regionName = request.getParameter("region");
 		if(regionName != null && !Web.isAllowed(userIdentity, regionName)) {
-			log.warn("no access to region " + regionName);
+			Logger.warn("no access to region " + regionName);
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return;
 		}
 		if((generalstationName == null && regionName == null) || (generalstationName != null && regionName != null)) {
-			log.warn("wrong call");
+			Logger.warn("wrong call");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -97,20 +97,20 @@ public class Handler_plot_list extends MethodHandler {
 							String plot = plotReader.get(row);
 							String plotYearComment = commentReader.get(row);
 							if(commentMap.containsKey(plot)) {
-								log.warn("overwrite "+plot+"  "+commentMap.get(plot)+" with "+Arrays.toString(row));
+								Logger.warn("overwrite "+plot+"  "+commentMap.get(plot)+" with "+Arrays.toString(row));
 							}
 							commentMap.put(plot, plotYearComment);
 						}
 					} catch(Exception e) {
-						log.warn(e);
+						Logger.warn(e);
 					}
 				}
 				
 				} else {
-					log.warn("file not found "+filename);
+					Logger.warn("file not found "+filename);
 				}				
 			} catch(Exception e) {
-				log.error(e);
+				Logger.error(e);
 			}
 		}
 		
@@ -121,7 +121,7 @@ public class Handler_plot_list extends MethodHandler {
 			if(generalstationName != null) {
 				GeneralStationInfo[] generalStationInfos = tsdb.getGeneralStations();
 				if(generalStationInfos == null) {
-					log.error("generalStationInfos null: ");
+					Logger.error("generalStationInfos null: ");
 					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);				
 					return;
 				}
@@ -137,7 +137,7 @@ public class Handler_plot_list extends MethodHandler {
 			} else {
 				GeneralStationInfo[] generalStationInfos = tsdb.getGeneralStationsOfRegion(regionName);			
 				if(generalStationInfos == null) {
-					log.error("generalStationInfos null: ");
+					Logger.error("generalStationInfos null: ");
 					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);				
 					return;
 				}
@@ -152,7 +152,7 @@ public class Handler_plot_list extends MethodHandler {
 			
 			PlotInfo[] plotInfos = tsdb.getPlots();
 			if(plotInfos==null) {
-				log.error("plotInfos null: ");
+				Logger.error("plotInfos null: ");
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);				
 				return;
 			}
@@ -185,7 +185,7 @@ public class Handler_plot_list extends MethodHandler {
 			writeStringArray(writer, webList);
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}

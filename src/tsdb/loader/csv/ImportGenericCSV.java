@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -33,12 +33,12 @@ import tsdb.util.Util;
  *
  */
 public class ImportGenericCSV {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 
 	public ImportGenericCSV(TsDB tsdb) {
-		//log.info("ImportGenericCSV");
+		//Logger.info("ImportGenericCSV");
 		AssumptionCheck.throwNull(tsdb);
 		this.tsdb = tsdb;
 	}
@@ -60,7 +60,7 @@ public class ImportGenericCSV {
 				}
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -72,13 +72,13 @@ public class ImportGenericCSV {
 				}
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 	}
 
 	public void loadFile(Path filePath) {
 		try {
-			log.info("load file "+filePath);			
+			Logger.info("load file "+filePath);			
 			Table table = Table.readCSV(filePath,',');
 
 			int stationIndex = getStationIndex(table);
@@ -100,7 +100,7 @@ public class ImportGenericCSV {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(e+"   "+filePath);
+			Logger.error(e+"   "+filePath);
 		}
 	}
 
@@ -134,7 +134,7 @@ public class ImportGenericCSV {
 
 	private void loadSingleStationFile(Table table, Path filePath) {
 		String stationName = parseStationName(filePath);
-		log.trace("station "+stationName);
+		Logger.trace("station "+stationName);
 		Station station = tsdb.getStation(stationName);
 		if(station==null) {
 			throw new RuntimeException("station not found: "+stationName+"   in "+filePath);
@@ -147,13 +147,13 @@ public class ImportGenericCSV {
 		int prevTimestamp = -1;
 		for(String[] row:table.rows) {
 			if(row[0].isEmpty() || row[0].equals("NA")) {
-				log.warn("skip row with missing timestamp "+row[0]+" "+filePath);
+				Logger.warn("skip row with missing timestamp "+row[0]+" "+filePath);
 				continue;
 			}
 			int timestamp = parseTimestamp(row[0]);
 
 			if(timestamp==prevTimestamp) {
-				log.warn("skip duplicate timestamp "+row[0]+" "+filePath);
+				Logger.warn("skip duplicate timestamp "+row[0]+" "+filePath);
 				continue;
 			}
 
@@ -177,13 +177,13 @@ public class ImportGenericCSV {
 			}
 
 			DataRow dataRow = new DataRow(data, timestamp);
-			//log.info(dataRow);
+			//Logger.info(dataRow);
 			dataRows.add(dataRow);
 
 			prevTimestamp = timestamp;
 		}
 
-		//log.info("read done.");
+		//Logger.info("read done.");
 
 		if(!dataRows.isEmpty()) {
 			String[] sensorNames = Arrays.copyOfRange(table.names, 1, sensors + 1);
@@ -192,17 +192,17 @@ public class ImportGenericCSV {
 
 			List<LabeledProperty> computationList = station.labeledProperties.query("computation", (int)firstTimestamp, (int)lastTimestamp);
 			if(computationList.size()>0) {
-				log.trace("LabeledProperty computations");
+				Logger.trace("LabeledProperty computations");
 				for(LabeledProperty prop:computationList) {					
 					try {
 						PropertyComputation computation = ((PropertyComputation)prop.content);
 						if(Util.containsString(sensorNames, computation.target)) {
-							log.trace("LabeledProperty computation "+computation.target);
+							Logger.trace("LabeledProperty computation "+computation.target);
 							computation.calculate(dataRows, sensorNames, firstTimestamp, lastTimestamp);
 						}
 					} catch(Exception e) {
 						e.printStackTrace();
-						log.warn(e);
+						Logger.warn(e);
 					}
 				}
 			}
@@ -223,17 +223,17 @@ public class ImportGenericCSV {
 
 		for(String[] row:table.rows) {
 			if(row.length < 3) {
-				log.warn("skip row with missing columns  " + filePath);
+				Logger.warn("skip row with missing columns  " + filePath);
 				continue;
 			}
 			String stationName = row[0];
 			if(stationName.isEmpty() || stationName.equals("NA")) {
-				log.warn("skip row with missing plotID " + stationName + " " + filePath);
+				Logger.warn("skip row with missing plotID " + stationName + " " + filePath);
 				continue;
 			}
 			String timestampText = row[1];
 			if(timestampText.isEmpty() || timestampText.equals("NA")) {
-				log.warn("skip row with missing timestamp " + timestampText + " " + filePath);
+				Logger.warn("skip row with missing timestamp " + timestampText + " " + filePath);
 				continue;
 			}
 
@@ -273,10 +273,10 @@ public class ImportGenericCSV {
 
 		for(Entry<String, ArrayList<DataRow>> entry:dataRowsMap.entrySet()) {
 			String stationName = entry.getKey();
-			log.trace("station "+stationName);
+			Logger.trace("station "+stationName);
 			Station station = tsdb.getStation(stationName);
 			if(station==null) {
-				log.warn("station not found: "+stationName+"   in "+filePath);
+				Logger.warn("station not found: "+stationName+"   in "+filePath);
 				continue;
 			}
 			ArrayList<DataRow> dataRows = entry.getValue();
@@ -290,22 +290,22 @@ public class ImportGenericCSV {
 
 				List<LabeledProperty> computationList = station.labeledProperties.query("computation", (int)firstTimestamp, (int)lastTimestamp);
 				if(computationList.size() > 0) {
-					log.trace("LabeledProperty computations");
+					Logger.trace("LabeledProperty computations");
 					for(LabeledProperty prop:computationList) {					
 						try {
 							PropertyComputation computation = ((PropertyComputation)prop.content);
 							if(Util.containsString(sensorNames, computation.target)) {
-								log.trace("LabeledProperty computation "+computation.target);
+								Logger.trace("LabeledProperty computation "+computation.target);
 								computation.calculate(dataRows, sensorNames, firstTimestamp, lastTimestamp);
 							}
 						} catch(Exception e) {
 							e.printStackTrace();
-							log.warn(e);
+							Logger.warn(e);
 						}
 					}
 				}
 
-				log.info("insert " + stationName + "  with rows: " + dataRows.size() + "  " + TimeUtil.oleMinutesToText(firstTimestamp) + "  " + TimeUtil.oleMinutesToText(lastTimestamp) + "   " + dataRows.get(0));
+				Logger.info("insert " + stationName + "  with rows: " + dataRows.size() + "  " + TimeUtil.oleMinutesToText(firstTimestamp) + "  " + TimeUtil.oleMinutesToText(lastTimestamp) + "   " + dataRows.get(0));
 				tsdb.streamStorage.insertDataRows(stationName, sensorNames, dataRows);
 				tsdb.sourceCatalog.insert(SourceEntry.of(stationName, sensorNames, dataRows, filePath));
 			}
@@ -354,7 +354,7 @@ public class ImportGenericCSV {
 					cleanDataRows.add(dataRow);
 				}
 			}
-			log.warn("duplicates skipped " + duplicatesCnt);
+			Logger.warn("duplicates skipped " + duplicatesCnt);
 			return cleanDataRows;
 		} else {
 			return dataRows;

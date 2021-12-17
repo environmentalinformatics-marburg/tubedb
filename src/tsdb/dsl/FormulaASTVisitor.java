@@ -1,8 +1,8 @@
 package tsdb.dsl;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.dsl.FormulaParser.AtomContext;
 import tsdb.dsl.FormulaParser.ConditionalContext;
@@ -28,7 +28,7 @@ import tsdb.dsl.formula.FormulaSub;
 import tsdb.dsl.formula.FormulaVar;
 
 public class FormulaASTVisitor extends FormulaBaseVisitor<Formula> {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static final FormulaASTVisitor DEFAULT = new FormulaASTVisitor();
 

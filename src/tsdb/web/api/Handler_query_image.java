@@ -11,8 +11,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 
 import tsdb.component.Region;
@@ -55,7 +55,7 @@ import tsdb.util.iterator.TimestampSeries;
  *
  */
 public class Handler_query_image extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static final int MIN_YEAR = 1900;
 	public static final int MAX_YEAR = 2100;
@@ -77,14 +77,14 @@ public class Handler_query_image extends MethodHandler {
 
 		String plot = request.getParameter("plot");
 		if(plot==null) {
-			log.warn("wrong call");
+			Logger.warn("wrong call");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
 		String sensorName = request.getParameter("sensor");
 
 		if(sensorName==null) {
-			log.warn("wrong call");
+			Logger.warn("wrong call");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -98,7 +98,7 @@ public class Handler_query_image extends MethodHandler {
 					agg = AggregationInterval.HOUR;
 				}
 			} catch (Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 		}
 		
@@ -111,7 +111,7 @@ public class Handler_query_image extends MethodHandler {
 					aggregatedConnection = ac;
 				}
 			} catch (Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 		}
 		
@@ -124,7 +124,7 @@ public class Handler_query_image extends MethodHandler {
 					rawConnection = rc;
 				}
 			} catch (Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 		}
 		
@@ -137,7 +137,7 @@ public class Handler_query_image extends MethodHandler {
 					aggregatedValue = av;
 				}
 			} catch (Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 		}
 		
@@ -150,7 +150,7 @@ public class Handler_query_image extends MethodHandler {
 					rawValue = rv;
 				}
 			} catch (Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 		}
 
@@ -163,14 +163,14 @@ public class Handler_query_image extends MethodHandler {
 				if(agg==AggregationInterval.DAY||agg==AggregationInterval.WEEK||agg==AggregationInterval.MONTH||agg==AggregationInterval.YEAR) {
 					boxplot = true;
 				} else {
-					log.warn("no boxplot for aggregate "+agg);
+					Logger.warn("no boxplot for aggregate "+agg);
 				}
 				break;
 			case "false":
 				boxplot = false;
 				break;
 			default:
-				log.warn("unknown input for boxplot");
+				Logger.warn("unknown input for boxplot");
 				boxplot = false;				
 			}
 		}
@@ -188,7 +188,7 @@ public class Handler_query_image extends MethodHandler {
 					dataQuality = DataQuality.STEP;
 				}
 			} catch (Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 		}
 
@@ -203,7 +203,7 @@ public class Handler_query_image extends MethodHandler {
 				isInterpolated = false;
 				break;
 			default:
-				log.warn("unknown value for parameter interpolated: "+interpolated);
+				Logger.warn("unknown value for parameter interpolated: "+interpolated);
 				isInterpolated = false;				
 			}
 		}
@@ -215,7 +215,7 @@ public class Handler_query_image extends MethodHandler {
 			try {
 				int year = Integer.parseInt(timeYear);
 				if(year<MIN_YEAR||year>MAX_YEAR) {
-					log.error("year out of range "+year);
+					Logger.error("year out of range "+year);
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
@@ -227,7 +227,7 @@ public class Handler_query_image extends MethodHandler {
 					try {
 						int month = Integer.parseInt(timeMonth);
 						if(month<1||month>12) {
-							log.error("month out of range "+month);
+							Logger.error("month out of range "+month);
 							response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 							return;
 						}
@@ -240,7 +240,7 @@ public class Handler_query_image extends MethodHandler {
 							try {
 								int day = Integer.parseInt(timeDay);
 								if(day < 1 || day > 31) {
-									log.error("day out of range "+day);
+									Logger.error("day out of range "+day);
 									response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 									return;
 								}
@@ -248,19 +248,19 @@ public class Handler_query_image extends MethodHandler {
 								startTime = TimeUtil.dateTimeToOleMinutes(dateDay);
 								endTime = TimeUtil.dateTimeToOleMinutes(dateDay.plusDays(1));
 							} catch (Exception e) {
-								log.error(e);
+								Logger.error(e);
 								response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 								return;
 							}	
 						}
 					} catch (Exception e) {
-						log.error(e);
+						Logger.error(e);
 						response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 						return;
 					}	
 				}
 			} catch (Exception e) {
-				log.error(e);
+				Logger.error(e);
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return;
 			}
@@ -280,7 +280,7 @@ public class Handler_query_image extends MethodHandler {
 			try {
 				int year = Integer.parseInt(timeEndYear);
 				if(year < MIN_YEAR || year > MAX_YEAR) {
-					log.error("end_year out of range "+year);
+					Logger.error("end_year out of range "+year);
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
@@ -291,7 +291,7 @@ public class Handler_query_image extends MethodHandler {
 					try {
 						int month = Integer.parseInt(timeEndMonth);
 						if(month<1||month>12) {
-							log.error("end_month out of range "+month);
+							Logger.error("end_month out of range "+month);
 							response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 							return;
 						}
@@ -303,26 +303,26 @@ public class Handler_query_image extends MethodHandler {
 							try {
 								int day = Integer.parseInt(timeEndDay);
 								if(day < 1 || day > 31) {
-									log.error("end_day out of range "+day);
+									Logger.error("end_day out of range "+day);
 									response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 									return;
 								}
 								LocalDateTime dateDay = LocalDateTime.of(year, month, day, 0, 0);
 								endTime = TimeUtil.dateTimeToOleMinutes(dateDay.plusDays(1));
 							} catch (Exception e) {
-								log.error(e);
+								Logger.error(e);
 								response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 								return;
 							}	
 						}
 					} catch (Exception e) {
-						log.error(e);
+						Logger.error(e);
 						response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 						return;
 					}	
 				}
 			} catch (Exception e) {
-				log.error(e);
+				Logger.error(e);
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return;
 			}
@@ -342,7 +342,7 @@ public class Handler_query_image extends MethodHandler {
 			String[] sensorNames = tsdb.supplementSchema(new String[]{sensorName}, tsdb.getSensorNamesOfPlotWithVirtual(plot));
 			String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, sensorNames);
 			if(sensorNames.length!=validSchema.length) {
-				log.info("sensorName not in plot: "+plot+"  "+sensorName+"    "+Arrays.toString(sensorNames)+"   "+Arrays.toString(validSchema));
+				Logger.info("sensorName not in plot: "+plot+"  "+sensorName+"    "+Arrays.toString(sensorNames)+"   "+Arrays.toString(validSchema));
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);				
 				return;
 			}
@@ -356,7 +356,7 @@ public class Handler_query_image extends MethodHandler {
 			}
 
 			if(ts==null) {
-				log.error("TimestampSeries null: "+plot);
+				Logger.error("TimestampSeries null: "+plot);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);				
 				return;
 			}
@@ -366,7 +366,7 @@ public class Handler_query_image extends MethodHandler {
 					compareTs = tsdb.plot(null, plot, new String[]{sensorName}, agg, DataQuality.NO, false, startTime, endTime);
 				} catch(Exception e) {
 					e.printStackTrace();
-					log.warn(e,e);
+					Logger.warn(e);
 				}
 			}
 
@@ -380,16 +380,14 @@ public class Handler_query_image extends MethodHandler {
 				try {
 					int w = Integer.parseInt(imageWidthText);
 					int h = Integer.parseInt(imageHeightText);
-					if(w>=32&&h>=32&&w<100000&&h<100000) {
+					if(w >= 32 && h >= 32 && w < 100000 && h < 100000) {
 						imageWidth = w;
 						imageHeight = h;
 					}
 				} catch(Exception e) {
-					log.warn(e);
+					Logger.warn(e);
 				}
 			}
-
-
 
 			BufferedImage bufferedImage = new BufferedImage(imageWidth, imageHeight, java.awt.image.BufferedImage.TYPE_INT_RGB);
 			Graphics2D gc = bufferedImage.createGraphics();
@@ -408,7 +406,7 @@ public class Handler_query_image extends MethodHandler {
 					}
 				}
 			} catch(Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 			
 			float[] valueRange = null;
@@ -444,12 +442,12 @@ public class Handler_query_image extends MethodHandler {
 				//ImageRGBA.ofBufferedImage(bufferedImage).writePngUncompressed(response.getOutputStream());
 				ImageRGBA.ofBufferedImage(bufferedImage).writePngCompressed(response.getOutputStream());
 			} catch (IOException e) {
-				log.error(e);
+				Logger.error(e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(e);
+			Logger.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}	

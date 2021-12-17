@@ -8,8 +8,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 
 import tsdb.remote.GeneralStationInfo;
@@ -26,7 +26,7 @@ import tsdb.web.util.Web;
  *
  */
 public class Handler_generalstation_list extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_generalstation_list(RemoteTsDB tsdb) {
 		super(tsdb, "generalstation_list");
@@ -38,7 +38,7 @@ public class Handler_generalstation_list extends MethodHandler {
 		response.setContentType("text/plain;charset=utf-8");
 		String regionName = request.getParameter("region");
 		if(regionName==null) {
-			log.warn("wrong call");
+			Logger.warn("wrong call");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -46,7 +46,7 @@ public class Handler_generalstation_list extends MethodHandler {
 		try {
 			GeneralStationInfo[] generalStationInfos = tsdb.getGeneralStationsOfRegion(regionName);
 			if(generalStationInfos==null) {
-				log.error("generalStationInfos null: "+regionName);
+				Logger.error("generalStationInfos null: "+regionName);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				return;
 			}
@@ -55,11 +55,11 @@ public class Handler_generalstation_list extends MethodHandler {
 			writeStringArray(writer, webList);
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 		} else {
-			log.warn("no access to region "+regionName);
+			Logger.warn("no access to region "+regionName);
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 		}
 	}

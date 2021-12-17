@@ -3,15 +3,15 @@ package tsdb.component.iterator;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.InputIterator;
 import tsdb.util.iterator.TsIterator;
 
 public class NocCheckIterator extends InputIterator {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private static final float ABSENT = -9999999f;
 
@@ -45,7 +45,7 @@ public class NocCheckIterator extends InputIterator {
 				//maxDiff = 10f;
 				break;
 			case "Ta_200_min_raw":
-				//log.info("check");
+				//Logger.info("check");
 				//minRange = 5f;
 				//maxDiff = 5f;
 				//maxDiff = 10f;
@@ -131,21 +131,21 @@ public class NocCheckIterator extends InputIterator {
 		}
 		float[] prevDayHour = past.size()==MAX_ELEMENTS ? past.peekFirst().data : null;
 		float[] futureDayHour = future.size()==MAX_ELEMENTS ? future.peekLast().data : null;
-		//log.info(TimeUtil.oleMinutesToText(prevDayHour==null?0:prevDayHour.timestamp)+" "+TimeUtil.oleMinutesToText(current.timestamp)+" "+TimeUtil.oleMinutesToText(futureDayHour==null?0:futureDayHour.timestamp));
+		//Logger.info(TimeUtil.oleMinutesToText(prevDayHour==null?0:prevDayHour.timestamp)+" "+TimeUtil.oleMinutesToText(current.timestamp)+" "+TimeUtil.oleMinutesToText(futureDayHour==null?0:futureDayHour.timestamp));
 		float[] result = Arrays.copyOf(current.data, current.data.length);
 		for (int i = 0; i < len; i++) {
 			float v = current.data[i];
 			boolean flag = false;
 			if(min_range[i] != ABSENT) {
 				float range = max[i] - min[i];
-				//log.info("NOC "+min+" "+max+"    "+range);
+				//Logger.info("NOC "+min+" "+max+"    "+range);
 				if(range <= min_range[i]) {
 					flag = true;
 				}
 			}
 			if(max_diff[i] != ABSENT && prevDayHour!=null && futureDayHour!=null) {
 				float maxDiff = max_diff[i];
-				//log.info("check!!!"   + maxDiff +"       " + prevDayHour[i] + " " + v + " " + futureDayHour[i]);
+				//Logger.info("check!!!"   + maxDiff +"       " + prevDayHour[i] + " " + v + " " + futureDayHour[i]);
 				/*if( (v+maxDiff<prevDayHour[i] && v+maxDiff<futureDayHour[i]) || (prevDayHour[i]<v-maxDiff && futureDayHour[i]<v-maxDiff) ) {
 					flag = true;
 				}*/
@@ -157,7 +157,7 @@ public class NocCheckIterator extends InputIterator {
 				}*/
 				if(Math.abs(v - prevDayHour[i]) > maxDiff && Math.abs(v - futureDayHour[i]) > maxDiff) {
 					flag = true;
-					//log.info("there " + TimeUtil.oleMinutesToText(current.timestamp));
+					//Logger.info("there " + TimeUtil.oleMinutesToText(current.timestamp));
 				}
 			}
 

@@ -10,8 +10,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
@@ -25,7 +25,7 @@ import tsdb.util.DataRow;
 import tsdb.util.TimeUtil;
 
 public class CSV_MXminiLoader {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 
@@ -51,7 +51,7 @@ public class CSV_MXminiLoader {
 				}
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -63,7 +63,7 @@ public class CSV_MXminiLoader {
 				}
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 	}
 
@@ -71,7 +71,7 @@ public class CSV_MXminiLoader {
 
 	public void loadFile(Path filePath) {
 		try {
-			log.info("load file "+filePath);			
+			Logger.info("load file "+filePath);			
 			InputStreamReader in = new InputStreamReader(new FileInputStream(filePath.toFile()),ASCII);			
 			CSVParser parser = new CSVParserBuilder().withSeparator(';').withIgnoreQuotations(true).build();			
 			CSVReader csvReader = new CSVReaderBuilder(in).withCSVParser(parser).withMultilineLimit(1).build();
@@ -131,10 +131,10 @@ public class CSV_MXminiLoader {
 					}
 				}
 				DataRow dataRow = new DataRow(data, timestamp);
-				//log.info(dataRow);
+				//Logger.info(dataRow);
 				dataRows.add(dataRow);
 				} else {
-					log.warn("skip invalid line sensor columns: " + (row.length - 1) + " should be: " + sensorNamesLen + "   in " + filePath + "  line: " + Arrays.toString(row));
+					Logger.warn("skip invalid line sensor columns: " + (row.length - 1) + " should be: " + sensorNamesLen + "   in " + filePath + "  line: " + Arrays.toString(row));
 				}
 				row = csvReader.readNext();
 			}
@@ -144,7 +144,7 @@ public class CSV_MXminiLoader {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(e+"   "+filePath);
+			Logger.error(e+"   "+filePath);
 		}
 	}
 }

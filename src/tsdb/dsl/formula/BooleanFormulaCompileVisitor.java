@@ -1,8 +1,8 @@
 package tsdb.dsl.formula;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.dsl.FormulaASTVisitor;
 import tsdb.dsl.FormulaBaseVisitor;
@@ -18,7 +18,7 @@ import tsdb.dsl.FormulaParser.Predicate_factorContext;
 import tsdb.dsl.FormulaParser.Predicate_termContext;
 
 public class BooleanFormulaCompileVisitor extends FormulaBaseVisitor<BooleanFormula> {
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	public static final BooleanFormulaCompileVisitor DEFAULT = new BooleanFormulaCompileVisitor();
 	

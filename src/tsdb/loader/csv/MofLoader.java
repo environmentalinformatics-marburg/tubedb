@@ -3,15 +3,15 @@ package tsdb.loader.csv;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.util.Table;
 import tsdb.util.TimeUtil;
 
 public class MofLoader extends ImportGenericCSV {
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	public MofLoader(TsDB tsdb) {
 		super(tsdb);
@@ -31,7 +31,7 @@ public class MofLoader extends ImportGenericCSV {
 			throw new RuntimeException("could not get station name from file name: "+filename);
 		}
 		String stationName = filename.substring(0, postFixIndex);
-		log.info("parsed station name: |" + stationName + "|");
+		Logger.info("parsed station name: |" + stationName + "|");
 		return stationName;
 	}
 

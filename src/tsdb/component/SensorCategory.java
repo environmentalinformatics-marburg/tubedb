@@ -1,7 +1,7 @@
 package tsdb.component;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 /**
  * Type of sensor: used for visualization purposes
@@ -13,7 +13,7 @@ public enum SensorCategory {
 	WATER,
 	OTHER;
 	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static SensorCategory parse(String text) {
 		switch(text.toLowerCase().trim()) {
@@ -24,7 +24,7 @@ public enum SensorCategory {
 		case "other":
 			return OTHER;
 		default:
-			log.warn("SensorCategory unknown: "+text);
+			Logger.warn("SensorCategory unknown: "+text);
 			return OTHER;
 		}
 	}

@@ -8,8 +8,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.influxdb.BatchOptions;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDB.ConsistencyLevel;
@@ -25,7 +25,7 @@ import tsdb.util.DataRow;
 import tsdb.util.TimeUtil;
 
 public class Experiment_InfluxDB extends Experiment {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	//00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970
 	private static final long INFLUXDB_TIME_START_OLE_MINUTES = TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(1970,01,01,0,0));
@@ -36,7 +36,7 @@ public class Experiment_InfluxDB extends Experiment {
 	public Experiment_InfluxDB() {	
 		influxDB = createConnection();
 		BiConsumer<Iterable<Point>, Throwable> exceptionHandler = (points, throwable) -> {
-			log.error("error in write batch: " + points.toString() + "  " + throwable);
+			Logger.error("error in write batch: " + points.toString() + "  " + throwable);
 		 };
 		BatchOptions b = BatchOptions.DEFAULTS
 				.actions(1_000)
@@ -82,7 +82,7 @@ public class Experiment_InfluxDB extends Experiment {
 				influxDB.write(b.build());
 				batchPointCount++;
 				if(batchPointCount >= 1_00) {
-					log.info("flush");
+					Logger.info("flush");
 					influxDB.flush();
 					batchPointCount = 0;
 				}
@@ -118,7 +118,7 @@ public class Experiment_InfluxDB extends Experiment {
 	}
 
 	private long full_read_station(String stationName) {
-		//log.info(stationName);
+		//Logger.info(stationName);
 		long rowCount = 0;
 		Query query = new Query("SHOW FIELD KEYS ON " + DB_NAME + " FROM " + stationName);	
 		QueryResult queryResult = influxDB.query(query);
@@ -138,10 +138,10 @@ public class Experiment_InfluxDB extends Experiment {
 
 	private long full_read_station_data(String stationName, String[] sensorNames) {
 		long rowCount = 0;
-		log.info(stationName + " " + Arrays.toString(sensorNames));
+		Logger.info(stationName + " " + Arrays.toString(sensorNames));
 		String fields = String.join(",", sensorNames);
 		String q = "SELECT "+ fields +" FROM " + stationName;
-		log.info(q);
+		Logger.info(q);
 		Query query = new Query(q, DB_NAME);	
 		QueryResult queryResult = influxDB.query(query);
 		List<Result> results = queryResult.getResults();
@@ -149,12 +149,12 @@ public class Experiment_InfluxDB extends Experiment {
 			List<Series> seriess = result.getSeries();
 			for(Series series:seriess) {
 				List<List<Object>> values = series.getValues();
-				log.info("series " + values.size());
+				Logger.info("series " + values.size());
 				for(List<Object> value:values) {
-					//log.info("entry " + value.get(0));
+					//Logger.info("entry " + value.get(0));
 					rowCount++;
 					/*for(Object v:value) {
-						log.info("v " + v);
+						Logger.info("v " + v);
 					}*/
 				}
 			}

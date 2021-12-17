@@ -4,8 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.gdal.gdal.Band;
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.gdal;
@@ -27,7 +27,7 @@ import static tsdb.util.AssumptionCheck.*;
  */
 public class Create_ki_elevation {
 	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) throws FileNotFoundException {
 
@@ -74,7 +74,7 @@ public class Create_ki_elevation {
 		
 		//destination geo pos projection of geoTiff
 		dst.ImportFromWkt(dataset.GetProjection());
-		log.info(dataset.GetProjection());
+		Logger.info(dataset.GetProjection());
 		CoordinateTransformation ct = CoordinateTransformation.CreateCoordinateTransformation(src, dst);		
 		
 		//create csv output file
@@ -101,10 +101,10 @@ public class Create_ki_elevation {
 					System.out.println(virtualPlot.plotID+": "+virtualPlot.geoPosEasting+","+virtualPlot.geoPosNorthing+" -> "+xoff+","+yoff+" -> "+array[0]);
 					out.println(virtualPlot.plotID+","+array[0]);
 				} else {
-					log.warn("error in get elevation: "+virtualPlot.plotID+"  "+virtualPlot.geoPosEasting+","+virtualPlot.geoPosNorthing);
+					Logger.warn("error in get elevation: "+virtualPlot.plotID+"  "+virtualPlot.geoPosEasting+","+virtualPlot.geoPosNorthing);
 				}
 			} catch(Exception e) {
-				log.warn("error in get elevation: "+virtualPlot.plotID+"    "+e);
+				Logger.warn("error in get elevation: "+virtualPlot.plotID+"    "+e);
 			}
 		}
 		

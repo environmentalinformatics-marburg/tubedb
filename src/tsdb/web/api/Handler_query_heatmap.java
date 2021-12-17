@@ -8,8 +8,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 
 import tsdb.component.Region;
@@ -46,7 +46,7 @@ import tsdb.util.iterator.TimestampSeries;
  *
  */
 public class Handler_query_heatmap extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_query_heatmap(RemoteTsDB tsdb) {
 		super(tsdb, "query_heatmap");
@@ -59,14 +59,14 @@ public class Handler_query_heatmap extends MethodHandler {
 
 		String plot = request.getParameter("plot");
 		if(plot==null) {
-			log.warn("wrong call");
+			Logger.warn("wrong call");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
 		String sensorName = request.getParameter("sensor");
 
 		if(sensorName==null) {
-			log.warn("wrong call");
+			Logger.warn("wrong call");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -80,7 +80,7 @@ public class Handler_query_heatmap extends MethodHandler {
 					agg = AggregationInterval.HOUR;
 				}
 			} catch (Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 		}
 
@@ -93,7 +93,7 @@ public class Handler_query_heatmap extends MethodHandler {
 					dataQuality = DataQuality.STEP;
 				}
 			} catch (Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 		}
 
@@ -108,7 +108,7 @@ public class Handler_query_heatmap extends MethodHandler {
 				isInterpolated = false;
 				break;
 			default:
-				log.warn("unknown input");
+				Logger.warn("unknown input");
 				isInterpolated = false;				
 			}
 		}
@@ -120,7 +120,7 @@ public class Handler_query_heatmap extends MethodHandler {
 			try {
 				int year = Integer.parseInt(timeYear);
 				if(year<Handler_query_image.MIN_YEAR||year>Handler_query_image.MAX_YEAR) {
-					log.error("year out of range "+year);
+					Logger.error("year out of range "+year);
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
@@ -132,7 +132,7 @@ public class Handler_query_heatmap extends MethodHandler {
 					try {
 						int month = Integer.parseInt(timeMonth);
 						if(month<1||month>12) {
-							log.error("month out of range "+month);
+							Logger.error("month out of range "+month);
 							response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 							return;
 						}
@@ -145,7 +145,7 @@ public class Handler_query_heatmap extends MethodHandler {
 							try {
 								int day = Integer.parseInt(timeDay);
 								if(day < 1 || day > 31) {
-									log.error("day out of range "+day);
+									Logger.error("day out of range "+day);
 									response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 									return;
 								}
@@ -153,19 +153,19 @@ public class Handler_query_heatmap extends MethodHandler {
 								startTime = TimeUtil.dateTimeToOleMinutes(dateDay);
 								endTime = TimeUtil.dateTimeToOleMinutes(dateDay.plusHours(23));
 							} catch (Exception e) {
-								log.error(e);
+								Logger.error(e);
 								response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 								return;
 							}	
 						}
 					} catch (Exception e) {
-						log.error(e);
+						Logger.error(e);
 						response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 						return;
 					}	
 				}
 			} catch (Exception e) {
-				log.error(e);
+				Logger.error(e);
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return;
 			}				
@@ -185,7 +185,7 @@ public class Handler_query_heatmap extends MethodHandler {
 			try {
 				int year = Integer.parseInt(timeEndYear);
 				if(year < Handler_query_image.MIN_YEAR || year > Handler_query_image.MAX_YEAR) {
-					log.error("end_year out of range "+year);
+					Logger.error("end_year out of range "+year);
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 					return;
 				}
@@ -196,7 +196,7 @@ public class Handler_query_heatmap extends MethodHandler {
 					try {
 						int month = Integer.parseInt(timeEndMonth);
 						if(month<1||month>12) {
-							log.error("end_month out of range "+month);
+							Logger.error("end_month out of range "+month);
 							response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 							return;
 						}
@@ -208,26 +208,26 @@ public class Handler_query_heatmap extends MethodHandler {
 							try {
 								int day = Integer.parseInt(timeEndDay);
 								if(day < 1 || day > 31) {
-									log.error("end_day out of range "+day);
+									Logger.error("end_day out of range "+day);
 									response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 									return;
 								}
 								LocalDateTime dateDay = LocalDateTime.of(year, month, day, 0, 0);
 								endTime = TimeUtil.dateTimeToOleMinutes(dateDay.plusDays(1));
 							} catch (Exception e) {
-								log.error(e);
+								Logger.error(e);
 								response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 								return;
 							}	
 						}
 					} catch (Exception e) {
-						log.error(e);
+						Logger.error(e);
 						response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 						return;
 					}	
 				}
 			} catch (Exception e) {
-				log.error(e);
+				Logger.error(e);
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return;
 			}
@@ -250,14 +250,14 @@ public class Handler_query_heatmap extends MethodHandler {
 			String[] sensorNames = tsdb.supplementSchema(new String[]{sensorName}, tsdb.getSensorNamesOfPlotWithVirtual(plot));
 			String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, sensorNames);
 			if(sensorNames.length!=validSchema.length) {
-				log.info("sensorName not in plot: "+plot+"  "+sensorName);
+				Logger.info("sensorName not in plot: "+plot+"  "+sensorName);
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);				
 				return;
 			}
 
 			TimestampSeries ts = tsdb.plot(null, plot, sensorNames, agg, dataQuality, isInterpolated, startTime, endTime);
 			if(ts==null) {
-				log.error("TimestampSeries null: "+plot);
+				Logger.error("TimestampSeries null: "+plot);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);				
 				return;
 			}
@@ -306,7 +306,7 @@ public class Handler_query_heatmap extends MethodHandler {
 					ImageRGBA.ofBufferedImage(bufferedImage).writePngCompressed(response.getOutputStream());
 					response.setStatus(HttpServletResponse.SC_OK);
 				} catch (IOException e) {
-					log.error(e);
+					Logger.error(e);
 					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				}
 			} else {
@@ -331,14 +331,14 @@ public class Handler_query_heatmap extends MethodHandler {
 					ImageRGBA.ofBufferedImage(bufferedImage).writePngCompressed(response.getOutputStream());
 					response.setStatus(HttpServletResponse.SC_OK);
 				} catch (IOException e) {
-					log.error(e);
+					Logger.error(e);
 					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				}
 
 			}			
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(e);
+			Logger.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}

@@ -12,8 +12,8 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.StationProperties;
@@ -32,7 +32,7 @@ import tsdb.util.iterator.TimestampSeries;
  */
 public class TimeSeriesLoaderKiLi {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb; //not null
 
@@ -52,7 +52,7 @@ public class TimeSeriesLoaderKiLi {
 	 * @param timeOffset 
 	 */
 	public void loadDirectory_with_stations_recursive(Path root, boolean checkExcluded, int timeOffset) {
-		log.info("load directory:      "+root);		
+		Logger.info("load directory:      "+root);		
 		TreeMap<String,Path> ascCollectorMap = new TreeMap<String,Path>();		
 		loadDirectory_with_stations_recursive_internal(root, checkExcluded, ascCollectorMap);
 		//loadWithAscCollectorMap(ascCollectorMap);
@@ -70,7 +70,7 @@ public class TimeSeriesLoaderKiLi {
 			}
 			stream.close();
 		} catch (IOException e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -83,7 +83,7 @@ public class TimeSeriesLoaderKiLi {
 		try {
 			if(Files.exists(kiliPath)) {
 				DirectoryStream<Path> stream = Files.newDirectoryStream(kiliPath);
-				//log.info("read directory of files:    "+kiliPath);
+				//Logger.info("read directory of files:    "+kiliPath);
 				for(Path path:stream) {
 					if(!Files.isDirectory(path)) {
 						String filename = path.getName(path.getNameCount()-1).toString();
@@ -104,18 +104,18 @@ public class TimeSeriesLoaderKiLi {
 							if(!excluded) {
 								String fileKey = filename.substring(0, ascIndex);
 								if(ascCollectorMap.containsKey(fileKey)) {
-									log.warn("file already inserted in map "+fileKey+"   "+ascCollectorMap.get(fileKey)+"   "+path);
+									Logger.warn("file already inserted in map "+fileKey+"   "+ascCollectorMap.get(fileKey)+"   "+path);
 								}
 								ascCollectorMap.putIfAbsent(fileKey, path);
 							}
 						} else {
-							log.warn("no asc file: "+filename);
+							Logger.warn("no asc file: "+filename);
 						}
 					}
 				}
 				stream.close();
 			} else {
-				log.warn("directory not found: "+kiliPath);
+				Logger.warn("directory not found: "+kiliPath);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -135,21 +135,21 @@ public class TimeSeriesLoaderKiLi {
 					infoKeyPrefix = infoKeyPrefix.substring(0, 18);
 				}
 				if(!currentInfoPrefix.equals(infoKeyPrefix)) {
-					log.info("load files of prefix   "+infoKeyPrefix);
+					Logger.info("load files of prefix   "+infoKeyPrefix);
 					currentInfoPrefix = infoKeyPrefix;
 				}
 			} catch(Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}			
 
 			try {
 				TimestampSeries timestampseries = AscParser.parse(ascPath, true);
 				if(timestampseries==null) {
-					log.error("read error in "+infoFilename);
+					Logger.error("read error in "+infoFilename);
 					continue;
 				}
 				if(timestampseries.entryList.isEmpty()) {
-					log.info("empty timestampseries in  "+infoFilename);
+					Logger.info("empty timestampseries in  "+infoFilename);
 					continue;
 				}
 				
@@ -157,7 +157,7 @@ public class TimeSeriesLoaderKiLi {
 
 				Station station = tsdb.getStation(timestampseries.name);
 				if(station==null) {
-					log.error("station not found "+timestampseries.name+"   in  "+ascPath);
+					Logger.error("station not found "+timestampseries.name+"   in  "+ascPath);
 					continue;
 				}
 
@@ -169,14 +169,14 @@ public class TimeSeriesLoaderKiLi {
 				StationProperties properties = station.getProperties(timestampseries.getFirstTimestamp(), timestampseries.getLastTimestamp());
 
 				if(properties==null) {
-					log.error("no properties found in station "+timestampseries.name+"  of  "+TimeUtil.oleMinutesToText(timestampseries.getFirstTimestamp())+" - "+TimeUtil.oleMinutesToText(timestampseries.getLastTimestamp())+"  in  "+ascPath);
+					Logger.error("no properties found in station "+timestampseries.name+"  of  "+TimeUtil.oleMinutesToText(timestampseries.getFirstTimestamp())+" - "+TimeUtil.oleMinutesToText(timestampseries.getLastTimestamp())+"  in  "+ascPath);
 					continue;
 				}
 
 				insertTimestampseries(station, properties, timestampseries, translatedInputSchema, ascPath);
 			} catch (Exception e) {
 				e.printStackTrace();
-				log.error(e+"  in  "+infoFilename);
+				Logger.error(e+"  in  "+infoFilename);
 			}
 		}
 	}
@@ -184,12 +184,12 @@ public class TimeSeriesLoaderKiLi {
 	public void insertTimestampseries(Station station, StationProperties properties, TimestampSeries timestampSeries, String[] translatedInputSchema, Path ascPath) {
 		AbstractLoader loader = LoaderFactory.createLoader(station.loggerType.typeName, translatedInputSchema, properties, ascPath.toString());
 		if(loader==null) {
-			log.error("no loader found for  "+station.stationID);
+			Logger.error("no loader found for  "+station.stationID);
 			return;
 		}
 		List<DataRow> resultRows = loader.load(station, station.loggerType.sensorNames, timestampSeries);
 		if(resultRows==null) {
-			log.error("no entries for "+station.stationID+"   in   "+ascPath);
+			Logger.error("no entries for "+station.stationID+"   in   "+ascPath);
 			return;
 		}
 		tsdb.streamStorage.insertDataRows(timestampSeries.name, resultRows, timestampSeries.getFirstTimestamp(), timestampSeries.getLastTimestamp(), station.loggerType.sensorNames);

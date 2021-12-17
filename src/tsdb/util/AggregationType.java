@@ -1,7 +1,7 @@
 package tsdb.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 /**
  * aggregation type of sensor data
@@ -23,7 +23,7 @@ public enum AggregationType {
 	SUM_SECOND_TO_HOUR, // sum of values, unit second to hour conversion for base aggregation
 	LAST; // most recent value of aggregation interval
 	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static AggregationType parse(String aggregateTypeText) {
 		switch(aggregateTypeText.toLowerCase()) {
@@ -54,7 +54,7 @@ public enum AggregationType {
 		case "last":
 			return LAST;				
 		default:
-			log.warn("unknown aggregation: "+aggregateTypeText);
+			Logger.warn("unknown aggregation: "+aggregateTypeText);
 			return null;
 		}
 	}

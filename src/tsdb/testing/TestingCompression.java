@@ -2,8 +2,8 @@ package tsdb.testing;
 
 import java.io.IOException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.mapdb.DataInput2;
 import org.mapdb.DataOutput2;
 import org.mapdb.Serializer;
@@ -23,7 +23,7 @@ import tsdb.util.TimeUtil;
 import tsdb.util.Util;
 
 public class TestingCompression {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private static final float QUANTIZATION_FACTOR = 100f;
 
@@ -56,7 +56,7 @@ public class TestingCompression {
 
 		long timeEnd = System.currentTimeMillis();
 
-		log.info(Util.msToText(timeStart,timeEnd)+" compress");
+		Logger.info(Util.msToText(timeStart,timeEnd)+" compress");
 
 
 
@@ -68,7 +68,7 @@ public class TestingCompression {
 			DataOutput2 out = new DataOutput2();
 			Chunk.SNAPPY_DELTA_TIME_DELTA_DELTA_VALUE_INT_QUANTIZED_SERIALIZER.serialize(out, chunk);
 			byte[] raw = out.copyBytes();
-			//log.info(raw.length);
+			//Logger.info(raw.length);
 			for(int innerRound=0;innerRound<INNER_ROUNDS;innerRound++) {
 				DataInput2 in = new DataInput2(raw);
 				Chunk.SNAPPY_DELTA_TIME_DELTA_DELTA_VALUE_INT_QUANTIZED_SERIALIZER.deserialize(in, -1);
@@ -84,7 +84,7 @@ public class TestingCompression {
 			DataOutput2 out = new DataOutput2();
 			ChunkSerializer.DEFAULT.serialize(out, chunk);
 			byte[] raw = out.copyBytes();
-			//log.info(raw.length);
+			//Logger.info(raw.length);
 			for(int innerRound=0;innerRound<INNER_ROUNDS;innerRound++) {
 				DataInput2 in = new DataInput2(raw);
 				Chunk chunkNew = ChunkSerializer.DEFAULT.deserialize(in, -1);
@@ -135,7 +135,7 @@ public class TestingCompression {
 			Serializer.BYTE_ARRAY.serialize(out, Snappy.compress(resultTimestamp));
 			Serializer.BYTE_ARRAY.serialize(out, Snappy.compress(result));
 			byte[] raw = out.copyBytes();
-			log.info(raw.length);
+			Logger.info(raw.length);
 
 			/*
 			System.out.println("size\t"+SIZE*4);
@@ -168,7 +168,7 @@ public class TestingCompression {
 				}
 
 				/*if(!DataEntry.equals(data, dataNew)) {
-					log.error("wrong data");
+					Logger.error("wrong data");
 				}*/
 
 			}

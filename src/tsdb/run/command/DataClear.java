@@ -1,13 +1,13 @@
 package tsdb.run.command;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 
 public class DataClear {
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	private final TsDB tsdb;
 
@@ -22,7 +22,7 @@ public class DataClear {
 	}
 	
 	public void run() {		
-		log.info("clear database");
+		Logger.info("clear database");
 		tsdb.clear();
 	}
 }

@@ -8,15 +8,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import com.opencsv.CSVReader;
 
 import tsdb.util.Table;
 
 public class HoboTable extends Table {
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	public final String plotID;
 	public final String[] columnsHeader;
@@ -33,11 +33,11 @@ public class HoboTable extends Table {
 				throw new RuntimeException("invalid HOBO header: |"+metaHeader+"|");
 			}
 			this.plotID = metaHeader.substring(12).trim();
-			//log.info("|" + plotID + "|");			
+			//Logger.info("|" + plotID + "|");			
 			
 			this.columnsHeader = reader.readNext();
 			
-			//log.info(Arrays.toString(columnsHeader));
+			//Logger.info(Arrays.toString(columnsHeader));
 			String[] names = new String[columnsHeader.length];
 			for (int i = 0; i < names.length; i++) {
 				String name = columnsHeader[i];
@@ -61,7 +61,7 @@ public class HoboTable extends Table {
 					}
 				}				
 			}
-			//log.info(Arrays.toString(names));			
+			//Logger.info(Arrays.toString(names));			
 			this.updateNames(names);
 			
 			//List<String[]> rows = reader.readAll();  // very slow because of linkedlist for indexed access			

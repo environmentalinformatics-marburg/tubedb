@@ -6,8 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.ini4j.Config;
 import org.ini4j.InvalidFileFormatException;
 import org.ini4j.Profile.Section;
@@ -35,7 +35,7 @@ import tsdb.util.Interval;
 import tsdb.util.TimeUtil;
 
 public class DataImport {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 
@@ -45,7 +45,7 @@ public class DataImport {
 			dataImport.run("import.ini");
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -62,18 +62,18 @@ public class DataImport {
 		ini.load(new File(configFile));
 
 		for(Section section:ini.values()) {
-			//log.info("section "+section);
+			//Logger.info("section "+section);
 			String regionName = section.getName();
 			Region region = tsdb.getRegion(regionName);
 			if(region!=null) {
-				log.info("import "+region.name);
+				Logger.info("import "+region.name);
 				for(String key:section.keySet()) {
 					for(String value:section.getAll(key)) {
 						importPath(region,key,value);
 					}
 				}
 			} else {
-				log.warn("region not found, not imported: "+regionName);
+				Logger.warn("region not found, not imported: "+regionName);
 			}
 		}
 	}
@@ -118,10 +118,10 @@ public class DataImport {
 			case "asc_sa_own": {
 				new ImportSaOwn(tsdb).load(rootDirectory);
 				try {
-					log.info("*remove South Africa Own Stations first measure days*");
+					Logger.info("*remove South Africa Own Stations first measure days*");
 					RemoveSouthAfricaStationBeginings.run(tsdb);
 				} catch (Exception e) {
-					log.warn(e);
+					Logger.warn(e);
 				}
 				break;
 			}
@@ -138,7 +138,7 @@ public class DataImport {
 					InfluxLoaderConfig config = new InfluxLoaderConfig(rootDirectory);
 					new InfluxLoader(tsdb).load(config);
 				} catch (Exception e) {
-					log.warn(e);
+					Logger.warn(e);
 				}
 				break;
 			}
@@ -151,10 +151,10 @@ public class DataImport {
 				break;
 			}
 			default:
-				log.error("unknown import type: "+type+" for "+region.name+" in "+path);
+				Logger.error("unknown import type: "+type+" for "+region.name+" in "+path);
 			}
 		} else {
-			log.warn("path not found, not imported: "+type+" for "+region.name+" in "+path);
+			Logger.warn("path not found, not imported: "+type+" for "+region.name+" in "+path);
 		}
 	}
 

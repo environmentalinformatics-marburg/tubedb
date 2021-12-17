@@ -8,8 +8,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDBFactory;
 import tsdb.component.Region;
@@ -25,7 +25,7 @@ import tsdb.util.Pair;
  *
  */
 public class ZipExportProxy {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final RemoteTsDB tsdb;
 	private final ExportModel model;
@@ -48,10 +48,10 @@ public class ZipExportProxy {
 			File downloadDir = new File(TsDBFactory.WEBDOWNLOAD_PATH);
 			downloadDir.mkdirs();
 			tempFile = File.createTempFile("result_", ".zip", downloadDir);
-			log.info(tempFile.getName());
+			Logger.info(tempFile.getName());
 		} catch (IOException e) {
 			tempFile = null;
-			log.info(e);
+			Logger.info(e);
 		}
 	}
 
@@ -107,7 +107,7 @@ public class ZipExportProxy {
 
 			workerThread.start();
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 

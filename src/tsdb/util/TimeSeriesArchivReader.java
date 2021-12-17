@@ -6,8 +6,8 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.mapdb.DataInput2;
 
 import tsdb.TsDB;
@@ -20,7 +20,7 @@ import tsdb.util.iterator.TimestampSeries;
  *
  */
 public class TimeSeriesArchivReader {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static interface TimeSeriesArchivVisitor {
 		public default void readDataEntries(String stationName, String sensorName, DataEntry[] dataEntries) {}
@@ -69,7 +69,7 @@ public class TimeSeriesArchivReader {
 		if(byteBufferSize>byteBufferMaxSize) {
 			byteBufferSize = byteBufferMaxSize;
 		}
-		//log.info("remap buffer "+byteBufferPos+" size "+byteBufferSize);
+		//Logger.info("remap buffer "+byteBufferPos+" size "+byteBufferSize);
 		//mappedByteBuffer = filechannel.map(MapMode.READ_ONLY, byteBufferPos, byteBufferSize);
 		byteBuffer.clear();
 		int readBytes = filechannel.read(byteBuffer, byteBufferPos);
@@ -227,7 +227,7 @@ public class TimeSeriesArchivReader {
 		boolean loop = true;
 		while(loop) {
 			EntryType entryType = this.getNextEntryType();
-			//log.info("entry: "+entryType);
+			//Logger.info("entry: "+entryType);
 			switch(entryType) {
 			case DATAENTRYARRAY: {
 				DataEntriesTriple triple = this.getDataEntryArray();
@@ -249,7 +249,7 @@ public class TimeSeriesArchivReader {
 				break;
 			}
 			default: {
-				log.error("unknown "+entryType);
+				Logger.error("unknown "+entryType);
 				loop = false;
 			}
 			}
@@ -263,16 +263,16 @@ public class TimeSeriesArchivReader {
 			tsaReader.readFully(new TimeSeriesArchivVisitor(){
 				@Override
 				public void readDataEntries(String stationName, String sensorName, DataEntry[] dataEntries) {
-					//log.info(stationName+" "+sensorName+" "+dataEntries.length);
+					//Logger.info(stationName+" "+sensorName+" "+dataEntries.length);
 					tsdb.streamStorage.insertDataEntryArray(stationName, sensorName, dataEntries);
 				}
 				@Override
 				public void readTimestampSeries(TimestampSeries timestampSeries) {
-					//log.info(timestampSeries.name);
+					//Logger.info(timestampSeries.name);
 					tsdb.streamStorage.insertTimestampSeries(timestampSeries);
 				}});
 		} catch (IOException e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 	}
 
@@ -282,7 +282,7 @@ public class TimeSeriesArchivReader {
 		importStationsFromFile(tsdb, TsDBFactory.OUTPUT_PATH+"/full.tsa");
 		tsdb.close();
 		long timeEndImport = System.currentTimeMillis();
-		log.info((timeEndImport-timeStartImport)/1000+" s Import");
+		Logger.info((timeEndImport-timeStartImport)/1000+" s Import");
 	}
 
 }

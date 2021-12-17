@@ -3,8 +3,8 @@ package tsdb.loader.ki.type;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.StationProperties;
 import tsdb.util.DataRow;
@@ -18,7 +18,7 @@ import tsdb.util.iterator.TimestampSeries;
  */
 class Loader_pu2 extends AbstractLoader {
 	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private enum ProcessingType {NONE,COPY,PU2_1,PU2_2};
 
@@ -52,7 +52,7 @@ class Loader_pu2 extends AbstractLoader {
 						resultSchema[schemaIndex] = "T_RT_NRT_01";
 						break;
 					default:
-						log.warn("type unknown: "+pu2_1_type);
+						Logger.warn("type unknown: "+pu2_1_type);
 						resultSchema[schemaIndex] = inputSchema[schemaIndex];
 					}
 					break;
@@ -69,12 +69,12 @@ class Loader_pu2 extends AbstractLoader {
 						resultSchema[schemaIndex] = "T_RT_NRT_02";
 						break;
 					default:
-						log.warn("type unknown: "+pu2_2_type);
+						Logger.warn("type unknown: "+pu2_2_type);
 						resultSchema[schemaIndex] = inputSchema[schemaIndex];
 					}
 					break;
 				default:
-					log.warn("more than two place_holder_rt_nrt: "+place_holder_rt_nrt_count);
+					Logger.warn("more than two place_holder_rt_nrt: "+place_holder_rt_nrt_count);
 				}
 				break;						
 			default:
@@ -140,7 +140,7 @@ class Loader_pu2 extends AbstractLoader {
 						eventData[schemaIndex] = entry.data[sourceIndex];
 						break;
 					default:
-						log.warn("processingType unknown: "+processingTypes[sourceIndex]);
+						Logger.warn("processingType unknown: "+processingTypes[sourceIndex]);
 						eventData[schemaIndex] = Float.NaN;
 					}						
 				}

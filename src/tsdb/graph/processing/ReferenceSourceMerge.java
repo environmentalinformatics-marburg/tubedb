@@ -4,8 +4,8 @@ import static tsdb.util.AssumptionCheck.throwNulls;
 
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -23,7 +23,7 @@ import tsdb.util.iterator.TsIterator;
 
 public class ReferenceSourceMerge extends Continuous.Abstract {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final Continuous source; //not null
 	private final Continuous refSource; //not null	
@@ -47,7 +47,7 @@ public class ReferenceSourceMerge extends Continuous.Abstract {
 		if(refSource!=null) {
 			return new ReferenceSourceMerge(tsdb,continuous,refSource, plotID, refRenameSchema, targetSchema);
 		} else {
-			log.warn("reference source");
+			Logger.warn("reference source");
 			return continuous;
 		}
 	}
@@ -75,10 +75,10 @@ public class ReferenceSourceMerge extends Continuous.Abstract {
 		TsIterator ref_iterator = refSource.get(start, end);
 		if(ref_iterator==null||!ref_iterator.hasNext()) {
 			new RuntimeException().printStackTrace();
-			log.info("no reference source iterator " + plotID + "  r " + Arrays.toString(refRenameSchema) + "  t " + Arrays.toString(targetSchema));
+			Logger.info("no reference source iterator " + plotID + "  r " + Arrays.toString(refRenameSchema) + "  t " + Arrays.toString(targetSchema));
 			return input_iterator;
 		}
-		log.info("reeeeeeeeef:"+ref_iterator.toString());
+		Logger.info("reeeeeeeeef:"+ref_iterator.toString());
 		ref_iterator = new RenameQfIterator(ref_iterator, refRenameSchema);
 		
 		
@@ -131,7 +131,7 @@ public class ReferenceSourceMerge extends Continuous.Abstract {
 			int timeStep = BaseAggregationTimeUtil.AGGREGATION_TIME_INTERVAL;
 			boolean isContinuous = tsSchema.isContinuous;
 			if(tsSchema.hasQualityFlags) {
-				log.warn("quality flags will be ignored");
+				Logger.warn("quality flags will be ignored");
 			}
 			boolean hasQualityFlags = true;
 			boolean hasInterpolatedFlags = false;

@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.NavigableSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.h2.jdbcx.JdbcDataSource;
 
 import tsdb.TsDB;
@@ -16,7 +16,7 @@ import tsdb.streamdb.StreamIterator;
 import tsdb.util.DataEntry;
 
 public class H2DataWriter {
-	private static final Logger log = LogManager.getLogger();
+	
 	private final TsDB tsdb;
 
 	public H2DataWriter(TsDB tsdb) {
@@ -42,13 +42,13 @@ public class H2DataWriter {
 		try(Statement statement = connection.createStatement()) {
 			statement.execute("DROP ALL OBJECTS");
 		} catch(SQLException sqle) {
-			log.error("not dropping "+sqle);
+			Logger.error("not dropping "+sqle);
 		}
 
 
 		for(int tsi=0;tsi<100;tsi++) {
 			String ts = "ts"+tsi;
-			log.info("ts "+ts);
+			Logger.info("ts "+ts);
 			Statement statement = connection.createStatement();
 			statement.execute("CREATE TABLE "+ts+" (timestamp INT4 PRIMARY KEY, m FLOAT4)");
 			statement.close();
@@ -72,7 +72,7 @@ public class H2DataWriter {
 		connection.close();
 
 		long timeEndImport = System.currentTimeMillis();
-		log.info((timeEndImport-timeStartImport)/1000+" s Export");*/
+		Logger.info((timeEndImport-timeStartImport)/1000+" s Export");*/
 	}
 
 
@@ -88,7 +88,7 @@ public class H2DataWriter {
 			/*try(Statement statement = connection.createStatement()) { // clear database
 				statement.execute("DROP ALL OBJECTS");
 			} catch(SQLException sqle) {
-				log.error("not dropping "+sqle);
+				Logger.error("not dropping "+sqle);
 			}*/
 
 			NavigableSet<String> stationNames = tsdb.streamStorage.getStationNames();	
@@ -105,7 +105,7 @@ public class H2DataWriter {
 								try(Statement statement = connection.createStatement()) {
 									statement.execute("CREATE TABLE "+tsName+" (timestamp INT4 PRIMARY KEY, m FLOAT4)");
 								} catch (Exception e) {
-									log.warn("at create table "+e);
+									Logger.warn("at create table "+e);
 								}
 								PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO "+tsName+" VALUES (?,?)");
 								while(it.hasNext()) {
@@ -121,16 +121,16 @@ public class H2DataWriter {
 						}
 					} catch(Exception e) {
 						e.printStackTrace();
-						log.error(e);
+						Logger.error(e);
 					}
 				}
 			} catch (Exception e) {
-				log.error(e);
+				Logger.error(e);
 			}
 			long timeEndImport = System.currentTimeMillis();
-			log.info((timeEndImport-timeStartImport)/1000+" s Export");
+			Logger.info((timeEndImport-timeStartImport)/1000+" s Export");
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		} 
 
 	}

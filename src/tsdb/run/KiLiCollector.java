@@ -18,8 +18,8 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.StationProperties;
@@ -43,7 +43,7 @@ import tsdb.util.iterator.TimestampSeries;
  *
  */
 public class KiLiCollector {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	//private static final  String PREPROCESS_PATH = "c:/timeseriesdatabase_preprocess_temp";
 	private static final  String PREPROCESS_PATH = "c:/timeseriesdatabase_preprocess";
@@ -131,7 +131,7 @@ public class KiLiCollector {
 				out.close();
 			}
 		} catch (FileNotFoundException e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -154,7 +154,7 @@ public class KiLiCollector {
 
 		for(CollectorEntry entry:collectorMapToAdd.values()) {
 			if(md5MapExcluded.containsKey(entry.md5)) {
-				//log.info("exclude "+entry.filename);
+				//Logger.info("exclude "+entry.filename);
 				entry.status = "removed";
 			}
 		}
@@ -231,7 +231,7 @@ public class KiLiCollector {
 				Util.createDirectoriesOfFile(target.toString());
 				Files.copy(source, target, options);
 			} catch(Exception e) {
-				log.error(e+"  "+collectorEntry.filename);
+				Logger.error(e+"  "+collectorEntry.filename);
 			}
 		}
 
@@ -247,7 +247,7 @@ public class KiLiCollector {
 	}
 
 	public Map<String, CollectorEntry> readDirectory_with_stations_flat(Path root) {
-		log.info("load directory with directories of files:      "+root);		
+		Logger.info("load directory with directories of files:      "+root);		
 		TreeMap<String,Path> ascCollectorMap = new TreeMap<String,Path>();		
 		try {
 			DirectoryStream<Path> stream = Files.newDirectoryStream(root);
@@ -255,19 +255,19 @@ public class KiLiCollector {
 				if(Files.isDirectory(subPath)) {
 					timeseriesloaderKiLi.readOneDirectory_structure_kili(subPath, ascCollectorMap,false);
 				} else {
-					log.warn("file in root directory: "+subPath+"   of   "+root);
+					Logger.warn("file in root directory: "+subPath+"   of   "+root);
 				}
 			}
 			stream.close();
 		} catch (IOException e) {
-			log.error(e);
+			Logger.error(e);
 		}
 		return readWithAscCollectorMap(ascCollectorMap);
 	}
 
 
 	public Map<String, CollectorEntry> readDirectory_with_asc_recursive(Path root) {
-		log.info("load directory of files recursive:      "+root);		
+		Logger.info("load directory of files recursive:      "+root);		
 		TreeMap<String,Path> ascCollectorMap = new TreeMap<String,Path>();
 		readDirectory_with_asc_recursive_internal(root,ascCollectorMap);
 		return readWithAscCollectorMap(ascCollectorMap);
@@ -277,7 +277,7 @@ public class KiLiCollector {
 		try {
 			readDirectory_with_asc_files(root, ascCollectorMap);
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 
 		try {
@@ -289,7 +289,7 @@ public class KiLiCollector {
 			}
 			stream.close();
 		} catch (IOException e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 	}
 
@@ -297,7 +297,7 @@ public class KiLiCollector {
 		try {
 			if(Files.exists(directory_path)) {
 				DirectoryStream<Path> stream = Files.newDirectoryStream(directory_path);
-				//log.info("read directory of files:    "+directory_path);
+				//Logger.info("read directory of files:    "+directory_path);
 				for(Path path:stream) {
 					if(!Files.isDirectory(path)) {
 						String filename = path.getName(path.getNameCount()-1).toString();
@@ -307,22 +307,22 @@ public class KiLiCollector {
 							if(!ascCollectorMap.containsKey(fileKey)) {
 								ascCollectorMap.put(fileKey, path);		
 							} else {
-								log.error("file key already present: "+fileKey+"     "+ascCollectorMap.get(fileKey)+"   "+path);
+								Logger.error("file key already present: "+fileKey+"     "+ascCollectorMap.get(fileKey)+"   "+path);
 							}										
 						} else {
 							int binIndex = filename.toLowerCase().indexOf(".bin");
 							if(binIndex<0) {
-								log.warn("no asc file: "+filename);
+								Logger.warn("no asc file: "+filename);
 							}
 						}
 					}
 				}
 				stream.close();
 			} else {
-				log.warn("directory not found: "+directory_path);
+				Logger.warn("directory not found: "+directory_path);
 			}
 		} catch (IOException e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 	}
 
@@ -351,7 +351,7 @@ public class KiLiCollector {
 			if(!collectorMap.containsKey(ascPath.toString())) {
 				collectorMap.put(ascPath.toString(),collectorEntry);
 			} else {
-				log.error("error duplicate filename");
+				Logger.error("error duplicate filename");
 			}
 
 			collectorEntry.md5 = getMD5(ascPath);
@@ -359,7 +359,7 @@ public class KiLiCollector {
 			try {
 				collectorEntry.filesize = ascPath.toFile().length();
 			} catch(Exception e) {
-				log.error(e);
+				Logger.error(e);
 			}
 
 
@@ -369,17 +369,17 @@ public class KiLiCollector {
 					infoKeyPrefix = infoKeyPrefix.substring(0, 18);
 				}
 				if(!currentInfoPrefix.equals(infoKeyPrefix)) {
-					log.info("read files of prefix   "+infoKeyPrefix);
+					Logger.info("read files of prefix   "+infoKeyPrefix);
 					currentInfoPrefix = infoKeyPrefix;
 				}
 			} catch(Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}			
 
 			try {
 				TimestampSeries timestampseries = AscParser.parse(ascPath, true);
 				if(timestampseries==null) {
-					log.error("read error in "+infoFilename);
+					Logger.error("read error in "+infoFilename);
 					collectorEntry.status = "read error";
 					continue;
 				}
@@ -387,7 +387,7 @@ public class KiLiCollector {
 				collectorEntry.station = timestampseries.name;
 
 				if(timestampseries.entryList.isEmpty()) {
-					log.info("empty timestampseries in  "+infoFilename);
+					Logger.info("empty timestampseries in  "+infoFilename);
 					collectorEntry.status = "empty";
 					continue;
 				}
@@ -397,7 +397,7 @@ public class KiLiCollector {
 
 				Station station = tsdb.getStation(timestampseries.name);
 				if(station==null) {
-					log.error("station not found "+timestampseries.name+"   in  "+ascPath);
+					Logger.error("station not found "+timestampseries.name+"   in  "+ascPath);
 					collectorEntry.status = "station not found";
 					continue;
 				}
@@ -410,7 +410,7 @@ public class KiLiCollector {
 				StationProperties properties = station.getProperties(timestampseries.getFirstTimestamp(), timestampseries.getLastTimestamp());
 
 				if(properties==null) {
-					log.error("no properties found in station "+timestampseries.name+"  of  "+TimeUtil.oleMinutesToText(timestampseries.getFirstTimestamp())+" - "+TimeUtil.oleMinutesToText(timestampseries.getLastTimestamp())+"  in  "+ascPath);
+					Logger.error("no properties found in station "+timestampseries.name+"  of  "+TimeUtil.oleMinutesToText(timestampseries.getFirstTimestamp())+" - "+TimeUtil.oleMinutesToText(timestampseries.getLastTimestamp())+"  in  "+ascPath);
 					collectorEntry.status = "no properties found in station";
 					continue;
 				}
@@ -422,7 +422,7 @@ public class KiLiCollector {
 
 			} catch (Exception e) {
 				collectorEntry.status = "error";
-				log.error(e+"  in  "+infoFilename);
+				Logger.error(e+"  in  "+infoFilename);
 			}
 		}
 

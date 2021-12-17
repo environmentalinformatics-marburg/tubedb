@@ -13,8 +13,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
@@ -36,7 +36,7 @@ import tsdb.web.util.Web;
  */
 public class TsDBAPIHandler extends AbstractHandler {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final RemoteTsDB tsdb;
 
@@ -71,13 +71,13 @@ public class TsDBAPIHandler extends AbstractHandler {
 
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {	
-		log.info(Web.requestMarker,Web.getRequestLogString("tsdb", target, baseRequest));
+		Logger.tag(Web.REQUEST_MARKER).info(Web.getRequestLogString("tsdb", target, baseRequest));
 		UserIdentity userIdentity = Web.getUserIdentity(baseRequest);
 
-		/*log.info("auth   "+request.getAuthType());
+		/*Logger.info("auth   "+request.getAuthType());
 		UserAuthentication userAuthentication = (UserAuthentication) baseRequest.getAuthentication();
 		if(userAuthentication!=null&&userAuthentication.isUserInRole(null, "admin")) {
-			log.info("is admin");
+			Logger.info("is admin");
 		}*/
 
 
@@ -92,7 +92,7 @@ public class TsDBAPIHandler extends AbstractHandler {
 			return;
 		}
 
-		log.info("*********************************** old request handlers: "+target);
+		Logger.info("*********************************** old request handlers: "+target);
 
 
 		baseRequest.setHandled(true);
@@ -122,7 +122,7 @@ public class TsDBAPIHandler extends AbstractHandler {
 			if(region!=null) {
 				ret = handle_region_sensor_list(response.getWriter(),region);
 			} else {
-				log.warn("wrong call");
+				Logger.warn("wrong call");
 			}
 			break;
 		}		
@@ -140,13 +140,13 @@ public class TsDBAPIHandler extends AbstractHandler {
 				try {
 					commandThreadId = Long.parseLong(commandThreadIdText);
 				} catch(Exception e) {
-					log.warn(e);
+					Logger.warn(e);
 				}
 				if(commandThreadId!=null) {
 					ret = handle_console_comand_get_output(commandThreadId, response.getWriter());
 				}
 			} else {
-				log.warn("wrong call");
+				Logger.warn("wrong call");
 			}
 			break;
 		}
@@ -262,7 +262,7 @@ public class TsDBAPIHandler extends AbstractHandler {
 			json_output.endArray();
 			return true;
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 			return false;
 		}
 	}	
@@ -333,12 +333,12 @@ public class TsDBAPIHandler extends AbstractHandler {
 				writeStringArray(writer, sensorNames);
 				return true;
 			} else {
-				log.warn("null");
+				Logger.warn("null");
 				System.out.println("null");
 				return false;
 			}			
 		} catch (Exception e) {
-			log.warn(e);
+			Logger.warn(e);
 			System.out.println(e);
 			return false;
 		}

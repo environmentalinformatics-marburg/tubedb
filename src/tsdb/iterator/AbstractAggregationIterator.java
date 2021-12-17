@@ -1,7 +1,7 @@
 package tsdb.iterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.component.Sensor;
@@ -20,7 +20,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public abstract class AbstractAggregationIterator extends InputProcessingIterator {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final Sensor[] sensors;
 	private final AggregationType[] aggregation;
@@ -108,14 +108,14 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 				if(wind_direction_pos==-1) {
 					wind_direction_pos = i;
 				} else {
-					log.error("just one wind_direction sensor can be aggregated");
+					Logger.error("just one wind_direction sensor can be aggregated");
 				}				
 			}
 			if(aggregation[i]==AggregationType.AVERAGE_WIND_VELOCITY) {
 				if(wind_velocity_pos==-1) {
 					wind_velocity_pos = i;
 				} else {
-					log.error("just one wind_velocity sensor can be aggregated");
+					Logger.error("just one wind_velocity sensor can be aggregated");
 				}				
 			}			
 		}
@@ -124,7 +124,7 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 			if(wind_velocity_pos>-1) {
 				aggregate_wind_direction = true;
 			} else {
-				log.warn("wind_velocity sensor for wind_direction aggregation is missing");
+				Logger.warn("wind_velocity sensor for wind_direction aggregation is missing");
 			}
 		}
 	}
@@ -198,7 +198,7 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 			if(inputQualityCounter != null && aggQualityCounter != null) {
 				for(int q = 0; q < QUALITY_COUNTERS; q++) {
 					if(Float.isNaN(value)) {
-						//log.info(Arrays.toString(inputQualityCounter[i]));
+						//Logger.info(Arrays.toString(inputQualityCounter[i]));
 					}
 					aggQualityCounter[i][q] += inputQualityCounter[i][q];
 				}					
@@ -295,7 +295,7 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 					break;
 				default:
 					resultData[i] = Float.NaN;
-					log.warn("aggration type unknown");
+					Logger.warn("aggration type unknown");
 				}
 
 				if(aggQualityCounter != null) {

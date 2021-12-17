@@ -2,8 +2,8 @@ package tsdb.component.iterator;
 
 import java.util.ArrayDeque;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.TsEntry;
 import tsdb.util.TsSchema;
@@ -11,7 +11,7 @@ import tsdb.util.iterator.InputIterator;
 import tsdb.util.iterator.TsIterator;
 
 public abstract class TimeWindowIterator extends InputIterator {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private int windowSizeMinutes;
 	protected ArrayDeque<TsEntry> past; // all element are in time window at processElement call
@@ -38,7 +38,7 @@ public abstract class TimeWindowIterator extends InputIterator {
 	@Override
 	public final TsEntry next() {
 		TsEntry current = future.pollFirst();
-		//log.info("window pollFirst " + current.toString());
+		//Logger.info("window pollFirst " + current.toString());
 		long tmax = current.timestamp + windowSizeMinutes;
 		TsEntry futureLastAdd = null;
 		TsEntry futureLastPeeked = future.peekLast();

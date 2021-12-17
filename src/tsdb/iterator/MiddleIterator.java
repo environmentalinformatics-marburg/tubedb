@@ -4,8 +4,8 @@ import static tsdb.util.AssumptionCheck.throwEmpty;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.TsEntry;
 import tsdb.util.TsSchema;
@@ -23,7 +23,7 @@ import tsdb.util.processingchain.ProcessingChain;
  */
 public class MiddleIterator extends MoveIterator {
 	@SuppressWarnings("unused")
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private Map<String, Integer> schemaMap;
 	private TsIterator[] input_iterators;

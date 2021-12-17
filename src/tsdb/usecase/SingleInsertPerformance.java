@@ -3,8 +3,8 @@ package tsdb.usecase;
 import java.util.DoubleSummaryStatistics;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.BatchPoints;
@@ -16,7 +16,7 @@ import tsdb.streamdb.StreamStorageStreamDB;
 import tsdb.util.DataEntry;
 
 public class SingleInsertPerformance {
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	final static int rounds = 1000;
 	final static int stations = 100;
@@ -44,7 +44,7 @@ public class SingleInsertPerformance {
 		long timeEnd = System.currentTimeMillis();
 		
 
-		log.info(msToText(timeStart,timeEnd)+" insert "+element_count);
+		Logger.info(msToText(timeStart,timeEnd)+" insert "+element_count);
 	}
 	
 	@SuppressWarnings("unused")
@@ -60,7 +60,7 @@ public class SingleInsertPerformance {
 
 		for(int round=0;round<rounds;round++) {
 			if(round%100==0) {
-				log.info("round "+round);
+				Logger.info("round "+round);
 			}
 			for(int station=0;station<stations;station++) {
 				int t = timestamp++;
@@ -97,7 +97,7 @@ public class SingleInsertPerformance {
 					//.consistency(ConsistencyLevel.ALL)
 					.build();
 			if(round%100==0) {
-				log.info("round "+round);
+				Logger.info("round "+round);
 			}
 			for(int station=0;station<stations;station++) {
 				int t = timestamp++;

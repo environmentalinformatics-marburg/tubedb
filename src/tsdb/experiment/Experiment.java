@@ -7,8 +7,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.DataRow;
 import tsdb.util.Table;
@@ -16,7 +16,7 @@ import tsdb.util.TimeUtil;
 import tsdb.util.Timer;
 
 public class Experiment implements AutoCloseable {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) throws Exception {
 		if(args.length < 2) {
@@ -60,7 +60,7 @@ public class Experiment implements AutoCloseable {
 			case "full_read": {
 				Timer.start("full_read");
 				long rows = experiment.full_read();
-				log.info(Timer.stop("full_read")+"  rows: " + rows);
+				Logger.info(Timer.stop("full_read")+"  rows: " + rows);
 				break;
 			}
 			default: {
@@ -79,17 +79,17 @@ public class Experiment implements AutoCloseable {
 	}
 
 	protected long full_read() {
-		log.info("dryRun: no data");
+		Logger.info("dryRun: no data");
 		return 0;
 	}
 
 	private void readCSV(String path) {
 		Timer.start("clear");
 		clear();
-		log.info(Timer.stop("clear"));
+		Logger.info(Timer.stop("clear"));
 		Timer.start("import");
 		load(path);
-		log.info(Timer.stop("import"));
+		Logger.info(Timer.stop("import"));
 	}
 
 	protected void clear() {		
@@ -112,7 +112,7 @@ public class Experiment implements AutoCloseable {
 				}
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -124,13 +124,13 @@ public class Experiment implements AutoCloseable {
 				}
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 	}
 
 	public void loadFile(Path filePath) {
 		try {
-			log.info("load file "+filePath);			
+			Logger.info("load file "+filePath);			
 			Table table = Table.readCSV(filePath,',');		
 			int datetimeIndex = getDatetimeIndex(table);
 			if(datetimeIndex!=0) {
@@ -138,7 +138,7 @@ public class Experiment implements AutoCloseable {
 			}
 
 			String stationName = parseStationName(filePath);
-			log.trace("station "+stationName);
+			Logger.trace("station "+stationName);
 
 			final int sensors = table.names.length-1;
 
@@ -149,7 +149,7 @@ public class Experiment implements AutoCloseable {
 				int timestamp = parseTimestamp(row[0]);
 
 				if(timestamp==prevTimestamp) {
-					log.warn("skip duplicate timestamp "+row[0]+" "+filePath);
+					Logger.warn("skip duplicate timestamp "+row[0]+" "+filePath);
 					continue;
 				}
 
@@ -182,7 +182,7 @@ public class Experiment implements AutoCloseable {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(e+"   "+filePath);
+			Logger.error(e+"   "+filePath);
 		}
 	}
 
@@ -211,7 +211,7 @@ public class Experiment implements AutoCloseable {
 	}
 
 	protected void insertTimeseries(String stationName, String[] sensorNames, ArrayList<DataRow> dataRows) {
-		log.info("insert timeseries " + stationName);
+		Logger.info("insert timeseries " + stationName);
 	}
 
 	@Override

@@ -4,13 +4,13 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import com.github.luben.zstd.Zstd;
 
 public class DataEntries {
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	public static int encodeZigZag(int v) {
 		return (v << 1) ^ (v >> 31);

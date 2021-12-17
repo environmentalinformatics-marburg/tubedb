@@ -1,13 +1,13 @@
 package tsdb.run.command;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 
 public class ClearMasks {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 
@@ -16,7 +16,7 @@ public class ClearMasks {
 			ClearMasks clearMasks = new ClearMasks(tsdb);
 			clearMasks.run(tsdb.configDirectory);
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 	}
 
@@ -30,7 +30,7 @@ public class ClearMasks {
 				tsdb.streamStorage.clearMaskOfStation(stationName);
 			}		
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 }

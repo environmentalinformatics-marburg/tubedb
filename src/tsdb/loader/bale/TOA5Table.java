@@ -10,7 +10,7 @@ import com.opencsv.CSVReader;
 import tsdb.util.Table;
 
 public class TOA5Table extends Table {
-	//private static final Logger log = LogManager.getLogger();
+	//
 	
 	public final String[] metaHeader;
 	public final String[] columnsHeader;
@@ -35,10 +35,10 @@ public class TOA5Table extends Table {
 			this.unitsHaeder = reader.readNext();
 			this.aggregationsHeader = reader.readNext();
 
-			//log.info("meta ("+metaHeader.length+") "+Arrays.toString(metaHeader));
-			//log.info("columns ("+columnsHeader.length+") "+Arrays.toString(columnsHeader));
-			//log.info("units ("+unitsHaeder.length+") "+Arrays.toString(unitsHaeder));
-			//log.info("aggregations ("+aggregationsHeader.length+") "+Arrays.toString(aggregationsHeader));
+			//Logger.info("meta ("+metaHeader.length+") "+Arrays.toString(metaHeader));
+			//Logger.info("columns ("+columnsHeader.length+") "+Arrays.toString(columnsHeader));
+			//Logger.info("units ("+unitsHaeder.length+") "+Arrays.toString(unitsHaeder));
+			//Logger.info("aggregations ("+aggregationsHeader.length+") "+Arrays.toString(aggregationsHeader));
 			
 			this.updateNames(columnsHeader);
 			

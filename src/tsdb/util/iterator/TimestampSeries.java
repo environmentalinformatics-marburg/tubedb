@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.mapdb.DataInput2;
 import org.mapdb.DataOutput2;
 
@@ -33,7 +33,7 @@ import tsdb.util.Util;
  *
  */
 public class TimestampSeries implements TsIterable, Serializable, Externalizable {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private static final long serialVersionUID = 6078067255995220349L;
 
@@ -188,7 +188,7 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 
 	public static TimestampSeries create(TsIterator input_iterator, String name) {
 		if(!input_iterator.hasNext()) {
-			log.warn("TimestampSeries.create: input_iterator is empty");
+			Logger.warn("TimestampSeries.create: input_iterator is empty");
 			//new Exception().printStackTrace(System.out);
 			return null;
 		}
@@ -216,7 +216,7 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 			}
 		}
 		if(index<0) {
-			log.warn("sensorName not found "+sensorName);
+			Logger.warn("sensorName not found "+sensorName);
 			return null;
 		}
 		ArrayList<DataEntry> resultList = new ArrayList<DataEntry>(entryList.size());
@@ -227,7 +227,7 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 			}
 		}
 		if(resultList.isEmpty()) {
-			log.trace("list empty "+sensorName);
+			Logger.trace("list empty "+sensorName);
 			return null;
 		}
 		return resultList.toArray(new DataEntry[0]);

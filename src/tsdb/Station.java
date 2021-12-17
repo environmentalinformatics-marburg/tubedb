@@ -11,8 +11,8 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.component.LoggerType;
 import tsdb.component.labeledproperty.LabeledProperties;
@@ -29,7 +29,7 @@ import tsdb.util.Util;
  *
  */
 public class Station {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb; //not null
 
@@ -99,18 +99,18 @@ public class Station {
 		this.sensorNameTranlationMap = new HashMap<String, String>();
 		if(isPlot) {
 			if(propertiesList.size()!=1) {
-				log.warn("station that is plot can only have one StationProperties: "+propertiesList.size());
+				Logger.warn("station that is plot can only have one StationProperties: "+propertiesList.size());
 				if(!stationID.equals(propertyMapList.get(0).get_plotid())) {
-					log.warn("stationID is not equal to plotID for station that is plot: "+stationID+"  "+propertyMapList.get(0).get_plotid());
+					Logger.warn("stationID is not equal to plotID for station that is plot: "+stationID+"  "+propertyMapList.get(0).get_plotid());
 				}
 			}
 		} else {
 			for(StationProperties property:propertyMapList) {
 				if(!stationID.equals(property.get_serial())) {
-					log.warn("stationID does not equal to serial: "+stationID+"  "+property.get_serial());
+					Logger.warn("stationID does not equal to serial: "+stationID+"  "+property.get_serial());
 				}
 				if(!loggerType.typeName.equals(property.get_logger_type_name())) {
-					log.warn("station logger does not equal to property logger: "+loggerType.typeName+"  "+property.get_logger_type_name()+" in "+stationID);
+					Logger.warn("station logger does not equal to property logger: "+loggerType.typeName+"  "+property.get_logger_type_name()+" in "+stationID);
 				}
 			}
 		}
@@ -170,7 +170,7 @@ public class Station {
 		}
 		for(NamedInterval namedInterval:corrected) {
 			if(namedInterval.covers(fileTimeInterval)) {
-				log.info("sensor name corrected in "+stationID+"    "+rawName+" -> "+namedInterval.name);
+				Logger.info("sensor name corrected in "+stationID+"    "+rawName+" -> "+namedInterval.name);
 				return namedInterval.name;
 			}
 		}
@@ -228,7 +228,7 @@ public class Station {
 		for(TimestampInterval<StationProperties> interval:propertiesList) {
 			if((interval.start==null || interval.start<=intervalStart) && (interval.end==null || intervalEnd<=interval.end)) {
 				if(properties!=null) {
-					log.warn("multiple properties for one time interval in station   "+stationID+"  of  "+TimeUtil.oleMinutesToText(intervalStart)+" "+TimeUtil.oleMinutesToText(intervalEnd));
+					Logger.warn("multiple properties for one time interval in station   "+stationID+"  of  "+TimeUtil.oleMinutesToText(intervalStart)+" "+TimeUtil.oleMinutesToText(intervalEnd));
 				}
 				properties = interval.value;
 			}

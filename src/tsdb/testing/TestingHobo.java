@@ -6,15 +6,15 @@ import java.nio.file.Paths;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.loader.burgwald.HoboLoader;
 
 public class TestingHobo {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		//String filename = "c:/timeseriesdatabase_source/burgwald/20160722_Daten_csv/TB_340.csv";

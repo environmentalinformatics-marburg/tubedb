@@ -8,8 +8,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
@@ -18,7 +18,7 @@ import tsdb.util.Table.ColumnReaderDayFirstAmPmTimestamp;
 import tsdb.util.Table.ColumnReaderFloat;
 
 public class HoboLoader {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 
@@ -27,7 +27,7 @@ public class HoboLoader {
 	}
 
 	public void loadDirectoryRecursive(Path path) {
-		//log.info("import "+path);
+		//Logger.info("import "+path);
 		try(DirectoryStream<Path> rootStream = Files.newDirectoryStream(path)) {
 			for(Path sub:rootStream) {
 				if(!Files.isDirectory(sub)) {
@@ -35,7 +35,7 @@ public class HoboLoader {
 						loadFile(sub);
 					} catch (Exception e) {
 						e.printStackTrace();
-						log.error(e+"  in "+sub);
+						Logger.error(e+"  in "+sub);
 					}
 				} else {
 					loadDirectoryRecursive(sub);
@@ -43,16 +43,16 @@ public class HoboLoader {
 
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 	}
 
 	public void loadFile(Path filename) throws FileNotFoundException, IOException {
-		//log.info("load Hobo File: "+filename);
+		//Logger.info("load Hobo File: "+filename);
 		HoboTable table = new HoboTable(filename.toString());
 
 		if(table.rows.length==0) {
-			log.info("empty HoboTable "+filename);
+			Logger.info("empty HoboTable "+filename);
 			return;
 		}
 
@@ -64,7 +64,7 @@ public class HoboLoader {
 		String stationName = table.plotID;
 
 		if(!tsdb.stationExists(stationName)) {
-			log.error("station not in database "+stationName+"  at  "+filename);
+			Logger.error("station not in database "+stationName+"  at  "+filename);
 			return;
 		}
 
@@ -136,7 +136,7 @@ public class HoboLoader {
 				tsdb.streamStorage.insertDataEntryArray(stationName, sensorName, dataEntries);				
 			} catch(Exception e) {
 				e.printStackTrace();
-				log.error(e+" with name "+valueNames[i]+"  in "+filename);
+				Logger.error(e+" with name "+valueNames[i]+"  in "+filename);
 			}
 		}
 		long firstTimestamp = -1;
@@ -153,13 +153,13 @@ public class HoboLoader {
 		String[] headerNames = traceHeaderList.toArray(new String[0]);
 		String[] sensorNames = traceTranslatedList.toArray(new String[0]);
 		int timeStep = -1;
-		//log.info("insert: "+Arrays.toString(sensorNames));
+		//Logger.info("insert: "+Arrays.toString(sensorNames));
 		SourceEntry sourceEntry = new SourceEntry(filename, stationName, firstTimestamp, lastTimestamp, rowCount, headerNames, sensorNames, timeStep);
 		tsdb.sourceCatalog.insert(sourceEntry);
 	}
 	
 	public void collectPlotsRecursive(Path path, Set<String> plotIDs) {
-		//log.info("import "+path);
+		//Logger.info("import "+path);
 				try(DirectoryStream<Path> rootStream = Files.newDirectoryStream(path)) {
 					for(Path sub:rootStream) {
 						if(!Files.isDirectory(sub)) {
@@ -168,7 +168,7 @@ public class HoboLoader {
 								plotIDs.add(table.plotID);
 							} catch (Exception e) {
 								e.printStackTrace();
-								log.error(e+"  in "+sub);
+								Logger.error(e+"  in "+sub);
 							}
 						} else {
 							collectPlotsRecursive(sub, plotIDs);
@@ -176,7 +176,7 @@ public class HoboLoader {
 
 					}
 				} catch (Exception e) {
-					log.error(e);
+					Logger.error(e);
 				}				
 	}
 }

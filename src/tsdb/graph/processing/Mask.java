@@ -2,8 +2,8 @@ package tsdb.graph.processing;
 
 import static tsdb.util.AssumptionCheck.throwNulls;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -14,7 +14,7 @@ import tsdb.util.TimeSeriesMask;
 import tsdb.util.iterator.TsIterator;
 
 public class Mask extends Node.Abstract{
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	private final Node source;
 	private final TimeSeriesMask[] masks;
@@ -37,7 +37,7 @@ public class Mask extends Node.Abstract{
 				mask_counter++;
 			}
 		}
-		log.trace("get masks "+mask_counter);
+		Logger.trace("get masks "+mask_counter);
 		if(mask_counter>0) {
 			return new Mask(tsdb,source,masks);
 		} else {
@@ -51,7 +51,7 @@ public class Mask extends Node.Abstract{
 		if(input_iterator==null||!input_iterator.hasNext()) {
 			return null;
 		}
-		//log.info("with mask !!!");
+		//Logger.info("with mask !!!");
 		MaskIterator it = new MaskIterator(input_iterator,masks);
 		return it;
 	}

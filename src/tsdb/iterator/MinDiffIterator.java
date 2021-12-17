@@ -15,7 +15,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class MinDiffIterator extends MoveIterator {
-	//private static final Logger log = LogManager.getLogger();
+	//
 
 	//private Map<String, Integer> schemaMap;
 	private TsIterator target_iterator;

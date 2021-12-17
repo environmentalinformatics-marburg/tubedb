@@ -8,8 +8,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -25,7 +25,7 @@ import tsdb.web.util.Web;
  */
 public class IotAPIHandler extends AbstractHandler {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final RemoteTsDB tsdb;
 
@@ -45,21 +45,21 @@ public class IotAPIHandler extends AbstractHandler {
 
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {	
-		log.info(Web.requestMarker,Web.getRequestLogString("IoT", target, baseRequest));
+		Logger.tag(Web.REQUEST_MARKER).info(Web.getRequestLogString("IoT", target, baseRequest));
 		baseRequest.setHandled(true);
 		if(!TsDBFactory.IOT_API_KEY.isEmpty()) {
 			String iot_api_key = baseRequest.getHeader("x-api-key");
 			if(iot_api_key == null) {
 				response.setContentType("text/plain;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				log.warn("IoT API error: missing IoT API key (HTTP header with 'x-api-key')");
+				Logger.warn("IoT API error: missing IoT API key (HTTP header with 'x-api-key')");
 				response.getWriter().println("IoT API error: missing IoT API key (HTTP header with 'x-api-key')");				
 				return;
 			}
 			if(!TsDBFactory.IOT_API_KEY.equals(iot_api_key)) {
 				response.setContentType("text/plain;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				log.warn("IoT API error: API key does not match (HTTP header with 'x-api-key')");
+				Logger.warn("IoT API error: API key does not match (HTTP header with 'x-api-key')");
 				response.getWriter().println("IoT API error: API key does not match (HTTP header with 'x-api-key')");				
 				return;
 			}
@@ -71,8 +71,8 @@ public class IotAPIHandler extends AbstractHandler {
 			subTarget = method.substring(i + 1);
 			method = method.substring(0, i);
 		}
-		log.info("method: " + method);
-		log.info("subTarget: " + subTarget);
+		Logger.info("method: " + method);
+		Logger.info("subTarget: " + subTarget);
 		Handler handler = handlerMap.get(method);
 		if(handler!=null) {
 			handler.handle(subTarget, baseRequest, request, response);

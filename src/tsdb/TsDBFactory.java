@@ -8,8 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.ini4j.Profile.Section;
 import org.ini4j.Wini;
 
@@ -22,7 +22,7 @@ import tsdb.util.Util;
  * @author woellauer
  */
 public final class TsDBFactory {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private static final String PATH_CONFIG_FILENAME = "tsdb_paths.ini";
 	private static final String TSDB_PATH_SECTION = "tsdb_paths"; 
@@ -81,18 +81,18 @@ public final class TsDBFactory {
 		try {
 			Wini ini;
 			if(Files.exists(Paths.get(PATH_CONFIG_FILENAME))) {
-				log.trace("read from root: "+PATH_CONFIG_FILENAME);
+				Logger.trace("read from root: "+PATH_CONFIG_FILENAME);
 				ini = new Wini(new File(PATH_CONFIG_FILENAME));
 			} else if(Files.exists(Paths.get(CONFIG_PATH,PATH_CONFIG_FILENAME))) {
-				log.trace("read from config: "+PATH_CONFIG_FILENAME);
+				Logger.trace("read from config: "+PATH_CONFIG_FILENAME);
 				ini = new Wini(new File(CONFIG_PATH,PATH_CONFIG_FILENAME));
 			} else {
-				log.trace("no "+PATH_CONFIG_FILENAME);
+				Logger.trace("no "+PATH_CONFIG_FILENAME);
 				return;
 			}
 			Section section = ini.get(TSDB_PATH_SECTION);
 			if(section==null) {
-				log.warn("no "+TSDB_PATH_SECTION+" section in "+ini.getFile());
+				Logger.warn("no "+TSDB_PATH_SECTION+" section in "+ini.getFile());
 				return;
 			}
 			Map<String, String> pathMap = Util.readIniSectionMap(section);
@@ -148,7 +148,7 @@ public final class TsDBFactory {
 		if(valueText.toLowerCase().trim().equals("false")) {
 			return false;
 		}
-		log.warn("tsdb ini config value for "+key+" unknown: "+valueText);		
+		Logger.warn("tsdb ini config value for "+key+" unknown: "+valueText);		
 		return defaultValue;
 	}
 
@@ -165,7 +165,7 @@ public final class TsDBFactory {
 			return defaultValue;
 		}
 		if(valueText.trim().isEmpty()) {
-			log.warn("tsdb ini config value for "+key+" empty: ");
+			Logger.warn("tsdb ini config value for "+key+" empty: ");
 			return defaultValue;
 		}
 		return valueText;	
@@ -177,13 +177,13 @@ public final class TsDBFactory {
 			return defaultValue;
 		}
 		if(valueText.trim().isEmpty()) {
-			log.warn("tsdb ini config value for "+key+" empty: ");
+			Logger.warn("tsdb ini config value for "+key+" empty: ");
 			return defaultValue;
 		}
 		try{
 			return Integer.parseInt(valueText);
 		} catch(Exception e) {
-			log.error("int not read for "+key+": "+valueText+" || "+e);
+			Logger.error("int not read for "+key+": "+valueText+" || "+e);
 			return defaultValue;
 		}	
 	}
@@ -209,7 +209,7 @@ public final class TsDBFactory {
 			try(DirectoryStream<Path> paths = Files.newDirectoryStream(Paths.get(configDirectory), path->path.toFile().isDirectory())) {
 				for(Path path : paths) {
 					String dir = path.toString();
-					//log.info("dir  "+path+"  "+path.getFileName());
+					//Logger.info("dir  "+path+"  "+path.getFileName());
 					try {
 						Region region = configLoader.readRegion(dir+"/region.ini", JUST_ONE_REGION);
 						if(region!=null) {
@@ -223,7 +223,7 @@ public final class TsDBFactory {
 						}
 					} catch(Exception e) {
 						e.printStackTrace();
-						log.info("could not load meta data of  "+path+"  "+e);
+						Logger.info("could not load meta data of  "+path+"  "+e);
 					}
 				}
 			}
@@ -239,7 +239,7 @@ public final class TsDBFactory {
 			return tsdb;		
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error("create TsDB"+e);
+			Logger.error("create TsDB"+e);
 			return null;
 		}		
 	}

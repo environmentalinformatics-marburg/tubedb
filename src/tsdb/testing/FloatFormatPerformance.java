@@ -5,14 +5,14 @@ import java.text.DecimalFormatSymbols;
 import java.util.Formatter;
 import java.util.Locale;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.Timer;
 import tsdb.util.Util;
 
 public class FloatFormatPerformance {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	static int ROUNDS = 1000;
 	static int LOOPS = 1_000_000;
@@ -33,10 +33,10 @@ public class FloatFormatPerformance {
 		//float testValue = 1234f;
 		//float testValue = 0f;
 		//float testValue = 0.3f;
-		log.info("toString "+Float.toString(testValue));
-		log.info("format "+String.format(Locale.ENGLISH, "%.2f", testValue));
-		log.info("decimalFormat "+decimalFormat.format(testValue));
-		log.info("fastWriteFloat "+new String(Util.fastWriteFloat(testValue)));
+		Logger.info("toString "+Float.toString(testValue));
+		Logger.info("format "+String.format(Locale.ENGLISH, "%.2f", testValue));
+		Logger.info("decimalFormat "+decimalFormat.format(testValue));
+		Logger.info("fastWriteFloat "+new String(Util.fastWriteFloat(testValue)));
 
 
 
@@ -48,7 +48,7 @@ public class FloatFormatPerformance {
 				s.append(Float.toString(v));
 				cnt += s.length();
 			}
-			log.info(Timer.stop("toString")+"  "+cnt);*/
+			Logger.info(Timer.stop("toString")+"  "+cnt);*/
 
 			/*Timer.start("append");
 			for(int i=0;i<LOOPS;i++) {
@@ -57,7 +57,7 @@ public class FloatFormatPerformance {
 				s.append(v);
 				cnt += s.length();
 			}
-			log.info(Timer.stop("append")+"  "+cnt);*/
+			Logger.info(Timer.stop("append")+"  "+cnt);*/
 
 			run_formatter();
 
@@ -68,7 +68,7 @@ public class FloatFormatPerformance {
 				s.append(String.format(Locale.ENGLISH, "%.2f", v));
 				cnt += s.length();
 			}
-			log.info(Timer.stop("format")+"  "+cnt);*/
+			Logger.info(Timer.stop("format")+"  "+cnt);*/
 
 			run_decimalFormat();
 			
@@ -88,7 +88,7 @@ public class FloatFormatPerformance {
 			formatter.format(Locale.ENGLISH, "%.2f", v);
 			cnt += s.length();
 		}
-		log.info(Timer.stop("formatter")+"  "+cnt);
+		Logger.info(Timer.stop("formatter")+"  "+cnt);
 
 	}
 
@@ -100,7 +100,7 @@ public class FloatFormatPerformance {
 			s.append(decimalFormat.format(v));
 			cnt += s.length();
 		}
-		log.info(Timer.stop("decimalFormat")+"  "+cnt);
+		Logger.info(Timer.stop("decimalFormat")+"  "+cnt);
 
 	}
 	
@@ -112,7 +112,7 @@ public class FloatFormatPerformance {
 			s.append(Util.fastWriteFloat(v));
 			cnt += s.length();
 		}
-		log.info(Timer.stop("fastWriteFloat")+"  "+cnt);
+		Logger.info(Timer.stop("fastWriteFloat")+"  "+cnt);
 
 	}
 

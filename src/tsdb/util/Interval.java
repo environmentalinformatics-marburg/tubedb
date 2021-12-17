@@ -5,8 +5,8 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.Serializable;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.mapdb.Serializer;
 
 /**
@@ -19,7 +19,6 @@ import org.mapdb.Serializer;
  */
 public class Interval implements Serializable {
 	private static final long serialVersionUID = -3129013387844118531L;
-	private static final Logger log = LogManager.getLogger("tsdb");
 
 	public final int start; // start <= end
 	public final int end;
@@ -105,16 +104,16 @@ public class Interval implements Serializable {
 		try {
 			text = text.trim();
 			if(text.charAt(0)!='[') {
-				log.error("no range: "+text);
+				Logger.error("no range: "+text);
 				return null;
 			}
 			if(text.charAt(text.length()-1)!=']') {
-				log.error("no range: "+text);
+				Logger.error("no range: "+text);
 				return null;
 			}
 			int sepIndex = text.indexOf(',');
 			if(sepIndex<0) {
-				log.error("no range: "+text);
+				Logger.error("no range: "+text);
 				return null;
 			}
 			String minText = text.substring(1, sepIndex).trim();
@@ -123,7 +122,7 @@ public class Interval implements Serializable {
 			int max = Integer.parseInt(maxText);
 			return Interval.of(min, max);
 		} catch (Exception e) {
-			log.error("parse Interval: "+e);
+			Logger.error("parse Interval: "+e);
 			return null;
 		}
 	}

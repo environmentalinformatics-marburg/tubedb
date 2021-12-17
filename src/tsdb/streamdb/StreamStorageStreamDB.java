@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.NavigableSet;
 import java.util.TreeMap;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.DataEntry;
 import tsdb.util.DataRow;
@@ -24,7 +24,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class StreamStorageStreamDB implements StreamStorage {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private StreamDB streamdb;
 
@@ -50,7 +50,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 
 	@Override
 	public void insertData(String streamName, TreeMap<Long, DataRow> eventMap, String[] sensorNames) {
-		log.trace("insertData "+Arrays.toString(sensorNames)+"  in "+streamName);
+		Logger.trace("insertData "+Arrays.toString(sensorNames)+"  in "+streamName);
 		ArrayList<DataEntry> sensorData = new ArrayList<DataEntry>(eventMap.size());
 		for(int i=0;i<sensorNames.length;i++) {
 			sensorData.clear();
@@ -58,7 +58,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 				float value = (float) event.data[i];
 				if(!Float.isNaN(value)&&!(value==-9999f)&&(-999999f<value)&&(value<999999f)) { // NaN some files (in AET06)
 					if(value<-9999f||value>9999f) {
-						log.trace(value+"                     "+sensorNames[i]+"                "+streamName);
+						Logger.trace(value+"                     "+sensorNames[i]+"                "+streamName);
 					}
 					sensorData.add(new DataEntry((int) event.timestamp,value));
 				}
@@ -88,7 +88,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 
 	@Override
 	public TsIterator getRawIterator(String stationName, String[] sensorNames, Long start, Long end) {
-		log.trace("StreamDB get "+stationName+" with "+Util.arrayToString(sensorNames)+"     at "+TimeUtil.oleMinutesToText(start)+" - "+TimeUtil.oleMinutesToText(end));
+		Logger.trace("StreamDB get "+stationName+" with "+Util.arrayToString(sensorNames)+"     at "+TimeUtil.oleMinutesToText(start)+" - "+TimeUtil.oleMinutesToText(end));
 		int minTimestamp;
 		int maxTimestamp;
 		if(start==null) {
@@ -106,7 +106,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 
 	@Override
 	public StreamIterator getRawSensorIterator(String stationName, String sensorName, Long start, Long end) {
-		log.info("StreamDB get raw sensor "+stationName+" with "+sensorName+"     at "+TimeUtil.oleMinutesToText(start)+" - "+TimeUtil.oleMinutesToText(end));
+		Logger.info("StreamDB get raw sensor "+stationName+" with "+sensorName+"     at "+TimeUtil.oleMinutesToText(start)+" - "+TimeUtil.oleMinutesToText(end));
 		int minTimestamp;
 		int maxTimestamp;
 		if(start==null) {
@@ -190,7 +190,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 
 	@Override
 	public void insertTimestampSeries(TimestampSeries timestampSeries) {
-		if(logging) log.info("streamDB insert TimestampSeries "+timestampSeries.name);
+		if(logging) Logger.info("streamDB insert TimestampSeries "+timestampSeries.name);
 		String stationName = timestampSeries.name;
 		for(String sensorName:timestampSeries.sensorNames) {
 			DataEntry[] data = timestampSeries.toDataEntyArray(sensorName);
@@ -220,7 +220,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 	}
 
 	public void insertDataEntryArray(String stationName, String sensorName, DataEntry[] dataEntries) {
-		if(logging) log.info("streamDB insert DataEntyArray "+stationName+"/"+sensorName);
+		if(logging) Logger.info("streamDB insert DataEntyArray "+stationName+"/"+sensorName);
 		if(dataEntries!=null&&dataEntries.length>0) {
 			streamdb.insertSensorData(stationName, sensorName, dataEntries);
 		}

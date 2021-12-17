@@ -3,8 +3,8 @@ package tsdb.run;
 import java.util.List;
 import java.util.NavigableSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Query;
@@ -16,7 +16,7 @@ import tsdb.TsDB;
 import tsdb.TsDBFactory;
 
 public class InfluxDBDataReader {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 	private final InfluxDB influxDB;
@@ -51,14 +51,14 @@ public class InfluxDBDataReader {
 					}
 				} catch(Exception e) {
 					e.printStackTrace();
-					log.error(e);
+					Logger.error(e);
 				}
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 		long timeEndImport = System.currentTimeMillis();
-		log.info((timeEndImport-timeStartImport)/1000+" s Export "+total_count+" count");
+		Logger.info((timeEndImport-timeStartImport)/1000+" s Export "+total_count+" count");
 	}
 
 	private void readSeries(String stationName, String sensorName) {
@@ -66,17 +66,17 @@ public class InfluxDBDataReader {
 		QueryResult queryResult = influxDB.query(new Query("SELECT * FROM \""+sensorName+"\" WHERE station='"+stationName+"'",InfluxDBDataWriter.dbName));
 		List<Result> resultList = queryResult.getResults();
 		for(Result result:resultList) {
-			//log.info("result");
+			//Logger.info("result");
 			List<Series> seriesList = result.getSeries();
 			if(seriesList==null) {
-				log.warn("no series "+stationName+" "+sensorName);
+				Logger.warn("no series "+stationName+" "+sensorName);
 				continue;
 			}
 			for(Series series:seriesList) {
-				log.info(stationName+"   series "+series.getName());
-				//log.info("columns "+series.getColumns());
-				//log.info("tags "+series.getTags());
-				//log.info("values "+series.getValues());
+				Logger.info(stationName+"   series "+series.getName());
+				//Logger.info("columns "+series.getColumns());
+				//Logger.info("tags "+series.getTags());
+				//Logger.info("values "+series.getValues());
 				List<List<Object>> valueList = series.getValues();
 				for(List<Object> value:valueList) {
 					value.get(1);

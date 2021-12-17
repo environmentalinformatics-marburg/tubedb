@@ -12,8 +12,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 
 import tsdb.TsDBFactory;
@@ -33,7 +33,7 @@ import tsdb.remote.RemoteTsDB;
  *
  */
 public class Handler_sensor_list extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_sensor_list(RemoteTsDB tsdb) {
 		super(tsdb, "sensor_list");
@@ -52,7 +52,7 @@ public class Handler_sensor_list extends MethodHandler {
 				||(plot==null&&general_station==null&&region!=null&&station==null)
 				||(plot==null&&general_station==null&&region==null&&station!=null)
 				)) {
-			log.warn("wrong call");
+			Logger.warn("wrong call");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -76,7 +76,7 @@ public class Handler_sensor_list extends MethodHandler {
 				sensorNames = tsdb.getSensorNamesOfPlotWithVirtual(station); //TODO change to just query stations
 			}
 			if(sensorNames==null) {
-				log.error("sensorNames null: "+plot);
+				Logger.error("sensorNames null: "+plot);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);				
 				return;
 			}
@@ -85,7 +85,7 @@ public class Handler_sensor_list extends MethodHandler {
 			//Map<String, Integer> sensorMap = Util.stringArrayToMap(sensorNames);
 			Sensor[] tsdbSensors = tsdb.getSensors();
 			if(tsdbSensors==null) {
-				log.error("sensors null: "+plot);
+				Logger.error("sensors null: "+plot);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);				
 				return;
 			}
@@ -156,7 +156,7 @@ public class Handler_sensor_list extends MethodHandler {
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(e);
+			Logger.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}

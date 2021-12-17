@@ -2,8 +2,8 @@ package tsdb.iterator;
 
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.TsEntry;
 import tsdb.util.Util;
@@ -16,7 +16,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class InterpolationAverageLinearIterator extends InputIterator {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsIterator[] interpolationIterators;
 	private final double[][] intercepts;
@@ -85,7 +85,7 @@ public class InterpolationAverageLinearIterator extends InputIterator {
 						count += weight;
 					}
 				}
-				//log.info(count);
+				//Logger.info(count);
 				if(count>0) {
 					interpolated[pos] = true;
 					y[pos] = (float) (sum/count);

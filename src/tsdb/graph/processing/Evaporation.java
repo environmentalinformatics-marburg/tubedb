@@ -4,8 +4,8 @@ import static tsdb.util.AssumptionCheck.throwNull;
 
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -86,7 +86,7 @@ public class Evaporation extends Node.Abstract{
 }
 
 class EvaporationIterator extends InputIterator {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private int sensor_pos = -1;
 	private int prevTimestamp = -1;

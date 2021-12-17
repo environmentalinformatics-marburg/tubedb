@@ -2,8 +2,8 @@ package tsdb.util.iterator;
 
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.DataQuality;
 import tsdb.util.TsEntry;
@@ -22,7 +22,7 @@ public class Virtual_P_RT_NRT_Iterator extends InputIterator {
 	private static float MAX_DELTA = 15;
 	
 	@SuppressWarnings("unused")
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final int pos_P_container_RT;
 	private final int pos_P_RT_NRT;
@@ -44,8 +44,8 @@ public class Virtual_P_RT_NRT_Iterator extends InputIterator {
 
 	public Virtual_P_RT_NRT_Iterator(TsIterator input_iterator, int pos_P_container_RT, int pos_P_RT_NRT) {
 		super(input_iterator, createSchema(input_iterator.schema));
-		//log.info("input_iterator "+input_iterator.schema);
-		//log.info("input_iterator "+this.schema);
+		//Logger.info("input_iterator "+input_iterator.schema);
+		//Logger.info("input_iterator "+this.schema);
 		this.pos_P_container_RT = pos_P_container_RT;
 		this.pos_P_RT_NRT = pos_P_RT_NRT;
 	}

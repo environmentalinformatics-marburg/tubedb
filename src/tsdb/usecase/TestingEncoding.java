@@ -7,23 +7,23 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.Timer;
 
 public class TestingEncoding {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	static int REPEATES = 100;
 	static int LOOPS = 10_000_000;
 
 
 	public static void main(String[] args) throws IOException {
-		log.info(Charset.defaultCharset());
+		Logger.info(Charset.defaultCharset());
 
 		for(String cs:Charset.availableCharsets().keySet()) {
-			log.info(cs);
+			Logger.info(cs);
 		}
 
 		String[] charsetNames = new String[]{"windows-1252","UTF-8","US-ASCII","ISO-8859-1"/*,"UTF8OutputStreamWriter"*/};
@@ -46,7 +46,7 @@ public class TestingEncoding {
 				}
 				bufferedWriter.flush();
 				writer.flush();
-				log.info(Timer.stop(charsetName));
+				Logger.info(Timer.stop(charsetName));
 			}
 		}
 	}

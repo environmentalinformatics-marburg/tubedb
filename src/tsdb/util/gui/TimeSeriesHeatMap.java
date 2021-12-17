@@ -3,8 +3,8 @@ package tsdb.util.gui;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.AggregationInterval;
 import tsdb.util.Pair;
@@ -16,7 +16,7 @@ import tsdb.util.iterator.TimestampSeries;
 
 public class TimeSeriesHeatMap {
 	@SuppressWarnings("unused")
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TimestampSeries ts;
 
@@ -298,7 +298,7 @@ public class TimeSeriesHeatMap {
 
 
 		LocalDate startDate = TimeUtil.oleMinutesToLocalDateTime(start).toLocalDate();
-		//log.info(startDate);
+		//Logger.info(startDate);
 
 		try {
 			tsp.setFontSmall();
@@ -311,7 +311,7 @@ public class TimeSeriesHeatMap {
 			for(long day=startDay; day<=endDay; day++) {
 				long dayDiff = day-startDay;
 				LocalDate curr = startDate.plusDays(dayDiff);
-				//log.info(curr);
+				//Logger.info(curr);
 				if(curr.getDayOfMonth()==1) {				
 					tsp.drawLine(dayDiff+xMin, yMin, dayDiff+xMin, yMax);
 					if(prevDayDiff>-1) {
@@ -481,7 +481,7 @@ public class TimeSeriesHeatMap {
 
 
 
-		//log.info(min+"  "+max+"  "+(min+max)+"   "+(min+max)/2);
+		//Logger.info(min+"  "+max+"  "+(min+max)+"   "+(min+max)/2);
 
 		tsp.setColor(0, 0, 0);
 

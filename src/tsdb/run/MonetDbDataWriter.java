@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.NavigableSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
@@ -17,7 +17,7 @@ import tsdb.util.DataEntry;
 import tsdb.util.Timer;
 
 public class MonetDbDataWriter {
-	private static final Logger log = LogManager.getLogger();
+	
 	private final TsDB tsdb;
 	
 	//public static String url = "jdbc:monetdb://localhost:50000/mydb?so_timeout=10000";
@@ -47,7 +47,7 @@ public class MonetDbDataWriter {
 			/*try(Statement statement = connection.createStatement()) { // clear database
 				statement.execute("DROP ALL OBJECTS");
 			} catch(SQLException sqle) {
-				log.error("not dropping "+sqle);
+				Logger.error("not dropping "+sqle);
 			}*/
 
 			NavigableSet<String> stationNames = tsdb.streamStorage.getStationNames();
@@ -67,7 +67,7 @@ public class MonetDbDataWriter {
 								try(Statement statement = connection.createStatement()) {
 									statement.execute("CREATE TABLE "+tablePrefix+tsName+" (timestamp INT PRIMARY KEY, m REAL);");
 								} catch (Exception e) {
-									log.warn("at create table "+e);
+									Logger.warn("at create table "+e);
 								}
 								PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO "+tablePrefix+tsName+" VALUES (?,?)");
 								while(it.hasNext()) {
@@ -84,17 +84,17 @@ public class MonetDbDataWriter {
 						connection.commit();
 					} catch(Exception e) {
 						e.printStackTrace();
-						log.error(e);
+						Logger.error(e);
 					}
 				}
 			} catch (Exception e) {
-				log.error(e);
+				Logger.error(e);
 			}
 			long timeEndImport = System.currentTimeMillis();
-			log.info((timeEndImport-timeStartImport)/1000+" s Export");
-			log.info(Timer.stop("MonetDB full write"));
+			Logger.info((timeEndImport-timeStartImport)/1000+" s Export");
+			Logger.info(Timer.stop("MonetDB full write"));
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		} 
 
 	}

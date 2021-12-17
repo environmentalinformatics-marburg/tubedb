@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import com.opencsv.CSVReader;
 
@@ -29,7 +29,7 @@ import tsdb.util.DataRow;
 import tsdb.util.TimeUtil;
 
 public class Loader_TreeTalker {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 	private static final char SEPARATOR = ';';
@@ -45,7 +45,7 @@ public class Loader_TreeTalker {
 
 
 	public void loadDirectoryRecursive(Path path) {
-		log.info("TreeTalker import Directory "+path);
+		Logger.info("TreeTalker import Directory "+path);
 		try(DirectoryStream<Path> rootStream = Files.newDirectoryStream(path)) {
 			for(Path sub:rootStream) {
 				if(!Files.isDirectory(sub)) {
@@ -53,7 +53,7 @@ public class Loader_TreeTalker {
 						loadFile(sub);
 					} catch (Exception e) {
 						e.printStackTrace();
-						log.error(e+"  in "+sub);
+						Logger.error(e+"  in "+sub);
 					}
 				} else {
 					loadDirectoryRecursive(sub);
@@ -61,18 +61,18 @@ public class Loader_TreeTalker {
 
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 	}
 
 
 	public void loadFile(Path filename) {
-		log.info("TreeTalker import File "+ filename);
+		Logger.info("TreeTalker import File "+ filename);
 		try {
 			new TreeTalkerTable(tsdb, filename.toFile());
 		} catch(Exception e) {
 			e.printStackTrace();
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -116,16 +116,16 @@ public class Loader_TreeTalker {
 				for (int i = 0; i < tabeRows.length; i++) {
 					String[] row = tabeRows[i];
 					if(row.length == 0 || row[0].isEmpty()) {
-						//log.info("skip empty line");
+						//Logger.info("skip empty line");
 						continue;
 					}
 					if(row.length < 5) {
-						//log.info("skip header/footer line");
+						//Logger.info("skip header/footer line");
 						continue;
 					}
 					String timeID = row[0];
 					String tt_ID = "tt_" + timeID.substring(timeID.indexOf(',') + 1);
-					//log.info(tt_ID);
+					//Logger.info(tt_ID);
 
 
 
@@ -133,7 +133,7 @@ public class Loader_TreeTalker {
 
 					switch(tt_Type) {
 					case "49": {
-						//log.info(tt_Type);					
+						//Logger.info(tt_Type);					
 						int timestamp = toTimestamp(row[3]);
 						float[] data = new float[]{
 								parseFloat(row[4]),
@@ -159,7 +159,7 @@ public class Loader_TreeTalker {
 						break;
 					}
 					case "4B": { // status
-						//log.info(tt_Type);					
+						//Logger.info(tt_Type);					
 						int timestamp = toTimestamp(row[3]);
 						float[] data = new float[]{
 								parseFloat(row[4]),
@@ -179,7 +179,7 @@ public class Loader_TreeTalker {
 						break;
 					}
 					case "4C": { // status
-						//log.info(tt_Type);					
+						//Logger.info(tt_Type);					
 						int timestamp = toTimestamp(row[3]);
 						float[] data = new float[]{
 								parseFloat(row[4]),
@@ -218,7 +218,7 @@ public class Loader_TreeTalker {
 						break;
 					}
 					case "4D": {
-						//log.info(tt_Type);					
+						//Logger.info(tt_Type);					
 						int timestamp = toTimestamp(row[3]);
 						float[] data = new float[]{
 								parseFloat(row[4]),
@@ -247,7 +247,7 @@ public class Loader_TreeTalker {
 						break;
 					}
 					case "53": { // 53 = three level ground moisture sensor log record identifier
-						//log.info(tt_Type);					
+						//Logger.info(tt_Type);					
 						int timestamp = toTimestamp(row[3]);
 						float[] data = new float[]{
 								parseFloat(row[4]),
@@ -276,10 +276,10 @@ public class Loader_TreeTalker {
 						break;
 					}
 					default: {
-						log.warn("unknown tt_Type" +tt_Type);
+						Logger.warn("unknown tt_Type" +tt_Type);
 						/*long timeStampSeconds = Long.parseLong(row[3]);
 					LocalDateTime datetime = TIME_START.plusSeconds(timeStampSeconds);
-					log.info(row[0] + "   " + timeStampText + "  " + datetime + row[3]);*/
+					Logger.info(row[0] + "   " + timeStampText + "  " + datetime + row[3]);*/
 					}
 					}
 
@@ -287,7 +287,7 @@ public class Loader_TreeTalker {
 				}
 
 				/*DataEntry[] a = tt4B_Battery_level.toArray(new DataEntry[0]);			
-			log.info(Arrays.toString(a));
+			Logger.info(Arrays.toString(a));
 			tsdb.streamStorage.insertDataEntryArray("treetalker_test_plot1", "sensor_1", a);*/
 
 
@@ -397,28 +397,28 @@ public class Loader_TreeTalker {
 				try {
 					insert(tsdb, tt49_dataMap, tt49_sensors, missingStationsCollector, file.toPath());
 				}catch(Exception e) {
-					log.warn("at tt49 " + e.getMessage());
+					Logger.warn("at tt49 " + e.getMessage());
 				}
 				try {
 					insert(tsdb, tt4B_dataMap, tt4B_sensors, missingStationsCollector, file.toPath());
 				}catch(Exception e) {
-					log.warn("at tt4B " + e.getMessage());
+					Logger.warn("at tt4B " + e.getMessage());
 				}
 				try {
 					insert(tsdb, tt4C_dataMap, tt4C_sensors, missingStationsCollector, file.toPath());
 				}catch(Exception e) {
 					e.printStackTrace();
-					log.warn("at tt4C " + e.getMessage());
+					Logger.warn("at tt4C " + e.getMessage());
 				}
 				try {
 					insert(tsdb, tt4D_dataMap, tt4D_sensors, missingStationsCollector, file.toPath());
 				}catch(Exception e) {
-					log.warn("at tt4D " + e.getMessage());
+					Logger.warn("at tt4D " + e.getMessage());
 				}
 				try {
 					insert(tsdb, tt53_dataMap, tt53_sensors, missingStationsCollector, file.toPath());
 				}catch(Exception e) {
-					log.warn("at tt53 " + e.getMessage());
+					Logger.warn("at tt53 " + e.getMessage());
 				}
 
 				if(!missingStationsCollector.isEmpty()) {
@@ -426,7 +426,7 @@ public class Loader_TreeTalker {
 					for(String station:missingStationsCollector) {
 						s += "\n" + station;
 					}
-					log.warn(s);
+					Logger.warn(s);
 				}
 			}
 		}
@@ -435,8 +435,8 @@ public class Loader_TreeTalker {
 			for(Entry<String, ArrayList<DataRow>> e:ttx_dataMap.entrySet()) {
 				String tt_ID = e.getKey();
 				ArrayList<DataRow> dataRows = e.getValue();
-				//log.info("insert in " + tt_ID + "  " + dataRows.size());
-				//log.info(dataRows.toString());
+				//Logger.info("insert in " + tt_ID + "  " + dataRows.size());
+				//Logger.info(dataRows.toString());
 				dataRows.sort(new Comparator<DataRow>() {
 					@Override
 					public int compare(DataRow o1, DataRow o2) {
@@ -456,12 +456,12 @@ public class Loader_TreeTalker {
 							dataEntryList.add(new DataEntry((int)dataRow.timestamp, v));
 							prevTimestamp = dataRow.timestamp;
 						} else {
-							//log.info("skip " + v);
+							//Logger.info("skip " + v);
 						}
 
 					}
 					if(tsdb.getStation(tt_ID) == null) {
-						//log.warn("missing station " + tt_ID);
+						//Logger.warn("missing station " + tt_ID);
 						missingStationsCollector.add(tt_ID);
 					}
 					DataEntry[] dataEntries = dataEntryList.toArray(new DataEntry[0]);

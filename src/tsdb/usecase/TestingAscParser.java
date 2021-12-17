@@ -8,15 +8,15 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDBFactory;
 import tsdb.loader.ki.AscParser;
 import tsdb.loader.ki.TimeSeriesLoaderKiLi;
 
 public class TestingAscParser {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) {
 
@@ -49,7 +49,7 @@ public class TestingAscParser {
 								//String fileKey = filename.substring(0, ascIndex);						
 								AscParser.parse(ascPath, true);
 							} else {
-								log.warn("no asc file: "+filename);
+								Logger.warn("no asc file: "+filename);
 							}
 						}
 					}
@@ -59,12 +59,12 @@ public class TestingAscParser {
 
 
 				} else {
-					log.warn("file in root directory: "+subPath);
+					Logger.warn("file in root directory: "+subPath);
 				}
 			}
 			stream.close();
 		} catch (IOException e) {
-			log.error(e);
+			Logger.error(e);
 		}
 
 

@@ -5,8 +5,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.ConfigLoader;
 import tsdb.TsDB;
@@ -20,7 +20,7 @@ import tsdb.util.Table.ColumnReaderIntFunc;
 import tsdb.util.Table.ColumnReaderString;
 
 public class LoadMasks {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static final String MASK_FILENAME = "mask.csv";
 
@@ -31,7 +31,7 @@ public class LoadMasks {
 			LoadMasks updateMasks = new LoadMasks(tsdb);
 			updateMasks.run(tsdb.configDirectory);
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 	}
 
@@ -48,7 +48,7 @@ public class LoadMasks {
 			//*** region config start
 			for(Path path : Files.newDirectoryStream(Paths.get(configDirectory), path->path.toFile().isDirectory())) {
 				String dir = path.toString();
-				//log.info("dir  "+path+"  "+path.getFileName());
+				//Logger.info("dir  "+path+"  "+path.getFileName());
 				try {
 					Region region = configLoader.readRegion(dir+"/region.ini", TsDBFactory.JUST_ONE_REGION);
 					if(region!=null) {
@@ -56,13 +56,13 @@ public class LoadMasks {
 						LoadMasks.loadMask(tsdb, fileName);
 					}
 				} catch(Exception e) {
-					log.info("could not load meta data of  "+path+"  "+e);
+					Logger.info("could not load meta data of  "+path+"  "+e);
 				}
 			}
 			//*** region config end
 
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -70,7 +70,7 @@ public class LoadMasks {
 	public static void loadMask(TsDB tsdb, String filename) {
 		try {
 			if(!Files.exists(Paths.get(filename))) {
-				log.trace("mask file not found: "+filename);
+				Logger.trace("mask file not found: "+filename);
 				return;
 			}
 			Table maskTable = Table.readCSV(filename, ',');
@@ -85,15 +85,15 @@ public class LoadMasks {
 					try {
 						String stationName = colStation.get(row);					
 						if(tsdb.getStation(stationName)==null) {
-							log.warn("mask: station not found "+stationName+"  at "+filename+"   in "+Arrays.toString(row));
+							Logger.warn("mask: station not found "+stationName+"  at "+filename+"   in "+Arrays.toString(row));
 						}					
 						String sensorName = colSensor.get(row);
 						if(!tsdb.sensorExists(sensorName)) {
-							log.warn("mask: sensor not found "+sensorName+"  at "+filename+"   in "+Arrays.toString(row));
+							Logger.warn("mask: sensor not found "+sensorName+"  at "+filename+"   in "+Arrays.toString(row));
 						}
 						int start = colStart.get(row);
 						int end = colEnd.get(row);				
-						//log.info(TimeUtil.oleMinutesToText(start, end));				
+						//Logger.info(TimeUtil.oleMinutesToText(start, end));				
 						TimeSeriesMask mask = tsdb.streamStorage.getTimeSeriesMask(stationName, sensorName);
 						if(mask==null) {
 							mask = new TimeSeriesMask();
@@ -101,14 +101,14 @@ public class LoadMasks {
 						mask.addInterval(Interval.of(start, end));				
 						tsdb.streamStorage.setTimeSeriesMask(stationName, sensorName, mask, false);
 					} catch(Exception e) {
-						log.error(e+" in "+Arrays.toString(row));
+						Logger.error(e+" in "+Arrays.toString(row));
 					}
 				}
 			}
 			tsdb.streamStorage.commit();
-			//log.info("\n"+maskTable);
+			//Logger.info("\n"+maskTable);
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 

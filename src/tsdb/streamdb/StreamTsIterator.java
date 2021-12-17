@@ -2,8 +2,8 @@ package tsdb.streamdb;
 
 import java.util.Iterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.DataEntry;
 import tsdb.util.TsEntry;
@@ -17,13 +17,13 @@ import tsdb.util.iterator.TsIterator;
  */
 public class StreamTsIterator extends TsIterator {
 	@SuppressWarnings("unused")
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	private final Iterator<DataEntry> input_iterator;
 	
 	public StreamTsIterator(StreamIterator input_iterator) {
 		this(input_iterator,input_iterator.sensorName);
-		//log.info("transform "+input_iterator.sensorName);
+		//Logger.info("transform "+input_iterator.sensorName);
 	}
 	
 	public static StreamTsIterator of(StreamIterator input_iterator) {

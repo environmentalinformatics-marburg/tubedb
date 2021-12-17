@@ -6,8 +6,8 @@ import static tsdb.util.AssumptionCheck.throwNulls;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.VirtualPlot;
@@ -17,7 +17,7 @@ import tsdb.util.Util;
 import tsdb.util.iterator.TsIterator;
 
 public class MinDiff implements Continuous {
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	private final Continuous target;
 	private final List<Continuous> sources; //not null
@@ -33,7 +33,7 @@ public class MinDiff implements Continuous {
 			throw new RuntimeException("no sources");	
 		}
 		if(sources.isEmpty()) {
-			log.warn("insufficient sources");
+			Logger.warn("insufficient sources");
 		}
 		this._constant_timestep = sources.get(0).isConstantTimestep();
 		for(Continuous source:sources) {

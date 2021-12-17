@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.TimeConverter;
 import tsdb.util.TimeUtil;
@@ -22,7 +22,7 @@ import tsdb.util.TimeUtil;
  */
 public class UniversalDataBinFile {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	final int MAX_VALID_ROW_ID = 30000;
 
@@ -125,15 +125,15 @@ public class UniversalDataBinFile {
 			throw new RuntimeException("reading of additional optional data in header not implemented: "+moduleAdditionalDataLen);
 		}
 		this.startTimeToDayFactor = byteBuffer.getDouble();
-		//log.info(startTimeToDayFactor+"\tstartTimeToDayFactor");
+		//Logger.info(startTimeToDayFactor+"\tstartTimeToDayFactor");
 		this.dActTimeDataType = byteBuffer.getShort();
-		//log.info(dActTimeDataType+"\tdActTimeDataType");
+		//Logger.info(dActTimeDataType+"\tdActTimeDataType");
 		this.dActTimeToSecondFactor = byteBuffer.getDouble();
-		//log.info(dActTimeToSecondFactor+"\tdActTimeToSecondFactor");
+		//Logger.info(dActTimeToSecondFactor+"\tdActTimeToSecondFactor");
 		this.startTime = byteBuffer.getDouble();
-		//log.info(startTime+"\tstartTime");
+		//Logger.info(startTime+"\tstartTime");
 		double sampleRate = byteBuffer.getDouble();
-		//log.info(sampleRate+"\tsampleRate");
+		//Logger.info(sampleRate+"\tsampleRate");
 		variableCount = byteBuffer.getShort();
 		//System.out.println(variableCount+" variableCount");
 
@@ -264,7 +264,7 @@ public class UniversalDataBinFile {
 		}
 
 		if((fileSize-dataSectionStartFilePosition)%dataRowByteSize!=0){
-			log.warn("file end not at row boundary: "+filename+"\t"+fileSize+"\t"+dataSectionStartFilePosition+"\t"+dataRowByteSize+"\t"+(fileSize-dataSectionStartFilePosition)%dataRowByteSize+"\t"+timeConverter.getStartDateTime());
+			Logger.warn("file end not at row boundary: "+filename+"\t"+fileSize+"\t"+dataSectionStartFilePosition+"\t"+dataRowByteSize+"\t"+(fileSize-dataSectionStartFilePosition)%dataRowByteSize+"\t"+timeConverter.getStartDateTime());
 			//return null;
 		}
 
@@ -350,7 +350,7 @@ public class UniversalDataBinFile {
 	}
 
 	private UDBFTimestampSeries getUDBFTimeSeriesDirect() {
-		//log.info("getUDBFTimeSeriesDirect "+filename);
+		//Logger.info("getUDBFTimeSeriesDirect "+filename);
 		DataRow[] dataRows = readDataRows();
 		int len = dataRows.length;
 		long[] time = new long[len]; 
@@ -370,7 +370,7 @@ public class UniversalDataBinFile {
 			}
 		}
 		if(pos < len) {
-			log.warn("filtered out "+(len - pos)+"  of "+len+"  rows in "+filename);
+			Logger.warn("filtered out "+(len - pos)+"  of "+len+"  rows in "+filename);
 			time = Arrays.copyOf(time, pos);
 			data = Arrays.copyOf(data, pos);
 		}
@@ -378,7 +378,7 @@ public class UniversalDataBinFile {
 	}
 
 	private UDBFTimestampSeries getUDBFTimeSeriesTimeConverted() {
-		//log.info("getUDBFTimeSeriesTimeConverted "+filename);
+		//Logger.info("getUDBFTimeSeriesTimeConverted "+filename);
 		DataRow[] dataRows = readDataRows();
 		if(dataRows.length==0) {
 			return null;
@@ -399,7 +399,7 @@ public class UniversalDataBinFile {
 				if(dataRows[i-1].id+1==dataRows[i].id || dataRows[i].id+1==dataRows[i+1].id) {
 					tempRowList.add(dataRows[i]);
 				} else {
-					//log.warn("no "+dataRows[i].id);
+					//Logger.warn("no "+dataRows[i].id);
 				}
 			}
 			if(dataRows[dataRows.length-2].id+1==dataRows[dataRows.length-1].id) {
@@ -423,7 +423,7 @@ public class UniversalDataBinFile {
 				continue;
 			}
 			if(dataRows[i].id > 1_000_000) { //invalid id at AEW40: 134220377 and 134220378
-				log.warn("invalid id "+dataRows[i].id);
+				Logger.warn("invalid id "+dataRows[i].id);
 				continue;
 			}
 			if(dataRows[i].id==prevCheckID) {
@@ -431,9 +431,9 @@ public class UniversalDataBinFile {
 				if(prevRow.id==prevCheckID) {
 					if(!Arrays.equals(prevRow.data, dataRows[i].data)) {
 						tempRowList.remove(tempRowList.size()-1);
-						//log.info("duplicate id row different "+dataRows[i].id+"  in "+filename+"   prev "+Arrays.toString(prevRow.data)+" curr "+Arrays.toString(dataRows[i].data));
+						//Logger.info("duplicate id row different "+dataRows[i].id+"  in "+filename+"   prev "+Arrays.toString(prevRow.data)+" curr "+Arrays.toString(dataRows[i].data));
 					} else {
-						//log.info("duplicate id row same "+dataRows[i].id+"  in "+filename);
+						//Logger.info("duplicate id row same "+dataRows[i].id+"  in "+filename);
 					}
 				}
 			} else {
@@ -463,11 +463,11 @@ public class UniversalDataBinFile {
 				data[rowIndex][sensorIndex] = row.data[sensorIndex];
 			}
 			if(prevID!=null&&prevID==row.id) {
-				log.error("duplicate timestamps: "+row.id+"      "+time[rowIndex]+"     "+ TimeUtil.oleMinutesToText(time[rowIndex]));
+				Logger.error("duplicate timestamps: "+row.id+"      "+time[rowIndex]+"     "+ TimeUtil.oleMinutesToText(time[rowIndex]));
 				return null;
 			}
 			if(prevID!=null&&prevID>row.id) {
-				log.error("invalid timestamps: "+row.id+"      "+time[rowIndex]+"     "+ TimeUtil.oleMinutesToText(time[rowIndex]));
+				Logger.error("invalid timestamps: "+row.id+"      "+time[rowIndex]+"     "+ TimeUtil.oleMinutesToText(time[rowIndex]));
 				return null;
 			}
 			rowIndex++;

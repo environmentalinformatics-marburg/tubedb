@@ -1,14 +1,14 @@
 package tsdb.graph.processing;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.graph.node.Node;
 import tsdb.util.iterator.TsIterator;
 
 public class Statistics {
 	@SuppressWarnings("unused")
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	public static class StatisticsData {
 		public final long columns;

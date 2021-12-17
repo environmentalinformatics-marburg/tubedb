@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDBFactory;
 import tsdb.util.Table;
@@ -28,7 +28,7 @@ import tsdb.util.Util;
  *
  */
 public class SouthAfricaPreImport_sasscal {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) {
 		System.out.println("start...");
@@ -40,7 +40,7 @@ public class SouthAfricaPreImport_sasscal {
 			tsaWriter.open();
 			DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("C:/timeseriesdatabase_source/sa/SASSCAL"));
 			for(Path filepath:ds) {
-				log.info("read "+filepath);
+				Logger.info("read "+filepath);
 				readOneFile(filepath,tsaWriter);
 			}
 			tsaWriter.close();
@@ -78,7 +78,7 @@ public class SouthAfricaPreImport_sasscal {
 		};		
 
 		if(table.rows.length==0) {
-			log.warn("empty");
+			Logger.warn("empty");
 			return;
 		}
 
@@ -97,7 +97,7 @@ public class SouthAfricaPreImport_sasscal {
 					if(!stationMap.containsKey(currentStationID)) {
 						stationMap.put(currentStationID, currentList);
 					} else {
-						log.error("station already present: "+currentStationID);
+						Logger.error("station already present: "+currentStationID);
 					}
 				}
 				currentStationID = stationID;
@@ -107,7 +107,7 @@ public class SouthAfricaPreImport_sasscal {
 			long timestamp = cr_timestamp.get(row);
 			if(timestamp<=prevTimestamp) {
 				if(timestamp==prevTimestamp) {
-					log.warn("duplicate timestamp: ignore second: "+prevTimestamp+" "+timestamp+" in "+stationID+" of "+filepath);
+					Logger.warn("duplicate timestamp: ignore second: "+prevTimestamp+" "+timestamp+" in "+stationID+" of "+filepath);
 					continue;
 				} else {
 					//throw new RuntimeException("timestamps not ordered"+prevTimestamp+" "+timestamp+" in "+stationID+" of "+filepath);
@@ -124,7 +124,7 @@ public class SouthAfricaPreImport_sasscal {
 			if(!stationMap.containsKey(currentStationID)) {
 				stationMap.put(currentStationID, currentList);
 			} else {
-				log.error("station already present: "+currentStationID);
+				Logger.error("station already present: "+currentStationID);
 			}
 		}
 

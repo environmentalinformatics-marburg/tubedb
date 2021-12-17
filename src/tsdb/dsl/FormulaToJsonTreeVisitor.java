@@ -1,7 +1,7 @@
 package tsdb.dsl;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.json.JSONWriter;
 
 import tsdb.dsl.formula.BooleanFormula;
@@ -23,7 +23,7 @@ import tsdb.dsl.formula.FormulaSub;
 import tsdb.dsl.formula.FormulaVar;
 
 public class FormulaToJsonTreeVisitor implements FormulaVisitor1<Void>, BooleanFormulaVisitor1<Void>  {
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	private final JSONWriter json;
 

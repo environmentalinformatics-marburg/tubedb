@@ -3,8 +3,8 @@ package tsdb.usecase;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Plot;
 import tsdb.TsDB;
@@ -21,7 +21,7 @@ import tsdb.util.DataQuality;
 import tsdb.util.TimeUtil;
 
 public class InterpolationAnalysis2 {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) {
 		try(TsDB tsdb = TsDBFactory.createDefault()) {
@@ -56,7 +56,7 @@ public class InterpolationAnalysis2 {
 		};
 		
 		List<Plot> nearPlots = tsdb.getPlot(targetPlot).getNearestPlots().collect(Collectors.toList());	
-		log.info("near plots "+nearPlots.size()+":  "+nearPlots);
+		Logger.info("near plots "+nearPlots.size()+":  "+nearPlots);
 		
 		Continuous realNode = continuousGen.get(targetPlot, schema);
 		Continuous interpolatedNode = InterpolatedAverageLinear.of(tsdb, targetPlot, schema, gapGen, AggregationInterval.HOUR);

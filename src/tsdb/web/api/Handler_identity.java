@@ -7,8 +7,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.security.DefaultUserIdentity;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.server.Authentication.User;
@@ -25,7 +25,7 @@ import tsdb.remote.RemoteTsDB;
  *
  */
 public class Handler_identity extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 	
 	public static final Field FIELD_ROLES;
 
@@ -63,7 +63,7 @@ public class Handler_identity extends MethodHandler {
 				try {
 					roles = (String[]) FIELD_ROLES.get(userIdentity);
 				} catch(Exception e) {
-					log.warn(e);
+					Logger.warn(e);
 				}
 			}
 		} else {

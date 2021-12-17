@@ -5,8 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.NavigableSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
@@ -15,7 +15,7 @@ import tsdb.util.DataEntry;
 import tsdb.util.TimeUtil;
 
 public class DruidCsvWriter {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 
@@ -31,7 +31,7 @@ public class DruidCsvWriter {
 
 	public DruidCsvWriter(TsDB tsdb) throws IOException {
 		this.tsdb = tsdb;
-		log.info("start");
+		Logger.info("start");
 		writer = new BufferedWriter(new FileWriter("climate-sampled.csv"),1024*1024);
 
 	}
@@ -58,16 +58,16 @@ public class DruidCsvWriter {
 						}
 					} catch(Exception e) {
 						e.printStackTrace();
-						log.error(e);
+						Logger.error(e);
 					}
 				}
 			} catch (Exception e) {
-				log.error(e);
+				Logger.error(e);
 			}
 			long timeEndImport = System.currentTimeMillis();
-			log.info((timeEndImport-timeStartImport)/1000+" s Export");
+			Logger.info((timeEndImport-timeStartImport)/1000+" s Export");
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		} finally {
 			writer.close();
 		}

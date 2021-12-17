@@ -5,8 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -23,7 +23,7 @@ import tsdb.util.iterator.TimestampSeries;
  *
  */
 public class ImportGenericASC {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 
@@ -46,13 +46,13 @@ public class ImportGenericASC {
 		try(DirectoryStream<Path> rootStream = Files.newDirectoryStream(rootPath)) {
 			for(Path sub:rootStream) {
 				if(Files.isDirectory(sub)) {
-					//log.info("dir "+sub);
+					//Logger.info("dir "+sub);
 					load(sub);
 				}
 
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 
@@ -60,13 +60,13 @@ public class ImportGenericASC {
 		try(DirectoryStream<Path> rootStream = Files.newDirectoryStream(rootPath)) {
 			for(Path sub:rootStream) {
 				if(!Files.isDirectory(sub)) {
-					//log.info("file "+sub);
+					//Logger.info("file "+sub);
 					loadFile(sub);
 				}
 
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 	}
 
@@ -75,20 +75,20 @@ public class ImportGenericASC {
 			if(filePath.toString().toLowerCase().endsWith(".bin")) { // skip file
 				return;
 			}
-			log.trace("load file "+filePath);
+			Logger.trace("load file "+filePath);
 			TimestampSeries timestampseries = AscParser.parse(filePath,true);
 			if(timestampseries==null) {
-				log.error("timestampseries null  "+filePath);
+				Logger.error("timestampseries null  "+filePath);
 				return;
 			}
 			Station station = tsdb.getStation(timestampseries.name);
 			if(station==null) {
-				log.error("station not found "+timestampseries.name+"   in "+filePath);
+				Logger.error("station not found "+timestampseries.name+"   in "+filePath);
 				return;
 			}
 
 			if(timestampseries.entryList.isEmpty()) {
-				log.info("no entries in timeseries "+filePath);
+				Logger.info("no entries in timeseries "+filePath);
 				return;
 			}
 
@@ -101,7 +101,7 @@ public class ImportGenericASC {
 					DataEntry[] data = timestampseries.toDataEntyArray(timestampseries.sensorNames[s]);
 
 					if(targetName.equals("P_RT_NRT")) {
-						//log.info("P_RT_NRT corrected");
+						//Logger.info("P_RT_NRT corrected");
 						DataEntry[] corrected_data =  new DataEntry[data.length];
 						for(int i=0;i<data.length;i++) {
 							corrected_data[i] = new DataEntry(data[i].timestamp,data[i].value*0.2f);
@@ -112,7 +112,7 @@ public class ImportGenericASC {
 						tsdb.streamStorage.insertDataEntryArray(timestampseries.name, targetName, data);
 					}
 				} else {
-					log.warn("sensor not found   "+timestampseries.sensorNames[s]+"     at logger "+station.loggerType.typeName+"   station "+station.stationID+"    "+filePath);
+					Logger.warn("sensor not found   "+timestampseries.sensorNames[s]+"     at logger "+station.loggerType.typeName+"   station "+station.stationID+"    "+filePath);
 				}
 			}
 
@@ -120,7 +120,7 @@ public class ImportGenericASC {
 			tsdb.sourceCatalog.insert(sourceEntry);
 
 		} catch (Exception e) {
-			log.error(e+"   "+filePath);
+			Logger.error(e+"   "+filePath);
 		}
 	}
 

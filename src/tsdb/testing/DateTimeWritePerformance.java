@@ -6,14 +6,14 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.time.LocalDateTime;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.TimeUtil;
 import tsdb.util.Timer;
 
 public class DateTimeWritePerformance {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	static int ROUNDS = 1000;
 	static int LOOPS = 10_000_000;
@@ -47,7 +47,7 @@ public class DateTimeWritePerformance {
 		out.flush();
 		writer.flush();
 		bufferedWriter.flush();		
-		log.info(Timer.stop("toString")+"  "+out.size());
+		Logger.info(Timer.stop("toString")+"  "+out.size());
 
 	}
 
@@ -65,7 +65,7 @@ public class DateTimeWritePerformance {
 		out.flush();
 		writer.flush();
 		bufferedWriter.flush();		
-		log.info(Timer.stop("toString2")+"  "+out.size());		
+		Logger.info(Timer.stop("toString2")+"  "+out.size());		
 	}
 
 	private static void run_toString_time() throws IOException {
@@ -82,7 +82,7 @@ public class DateTimeWritePerformance {
 		out.flush();
 		writer.flush();
 		bufferedWriter.flush();		
-		log.info(Timer.stop("toString_time")+"  "+out.size());		
+		Logger.info(Timer.stop("toString_time")+"  "+out.size());		
 	}
 	
 	private static void run_date_time() throws IOException {
@@ -100,7 +100,7 @@ public class DateTimeWritePerformance {
 		out.flush();
 		writer.flush();
 		bufferedWriter.flush();		
-		log.info(Timer.stop("date_time")+"  "+out.size());		
+		Logger.info(Timer.stop("date_time")+"  "+out.size());		
 	}
 	
 	private static void run_datetime() throws IOException {
@@ -116,7 +116,7 @@ public class DateTimeWritePerformance {
 		out.flush();
 		writer.flush();
 		bufferedWriter.flush();		
-		log.info(Timer.stop("datetime")+"  "+out.size());		
+		Logger.info(Timer.stop("datetime")+"  "+out.size());		
 	}
 
 }

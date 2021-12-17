@@ -3,8 +3,8 @@ package tsdb.loader.ki.type;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.StationProperties;
 import tsdb.util.DataRow;
@@ -18,7 +18,7 @@ import tsdb.util.iterator.TimestampSeries;
  */
 class Loader_rad extends AbstractLoader {
 	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private enum ProcessingType {NONE,COPY,FACTOR_10};
 
@@ -54,7 +54,7 @@ class Loader_rad extends AbstractLoader {
 					} else if(serial_PAR01_is_value&&!serial_PYR01_is_value) {
 						resultSchema[schemaIndex] = "par_01";
 					} else {
-						//log.warn("no entry found");
+						//Logger.warn("no entry found");
 						resultSchema[schemaIndex] = null;
 					}
 					break;
@@ -64,12 +64,12 @@ class Loader_rad extends AbstractLoader {
 					} else if(serial_PAR02_is_value&&!serial_PYR02_is_value) {
 						resultSchema[schemaIndex] = "par_02";
 					} else {
-						//log.warn("no entry found in "+csvtimeSeries.filename);
+						//Logger.warn("no entry found in "+csvtimeSeries.filename);
 						resultSchema[schemaIndex] = null;
 					}
 					break;					
 				default:
-					log.warn("no entry found");
+					Logger.warn("no entry found");
 					resultSchema[schemaIndex] = inputSchema[schemaIndex];
 				}
 				break;
@@ -124,7 +124,7 @@ class Loader_rad extends AbstractLoader {
 						eventData[schemaIndex] = entry.data[sourceIndex];
 						break;
 					default:
-						log.warn("processingType unknown: "+processingTypes[sourceIndex]);
+						Logger.warn("processingType unknown: "+processingTypes[sourceIndex]);
 						eventData[schemaIndex] = Float.NaN;
 					}						
 				}

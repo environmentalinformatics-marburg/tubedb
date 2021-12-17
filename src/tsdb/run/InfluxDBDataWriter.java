@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 import java.util.NavigableSet;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDB.ConsistencyLevel;
 import org.influxdb.InfluxDBFactory;
@@ -21,7 +21,7 @@ import tsdb.util.DataEntry;
 import tsdb.util.TimeUtil;
 
 public class InfluxDBDataWriter {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 
@@ -52,7 +52,7 @@ public class InfluxDBDataWriter {
 
 	public void writeAllStationsToDB(String dbName) {
 		try {
-			log.info("open connection to InfluxDB "+dbHost);
+			Logger.info("open connection to InfluxDB "+dbHost);
 			influxDB = InfluxDBFactory.connect(dbHost, "root", "root");
 			//int actions = 1000000;
 			//int flushDuration = 1;
@@ -72,36 +72,36 @@ public class InfluxDBDataWriter {
 						for(String sensorName:sensorNames) {
 							StreamIterator it = tsdb.streamStorage.getRawSensorIterator(stationName, sensorName, null, null);
 							if(it!=null&&it.hasNext()) {
-								//log.info(it);
+								//Logger.info(it);
 								boolean written = false;
 								while(!written) {
 									try {
 										writeItDB(dbName, stationName, sensorName, it);
 										written = true;
 									} catch(Exception e) {
-										log.warn("retry "+stationName+'/'+sensorName+": "+e.getMessage());
+										Logger.warn("retry "+stationName+'/'+sensorName+": "+e.getMessage());
 									}
 								}
 							}
 						}
 					} catch(Exception e) {
 						e.printStackTrace();
-						log.error(e);
+						Logger.error(e);
 					}
 				}
 			} catch (Exception e) {
-				log.error(e);
+				Logger.error(e);
 			}
 			long timeEndImport = System.currentTimeMillis();
-			log.info((timeEndImport-timeStartImport)/1000+" s Export");
+			Logger.info((timeEndImport-timeStartImport)/1000+" s Export");
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		} finally {
 			if(writer!=null) {
 				try {
 					writer.close();
 				} catch (IOException e) {
-					log.error(e);
+					Logger.error(e);
 				}
 			}
 		}
@@ -122,27 +122,27 @@ public class InfluxDBDataWriter {
 						for(String sensorName:sensorNames) {
 							StreamIterator it = tsdb.streamStorage.getRawSensorIterator(stationName, sensorName, null, null);
 							if(it!=null&&it.hasNext()) {
-								//log.info(it);
+								//Logger.info(it);
 								writeItWriter(stationName, sensorName, it);
 							}
 						}
 					} catch(Exception e) {
-						log.error(e);
+						Logger.error(e);
 					}
 				}
 			} catch (Exception e) {
-				log.error(e);
+				Logger.error(e);
 			}
 			long timeEndImport = System.currentTimeMillis();
-			log.info((timeEndImport-timeStartImport)/1000+" s Export");
+			Logger.info((timeEndImport-timeStartImport)/1000+" s Export");
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		} finally {
 			if(writer!=null) {
 				try {
 					writer.close();
 				} catch (IOException e) {
-					log.error(e);
+					Logger.error(e);
 				}
 			}
 		}
@@ -179,7 +179,7 @@ public class InfluxDBDataWriter {
 			influxDB.write(dbName, "default", point);
 		}*/
 
-		log.info("write "+it.stationName+" "+it.sensorName);
+		Logger.info("write "+it.stationName+" "+it.sensorName);
 
 	}
 

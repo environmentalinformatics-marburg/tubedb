@@ -16,8 +16,8 @@ import java.util.TreeMap;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -41,7 +41,7 @@ import tsdb.util.TimeUtil;
  */
 public class TimeSeriesLoaderBE {
 
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb; //not null
 
@@ -59,7 +59,7 @@ public class TimeSeriesLoaderBE {
 	 */
 	public void loadDirectory_with_stations_flat(Path rootPath) {
 		try {
-			log.info("load directory with stations:        "+rootPath);
+			Logger.info("load directory with stations:        "+rootPath);
 			DirectoryStream<Path> pathStream = Files.newDirectoryStream(rootPath);
 			@SuppressWarnings("unchecked")
 			Pair<Station,Path>[] pairs = StreamSupport.stream(pathStream.spliterator(), false)
@@ -71,11 +71,11 @@ public class TimeSeriesLoaderBE {
 					if(station!=null) {					
 						return Stream.of(new Pair<Station,Path>(station,stationPath));
 					} else {
-						log.error("load directory with stations unknown station:   "+stationID+"    from   "+stationPath);
+						Logger.error("load directory with stations unknown station:   "+stationID+"    from   "+stationPath);
 						return Stream.empty();
 					}
 				} catch(Exception e) {
-					log.error(e);
+					Logger.error(e);
 					return Stream.empty();
 				}
 			})
@@ -87,7 +87,7 @@ public class TimeSeriesLoaderBE {
 				loadDirectoryOfOneStation(pair.a,pair.b);
 			}			
 		} catch (Exception e) {
-			log.error("load directory with stations: "+rootPath+"   "+e);
+			Logger.error("load directory with stations: "+rootPath+"   "+e);
 		}		
 	}
 
@@ -99,17 +99,17 @@ public class TimeSeriesLoaderBE {
 		try {
 			AssumptionCheck.throwNull(station);
 			AssumptionCheck.throwNull(stationPath);
-			log.info("load station "+station.stationID+"     from  "+stationPath);
+			Logger.info("load station "+station.stationID+"     from  "+stationPath);
 			TreeMap<String,List<Path>> prefixFilenameMap = new TreeMap<String,List<Path>>(); // TreeMap: prefix needs to be ordered!
 			collectFlatDirectoryOfOneStation(stationPath,prefixFilenameMap);
 			if(!prefixFilenameMap.isEmpty()) {
 				loadWithPrefixFilenameMapOfOneStation(station, prefixFilenameMap);
 			} else {
-				log.info("no files in "+stationPath);
+				Logger.info("no files in "+stationPath);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
-			log.error("load directory of station:  "+station+"  "+stationPath+"  "+e);
+			Logger.error("load directory of station:  "+station+"  "+stationPath+"  "+e);
 		}
 	}
 
@@ -127,17 +127,17 @@ public class TimeSeriesLoaderBE {
 					}
 					list.add(pathfilename);
 				} catch(Exception e) {
-					log.error("collect flatDirectory of one Station file:  "+pathfilename+"  "+e);
+					Logger.error("collect flatDirectory of one Station file:  "+pathfilename+"  "+e);
 				}
 			}
 			stream.close();
 		} catch (Exception e) {
-			log.error("collect flatDirectory of one Station root loop:  "+directory+"  "+e);
+			Logger.error("collect flatDirectory of one Station root loop:  "+directory+"  "+e);
 		}		
 	}
 
 	private void merge(DataRow collector, DataRow add) {
-		//log.info("merge "+Arrays.toString(collector.data));
+		//Logger.info("merge "+Arrays.toString(collector.data));
 		if(collector!=add) {
 			float[] collectorData = collector.data;
 			float[] currentData = add.data;
@@ -181,7 +181,7 @@ public class TimeSeriesLoaderBE {
 					}
 				} catch (Exception e) {
 					//e.printStackTrace();
-					log.error("file not read: "+path+"\t"+e);
+					Logger.error("file not read: "+path+"\t"+e);
 				}
 			}
 
@@ -246,10 +246,10 @@ public class TimeSeriesLoaderBE {
 					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
 					try {
 						PropertyComputation cprop = (PropertyComputation) prop.content;
-						log.info(TimeUtil.oleMinutesToText(eventMap.firstKey().intValue(), eventMap.lastKey().intValue()) + "    computation "+prop.station + "  " +  TimeUtil.oleMinutesToText(prop.start, prop.end) + "   " + cprop.target +"    "+ cprop.formula_org);
+						Logger.info(TimeUtil.oleMinutesToText(eventMap.firstKey().intValue(), eventMap.lastKey().intValue()) + "    computation "+prop.station + "  " +  TimeUtil.oleMinutesToText(prop.start, prop.end) + "   " + cprop.target +"    "+ cprop.formula_org);
 						cprop.calculate(rows, station.loggerType.sensorNames);
 					} catch(Exception e) {
-						log.warn(e);
+						Logger.warn(e);
 					}
 					break;
 				}
@@ -258,7 +258,7 @@ public class TimeSeriesLoaderBE {
 					try {
 						((PropertyCNR4)prop.content).calculate(rows, station.loggerType.sensorNames);
 					} catch(Exception e) {
-						log.warn(station.stationID+"   "+ e);
+						Logger.warn(station.stationID+"   "+ e);
 					}
 					break;
 				}
@@ -267,7 +267,7 @@ public class TimeSeriesLoaderBE {
 					try {
 						((PropertyReassign)prop.content).calculate(rows, station.loggerType.sensorNames);
 					} catch(Exception e) {
-						log.warn(station.stationID+"   "+ e);
+						Logger.warn(station.stationID+"   "+ e);
 					}
 					break;
 				}
@@ -276,12 +276,12 @@ public class TimeSeriesLoaderBE {
 					try {
 						((PropertyClear)prop.content).calculate(rows, station.loggerType.sensorNames);
 					} catch(Exception e) {
-						log.warn(station.stationID+"   "+ e);
+						Logger.warn(station.stationID+"   "+ e);
 					}
 					break;
 				}
 				default:
-					log.warn("unknown property label: "+prop.label);
+					Logger.warn("unknown property label: "+prop.label);
 					break;
 				}
 			}
@@ -291,13 +291,13 @@ public class TimeSeriesLoaderBE {
 			{
 				List<LabeledProperty> cnr4List = station.labeledProperties.query("CNR4", eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
 				if(cnr4List.size()>0) {
-					log.info("LabeledProperty CNR4");				
+					Logger.info("LabeledProperty CNR4");				
 					for(LabeledProperty prop:cnr4List) {					
 						Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
 						try {
 							((PropertyCNR4)prop.content).calculate(rows, station.loggerType.sensorNames);
 						} catch(Exception e) {
-							log.warn(e);
+							Logger.warn(e);
 						}
 					}
 				}
@@ -306,13 +306,13 @@ public class TimeSeriesLoaderBE {
 			{
 				List<LabeledProperty> cnr4_calcList = station.labeledProperties.query("CNR4_calc", eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
 				if(cnr4_calcList.size()>0) {
-					log.info("LabeledProperty CNR4_calc");				
+					Logger.info("LabeledProperty CNR4_calc");				
 					for(LabeledProperty prop:cnr4_calcList) {					
 						Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
 						try {
 							((PropertyCNR4_calc)prop.content).calculate(rows, station.loggerType.sensorNames);
 						} catch(Exception e) {
-							log.warn(e);
+							Logger.warn(e);
 						}
 					}
 				}
@@ -320,20 +320,20 @@ public class TimeSeriesLoaderBE {
 
 			List<LabeledProperty> computationList = station.labeledProperties.query("computation", eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
 			if(computationList.size()>0) {
-				log.info("LabeledProperty computation");				
+				Logger.info("LabeledProperty computation");				
 				for(LabeledProperty prop:computationList) {					
 					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
 					try {
 						((PropertyComputation)prop.content).calculate(rows, station.loggerType.sensorNames);
 					} catch(Exception e) {
-						log.warn(e);
+						Logger.warn(e);
 					}
 				}
 			}*/
 
 			tsdb.streamStorage.insertData(station.stationID, eventMap, station.loggerType.sensorNames);			
 		} else {
-			log.warn("no data to insert: "+station);
+			Logger.warn("no data to insert: "+station);
 		}		
 	}
 
@@ -344,13 +344,13 @@ public class TimeSeriesLoaderBE {
 	 * @throws IOException
 	 */
 	public static UDBFTimestampSeries readUDBFTimeSeries(String stationID_info, Path filename) throws IOException {
-		log.trace("load UDBF file:\t"+filename+"\tplotID:\t"+stationID_info);
+		Logger.trace("load UDBF file:\t"+filename+"\tplotID:\t"+stationID_info);
 		UniversalDataBinFile udbFile = new UniversalDataBinFile(filename);
 		if(!udbFile.isEmpty()){
 			UDBFTimestampSeries udbfTimeSeries = udbFile.getUDBFTimeSeries();
 			return udbfTimeSeries;
 		} else {
-			log.info("empty file: "+filename);
+			Logger.info("empty file: "+filename);
 			return null;
 		}		
 	}
@@ -403,10 +403,10 @@ public class TimeSeriesLoaderBE {
 				if(eventPos[sensorIndex] == -1) {
 					if(sensorName==null) {
 						infoListNoMapping.add(rawSensorName);
-						//log.info("sensor name not in translation map: "+rawSensorName+" -> "+sensorName+"\t"+station.stationID+"\t"+udbfTimeSeries.filename+"\t"+station.loggerType);
+						//Logger.info("sensor name not in translation map: "+rawSensorName+" -> "+sensorName+"\t"+station.stationID+"\t"+udbfTimeSeries.filename+"\t"+station.loggerType);
 					} else {
 						infoListNoSchemaMapping.add(rawSensorName+" -> "+sensorName);
-						//log.info("sensor name not in schema: "+rawSensorName+" -> "+sensorName+"\t"+station.stationID+"\t"+udbfTimeSeries.filename+"\t"+station.loggerType);
+						//Logger.info("sensor name not in schema: "+rawSensorName+" -> "+sensorName+"\t"+station.stationID+"\t"+udbfTimeSeries.filename+"\t"+station.loggerType);
 					}
 				} else {
 					infoTranslatedSensorNames[sensorIndex] = sensorName;
@@ -415,11 +415,11 @@ public class TimeSeriesLoaderBE {
 		}
 
 		if(!infoListNoMapping.isEmpty()) {
-			log.warn("sensor names not in translation map: "+infoListNoMapping+"\t"+station.stationID+"\t"+udbfTimeSeries.filename+"\t"+station.loggerType);
+			Logger.warn("sensor names not in translation map: "+infoListNoMapping+"\t"+station.stationID+"\t"+udbfTimeSeries.filename+"\t"+station.loggerType);
 		}
 
 		if(!infoListNoSchemaMapping.isEmpty()) {
-			log.warn("sensor names not in schema: "+infoListNoSchemaMapping+"\t"+station.stationID+"\t"+udbfTimeSeries.filename+"\t"+station.loggerType);
+			Logger.warn("sensor names not in schema: "+infoListNoSchemaMapping+"\t"+station.stationID+"\t"+udbfTimeSeries.filename+"\t"+station.loggerType);
 		}
 
 		//mapping event index position -> sensor index position 
@@ -436,7 +436,7 @@ public class TimeSeriesLoaderBE {
 		}
 
 		if(validSensorCount<1) {
-			log.trace("no fitting sensors in "+udbfTimeSeries.filename);
+			Logger.trace("no fitting sensors in "+udbfTimeSeries.filename);
 			return null; //all event columns are empty
 		}
 

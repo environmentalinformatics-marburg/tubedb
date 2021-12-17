@@ -12,8 +12,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 
 import tsdb.component.SourceEntry;
@@ -29,7 +29,7 @@ import tsdb.util.iterator.CSVTimeType;
  *
  */
 public class Handler_iot_insert_csv extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_iot_insert_csv(RemoteTsDB tsdb) {
 		super(tsdb, "insert_csv");
@@ -40,7 +40,7 @@ public class Handler_iot_insert_csv extends MethodHandler {
 	@Override
 	public void handle(String target, Request request, HttpServletRequest req, HttpServletResponse response) throws IOException, ServletException {		
 		request.setHandled(true);
-		log.info("target " + target);
+		Logger.info("target " + target);
 
 		if(request.getMethod() != "POST") {
 			throw new RuntimeException("insert_csv needs HTTP method POST");
@@ -50,8 +50,8 @@ public class Handler_iot_insert_csv extends MethodHandler {
 		Table table = Table.readCSV(request.getReader(), ',');
 
 		/*String request_data = Web.requestContentToString(request);  		
-		log.info("stream");
-		log.info(request_data);*/
+		Logger.info("stream");
+		Logger.info(request_data);*/
 
 		String stationName = request.getParameter("station");
 		if(stationName == null) {
@@ -61,14 +61,14 @@ public class Handler_iot_insert_csv extends MethodHandler {
 		CSVTimeType csvTimeType = CSVTimeType.DATETIME;
 		{
 			String datetime_fomat = request.getParameter("datetime_format");
-			log.info("dt " + datetime_fomat);
+			Logger.info("dt " + datetime_fomat);
 			if(datetime_fomat != null) {
 				switch(datetime_fomat) {
 				case "custom":
 					csvTimeType = CSVTimeType.CUSTOM;
 					break;
 				default:
-					log.warn("unknown datetime_fomat");
+					Logger.warn("unknown datetime_fomat");
 				}
 			}
 		}
@@ -103,7 +103,7 @@ public class Handler_iot_insert_csv extends MethodHandler {
 			}
 
 			if(timestamp==prevTimestamp) {
-				log.warn("skip duplicate timestamp "+row[0]);
+				Logger.warn("skip duplicate timestamp "+row[0]);
 				continue;
 			}
 

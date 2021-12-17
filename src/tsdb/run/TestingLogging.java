@@ -1,17 +1,16 @@
 package tsdb.run;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 public class TestingLogging {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) {
 		System.out.println("start");
-		log.info("start");
-		log.info("end");
+		Logger.info("start");
+		Logger.info("end");
 		System.out.println("end");
-		LogManager.shutdown();
 	}
 
 }

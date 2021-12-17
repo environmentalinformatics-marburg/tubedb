@@ -1,7 +1,7 @@
 package tsdb.web;
 
 public class MyEchoSocket /*implements WebSocketListener*/ {
-	/*private static final Logger log = LogManager.getLogger();
+	/*
 
 	//private Session session;
 	private RemoteEndpoint remote;
@@ -47,7 +47,7 @@ public class MyEchoSocket /*implements WebSocketListener*/ {
 			remote.sendString("2");
 			remote.sendString("3");
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 
 	}*/

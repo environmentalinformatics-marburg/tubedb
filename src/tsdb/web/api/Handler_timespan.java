@@ -8,8 +8,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 import org.json.JSONWriter;
 
@@ -26,7 +26,7 @@ import tsdb.util.TimestampInterval;
  */
 @Deprecated
 public class Handler_timespan extends MethodHandler {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_timespan(RemoteTsDB tsdb) {
 		super(tsdb, "timespan");
@@ -39,7 +39,7 @@ public class Handler_timespan extends MethodHandler {
 		String generalstationName = request.getParameter("generalstation");
 		String regionName = request.getParameter("region");
 		if((generalstationName!=null&&regionName!=null)) {
-			log.warn("wrong call");
+			Logger.warn("wrong call");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -53,7 +53,7 @@ public class Handler_timespan extends MethodHandler {
 				tsl = tsdb.getPlotTimeSpansOfRegion(regionName);				
 			}
 			if(tsl==null) {
-				log.error("tsl null");
+				Logger.error("tsl null");
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);				
 				return;
 			}
@@ -78,7 +78,7 @@ public class Handler_timespan extends MethodHandler {
 			json_output.endArray();
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}

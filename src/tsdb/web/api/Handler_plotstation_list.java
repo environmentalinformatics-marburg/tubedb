@@ -7,8 +7,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 
 import tsdb.remote.RemoteTsDB;
@@ -23,7 +23,7 @@ import tsdb.remote.RemoteTsDB;
  *
  */
 public class Handler_plotstation_list extends MethodHandler {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public Handler_plotstation_list(RemoteTsDB tsdb) {
 		super(tsdb, "plotstation_list");
@@ -35,7 +35,7 @@ public class Handler_plotstation_list extends MethodHandler {
 		response.setContentType("text/plain;charset=utf-8");
 		String plotID = request.getParameter("plot");
 		if(plotID==null) {
-			log.warn("wrong call");
+			Logger.warn("wrong call");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -59,7 +59,7 @@ public class Handler_plotstation_list extends MethodHandler {
 			writeStringArray(writer, webList);
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}

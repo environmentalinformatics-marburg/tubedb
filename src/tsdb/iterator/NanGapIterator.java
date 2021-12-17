@@ -1,7 +1,7 @@
 package tsdb.iterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.BaseAggregationTimeUtil;
 import tsdb.util.TimeUtil;
@@ -19,7 +19,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class NanGapIterator extends InputProcessingIterator {	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	/**
 	 * timestamp of next Element to output
@@ -138,7 +138,7 @@ public class NanGapIterator extends InputProcessingIterator {
 			if(input_iterator.hasNext()) {
 				TsEntry temp = input_iterator.next();
 				if(temp.timestamp<=nextElement.timestamp) {
-					log.error("timestamp error in input iterator");
+					Logger.error("timestamp error in input iterator");
 				}
 				nextElement = temp;
 			} else {
@@ -148,7 +148,7 @@ public class NanGapIterator extends InputProcessingIterator {
 			return currElement;
 		} else {// ******************** current timestamp higher than next timestamp
 			throw new RuntimeException("timestamp error in NanGapIterator: currTimestamp    nextElement.timestamp   "+currTimestamp+"\t\t"+nextElement.timestamp+"\t\t"+TimeUtil.oleMinutesToLocalDateTime(currTimestamp)+"\t-\t"+TimeUtil.oleMinutesToLocalDateTime(nextElement.timestamp));
-			//log.error("timestamp error in NanGapIterator: currTimestamp    nextElement.timestamp   "+currTimestamp+"\t\t"+nextElement.timestamp);
+			//Logger.error("timestamp error in NanGapIterator: currTimestamp    nextElement.timestamp   "+currTimestamp+"\t\t"+nextElement.timestamp);
 			//return null;
 		}
 	}

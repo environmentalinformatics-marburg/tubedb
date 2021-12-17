@@ -3,8 +3,8 @@ package tsdb.testing;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -26,7 +26,7 @@ import tsdb.util.Mutators;
 import tsdb.util.Timer;
 
 public class TestingFormulaCompile {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) throws Exception {
 		String[] sensorNames = new String[] {"a", "rH_200", "PAR_300_U", "PAR_300", "Ta_200", "c", "p_QNH", "Ta_200_max", "Ta_200_min", "b", "WV"};
@@ -50,16 +50,16 @@ public class TestingFormulaCompile {
 		Formula formula_org = FormulaBuilder.parseFormula(formulaText);
 		Formula formula = formula_org.accept(new FormulaResolveUnifyVisitor(env));
 		int[] unsafeVarIndices = formula.accept(new FormulaCollectUnsafeVarVisitor()).getDataVarIndices(env);
-		log.info("unsafeVarIndices " + Arrays.toString(unsafeVarIndices));
+		Logger.info("unsafeVarIndices " + Arrays.toString(unsafeVarIndices));
 		Computation computation = formula.accept(new FormulaCompileVisitor(env));
 		Mutator mutator = Mutators.getMutator(computation, targetIndex, unsafeVarIndices);
 
 
 		FormulaJavaVisitor formulaJavaVisitor = new FormulaJavaVisitor(env);
 		String javaText = formula.accept(formulaJavaVisitor);
-		log.info(javaText);
+		Logger.info(javaText);
 		Computation genComputation = createComputation(formulaJavaVisitor, javaText);
-		log.info(genComputation);
+		Logger.info(genComputation);
 		Mutator genComputationMutator = Mutators.getMutator(genComputation, targetIndex, unsafeVarIndices);
 
 		Mutator genMutator = createMutator(formulaJavaVisitor, javaText, targetIndex, unsafeVarIndices);
@@ -75,7 +75,7 @@ public class TestingFormulaCompile {
 					mutator.apply(dataRow.timestamp, dataRow.data);
 				}
 			}
-			log.info(Timer.stop("tree"));
+			Logger.info(Timer.stop("tree"));
 
 			Timer.start("genComputation");
 			for (int loop = 0; loop < LOOPS; loop++) {
@@ -83,7 +83,7 @@ public class TestingFormulaCompile {
 					genComputationMutator.apply(dataRow.timestamp, dataRow.data);
 				}
 			}
-			log.info(Timer.stop("genComputation"));
+			Logger.info(Timer.stop("genComputation"));
 
 			Timer.start("genMutator");
 			for (int loop = 0; loop < LOOPS; loop++) {
@@ -91,7 +91,7 @@ public class TestingFormulaCompile {
 					genMutator.apply(dataRow.timestamp, dataRow.data);
 				}
 			}
-			log.info(Timer.stop("genMutator"));
+			Logger.info(Timer.stop("genMutator"));
 
 		}
 	}
@@ -101,7 +101,7 @@ public class TestingFormulaCompile {
 		CtClass ctComputation = pool.get(Computation.class.getName());
 		CtClass evalAClass = pool.makeClass("EvalA", ctComputation);
 		for (int i = 0; i < formulaJavaVisitor.computations.size(); i++) {
-			log.info("add field");
+			Logger.info("add field");
 			evalAClass.addField(new CtField(ctComputation, "c"+i, evalAClass));	
 		}
 		evalAClass.addMethod(CtNewMethod.make("public float eval(long timestamp, float[] data) { return "+javaText+"; }",evalAClass));
@@ -111,7 +111,7 @@ public class TestingFormulaCompile {
 		}*/
 		parameters = new CtClass[]{pool.get(List.class.getName())};
 		CtConstructor ctConstructor = new CtConstructor(parameters, evalAClass);
-		log.info(ctConstructor.getSignature());
+		Logger.info(ctConstructor.getSignature());
 		MethodInfo mi = ctConstructor.getMethodInfo();
 		System.out.println(mi.getClass()+"   "+parameters.length);
 
@@ -122,7 +122,7 @@ public class TestingFormulaCompile {
 			body += "c"+i+" = (tsdb.util.Computation)$1.get("+i+");";
 		}
 		body += "}";
-		log.info("body "+body);
+		Logger.info("body "+body);
 		ctConstructor.setBody(body);
 		evalAClass.addConstructor(ctConstructor);
 
@@ -130,7 +130,7 @@ public class TestingFormulaCompile {
 		Class<? extends Computation> clazzA = (Class<? extends Computation>) evalAClass.toClass();
 
 		Computation objA = (Computation) clazzA.getConstructors()[0].newInstance(formulaJavaVisitor.computations);
-		log.info(objA.toString());
+		Logger.info(objA.toString());
 		return objA;
 	}
 
@@ -140,7 +140,7 @@ public class TestingFormulaCompile {
 		CtClass mutatorAClass = pool.makeClass("MutatorA", ctMutator);
 		CtClass ctComputation = pool.get(Computation.class.getName());
 		for (int i = 0; i < formulaJavaVisitor.computations.size(); i++) {
-			log.info("add field");
+			Logger.info("add field");
 			//CtClass ctComputation = pool.get(formulaJavaVisitor.computations.get(i).getClass().getName());
 			mutatorAClass.addField(new CtField(ctComputation, "c"+i, mutatorAClass));	
 		}
@@ -161,7 +161,7 @@ public class TestingFormulaCompile {
 		}*/
 		parameters = new CtClass[]{pool.get(List.class.getName())};
 		CtConstructor ctConstructor = new CtConstructor(parameters, mutatorAClass);
-		log.info(ctConstructor.getSignature());
+		Logger.info(ctConstructor.getSignature());
 		MethodInfo mi = ctConstructor.getMethodInfo();
 		System.out.println(mi.getClass()+"   "+parameters.length);
 
@@ -172,7 +172,7 @@ public class TestingFormulaCompile {
 			//body += "c"+i+" = ("+formulaJavaVisitor.computations.get(i).getClass().getName()+")$1.get("+i+");";
 		}
 		body += "}";
-		log.info("body "+body);
+		Logger.info("body "+body);
 		ctConstructor.setBody(body);
 		mutatorAClass.addConstructor(ctConstructor);
 
@@ -180,7 +180,7 @@ public class TestingFormulaCompile {
 		Class<? extends Computation> clazzA = (Class<? extends Computation>) mutatorAClass.toClass();
 
 		Mutator objA = (Mutator) clazzA.getConstructors()[0].newInstance(formulaJavaVisitor.computations);
-		log.info(objA.toString());
+		Logger.info(objA.toString());
 		return objA;
 	}
 

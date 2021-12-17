@@ -1,7 +1,7 @@
 package tsdb.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 /**
  * for data values: highest passed quality check
@@ -16,7 +16,7 @@ public enum DataQuality {
 	STEP,       //physical range check and step passed and empirical not passed
 	EMPIRICAL;   //physical range check and step and empirical passed
 	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public String getText() {
 		switch(this) {
@@ -31,7 +31,7 @@ public enum DataQuality {
 		case Na:
 			return "na";
 		default:
-			log.warn("data quality unknown");
+			Logger.warn("data quality unknown");
 			return "unknown";
 		}		
 	}
@@ -55,7 +55,7 @@ public enum DataQuality {
 
 	public static DataQuality parse(String text) {
 		if(text==null) {
-			log.warn("data quality null");
+			Logger.warn("data quality null");
 			return null;
 		}
 		switch(text) {
@@ -71,7 +71,7 @@ public enum DataQuality {
 		case "na":
 			return Na;
 		default:
-			log.warn("data quality unknown");
+			Logger.warn("data quality unknown");
 			return null;
 		}	
 	}

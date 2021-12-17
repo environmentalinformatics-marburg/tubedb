@@ -4,8 +4,8 @@ import static tsdb.util.AssumptionCheck.throwNull;
 import static tsdb.util.AssumptionCheck.throwNullArray;
 import static tsdb.util.AssumptionCheck.throwNullText;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.GeneralStation;
 import tsdb.Station;
@@ -27,7 +27,7 @@ import tsdb.util.iterator.TsIterator;
  */
 public class GroupAverageSource_NEW extends Continuous.Abstract {
 	@SuppressWarnings("unused")
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final String group;
 	private final String[] targetSchema;

@@ -25,8 +25,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.ini4j.Profile.Section;
 import org.ini4j.Wini;
 
@@ -39,13 +39,6 @@ public final class Util {
 	public static final Charset CHARSET_UTF_8 = Charset.forName("UTF-8");
 
 	private Util(){}
-
-	/**
-	 * Default logger
-	 */
-	public static final Logger log = LogManager.getLogger("tsdb");
-	//private static final PropertiesUtil PROPS = new PropertiesUtil("log4j2.StatusLogger.properties");
-	//public static final Logger log = new SimpleLogger("StatusLogger", Level.ERROR, false, true, false, false, Strings.EMPTY, null, PROPS, System.err);
 
 	/**
 	 * convert float to String with two fractional digits
@@ -133,7 +126,7 @@ public final class Util {
 		for(int i=0;i<entries.length;i++) {
 			if(entries[i]==null) {
 				if(!ignoreNull) {
-					log.warn("StringArrayToMap: entries["+i+"]==null ==> will not be included in map");				
+					Logger.warn("StringArrayToMap: entries["+i+"]==null ==> will not be included in map");				
 				}
 			} else {
 				map.put(entries[i], i);
@@ -166,7 +159,7 @@ public final class Util {
 			Integer pos = sourcePosStringMap.get(resultNames[i]);
 			if(pos==null) {
 				if(warn) {
-					log.warn("stringArrayToPositionIndexArray: "+resultNames[i]+" not in "+sourcePosStringMap);
+					Logger.warn("stringArrayToPositionIndexArray: "+resultNames[i]+" not in "+sourcePosStringMap);
 				}
 				if(exception) {
 					throw new RuntimeException("stringArrayToPositionIndexArray: "+resultNames[i]+" not in "+sourcePosStringMap);
@@ -320,16 +313,16 @@ public final class Util {
 					try {
 						resultList.add(FloatRange.parse(name, range));
 					} catch (Exception e) {
-						log.warn("error in read: "+name+"\t"+range+"\t"+e);
+						Logger.warn("error in read: "+name+"\t"+range+"\t"+e);
 					}
 				}
 				return resultList;
 			} else {
-				log.error("ini section not found: "+sectionName);
+				Logger.error("ini section not found: "+sectionName);
 				return null;
 			}
 		} catch (Exception e) {
-			log.error("ini file not read "+fileName+"\t"+sectionName+"\t"+e);
+			Logger.error("ini file not read "+fileName+"\t"+sectionName+"\t"+e);
 			return null;
 		}
 	}
@@ -464,11 +457,11 @@ public final class Util {
 		for(String key:section.keySet()) {
 			if(!key.equals("NaN")) {
 				if(section.getAll(key).size()>1) { // TODO always == 1 ???
-					log.warn("multiple entries: "+key+" from "+section.getName());
+					Logger.warn("multiple entries: "+key+" from "+section.getName());
 				}
 				sectionMap.put(key, section.get(key));
 			} else {
-				log.warn("NaN key");
+				Logger.warn("NaN key");
 			}
 		}
 		return sectionMap;
@@ -719,7 +712,7 @@ public final class Util {
 			File dir = new File(filepath);			
 			dir.getParentFile().mkdirs();
 		} catch(Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 	}
 

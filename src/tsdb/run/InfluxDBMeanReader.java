@@ -3,8 +3,8 @@ package tsdb.run;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Query;
@@ -25,7 +25,7 @@ SELECT MEAN(*) FROM "Ta_200" GROUP BY station
  * 
  */
 public class InfluxDBMeanReader {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	//private final TsDB tsdb;
 	private final InfluxDB influxDB;
@@ -59,14 +59,14 @@ public class InfluxDBMeanReader {
 						readSeries(stationName,"Ta_200");
 				} catch(Exception e) {
 					e.printStackTrace();
-					log.error(e);
+					Logger.error(e);
 				}
 			}*/
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}
 		long timeEndImport = System.currentTimeMillis();
-		log.info((timeEndImport-timeStartImport)/1000+" s Export "+total_count+" count");
+		Logger.info((timeEndImport-timeStartImport)/1000+" s Export "+total_count+" count");
 	}
 
 	private void readSeries(String stationName, String sensorName) {
@@ -74,25 +74,25 @@ public class InfluxDBMeanReader {
 	    //QueryResult queryResult = influxDB.query(new Query("SELECT mean(\"value\") FROM \""+sensorName+"\" WHERE station='"+stationName+"'",InfluxDBDataWriter.dbName));
 	    QueryResult queryResult = influxDB.query(new Query("SELECT MEAN(*) FROM \""+sensorName+"\" GROUP BY station",InfluxDBDataWriter.dbName));
 		List<Result> resultList = queryResult.getResults();
-		log.info("results "+resultList.size());
+		Logger.info("results "+resultList.size());
 		for(Result result:resultList) {
-			//log.info("result");
+			//Logger.info("result");
 			List<Series> seriesList = result.getSeries();
 			if(seriesList==null) {
-				log.warn("no series "+stationName+" "+sensorName);
+				Logger.warn("no series "+stationName+" "+sensorName);
 				continue;
 			}
 			for(Series series:seriesList) {
-				//log.info("series "+series.getName());
-				//log.info("columns "+series.getColumns());
-				//log.info("tags "+series.getTags());
-				//log.info("values "+series.getValues());
+				//Logger.info("series "+series.getName());
+				//Logger.info("columns "+series.getColumns());
+				//Logger.info("tags "+series.getTags());
+				//Logger.info("values "+series.getValues());
 				List<List<Object>> valueList = series.getValues();
 				for(List<Object> value:valueList) {
 					Object v = value.get(1);
 					//System.out.println(value.get(1));
 					total_count++;
-					log.info(stationName+" "+sensorName+" avg "+v);
+					Logger.info(stationName+" "+sensorName+" avg "+v);
 				}
 			}
 		}

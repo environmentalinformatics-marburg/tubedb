@@ -2,7 +2,7 @@ package tsdb.graph.node;
 
 import static tsdb.util.AssumptionCheck.throwNull;
 
-import org.apache.logging.log4j.LogManager;
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -81,11 +81,11 @@ public interface Continuous extends Node {
 		@Override
 		public TsIterator get(Long start, Long end) {
 			if(start!=null&&!BaseAggregationTimeUtil.isBaseAggregationTimestamp(start)) {
-				LogManager.getLogger().warn("start timestamp not alligned: "+start+"   "+TimeUtil.oleMinutesToText(start));
+				Logger.warn("start timestamp not alligned: "+start+"   "+TimeUtil.oleMinutesToText(start));
 				start = BaseAggregationTimeUtil.calcBaseAggregationTimestamp(start); // TODO ?
 			}
 			if(end!=null&&!BaseAggregationTimeUtil.isBaseAggregationTimestamp(end)) {
-				LogManager.getLogger().warn("end timestamp not alligned: "+end+"   "+TimeUtil.oleMinutesToText(end));
+				Logger.warn("end timestamp not alligned: "+end+"   "+TimeUtil.oleMinutesToText(end));
 				end = BaseAggregationTimeUtil.calcBaseAggregationTimestamp(end); // TODO ?
 			}
 			TsIterator input_iterator = source.get(start, end);

@@ -7,8 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -18,7 +18,7 @@ import tsdb.util.Table.ColumnReaderFloat;
 import tsdb.util.Table.ColumnReaderSpaceTimestamp;
 
 public class TOA5Loader {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 
@@ -27,7 +27,7 @@ public class TOA5Loader {
 	}
 
 	public void loadDirectoryRecursive(Path path) {
-		log.info("TOA5 import "+path);
+		Logger.info("TOA5 import "+path);
 		try(DirectoryStream<Path> rootStream = Files.newDirectoryStream(path)) {
 			for(Path sub:rootStream) {
 				if(!Files.isDirectory(sub)) {
@@ -35,7 +35,7 @@ public class TOA5Loader {
 						loadFile(sub);
 					} catch (Exception e) {
 						e.printStackTrace();
-						log.error(e+"  in "+sub);
+						Logger.error(e+"  in "+sub);
 					}
 				} else {
 					loadDirectoryRecursive(sub);
@@ -43,20 +43,20 @@ public class TOA5Loader {
 
 			}
 		} catch (Exception e) {
-			log.error(e);
+			Logger.error(e);
 		}		
 	}
 
 	public void loadFile(Path filename) throws FileNotFoundException, IOException {
-		log.info("TOA5 load " + filename);
+		Logger.info("TOA5 load " + filename);
 		TOA5Table table = new TOA5Table(filename.toString());
 
 		if(table.rows.length==0) {
-			log.info("empty TOA5Table "+filename);
+			Logger.info("empty TOA5Table "+filename);
 			return;
 		}
 
-		//log.info(Arrays.toString(table.names));
+		//Logger.info(Arrays.toString(table.names));
 		ColumnReaderSpaceTimestamp timestampReader = table.getColumnReader("TIMESTAMP", ColumnReaderSpaceTimestamp::new);
 		//ColumnReaderInt recordReader = table.createColumnReaderInt("RECORD");
 		
@@ -68,11 +68,11 @@ public class TOA5Loader {
 			if(tsdb.stationExistsWithAlias(stationNameText)) {
 				// nothing
 			} else {
-				log.error("station not in database "+stationNameText+"  at  "+filename);
+				Logger.error("station not in database "+stationNameText+"  at  "+filename);
 				return;
 			}
 		} else {
-			log.error("station not in database "+stationNameText+"  at  "+filename);
+			Logger.error("station not in database "+stationNameText+"  at  "+filename);
 			return;
 		}
 		
@@ -144,7 +144,7 @@ public class TOA5Loader {
 				tsdb.streamStorage.insertDataEntryArray(station.stationID, sensorName, dataEntries);				
 			} catch(Exception e) {
 				//e.printStackTrace();
-				log.error(e+" with name "+valueNames[i]+"  in "+filename);
+				Logger.error(e+" with name "+valueNames[i]+"  in "+filename);
 			}
 		}
 		long firstTimestamp = -1;

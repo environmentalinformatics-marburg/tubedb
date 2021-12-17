@@ -1,13 +1,13 @@
 package tsdb.testing;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.Timer;
 import tsdb.util.Util;
 
 public class TestingRegex {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	public static void main(String[] args) {
 		
@@ -23,14 +23,14 @@ public class TestingRegex {
 				for (int loop = 0; loop < LOOPS; loop++) {
 					Util.FloatRange.parse_no_regex("name", s);
 				}
-				log.info(Timer.stop("prog"));				
+				Logger.info(Timer.stop("prog"));				
 			}
 			{
 				Timer.start("regex");
 				for (int loop = 0; loop < LOOPS; loop++) {
 					Util.FloatRange.parse("name", s);
 				}
-				log.info(Timer.stop("regex"));				
+				Logger.info(Timer.stop("regex"));				
 			}
 
 		}

@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
@@ -22,7 +22,7 @@ import tsdb.util.TimestampInterval;
  */
 public class StationProperties implements Serializable{
 	private static final long serialVersionUID = -4558930650676952510L;
-	private static final Logger log = LogManager.getLogger();
+	
 
 
 	public final static String PROPERTY_START = "DATE_START";
@@ -59,11 +59,11 @@ public class StationProperties implements Serializable{
 			try {
 				return Integer.parseInt(text);
 			} catch(Exception e) {
-				log.warn("error in read int: "+e+"  for propery  "+key+" and value  "+text);
+				Logger.warn("error in read int: "+e+"  for propery  "+key+" and value  "+text);
 				return null;
 			}
 		} else {
-			log.warn("error in read int: not found for property "+key);
+			Logger.warn("error in read int: not found for property "+key);
 			return null;
 		}
 	}
@@ -78,11 +78,11 @@ public class StationProperties implements Serializable{
 			try {
 				return Float.parseFloat(text);
 			} catch(Exception e) {
-				log.warn("error in read float: "+e+"  for propery  "+key+" and value  "+text+"   at "+traceText);
+				Logger.warn("error in read float: "+e+"  for propery  "+key+" and value  "+text+"   at "+traceText);
 				return Float.NaN;
 			}
 		} else {
-			log.warn("error in read float: not found for property "+key+"   at "+traceText);
+			Logger.warn("error in read float: not found for property "+key+"   at "+traceText);
 			return Float.NaN;
 		}
 	}
@@ -137,7 +137,7 @@ public class StationProperties implements Serializable{
 			try {
 				resultList.add(properties.createTimestampInterval());
 			} catch(Exception e) {
-				log.warn(e);
+				Logger.warn(e);
 			}
 		}		
 		return resultList;

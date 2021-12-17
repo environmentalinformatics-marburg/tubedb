@@ -3,8 +3,8 @@ package tsdb.graph.processing;
 import java.util.Arrays;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -21,7 +21,7 @@ import tsdb.util.Util;
 import tsdb.util.iterator.TsIterator;
 
 public class InterpolatedAverageLinear extends Continuous.Abstract {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private static final int MAX_TRAINING_PLOT_COUNT = 15;
 	private static final int MIN_TRAINING_VALUE_COUNT_HOUR = 4*7*24; // four weeks with one hour time interval
@@ -63,7 +63,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 				.toArray(String[]::new);
 
 		if(iSchema.length==0) {
-			log.info("no interpolatable sensors for "+plotID+"   "+Arrays.toString(querySchema));
+			Logger.info("no interpolatable sensors for "+plotID+"   "+Arrays.toString(querySchema));
 			return source;
 		}
 
@@ -87,7 +87,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 				.toArray(Continuous[]::new);
 
 		if(trainingSources.length==0) {
-			log.info("no interpolation sources for "+plotID+"   "+Arrays.toString(querySchema));
+			Logger.info("no interpolation sources for "+plotID+"   "+Arrays.toString(querySchema));
 			return source;
 		}
 
@@ -98,10 +98,10 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 
 	@Override
 	public TsIterator getExactly(long start, long end) {
-		log.trace("lin get "+TimeUtil.oleMinutesToText(start, end));
+		Logger.trace("lin get "+TimeUtil.oleMinutesToText(start, end));
 		long[] trainingInterval = trainingTarget.getTimestampBaseInterval();
 		if(trainingInterval==null) {
-			log.info("no data in "+trainingTarget.getSourceName());
+			Logger.info("no data in "+trainingTarget.getSourceName());
 			return null;
 		}
 		long trainingStart = trainingInterval[0];
@@ -160,7 +160,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 					intercepts[trainingIndex][column] = reg.getIntercept();
 					slopes[trainingIndex][column] = reg.getSlope();
 					weights[trainingIndex][column] = mse;
-					//log.info("linear regression "+reg.getN()+"  "+reg.getIntercept()+" "+reg.getSlope()+" "+reg.getMeanSquareError());
+					//Logger.info("linear regression "+reg.getN()+"  "+reg.getIntercept()+" "+reg.getSlope()+" "+reg.getMeanSquareError());
 				}
 			}
 		}
@@ -176,7 +176,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 			for(int trainingIndex=0;trainingIndex<trainingIterators.length;trainingIndex++) {
 				double mse = weights[trainingIndex][column];
 				weights[trainingIndex][column] = Math.pow(min_mse/mse,5);
-				//log.info("w "+mse+" -> "+weights[trainingIndex][column]);
+				//Logger.info("w "+mse+" -> "+weights[trainingIndex][column]);
 			}
 		}
 
@@ -204,12 +204,12 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 		};*/
 
 		/*if(sourceIterator==null) {
-			log.error("no interpolation source");
+			Logger.error("no interpolation source");
 			//return null;
 		}*/
 
 		if(interpolationIterators[0]==null) {
-			log.error("no interpolation training sources");
+			Logger.error("no interpolation training sources");
 			//return null;
 		}
 

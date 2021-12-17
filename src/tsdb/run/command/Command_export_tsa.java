@@ -2,8 +2,8 @@ package tsdb.run.command;
 
 import java.io.IOException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 import tsdb.Station;
 import tsdb.TsDB;
@@ -14,7 +14,7 @@ import tsdb.util.DataEntry;
 import tsdb.util.TimeSeriesArchivWriter;
 
 public class Command_export_tsa {
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private final TsDB tsdb;
 
@@ -31,19 +31,19 @@ public class Command_export_tsa {
 			try(TsDB tsdb = TsDBFactory.createDefault()) {				
 				Region region = tsdb.getRegion(regionName);
 				if(region == null) {
-					log.info("region not found: "+regionName);
+					Logger.info("region not found: "+regionName);
 					return;
 				}
 				Command_export_tsa export_region = new Command_export_tsa(tsdb);
 				export_region.run(filename, region);
 			} catch (Exception e) {
 				e.printStackTrace();
-				log.error(e);
+				Logger.error(e);
 			}
 			break;
 		}
 		default:
-			log.info("export_tsa needs 1 or 2 parameters: output filename and optional region name");
+			Logger.info("export_tsa needs 1 or 2 parameters: output filename and optional region name");
 			return;
 		}
 	}
@@ -70,11 +70,11 @@ public class Command_export_tsa {
 								DataEntry[] dataEntries = it.remainingToArray();
 								tsaWriter.writeDataEntryArray(s.stationID, sensorName, dataEntries);
 							} else {
-								log.warn("empty sensor " + s.stationID + " " + sensorName);
+								Logger.warn("empty sensor " + s.stationID + " " + sensorName);
 							}
 						}
 					} else {
-						//log.info("no sensors in " + s.stationID);
+						//Logger.info("no sensors in " + s.stationID);
 					}
 				} catch(Exception e) {
 					throw new RuntimeException(e);

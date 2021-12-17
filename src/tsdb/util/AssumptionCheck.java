@@ -2,8 +2,8 @@ package tsdb.util;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.tinylog.Logger;
 
 /**
  * Methods of this class throw exceptions and add an entry in log if an assumtion is false.
@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
  */
 public final class AssumptionCheck {
 	
-	private static final Logger log = LogManager.getLogger();
+	
 
 	private AssumptionCheck(){}
 
@@ -30,7 +30,7 @@ public final class AssumptionCheck {
 	 * @param text
 	 */
 	public static void throwText(String text) {
-		log.error(text);
+		Logger.error(text);
 		throw new RuntimeException(text);
 	}
 
