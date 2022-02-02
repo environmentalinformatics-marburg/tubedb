@@ -1804,97 +1804,97 @@ ttraw_AS7262_650:
 
 tt_AS7263_610:
   description: Spectral band near infrared (orange) 610 nm ± 10 nm
-  unit: μW/cm^2 (microwatts per square centimeter)
+  unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7263_610
-  raw_func: "-312.45 + (1.6699 * ttraw_AS7263_610)"  
+  raw_func: "(-312.45 + (1.6699 * ttraw_AS7263_610))/10000000"  
   aggregation: average
   derived: false
   
 tt_AS7263_680:
   description: Spectral band near infrared (red) 680 nm ± 10 nm
-  unit: μW/cm^2 (microwatts per square centimeter)
+  unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7263_680
-  raw_func: "-561.56 + (1.5199 * ttraw_AS7263_680)"  
+  raw_func: "(-561.56 + (1.5199 * ttraw_AS7263_680))/10000000"  
   aggregation: average
   derived: false
   
 tt_AS7263_730:
   description: Spectral band near infrared (far red) 730 nm ± 10 nm
-  unit: μW/cm^2 (microwatts per square centimeter)
+  unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7263_730
-  raw_func: "-1511.2 + (1.6209 * ttraw_AS7263_730)"  
+  raw_func: "(-1511.2 + (1.6209 * ttraw_AS7263_730))/10000000"  
   aggregation: average
   derived: false
 
 tt_AS7263_760:
   description: Spectral band near infrared (invisible) 760 nm ± 10 nm
-  unit: μW/cm^2 (microwatts per square centimeter)
+  unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7263_760
-  raw_func: "-1012.5 + (1.4549 * ttraw_AS7263_760)"  
+  raw_func: "(-1012.5 + (1.4549 * ttraw_AS7263_760))/10000000"  
   aggregation: average
   derived: false
 
 tt_AS7263_810:
   description: Spectral band near infrared (invisible) 810 nm ± 10 nm
-  unit: μW/cm^2 (microwatts per square centimeter)
+  unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7263_810
-  raw_func: "91.58 + (0.8414 * ttraw_AS7263_810)"  
+  raw_func: "(91.58 + (0.8414 * ttraw_AS7263_810))/10000000"  
   aggregation: average
   derived: false
 
 tt_AS7263_860:
   description: Spectral band near infrared (invisible) 860 nm ± 10 nm
-  unit: μW/cm^2 (microwatts per square centimeter)
+  unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7263_860
-  raw_func: "334.88 + (0.531 * ttraw_AS7263_860)"  
+  raw_func: "(334.88 + (0.531 * ttraw_AS7263_860))/10000000"  
   aggregation: average
   derived: false
 
 tt_AS7262_450:
   description: Spectral band visible light (blue) 450 nm ± 20 nm
-  unit: μW/cm^2 (microwatts per square centimeter)
+  unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7262_450
-  raw_func: "-212.62 + (0.4562 * ttraw_AS7262_450)"  
+  raw_func: "(-212.62 + (0.4562 * ttraw_AS7262_450))/10000000"  
   aggregation: average
   derived: false  
   
 tt_AS7262_500:
   description: Spectral band visible light (cyan) 500 nm ± 20 nm
-  unit: μW/cm^2 (microwatts per square centimeter)
+  unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7262_500
-  raw_func: "-232.13 + (0.6257 * ttraw_AS7262_500)"  
+  raw_func: "(-232.13 + (0.6257 * ttraw_AS7262_500))/10000000"  
   aggregation: average
   derived: false
 
 tt_AS7262_550:
   description: Spectral band visible light (green) 550 nm ± 20 nm
-  unit: μW/cm^2 (microwatts per square centimeter)
+  unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7262_550
-  raw_func: "-842.1+(1.0546 *ttraw_AS7262_550)"  
+  raw_func: "(-842.1+(1.0546 *ttraw_AS7262_550))/10000000"  
   aggregation: average
   derived: false
 
 tt_AS7262_570:
   description: Spectral band visible light (yellow) 570 nm ± 20 nm
-  unit: μW/cm^2 (microwatts per square centimeter)
+  unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7262_570
-  raw_func: "-666.72+(1.0462 *ttraw_AS7262_570)"  
+  raw_func: "(-666.72+(1.0462 *ttraw_AS7262_570))/10000000"  
   aggregation: average
   derived: false
 
 tt_AS7262_600:
   description: Spectral band visible light (orange) 600 nm ± 20 nm
-  unit: μW/cm^2 (microwatts per square centimeter)
+  unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7262_600
-  raw_func: "-328.08+(0.8654 *ttraw_AS7262_600)"  
+  raw_func: "(-328.08+(0.8654 *ttraw_AS7262_600))/10000000"  
   aggregation: average
   derived: false
 
 tt_AS7262_650:
   description: Spectral band visible light (red) 650 nm ± 20 nm
-  unit: μW/cm^2 (microwatts per square centimeter)
+  unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7262_650
-  raw_func: "202.77 + (0.7829 * ttraw_AS7262_650)"  
+  raw_func: "(202.77 + (0.7829 * ttraw_AS7262_650))/10000000"  
   aggregation: average
   derived: false
 

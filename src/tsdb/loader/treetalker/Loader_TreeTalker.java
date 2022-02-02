@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -135,6 +136,9 @@ public class Loader_TreeTalker {
 					case "49": {
 						//Logger.info(tt_Type);					
 						int timestamp = toTimestamp(row[3]);
+						if(row.length < 18) {
+							row = fillMissing(row, 18);
+						}
 						float[] data = new float[]{
 								parseFloat(row[4]),
 								parseFloat(row[5]),
@@ -161,6 +165,9 @@ public class Loader_TreeTalker {
 					case "4B": { // status
 						//Logger.info(tt_Type);					
 						int timestamp = toTimestamp(row[3]);
+						if(row.length < 11) {
+							row = fillMissing(row, 11);
+						}
 						float[] data = new float[]{
 								parseFloat(row[4]),
 								parseFloat(row[5]),
@@ -181,6 +188,9 @@ public class Loader_TreeTalker {
 					case "4C": { // status
 						//Logger.info(tt_Type);					
 						int timestamp = toTimestamp(row[3]);
+						if(row.length < 27) {
+							row = fillMissing(row, 27);
+						}
 						float[] data = new float[]{
 								parseFloat(row[4]),
 								parseFloat(row[5]),
@@ -220,6 +230,9 @@ public class Loader_TreeTalker {
 					case "4D": {
 						//Logger.info(tt_Type);					
 						int timestamp = toTimestamp(row[3]);
+						if(row.length < 21) {
+							row = fillMissing(row, 21);
+						}
 						float[] data = new float[]{
 								parseFloat(row[4]),
 								parseFloat(row[5]),
@@ -249,6 +262,9 @@ public class Loader_TreeTalker {
 					case "53": { // 53 = three level ground moisture sensor log record identifier
 						//Logger.info(tt_Type);					
 						int timestamp = toTimestamp(row[3]);
+						if(row.length < 21) {
+							row = fillMissing(row, 21);
+						}
 						float[] data = new float[]{
 								parseFloat(row[4]),
 								parseFloat(row[5]),
@@ -276,7 +292,7 @@ public class Loader_TreeTalker {
 						break;
 					}
 					default: {
-						Logger.warn("unknown tt_Type" +tt_Type);
+						Logger.warn("unknown tt_Type " +tt_Type);
 						/*long timeStampSeconds = Long.parseLong(row[3]);
 					LocalDateTime datetime = TIME_START.plusSeconds(timeStampSeconds);
 					Logger.info(row[0] + "   " + timeStampText + "  " + datetime + row[3]);*/
@@ -475,5 +491,18 @@ public class Loader_TreeTalker {
 	
 	private static float parseFloat(String s) {
 		return s.isEmpty() ? Float.NaN : Float.parseFloat(s);
+	}
+	
+	private static String[] fillMissing(String[] src, int dstLen) {
+		int srcLen = src.length;
+		if(srcLen >= dstLen) {
+			return src;
+		}
+		String[] dst = new String[dstLen];
+		System.arraycopy(src, 0, dst, 0, srcLen);
+		for(int i = srcLen; i < dstLen; i++) {
+			dst[i] = "";
+		}
+		return dst;
 	}
 }
