@@ -67,7 +67,7 @@
 
           <q-separator />
           <template v-if="plotSensorList.length > 0">
-            Selected timeseries:
+            Selected timeseries: (max: {{max_timeseries}})
           <q-item v-for="plotSensor in plotSensorList" :key="plotSensor.plot + '/' + plotSensor.sensor">
             {{plotSensor.plot}} / {{plotSensor.sensor}}
           </q-item>
@@ -153,6 +153,7 @@ export default {
       dataRequestSentCounter: 0,
       dataRequestReceivedCounter: 0,
       dataRequestError: 'no data loaded',
+      max_timeseries: 7,
 
       timeAggregation: 'hour',
       quality: 'step',
@@ -185,7 +186,7 @@ export default {
           if(selectedPlot.sensorSet.has(selectedSensor.id)) {
             let entry = {plot: selectedPlot.id, sensor: selectedSensor.id};
             list.push(entry);
-            if(list.length > 4) {
+            if(list.length >= this.max_timeseries) {
               return list;
             }
           }
@@ -231,7 +232,7 @@ export default {
           }
           var reqData = {
             settings: settings,
-            timeseries: this.plotSensorList.slice(0, 4),
+            timeseries: this.plotSensorList,
           };
           var response = await this.apiPOST(['tsdb', 'query_js'], reqData, reqConfig);
           if(dataRequestCurrentCounter < this.dataRequestSentCounter) {

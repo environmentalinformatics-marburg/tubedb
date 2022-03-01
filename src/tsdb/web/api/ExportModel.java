@@ -13,9 +13,6 @@ import tsdb.util.TimeUtil;
 
 public class ExportModel{
 
-	
-
-
 	public enum TimespanType{
 		ALL,YEAR,YEARS,DATES;
 

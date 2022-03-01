@@ -385,6 +385,45 @@ export default {
         });
       }
 
+      if(this.data.length > 5) {
+        series.push({
+          show: true,
+          spanGaps: (this.timeAggregation === 'none'),
+          // in-legend display
+          label: "Value",
+          value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
+          // series style
+          stroke: "aqua",
+          width: 1,
+        });
+      }
+
+      if(this.data.length > 6) {
+        series.push({
+          show: true,
+          spanGaps: (this.timeAggregation === 'none'),
+          // in-legend display
+          label: "Value",
+          value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
+          // series style
+          stroke: "brown",
+          width: 1,
+        });
+      }
+
+      if(this.data.length > 7) {
+        series.push({
+          show: true,
+          spanGaps: (this.timeAggregation === 'none'),
+          // in-legend display
+          label: "Value",
+          value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
+          // series style
+          stroke: "grey",
+          width: 1,
+        });
+      }            
+
       let opts = {
         width: width,
         height: height,
