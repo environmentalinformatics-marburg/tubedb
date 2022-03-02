@@ -303,6 +303,8 @@ export default {
   data() {
     return {
       uplot: undefined,
+      //timeseriesStrokes: ["red", "blue", "green", "violet", "aqua", "brown", "grey"],
+      timeseriesStrokes: ['black', 'red', 'lime', 'blue', 'gray', 'cyan', 'magenta', 'maroon', 'olive', 'green', 'purple', 'teal'],
     }
   },
   computed: {
@@ -336,93 +338,21 @@ export default {
       //console.log(width + " x "  + height);
 
       let series = [{}];
-      if(this.data.length > 1) {
-        series.push({
-          show: true,
-          spanGaps: (this.timeAggregation === 'none'),
-          // in-legend display
-          label: "Value",
-          value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
-          // series style
-          stroke: "red",
-          width: 1,
-        });
-      }
-      if(this.data.length > 2) {
-        series.push({
-          show: true,
-          spanGaps: (this.timeAggregation === 'none'),
-          // in-legend display
-          label: "Value",
-          value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
-          // series style
-          stroke: "blue",
-          width: 1,
-        });
-      }
-      if(this.data.length > 3) {
-        series.push({
-          show: true,
-          spanGaps: (this.timeAggregation === 'none'),
-          // in-legend display
-          label: "Value",
-          value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
-          // series style
-          stroke: "green",
-          width: 1,
-        });
-      }
-      if(this.data.length > 4) {
-        series.push({
-          show: true,
-          spanGaps: (this.timeAggregation === 'none'),
-          // in-legend display
-          label: "Value",
-          value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
-          // series style
-          stroke: "violet",
-          width: 1,
-        });
-      }
 
-      if(this.data.length > 5) {
-        series.push({
-          show: true,
-          spanGaps: (this.timeAggregation === 'none'),
-          // in-legend display
-          label: "Value",
-          value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
-          // series style
-          stroke: "aqua",
-          width: 1,
-        });
-      }
-
-      if(this.data.length > 6) {
-        series.push({
-          show: true,
-          spanGaps: (this.timeAggregation === 'none'),
-          // in-legend display
-          label: "Value",
-          value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
-          // series style
-          stroke: "brown",
-          width: 1,
-        });
-      }
-
-      if(this.data.length > 7) {
-        series.push({
-          show: true,
-          spanGaps: (this.timeAggregation === 'none'),
-          // in-legend display
-          label: "Value",
-          value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
-          // series style
-          stroke: "grey",
-          width: 1,
-        });
-      }            
+      if(this.data) {
+        for(let i = 0; i < this.data.length - 1; i++) {
+          series.push({
+            show: true,
+            spanGaps: (this.timeAggregation === 'none'),
+            // in-legend display
+            label: '[' + (i + 1) + ']',
+            value: (self, rawValue) => rawValue === null ? '---' : rawValue.toFixed(2),
+            // series style
+            stroke: this.timeseriesStrokes[i],
+            width: 1,
+          });
+        }
+      }           
 
       let opts = {
         width: width,

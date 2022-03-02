@@ -68,16 +68,27 @@
 
           <q-separator />
           <template v-if="plotSensorList.length > 0">
-            Selected timeseries: (max: {{max_timeseries}})
-          <q-item v-for="plotSensor in plotSensorList" :key="plotSensor.plot + '/' + plotSensor.sensor">
-            {{plotSensor.plot}} / {{plotSensor.sensor}}
-          </q-item>
+            Selected timeseries <span style="color: grey;">(max {{max_timeseries}})</span>
+            <q-list dense separator>
+              <q-item v-for="(plotSensor, i) in plotSensorList" :key="plotSensor.plot + '/' + plotSensor.sensor" clickable>
+                <q-item-section>
+                  <q-item-label>{{plotSensor.plot}}</q-item-label>
+                  <q-item-label caption lines="2">{{plotSensor.sensor}}</q-item-label>
+                </q-item-section>
+                  <q-item-section side top color="yellow">
+                  <q-item-label caption style="background-color: rgb(240,240,240);" :style="{color: $refs.timeseriesDiagram.timeseriesStrokes[i]}">[{{i + 1}}]</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
           </template>
                     
         </q-list>
       </q-scroll-area>
       <div v-else  class="fit">
-        <div v-if="modelLoading">Loading metadata...</div>
+        <div v-if="modelLoading">
+          <q-spinner-ios color="primary" size="2em" />
+          Loading metadata...
+        </div>
         <div v-else-if="modelError">Error loading metadata. <q-btn @click="$store.dispatch('model/refresh')">try again</q-btn></div>
         <div v-else>Metadata not loaded.</div>
       </div>
@@ -91,7 +102,10 @@
       <div v-if="dataRequestSentCounter > dataRequestReceivedCounter" style="position: absolute; top: 70px; left: 50px;">        
         <q-item>
           <q-item-section avatar ><q-icon name="error_outline" color="blue-14"/></q-item-section>
-          <q-item-section>Waiting for data ...</q-item-section>
+          <q-item-section>
+            <q-spinner-ios color="primary" size="2em" />
+            Requesting data from server ...
+          </q-item-section>
         </q-item>
       </div>
       <div v-if="dataRequestError !== undefined" style="position: absolute; top: 100px; left: 100px;">
@@ -107,7 +121,7 @@
         <tr><td style="padding-right: 10px; text-align:center"><b>Inspect timeseries values</b></td><td>Move mouse over diagram without mouse buttons pressed to show time / measurement values.</td></tr>        
         </table>
       </div>
-      <timeseries-diagram :data="data" :timeAggregation="timeAggregation" />
+      <timeseries-diagram :data="data" :timeAggregation="timeAggregation" ref="timeseriesDiagram" />
       </div>
     </q-page-container>
 
@@ -154,7 +168,7 @@ export default {
       dataRequestSentCounter: 0,
       dataRequestReceivedCounter: 0,
       dataRequestError: 'no data loaded',
-      max_timeseries: 7,
+      max_timeseries: 12,
 
       timeAggregation: 'hour',
       quality: 'step',
