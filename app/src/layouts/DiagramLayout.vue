@@ -61,7 +61,8 @@
             <timeseries-selector 
               :multiTimeseries="multiTimeseries" 
               :timeAggregation="timeAggregation" 
-              @plot-sensor-changed="selectedPlots = $event.plots; selectedSensors = $event.sensors;" 
+              @plot-sensor-changed="selectedPlots = $event.plots; selectedSensors = $event.sensors;"
+              ref="timeseriesSelector" 
             />            
           </q-item>
 
@@ -193,7 +194,7 @@ export default {
         }
       }
       return list;
-    }, 
+    },
   },
   methods: {
     onChangeDrawerWidth(e) {
@@ -229,6 +230,10 @@ export default {
           };
           if(this.timeAggregation !== 'none') {
             settings.interpolation = this.interpolation;
+          }
+          if(this.$refs.timeseriesSelector.view_time_range_limit) {
+            settings.view_time_limit_start = this.$refs.timeseriesSelector.view_time_range_limit[0];
+            settings.view_time_limit_end = this.$refs.timeseriesSelector.view_time_range_limit[1];
           }
           var reqData = {
             settings: settings,

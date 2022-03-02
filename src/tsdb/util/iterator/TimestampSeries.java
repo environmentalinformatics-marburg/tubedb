@@ -464,7 +464,21 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 				resultSchema[pos++] = name + "/" + sensorNames[j];
 			}
 		}
-		TimestampSeries resultTs = new TimestampSeries("castMerge", resultSchema , result);
+		TimestampSeries resultTs = new TimestampSeries("castMerge", resultSchema, result);
+		return resultTs;
+	}
+
+	public TimestampSeries limitTime(long limitStart, long limitEnd) {
+		List<TsEntry> resultList = new ArrayList<TsEntry>();
+		Iterator<TsEntry> it = this.entryList.iterator();
+		while(it.hasNext()) {
+			TsEntry e = it.next();
+			//Logger.info(limitStart + "  " + limitEnd + "  " + e.timestamp + "      " + TimeUtil.oleMinutesToText(limitStart) + " " + TimeUtil.oleMinutesToText(limitEnd) + " " + TimeUtil.oleMinutesToText(e.timestamp));
+			if(limitStart <= e.timestamp && e.timestamp <= limitEnd) {
+				resultList.add(e);
+			}
+		}
+		TimestampSeries resultTs = new TimestampSeries(this.name, this.sensorNames, resultList);
 		return resultTs;
 	}
 }

@@ -25,7 +25,7 @@ import tsdb.util.TsEntry;
 import tsdb.util.iterator.TimestampSeries;
 
 public class Handler_query_js extends MethodHandler {	
-	
+
 
 	public Handler_query_js(RemoteTsDB tsdb) {
 		super(tsdb, "query_js");
@@ -47,6 +47,19 @@ public class Handler_query_js extends MethodHandler {
 
 		Long startTime = null;
 		Long endTime = null;
+
+		boolean limitTime = false;
+		long limitStart = Long.MIN_VALUE;
+		long limitEnd = Long.MAX_VALUE;
+		if(jsonSettings.has("view_time_limit_start")) {
+			limitStart = jsonSettings.getLong("view_time_limit_start");
+			limitTime = true;
+		}
+		if(jsonSettings.has("view_time_limit_end")) {
+			limitEnd = jsonSettings.getLong("view_time_limit_end");
+			limitTime = true;
+		}
+
 
 		TimestampSeries resultTs = null;
 		int resultSchemaCount = -1;
@@ -71,6 +84,9 @@ public class Handler_query_js extends MethodHandler {
 			String[] supplementedSchema = tsdb.supplementSchema(schema, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
 			String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, supplementedSchema);
 			resultTs = tsdb.plot(null, plot, validSchema, agg, dataQuality, interpolation, startTime, endTime);
+			if(limitTime && resultTs != null && resultTs.size() > 0 && (resultTs.getFirstTimestamp() < limitStart || resultTs.getLastTimestamp() > limitEnd)) {
+				resultTs = resultTs.limitTime(limitStart, limitEnd);
+			}
 			break;
 		}
 		default: {
@@ -86,17 +102,20 @@ public class Handler_query_js extends MethodHandler {
 				String[] supplementedSchema = tsdb.supplementSchema(schema, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
 				String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, supplementedSchema);
 				tss[i] = tsdb.plot(null, plot, validSchema, agg, dataQuality, interpolation, startTime, endTime);
+				if(limitTime && tss[i] != null && tss[i].size() > 0 && (tss[i].getFirstTimestamp() < limitStart || tss[i].getLastTimestamp() > limitEnd)) {
+					tss[i] = tss[i].limitTime(limitStart, limitEnd);
+				}
 				//Logger.info(tss[i].toString());
 			}
 			resultTs = TimestampSeries.castMerge(tss);
 			resultSchemaCount = resultTs.sensorNames.length;
 		}
 		}
-		
+
 		//Logger.info(Arrays.toString(resultTs.sensorNames));
-		
+
 		//Logger.info(resultTs.toString());
-		
+
 		String[] schema = resultTs.sensorNames;
 
 		List<TsEntry> entries = resultTs.entryList;

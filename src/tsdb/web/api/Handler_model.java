@@ -74,6 +74,12 @@ public class Handler_model extends MethodHandler {
 					json.value(generalStationInfo.name);
 				}
 				json.endArray(); // end groups
+				if(region.viewTimeRange != null) {
+					json.key("view_timestamp_start");
+					json.value(region.viewTimeRange.start);		
+					json.key("view_timestamp_end");
+					json.value(region.viewTimeRange.end);		
+				}
 				json.endObject(); // end project
 			}
 		}
@@ -105,6 +111,17 @@ public class Handler_model extends MethodHandler {
 					}
 				}
 				json.endArray(); // end plots
+				if(generalStationInfo.viewTimeRange != null) {
+					json.key("view_timestamp_start");
+					json.value(generalStationInfo.viewTimeRange.start);		
+					json.key("view_timestamp_end");
+					json.value(generalStationInfo.viewTimeRange.end);		
+				} else if(generalStationInfo.region != null && generalStationInfo.region.viewTimeRange != null){
+					json.key("view_timestamp_start");
+					json.value(generalStationInfo.region.viewTimeRange.start);		
+					json.key("view_timestamp_end");
+					json.value(generalStationInfo.region.viewTimeRange.end);	
+				}
 				json.endObject(); // end group
 			}
 		}

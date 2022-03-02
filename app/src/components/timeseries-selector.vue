@@ -363,7 +363,29 @@ export default {
         return 0;
       });
       return result;
-    },      
+    },
+    view_time_range_limit() {
+      let start = 2000000000;
+      let end =   -2000000000;
+      if(this.selectedGroupsModel) {
+        for(const group of this.selectedGroupsModel) {
+          if(group.view_timestamp_start && group.view_timestamp_start < start) {
+            start = group.view_timestamp_start;
+          }
+          if(group.view_timestamp_end && group.view_timestamp_end > end) {
+            end = group.view_timestamp_end;
+          }
+          console.log(group);
+        }
+      }
+      if(start === 2000000000) {
+        start = -2000000000;
+      }
+      if(end === -2000000000) {
+        end = 2000000000;
+      }
+      return [start, end];
+    },   
   },
   methods: {
     onPlotSensorChanged() {
