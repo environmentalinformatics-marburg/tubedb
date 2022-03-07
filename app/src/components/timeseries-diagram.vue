@@ -391,3 +391,15 @@ export default {
 <style scoped>
 
 </style>
+
+<style>
+
+.u-over {
+  cursor: crosshair;
+}
+
+.u-over:active {
+  cursor: grabbing;
+}
+
+</style>

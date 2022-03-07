@@ -114,7 +114,7 @@
           <q-item-section>{{dataRequestError}}</q-item-section>
         </q-item>
       </div>
-      <div style="margin-top: 10px; margin-left: 10px;">
+      <div style="margin-top: 10px; margin-left: 10px;" v-show="data !== undefined">
         <table>
         <tr><td style="padding-right: 10px; text-align:center"><b>Zoom in/out</b></td><td>Place mouse on diagram and rotate the mouse wheel.</td></tr>
         <tr><td style="padding-right: 10px; text-align:center"><b>Move in time</b></td><td>Place mouse on diagram, press and hold left mouse button and move mouse left / right on the diagram.</td></tr>
@@ -122,6 +122,9 @@
         </table>
       </div>
       <timeseries-diagram :data="data" :timeAggregation="timeAggregation" ref="timeseriesDiagram" />
+      <div style="text-align: right;" v-show="data !== undefined">
+        Click on the colored squares to <b>(de-)activate</b> that time series shown in the diagram.
+      </div>
       </div>
     </q-page-container>
 

@@ -32,7 +32,7 @@ import tsdb.util.Util;
  */
 public class TsDB implements AutoCloseable {
 	
-	public static final String tubedb_version = "1.20.11";
+	public static final String tubedb_version = "1.20.12";
 
 	/**
 	 * map regionName -> Region
@@ -394,7 +394,7 @@ public class TsDB implements AutoCloseable {
 				Logger.warn("missing region for " + generalStation );
 				return false;
 			}
-			return regionName.equals(generalStation .region.name);
+			return regionName.equals(generalStation.region.name);
 		});
 	}
 
