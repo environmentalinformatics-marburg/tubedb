@@ -116,9 +116,9 @@
       </div>
       <div style="margin-top: 10px; margin-left: 10px;" v-show="data !== undefined">
         <table>
-        <tr><td style="padding-right: 10px; text-align:center"><b>Zoom in/out</b></td><td>Place mouse on diagram and rotate the mouse wheel.</td></tr>
-        <tr><td style="padding-right: 10px; text-align:center"><b>Move in time</b></td><td>Place mouse on diagram, press and hold left mouse button and move mouse left / right on the diagram.</td></tr>
-        <tr><td style="padding-right: 10px; text-align:center"><b>Inspect timeseries values</b></td><td>Move mouse over diagram without mouse buttons pressed to show time / measurement values.</td></tr>        
+          <tr><td style="padding-right: 10px; text-align:center"><b>Zoom in/out</b></td><td>Place mouse on diagram and rotate the mouse wheel.</td></tr>
+          <tr><td style="padding-right: 10px; text-align:center"><b>Move in time</b></td><td>Place mouse on diagram, press and hold left mouse button and move mouse left / right on the diagram.</td></tr>
+          <tr><td style="padding-right: 10px; text-align:center"><b>Inspect timeseries values</b></td><td>Move mouse over diagram without mouse buttons pressed to show time / measurement values.</td></tr>        
         </table>
       </div>
       <timeseries-diagram :data="data" :timeAggregation="timeAggregation" ref="timeseriesDiagram" />
