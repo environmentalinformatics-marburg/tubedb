@@ -20,6 +20,8 @@ public class Region implements Serializable {
 	public Interval viewTimeRange; //nullable
 	public String defaultGeneralStation;  //nullable
 	public String description;  //nullable
+	public String time_zone;  //nullable
+	public String time_zone_description;  //nullable
 	
 	public Region(String name, String longName) {
 		throwNulls(name,longName);
@@ -28,6 +30,8 @@ public class Region implements Serializable {
 		this.viewTimeRange = null;
 		this.defaultGeneralStation = null;
 		this.description = null;
+		this.time_zone = null;
+		this.time_zone_description = null;
 	}
 	
 	@Override

@@ -528,6 +528,57 @@ public class ConfigLoader {
 					}
 				}
 			}
+			
+			section = ini.get("region_default_general_station");
+			if(section!=null) {
+				Map<String, String> defaultGeneralStationNameMap = Util.readIniSectionMap(section);
+				for(Entry<String, String> entry:defaultGeneralStationNameMap.entrySet()) {
+					String regionName = entry.getKey();
+					if(justRegion==null || justRegion.toLowerCase().equals(regionName.toLowerCase())) {
+						String name = entry.getValue();
+						Region region1 = tsdb.getRegion(regionName);
+						if(region1 != null) {
+							region1.defaultGeneralStation = name;
+						} else {
+							Logger.warn("region not found: "+regionName);
+						}
+					}
+				}
+			}
+			
+			section = ini.get("region_time_zone");
+			if(section!=null) {
+				Map<String, String> defaultGeneralStationNameMap = Util.readIniSectionMap(section);
+				for(Entry<String, String> entry:defaultGeneralStationNameMap.entrySet()) {
+					String regionName = entry.getKey();
+					if(justRegion==null || justRegion.toLowerCase().equals(regionName.toLowerCase())) {
+						String name = entry.getValue();
+						Region region1 = tsdb.getRegion(regionName);
+						if(region1 != null) {
+							region1.time_zone = name;
+						} else {
+							Logger.warn("region not found: "+regionName);
+						}
+					}
+				}
+			}
+			
+			section = ini.get("region_time_zone_description");
+			if(section!=null) {
+				Map<String, String> defaultGeneralStationNameMap = Util.readIniSectionMap(section);
+				for(Entry<String, String> entry:defaultGeneralStationNameMap.entrySet()) {
+					String regionName = entry.getKey();
+					if(justRegion==null || justRegion.toLowerCase().equals(regionName.toLowerCase())) {
+						String name = entry.getValue();
+						Region region1 = tsdb.getRegion(regionName);
+						if(region1 != null) {
+							region1.time_zone_description = name;
+						} else {
+							Logger.warn("region not found: "+regionName);
+						}
+					}
+				}
+			}
 
 			return region;
 		} catch (IOException e) {

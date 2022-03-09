@@ -47,7 +47,7 @@ import tsdb.util.iterator.TimestampSeriesCSVwriter;
  *
  */
 public class ZipExport extends TimestampSeriesCSVwriter{
-	
+
 	private static final Charset charset = Charset.forName("UTF-8");
 
 	private final RemoteTsDB tsdb;
@@ -356,6 +356,12 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 			Map<String, Object> regionMap = new LinkedHashMap<String,Object>();
 			regionMap.put("id", region.name);
 			regionMap.put("name", region.longName);
+			if(region.time_zone != null) {
+				regionMap.put("time_zone", region.time_zone);
+			}
+			if(region.time_zone_description != null) {
+				regionMap.put("time_zone_description", region.time_zone_description);
+			}
 			map.put("region", regionMap);
 
 			try {
