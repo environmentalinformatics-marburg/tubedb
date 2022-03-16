@@ -406,13 +406,16 @@ public class ServerTsDB implements RemoteTsDB {
 					{
 						scale = 1000;
 						String sensorName = "tt_battery_voltage";
-						voltage_min_watch = 3.2f;
+						/*voltage_min_watch = 3.2f;
 						voltage_min_good = 3.4f;
+						voltage_min_error = 5.0f;*/
+						voltage_min_watch = 3.5f;
+						voltage_min_good = 3.7f;
 						voltage_min_error = 5.0f;
 						String[] schema = new String[] {sensorName};
 						if(tsdb.isValidSchemaWithVirtualSensors(plotID, schema)) {
 							schema = tsdb.supplementSchema(plotID, schema);
-							Logger.info("status get: " + Arrays.toString(schema));
+							//Logger.info("status get: " + Arrays.toString(schema));
 							node = QueryPlan.plot(tsdb, plotID, schema, AggregationInterval.RAW, DataQuality.Na, false);
 						}
 					}
@@ -428,7 +431,7 @@ public class ServerTsDB implements RemoteTsDB {
 						String[] schema = new String[] {sensorName};
 						if(tsdb.isValidSchemaWithVirtualSensors(plotID, schema)) {
 							schema = tsdb.supplementSchema(schema, getSensorNamesOfPlotWithVirtual(plotID));
-							Logger.info("status get: " + Arrays.toString(schema));
+							//Logger.info("status get: " + Arrays.toString(schema));
 							node = QueryPlan.plot(tsdb, plotID, schema, AggregationInterval.RAW, DataQuality.Na, false);
 						}
 					}
