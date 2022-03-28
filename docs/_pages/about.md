@@ -5,13 +5,13 @@ title: Imprint and Privacy
 # Imprint
 This website is brought to you by the [Environmental Informatics Lab](https://www.uni-marburg.de/de/fb19/disciplines/physisch/umweltinformatik) of [Marburg University, Germany](https://www.uni-marburg.de/de):
 
-Thomas Nauss<br>  
-Faculty of Geography, Environmental Informatics Lab<br>  
-Philipps-Universität Marburg<br>  
-Deutschhausstraße 12<br>  
-35032 Marburg, Germany<br>  
+Thomas Nauss<br>
+Faculty of Geography, Environmental Informatics Lab<br>
+Philipps-Universität Marburg<br>
+Deutschhausstraße 12<br>
+35032 Marburg, Germany<br>
 Tel.: +49 6421 28-25753<br>  
-E-Mail: umweltinformatik@uni-marburg.de<br>   
+E-Mail: umweltinformatik@uni-marburg.de<br>
 Website: https://www.uni-marburg.de/de/fb19/disciplines/physisch/umweltinformatik 
 
 # Privacy 
