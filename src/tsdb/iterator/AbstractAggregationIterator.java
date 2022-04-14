@@ -256,6 +256,7 @@ public abstract class AbstractAggregationIterator extends InputProcessingIterato
 				case SUM_SUNSHINE:
 				case SUM_OF_AVERAGE:
 				case SUM_SECOND_TO_HOUR:
+				case SUM_ALWAYS:
 					resultData[i] = aggSum[i];
 					validValueCounter++;
 					columnEntryCounter[i]++;

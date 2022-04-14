@@ -33,6 +33,8 @@ public class DayAggregationIterator extends AbstractAggregationIterator {
 			return 5<=collectorCount;
 		case LAST:
 			return 1<=collectorCount;
+		case SUM_ALWAYS:
+			return 1<=collectorCount;
 		default:
 			return 22<=collectorCount;
 		}						

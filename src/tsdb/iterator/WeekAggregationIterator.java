@@ -26,6 +26,8 @@ public class WeekAggregationIterator extends AbstractAggregationIterator {
 		switch(aggregationType) {
 		case LAST:
 			return 1<=collectorCount;
+		case SUM_ALWAYS:
+			return 1<=collectorCount;
 		default:
 			return 6<=collectorCount; 
 		}		

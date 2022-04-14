@@ -264,6 +264,7 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 					columnEntryCounter[i]++;
 					break;					
 				case SUM:
+				case SUM_ALWAYS:
 					resultData[i] = aggSum[i];
 					validValueCounter++;
 					columnEntryCounter[i]++;

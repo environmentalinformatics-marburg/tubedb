@@ -2606,5 +2606,11 @@ RG_300:
   physical_range: [0.0, 3000.0]
   step_range: [0.0, 1000.0]
   empirical_diff: 610.46
-  interpolation_mse: 10000 
+  interpolation_mse: 10000
+
+audio:
+  description: audio recording events 
+  unit: count
+  aggregation: sum_always
+  category: water  
   

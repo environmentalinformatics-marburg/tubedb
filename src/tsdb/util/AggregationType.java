@@ -21,7 +21,8 @@ public enum AggregationType {
 	SUM_SUNSHINE, // average of values, special base aggregation for sunshine (SD)
 	SUM_OF_AVERAGE, // sum of values, average for base aggregation
 	SUM_SECOND_TO_HOUR, // sum of values, unit second to hour conversion for base aggregation
-	LAST; // most recent value of aggregation interval
+	LAST, // most recent value of aggregation interval
+	SUM_ALWAYS; // sum of values, always aggregate as long as one value is present
 	
 	
 
@@ -51,8 +52,10 @@ public enum AggregationType {
 			return SUM_OF_AVERAGE;
 		case "sum_second_to_hour":
 			return SUM_SECOND_TO_HOUR;
-		case "last":
-			return LAST;				
+		case "last":			
+			return LAST;
+		case "sum_always":
+			return SUM_ALWAYS;			
 		default:
 			Logger.warn("unknown aggregation: "+aggregateTypeText);
 			return null;
@@ -88,6 +91,8 @@ public enum AggregationType {
 			return "sum_second_to_hour";
 		case LAST: 
 			return "last";
+		case SUM_ALWAYS:
+			return "sum_always";
 		default:
 			return "unknown";
 		}
