@@ -2,11 +2,12 @@
   <q-layout view="hHh LpR fFf">
 
     <q-header reveal elevated class="bg-grey-7 text-grey-4">
-      <pages-toolbar title="TubeDB Web App (beta)" active="/overview"/>
+      <pages-toolbar title="TubeDB Web App" active="/overview"/>
     </q-header>
 
     <q-page-container class="row justify-center">
       <q-page padding class="column justify-center">
+
         <q-card bordered class="overview-item">
           <q-card-section>
             <div class="text-h6">Metadata</div>
@@ -20,7 +21,7 @@
           </q-card-section>
         </q-card>
 
-        <q-card bordered>
+        <q-card bordered class="overview-item">
           <q-card-section>
             <div class="text-h6">Visualisations</div>
           </q-card-section>
@@ -32,6 +33,20 @@
             Interactive visualisations of time series data.
           </q-card-section>
         </q-card>
+
+        <q-card bordered class="overview-item">
+          <q-card-section>
+            <div class="text-h6">Monitoring</div>
+          </q-card-section>
+          <q-card-actions>
+            <q-btn outline to="/monitoring" label="View station and sensor status" />
+          </q-card-actions>          
+          <q-separator inset />
+          <q-card-section>
+            Monitoring operability of measuring stations and sensors.
+          </q-card-section>
+        </q-card>
+
       </q-page>
     </q-page-container>
 

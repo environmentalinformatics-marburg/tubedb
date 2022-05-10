@@ -140,18 +140,18 @@ import timeseriesSelector from 'components/timeseries-selector.vue';
 import timeseriesDiagram from 'components/timeseries-diagram.vue';
 
 function convertFloat32ArrayToArray(a) {
-  var r = [];
-  for(var i = 0; i < a.length; i++) {
-    var v = a[i];
+  let r = [];
+  for(let i = 0; i < a.length; i++) {
+    let v = a[i];
     r[i] = Number.isFinite(v) ? v : null;
   }
   return r;
 }
 
 function convertInt32ArrayToArray(a) {
-  var r = [];
-  for(var i = 0; i < a.length; i++) {
-    var t = a[i];
+  let r = [];
+  for(let i = 0; i < a.length; i++) {
+    let t = a[i];
     r[i] = (t - 36819360 - 60) * 60;
   }
   return r;
@@ -215,7 +215,7 @@ export default {
   },
   methods: {
     onChangeDrawerWidth(e) {
-      var delta = e.delta.x;
+      const delta = e.delta.x;
       this.drawerWidth += delta;
       if(this.drawerWidth < 30) {
         this.drawerWidth = 30;
@@ -233,15 +233,15 @@ export default {
           this.data = undefined;
           return;
         }
+        this.dataRequestSentCounter++;
+        let dataRequestCurrentCounter = this.dataRequestSentCounter;
         try {
-          this.dataRequestSentCounter++;
-          var dataRequestCurrentCounter = this.dataRequestSentCounter;
           this.dataRequestError = undefined;
           //console.time('apiPOST');
-          var reqConfig = {
+          let reqConfig = {
             responseType: 'arraybuffer',
           }
-          var settings = {
+          let settings = {
             timeAggregation: this.timeAggregation,
             quality: this.quality,            
           };
@@ -252,11 +252,11 @@ export default {
             settings.view_time_limit_start = this.$refs.timeseriesSelector.view_time_range_limit[0];
             settings.view_time_limit_end = this.$refs.timeseriesSelector.view_time_range_limit[1];
           }
-          var reqData = {
+          let reqData = {
             settings: settings,
             timeseries: this.plotSensorList,
           };
-          var response = await this.apiPOST(['tsdb', 'query_js'], reqData, reqConfig);
+          const response = await this.apiPOST(['tsdb', 'query_js'], reqData, reqConfig);
           if(dataRequestCurrentCounter < this.dataRequestSentCounter) {
             return;
           }
@@ -264,17 +264,17 @@ export default {
           //console.log(response);
           //console.timeEnd('apiPOST');
           //console.time('prepare');         
-          var arrayBuffer = response.data;
-          var dataView = new DataView(arrayBuffer);
-          var entryCount = dataView.getInt32(0, true);
-          var schemaCount = dataView.getInt32(4, true); 
+          let arrayBuffer = response.data;
+          let dataView = new DataView(arrayBuffer);
+          let entryCount = dataView.getInt32(0, true);
+          let schemaCount = dataView.getInt32(4, true); 
           console.log("entryCount: " + entryCount + "   schemaCount: " + schemaCount);
-          var data = [];
-          var timestamps = new Int32Array(arrayBuffer, 4 + 4, entryCount);
+          let data = [];
+          let timestamps = new Int32Array(arrayBuffer, 4 + 4, entryCount);
           //console.log(timestamps);
           data[0] = convertInt32ArrayToArray(timestamps);
-          for(var i = 0; i < schemaCount; i++) {
-            var values = new Float32Array(arrayBuffer, 4 + 4 + 4 * entryCount * (i + 1), entryCount); 
+          for(let i = 0; i < schemaCount; i++) {
+            let values = new Float32Array(arrayBuffer, 4 + 4 + 4 * entryCount * (i + 1), entryCount); 
             data[i + 1] = convertFloat32ArrayToArray(values);
           }
           //console.log(data);

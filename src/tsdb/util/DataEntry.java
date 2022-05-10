@@ -16,6 +16,8 @@ import org.mapdb.Serializer;
  *
  */
 public final class DataEntry implements Comparable<DataEntry>, Serializable {
+	
+	public static DataEntry NA = new DataEntry(0, Float.NaN);
 
 	public final int timestamp;
 	public final float value;

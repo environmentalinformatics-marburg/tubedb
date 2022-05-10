@@ -2,9 +2,9 @@
   <!--<div :class="levelClass" style="display: inline-block; text-align: center; vertical-align: middle;">-->
 <div :class="[formulaOpClass, levelClass]">
   <template v-if="node.op === 'add'">
-    <template v-for="(sub, index) in node.terms">
-      <div :class="{'formula-op-add-column': true, 'formula-op-add-column-follow': index > 0}" :key="JSON.stringify(sub)+0">{{index == 0 && sub.positive ? '' : sub.positive ? '+' : '-'}}</div> 
-      <div :key="JSON.stringify(sub)+1" class="formula-op-add-item">
+    <template v-for="(sub, index) in node.terms" :key="JSON.stringify(sub)">
+      <div :class="{'formula-op-add-column': true, 'formula-op-add-column-follow': index > 0}">{{index == 0 && sub.positive ? '' : sub.positive ? '+' : '-'}}</div> 
+      <div class="formula-op-add-item">
         <formula-print :node="sub.term" :level="node.depth <= 2 ? level : level + 1" /> 
       </div>
     </template>
@@ -40,9 +40,9 @@
     <formula-print :node="node.b" :level="node.depth === 1 ? level : level + 1"/>
   </template>
   <template v-else-if="node.op === 'mul'">
-    <template v-for="(factor, index) in node.factors">
+    <template v-for="(factor, index) in node.factors" :key="JSON.stringify(factor)">
       <div v-if="index > 0" :key="JSON.stringify(factor)+index">&middot;</div>
-      <formula-print :node="factor" :level="node.depth === 1 ? level : level + 1" :key="JSON.stringify(factor)"/> 
+      <formula-print :node="factor" :level="node.depth === 1 ? level : level + 1"/> 
     </template>
   </template> 
   <template v-else-if="node.op === 'pow'">
@@ -51,9 +51,9 @@
     <formula-print :node="node.b" :level="node.depth === 1 || node.depth === 0 ? level : level + 1" class="formula-op-pow-exp"/> 
   </template>
   <template v-else-if="node.pred_op === 'and'">
-    <template v-for="(pred, index) in node.preds">
-      <div class="formula-op-and-column" :key="JSON.stringify(pred)+index">{{index == 0 ? '' : 'AND'}}</div>
-      <formula-print :node="pred" :level="node.depth <= 2 ? level : level + 1" :key="JSON.stringify(pred)"/> 
+    <template v-for="(pred, index) in node.preds" :key="JSON.stringify(pred)+index">
+      <div class="formula-op-and-column">{{index == 0 ? '' : 'AND'}}</div>
+      <formula-print :node="pred" :level="node.depth <= 2 ? level : level + 1"/> 
     </template>
   </template>
   <template v-else-if="node.op === 'func'">
@@ -62,9 +62,9 @@
     <div>)</div>
   </template>
   <template v-else-if="node.pred_op === 'or'">
-    <template v-for="(pred, index) in node.preds">
+    <template v-for="(pred, index) in node.preds" :key="JSON.stringify(pred)">
       <div v-if="index > 0" :key="JSON.stringify(pred)+index">OR</div>
-      <formula-print :node="pred" :level="node.depth === 1 ? level : level + 1" :key="JSON.stringify(pred)"/> 
+      <formula-print :node="pred" :level="node.depth === 1 ? level : level + 1"/> 
     </template>
   </template>
   <template v-else-if="node.pred_op === 'const'">

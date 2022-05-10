@@ -140,6 +140,11 @@ public final class TimeUtil implements Serializable {
 		LocalDateTime dt = LocalDateTime.parse(datetimeminutes, DATE_TIME_FORMATER_SPACE);
 		return TimeUtil.dateTimeToOleMinutes(dt);
 	}
+	
+	public static String toDateSpaceTime(int t) {
+		LocalDateTime datetime = oleMinutesToLocalDateTime(t);
+		return DATE_TIME_FORMATER_SPACE.format(datetime);
+	}
 
 	/**
 	 * example: 05.21.16 10:10:00 AM 

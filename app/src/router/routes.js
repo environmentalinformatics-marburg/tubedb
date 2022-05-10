@@ -21,14 +21,19 @@ const routes = [
   },
 
   {
-    path: '/',
+    path: '/monitoring',
+    component: () => import('layouts/MonitoringLayout.vue'),
+  },  
+
+  {
+    path: '',
     redirect: '/overview',
   },
 
   {
-    path: '*',
+    path: '/:catchAll(.*)*',
     component: () => import('pages/Error404.vue')
-  },
+  }
 ]
 
 export default routes

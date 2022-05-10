@@ -25,6 +25,7 @@ export default {
         {title: 'Overview', link: '/overview'},
         {title: 'Metadata', link: '/model'},
         {title: 'Diagrams', link: '/diagram'},
+        {title: 'Monitoring', link: '/monitoring'},
       ],
     }
   },  

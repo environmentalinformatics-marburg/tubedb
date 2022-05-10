@@ -276,8 +276,8 @@ export default {
       }
       let result = Object.values(this.model.projects);
       result.sort((a, b) => {
-        var nameA = a.title.toLowerCase();
-        var nameB = b.title.toLowerCase();
+        const nameA = a.title.toLowerCase();
+        const nameB = b.title.toLowerCase();
         if (nameA < nameB) {
           return -1;
         }
@@ -292,14 +292,14 @@ export default {
       if(this.model === undefined || this.selectedProjects.length === 0) {
         return [];
       }
-      var result = [];
+      let result = [];
       for (let project of this.selectedProjects) {
         let g = project.groups.map(group => this.model.groups[group]);
         result = result.concat(g);
       }
       result.sort((a, b) => {
-        var nameA = a.title.toLowerCase();
-        var nameB = b.title.toLowerCase();
+        const nameA = a.title.toLowerCase();
+        const nameB = b.title.toLowerCase();
         if (nameA < nameB) {
           return -1;
         }
@@ -314,7 +314,7 @@ export default {
       if(this.model === undefined || this.selectedGroups.length === 0) {
         return [];
       }
-      var plotNameSet = new Set();
+      let plotNameSet = new Set();
       for (let group of this.selectedGroups) {
         for(let plotName of group.plots) {
           plotNameSet.add(plotName);
@@ -322,8 +322,8 @@ export default {
       }
       let result = [...plotNameSet];
       result.sort((a, b) => {
-        var nameA = a.toLowerCase();
-        var nameB = b.toLowerCase();
+        const nameA = a.toLowerCase();
+        const nameB = b.toLowerCase();
         if (nameA < nameB) {
           return -1;
         }
@@ -344,7 +344,7 @@ export default {
       if(this.model === undefined || this.selectedPlotstations === undefined || this.selectedPlotstations.length === 0) {
         return [];
       }
-      var sensorNames = new Set();
+      let sensorNames = new Set();
       for (let plotstation of this.selectedPlotstations) {
         for(let sensorName of plotstation.sensorSet) {
           sensorNames.add(sensorName);
@@ -352,8 +352,8 @@ export default {
       }
       let result = [...sensorNames].map(sensorName => this.model.sensors[sensorName]);
       result.sort((a, b) => {
-        var nameA = a.id.toLowerCase();
-        var nameB = b.id.toLowerCase();
+        const nameA = a.id.toLowerCase();
+        const nameB = b.id.toLowerCase();
         if (nameA < nameB) {
           return -1;
         }

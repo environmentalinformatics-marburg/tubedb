@@ -13,6 +13,7 @@ import tsdb.util.AggregationInterval;
 import tsdb.util.DataEntry;
 import tsdb.util.DataQuality;
 import tsdb.util.DataRow;
+import tsdb.util.Measurement;
 import tsdb.util.Pair;
 import tsdb.util.TimeSeriesMask;
 import tsdb.util.TimestampInterval;
@@ -96,9 +97,14 @@ public interface RemoteTsDB extends Remote {
 	//time series mask
 	TimeSeriesMask getTimeSeriesMask(String stationName, String sensorName) throws RemoteException;
 	void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask) throws RemoteException;
+	
+	// status
 	ArrayList<PlotStatus> getPlotStatuses() throws RemoteException;
 	ArrayList<PlotStatus> getPlotStatusesOfGeneralStation(String generalStationName) throws RemoteException;
 	ArrayList<PlotStatus> getPlotStatusesOfRegion(String regionName) throws RemoteException;
+	
+	//monitoring
+	ArrayList<Measurement> getMonitoring(String[] plotIDs, String[] sensorNames) throws RemoteException;
 	
 	//info
 	String get_tubedb_version() throws RemoteException;

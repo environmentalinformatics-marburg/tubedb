@@ -68,7 +68,7 @@ export default {
     async refresh ({ commit, rootGetters }) {
       commit('setLoading')
       try {
-        var response = await rootGetters.apiGET(['tsdb', 'model']);
+        const response = await rootGetters.apiGET(['tsdb', 'model']);
         commit('setData', response.data.model);
       } catch {
         commit('setError', 'error');

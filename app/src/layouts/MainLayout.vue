@@ -69,7 +69,7 @@ export default {
   },
   methods: {
     onChangeDrawerWidth(e) {
-      var delta = e.delta.x;
+      const delta = e.delta.x;
       this.drawerWidth += delta;
       if(this.drawerWidth < 30) {
         this.drawerWidth = 30;

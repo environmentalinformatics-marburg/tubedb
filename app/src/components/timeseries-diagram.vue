@@ -316,9 +316,9 @@ export default {
   methods: {    
     onChangeDiagramDimensions() {
       if(this.uplot !== undefined && this.$refs.diagram !== undefined) {
-        var width = this.$refs.diagram.clientWidth;
-        //var height = this.$refs.diagram.clientHeight;
-        var height = 400;
+        const width = this.$refs.diagram.clientWidth;
+        //const height = this.$refs.diagram.clientHeight;
+        const height = 400;
         this.uplot.setSize({ width: width, height: height });
       }
     },
@@ -331,9 +331,9 @@ export default {
         return;   
       }
 
-      var width = this.$refs.diagram.clientWidth;
-      //var height = this.$refs.diagram.clientHeight;
-      var height = 400;
+      const width = this.$refs.diagram.clientWidth;
+      //const height = this.$refs.diagram.clientHeight;
+      const height = 400;
 
       //console.log(width + " x "  + height);
 
