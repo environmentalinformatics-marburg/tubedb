@@ -1,6 +1,7 @@
 package tsdb.web.api;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import org.eclipse.jetty.server.Request;
@@ -59,12 +60,14 @@ public class Handler_monitoring extends MethodHandler {
 			json.key("value");
 			json.array();
 			for(DataEntry e:r.values) {
-				json.value(e.value);
+				json.value(Float.isFinite(e.value) ? e.value : -99999);
 			}
 			json.endArray();
 			json.endObject();
 		}
 		json.endArray();
+		json.key("timestamp");
+		json.value(TimeUtil.dateTimeToOleMinutes(LocalDateTime.now()));
 		json.endObject();
 	}
 }
