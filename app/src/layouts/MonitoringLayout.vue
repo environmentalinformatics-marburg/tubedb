@@ -17,6 +17,7 @@
             options-dense
             dense
             style="width: 250px"
+            title="Choose one predefined monitoring set containing plots, sensors and monitoring settings."
           />          
           <q-select 
             outlined 
@@ -29,8 +30,8 @@
             options-dense
             dense
             style="width: 250px"
+            title="Leave empty to select all plots."
           />
-
           <q-select 
             outlined 
             label="Select monitored sensors"
@@ -43,9 +44,11 @@
             options-dense
             dense
             style="width: 250px"
+            title="Leave empty to select all sensors."
           />
         </q-toolbar>
         <q-btn @click="refresh" :loading="dataLoading" icon="refresh">refresh</q-btn>
+        
         <q-table         
           dense
           :columns="columns"
@@ -57,17 +60,11 @@
           :sort-method="customSort"    
           binary-state-sort            
         >
-              <template v-slot:body="props">
+        <template v-slot:body="props">
         <q-tr :props="props">
-          <q-td key="plot" :props="props">
+          <q-td key="plot" :props="props" :class="plotClass(props.row)">
             <b>{{props.row.plot}}</b>
           </q-td>
-          <!--<q-td key="UB.datetime" :props="props">
-            {{props.row['UB.datetime']}}
-          </q-td>
-          <q-td key="UB" :props="props">
-            {{props.row.UB.toFixed(2)}}
-          </q-td>-->
 
           <q-td :props="props" v-for="sensorColumn in sensorColumns" :key="sensorColumn.sensor" :class="cellClass(sensorColumn, props.row)" :title="props.row.plot + ' ' + sensorColumn.sensor">
             <span v-if="sensorColumn.number">
@@ -76,21 +73,9 @@
             <i v-else>
               {{props.row[sensorColumn.sensorTimestamp] === 0 ? '' : props.row[sensorColumn.sensor]}}
             </i>
-          </q-td>
-
-          <!--<template v-for="sensor in monitoring_meta.sensors" :key="sensor">
-            
-            <q-td :props="props">
-              {{sensor}}
-              Ready
-            </q-td>
-            <q-td :props="props">
-              {{props.row[sensor]}}
-            </q-td>
-          </template>-->
-          
+          </q-td>          
         </q-tr>
-      </template>
+        </template>
         </q-table>
       <div v-if="data === undefined" style="color: red;">
         Click refresh button to load data!
@@ -182,7 +167,7 @@ export default {
           {sensor: 'Ts_50', ok: [-20, 35], warn: [-40, 40]}, 
           {sensor: 'SM_10', ok: [1, 65], warn: [0, 70]}, 
           {sensor: 'SM_20', ok: [1, 65], warn: [0, 70]},
-          {sensor: 'SM_30', ok: [1, 65], warn: [0, 70]},
+          /*{sensor: 'SM_30', ok: [1, 65], warn: [0, 70]},*/
           {sensor: 'rH_200', ok: [15, 100], warn: [0, 100]},
           {sensor: 'LWDR_300', ok: [0, 1000], warn: [0, 1500]},
           {sensor: 'LWUR_300', ok: [0, 1000], warn: [0, 1500]},
@@ -211,7 +196,7 @@ export default {
           const sensor = this.monitoring_meta.sensors.find(sensor => sensor.sensor === sensorName);
           //});
           //this.monitoring_meta.sensors.forEach(sensor => {
-          console.log(sensor);
+          //console.log(sensor);
           const timename = sensor.sensor + '.datetime';
           result.push({
             name: timename,
@@ -243,13 +228,28 @@ export default {
     },
     sensorColumns() {
       let result = [];
-      if(this.monitoring_meta !== undefined) {
-        this.monitoring_meta.sensors.forEach(sensor => {
+      if(this.monitoring_meta !== undefined && this.data !== undefined) {
+        const sensorNames = this.data.sensors;
+        const sensors = this.monitoring_meta.sensors;
+        sensorNames.forEach(sensorName => {
+          const sensor = sensors.find(sensor => sensor.sensor === sensorName);
+          if(sensor) {
+            const timename = sensor.sensor + '.datetime';
+            const timestampName = sensor.sensor + '.timestamp';
+            result.push({sensor: timename, datetime: true, number: false, sensorTimestamp: timestampName});
+            result.push({sensor: sensor.sensor, datetime: false, number: true, ok: sensor.ok, warn: sensor.warn, sensorTimestamp: timestampName});
+          } else {
+            console.log("sensor not found " + sensorName);
+          }
+        });
+
+
+        /*this.monitoring_meta.sensors.forEach(sensor => {
           const timename = sensor.sensor + '.datetime';
           const timestampName = sensor.sensor + '.timestamp';
           result.push({sensor: timename, datetime: true, number: false, sensorTimestamp: timestampName});
           result.push({sensor: sensor.sensor, datetime: false, number: true, ok: sensor.ok, warn: sensor.warn, sensorTimestamp: timestampName});
-        });
+        });*/
       }
       return result;
     }, 
@@ -312,8 +312,8 @@ export default {
       const delta = this.timestampNow - sensorTimestamp;
       const deltaWarn = delta > 100000 || delta < -24 * 60;
       const deltaError = delta > 200000 || delta < -2 * 24 * 60;
-      console.log(sensorColumn.sensorTimestamp);
-      console.log(delta);      
+      //console.log(sensorColumn.sensorTimestamp);
+      //console.log(delta);      
       if(sensorColumn.number) {
         if(sensorValue === -99999) { // missing
           return '';
@@ -347,6 +347,64 @@ export default {
       } else {
         return '';
       }
+    },
+    plotClass(row) {
+      let c = 'sensor-ok';
+      this.sensorColumns.forEach(sensorColumn => {
+        const sensorValue = row[sensorColumn.sensor];
+        const sensorTimestamp = row[sensorColumn.sensorTimestamp];
+        const delta = this.timestampNow - sensorTimestamp;
+        const deltaWarn = delta > 100000 || delta < -24 * 60;
+        const deltaError = delta > 200000 || delta < -2 * 24 * 60;
+        if(sensorColumn.number) {
+          if(sensorValue === -99999) { // missing
+            // nothing
+          } else if(sensorColumn.ok) {
+            if(sensorColumn.ok[0] <= sensorValue && sensorValue <= sensorColumn.ok[1]) {
+              // nothing
+            } else if(sensorColumn.warn && sensorColumn.warn[0] <= sensorValue && sensorValue <= sensorColumn.warn[1]) {
+              if(c === 'sensor-ok') {
+                //console.log("set sensor-warn  " + sensorColumn.sensor);
+                c = 'sensor-warn';
+              }
+            } else {
+              //console.log("set sensor-error  " + sensorColumn.sensor);
+              c = 'sensor-error';
+            }
+          } else if(sensorColumn.warn) {
+            if(sensorColumn.warn[0] <= sensorValue && sensorValue <= sensorColumn.warn[1]) {
+              if(c === 'sensor-ok') {
+                //console.log("set sensor-warn  " + sensorColumn.sensor);
+                c = 'sensor-warn';
+              }
+            } else {
+              //console.log("set sensor-error  " + sensorColumn.sensor);
+              c = 'sensor-error';
+            }
+          } else {
+            // nothing
+          }
+        } else if(sensorColumn.datetime) {
+          if(sensorTimestamp === 0) { // missing
+            // nothing
+          } else if(deltaWarn) {
+            if(deltaError) {
+              //console.log("set sensor-error  " + sensorColumn.sensor + "  " + sensorTimestamp);
+              c = 'sensor-error';
+            } else {
+              if(c === 'sensor-ok') {
+                //console.log("set sensor-warn  " + sensorColumn.sensor + "  " + sensorTimestamp);
+                c = 'sensor-warn';
+              }
+            }
+          } else {
+            // nothing
+          }
+        } else {
+          // nothing
+        }                
+      });
+      return c;
     },
     customSort(rows, sortBy, descending) {
       const data = [...rows];
@@ -441,6 +499,12 @@ export default {
 
 .time-error {
   color: #ec0f0f85;
+}
+
+
+th:first-child, td:first-child {
+  position: sticky;
+  left: 0;
 }
 
 </style>

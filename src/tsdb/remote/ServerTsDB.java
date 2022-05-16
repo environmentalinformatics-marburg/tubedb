@@ -2,7 +2,6 @@ package tsdb.remote;
 
 import static tsdb.util.AssumptionCheck.throwNull;
 
-import java.lang.annotation.Annotation;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +9,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import org.tinylog.Logger;
@@ -41,7 +39,6 @@ import tsdb.util.DataRow;
 import tsdb.util.Measurement;
 import tsdb.util.Pair;
 import tsdb.util.TimeSeriesMask;
-import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.TimestampSeries;
