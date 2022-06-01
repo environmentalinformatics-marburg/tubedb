@@ -1,11 +1,10 @@
 package tsdb.graph.processing;
 
-import static tsdb.util.AssumptionCheck.throwNulls;
+import static tsdb.util.AssumptionCheck.throwNull;
 
-import tsdb.Station;
 import tsdb.TsDB;
-import tsdb.VirtualPlot;
 import tsdb.graph.node.Node;
+import tsdb.graph.source.DelegateNode;
 import tsdb.util.Mutator;
 import tsdb.util.iterator.MutatorIterator;
 import tsdb.util.iterator.TsIterator;
@@ -15,15 +14,13 @@ import tsdb.util.iterator.TsIterator;
  * @author woellauer
  *
  */
-public class MutatorNode extends Node.Abstract {
+public class MutatorNode extends DelegateNode {
 	
-	private final Node source;
 	private final Mutator mutator;
 
 	protected MutatorNode(TsDB tsdb, Node source, Mutator mutator) {
-		super(tsdb);
-		throwNulls(source, mutator);
-		this.source = source;
+		super(tsdb, source);
+		throwNull(mutator);
 		this.mutator = mutator;
 	}
 	
@@ -45,35 +42,5 @@ public class MutatorNode extends Node.Abstract {
 			return null;
 		}		
 		return mi;
-	}
-
-	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
-	@Override
-	public String[] getSchema() {
-		return source.getSchema();
-	}
-	
-	@Override
-	public boolean isContinuous() {
-		return source.isContinuous();
-	}
-
-	@Override
-	public boolean isConstantTimestep() {
-		return source.isConstantTimestep();
-	}
-	
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-	
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
+	}	
 }

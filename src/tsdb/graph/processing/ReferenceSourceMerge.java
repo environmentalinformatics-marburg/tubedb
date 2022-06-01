@@ -4,13 +4,11 @@ import static tsdb.util.AssumptionCheck.throwNulls;
 
 import java.util.Arrays;
 
-
 import org.tinylog.Logger;
 
-import tsdb.Station;
 import tsdb.TsDB;
-import tsdb.VirtualPlot;
 import tsdb.graph.node.Continuous;
+import tsdb.graph.source.DelegateContinuousAbstract;
 import tsdb.graph.source.GroupAverageSource_NEW;
 import tsdb.iterator.MergeIterator;
 import tsdb.util.BaseAggregationTimeUtil;
@@ -21,21 +19,16 @@ import tsdb.util.TsSchema.Aggregation;
 import tsdb.util.iterator.InputIterator;
 import tsdb.util.iterator.TsIterator;
 
-public class ReferenceSourceMerge extends Continuous.Abstract {
+public class ReferenceSourceMerge extends DelegateContinuousAbstract {	
 
-	
-
-	private final Continuous source; //not null
 	private final Continuous refSource; //not null	
 	private final String plotID; //not null
 	private final String[] refRenameSchema;
 	private final String[] targetSchema;
 
-
 	public ReferenceSourceMerge(TsDB tsdb, Continuous source, Continuous refSource, String plotID, String[] refRenameSchema, String[] targetSchema) {
-		super(tsdb);
-		throwNulls(source,refSource, plotID);
-		this.source = source;
+		super(tsdb, source);
+		throwNulls(refSource, plotID);
 		this.refSource = refSource;
 		this.plotID = plotID;
 		this.refRenameSchema = refRenameSchema;
@@ -78,47 +71,17 @@ public class ReferenceSourceMerge extends Continuous.Abstract {
 			Logger.info("no reference source iterator " + plotID + "  r " + Arrays.toString(refRenameSchema) + "  t " + Arrays.toString(targetSchema));
 			return input_iterator;
 		}
-		Logger.info("reeeeeeeeef:"+ref_iterator.toString());
+		Logger.info("ref: " + ref_iterator.toString());
 		ref_iterator = new RenameQfIterator(ref_iterator, refRenameSchema);
 		
 		
 		return new MergeIterator(targetSchema, new TsIterator[] {input_iterator, ref_iterator}, plotID);
 	}
-
-	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
+	
 	@Override
 	public String[] getSchema() {
 		return targetSchema;
-	}
-
-	@Override
-	public TsIterator getExactly(long start, long end) {
-		return get(start,end);
-	}
-
-	@Override
-	public boolean isContinuous() {
-		return source.isContinuous();
-	}
-
-	@Override
-	public boolean isConstantTimestep() {
-		return source.isContinuous();
-	}
-	
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-	
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
+	}	
 	
 	private static class RenameQfIterator extends InputIterator {
 		private final int len;

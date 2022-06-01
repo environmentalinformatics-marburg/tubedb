@@ -1,16 +1,10 @@
 package tsdb.graph.processing;
 
-import static tsdb.util.AssumptionCheck.throwNull;
-
 import java.util.Arrays;
 
-
-import org.tinylog.Logger;
-
-import tsdb.Station;
 import tsdb.TsDB;
-import tsdb.VirtualPlot;
 import tsdb.graph.node.Node;
+import tsdb.graph.source.DelegateNode;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataQuality;
 import tsdb.util.TsEntry;
@@ -22,19 +16,16 @@ import tsdb.util.iterator.TsIterator;
  * @author woellauer
  *
  */
-public class Evaporation extends Node.Abstract{
+public class Evaporation extends DelegateNode {
 
 	public static final String SOURCE_SENSOR_NAME = "P_container_NRT";
 	public static final String SENSOR_NAME = "evaporation";
 
-	private final Node source;
 	private final double latitude_DEG;
 	private final double longitude_DEG;
-
-	protected Evaporation(TsDB tsdb,Node source) {
-		super(tsdb);
-		throwNull(source);
-		this.source = source;
+	
+	protected Evaporation(TsDB tsdb, Node source) {
+		super(tsdb, source);
 		double[] latlon = source.getSourcePlot().getLatLon();
 		System.out.println(Arrays.toString(latlon));
 		this.latitude_DEG = latlon[0];
@@ -52,41 +43,10 @@ public class Evaporation extends Node.Abstract{
 			return null;
 		}			
 		return new EvaporationIterator(input_iterator, latitude_DEG, longitude_DEG);
-	}
-
-	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
-	@Override
-	public boolean isContinuous() {
-		return source.isContinuous();
-	}
-
-	@Override
-	public boolean isConstantTimestep() {
-		return source.isConstantTimestep();
-	}
-
-	@Override
-	public String[] getSchema() {
-		return source.getSchema();
-	}
-
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
+	}	
 }
 
-class EvaporationIterator extends InputIterator {
-	
+class EvaporationIterator extends InputIterator {	
 
 	private int sensor_pos = -1;
 	private int prevTimestamp = -1;
@@ -127,5 +87,4 @@ class EvaporationIterator extends InputIterator {
 		prevTimestamp = timestamp;
 		return 120<deltaT || result<0f || result>2f ? Float.NaN : result;
 	}
-
 }

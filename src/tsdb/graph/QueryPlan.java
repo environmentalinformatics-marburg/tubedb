@@ -1,6 +1,7 @@
 package tsdb.graph;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -103,7 +104,7 @@ public final class QueryPlan {
 	 * @return
 	 */
 	public static Node plot(TsDB tsdb, String plotID, String[] schema, AggregationInterval aggregationInterval, DataQuality dataQuality, boolean interpolated) {
-		//Logger.info("schema "+Arrays.toString(schema));
+		//Logger.info("schema " + Arrays.toString(schema));
 		if(plotID.indexOf(':') < 0) { //plotID
 			if(aggregationInterval != AggregationInterval.RAW) { //plotID aggregated
 				return plotWithoutSubStation(tsdb, plotID, schema, aggregationInterval, dataQuality, interpolated);

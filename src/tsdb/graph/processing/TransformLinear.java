@@ -1,27 +1,24 @@
 package tsdb.graph.processing;
 
-import static tsdb.util.AssumptionCheck.throwNull;
-import tsdb.Station;
-import tsdb.VirtualPlot;
 import tsdb.graph.node.Continuous;
+import tsdb.graph.source.DelegateContinuous;
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.InputProcessingIterator;
 import tsdb.util.iterator.TsIterator;
 
-public class TransformLinear implements Continuous {
-	
-	private Continuous source;
+
+public class TransformLinear extends DelegateContinuous {
+
 	private final float a;
 	private final float b;
 
-	protected TransformLinear(Continuous source,float a,float b) {
-		throwNull(source);
-		this.source = source;
+	protected TransformLinear(Continuous source, float a, float b) {
+		super(source);
 		this.a = a;
 		this.b = b;
 	}
-	
-	public static TransformLinear of(Continuous source,float a,float b) {
+
+	public static TransformLinear of(Continuous source, float a, float b) {
 		return new TransformLinear(source, a, b);
 	}
 
@@ -49,42 +46,11 @@ public class TransformLinear implements Continuous {
 				}
 				return new TsEntry(element.timestamp, data);
 			}
-			
+
 		};		
 		if(it==null||!it.hasNext()) {
 			return null;
 		}
 		return it;
 	}
-
-	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
-	@Override
-	public boolean isContinuous() {
-		return source.isContinuous();
-	}
-
-	@Override
-	public boolean isConstantTimestep() {
-		return source.isConstantTimestep();
-	}
-
-	@Override
-	public String[] getSchema() {
-		return source.getSchema();
-	}
-	
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-	
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
-
 }

@@ -93,7 +93,12 @@ public class VirtualRawSource extends RawSource.Abstract {
 	}
 	
 	@Override
-	public long[] getTimestampInterval() {
-		return virtualPlot.getTimestampInterval();
+	public long[] getTimeInterval() {
+		return virtualPlot.getTimeInterval();
+	}
+	
+	@Override
+	public int[] getSensorTimeInterval(String sensorName) {
+		return virtualPlot.getSensorTimeInterval(sensorName);
 	}
 }

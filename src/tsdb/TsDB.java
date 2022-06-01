@@ -3,6 +3,7 @@ package tsdb;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -32,7 +33,7 @@ import tsdb.util.Util;
  */
 public class TsDB implements AutoCloseable {
 	
-	public static final String tubedb_version = "1.22.2";
+	public static final String tubedb_version = "1.22.3";
 
 	/**
 	 * map regionName -> Region
@@ -329,7 +330,7 @@ public class TsDB implements AutoCloseable {
 	public long[] getTimeInterval(String stationName) {
 		VirtualPlot virtualPlot = getVirtualPlot(stationName);
 		if(virtualPlot!=null) {
-			return virtualPlot.getTimestampInterval();
+			return virtualPlot.getTimeInterval();
 		}
 		return streamStorage.getStationTimeInterval(stationName);
 	}
@@ -451,6 +452,27 @@ public class TsDB implements AutoCloseable {
 
 	public Collection<Sensor> getSensors() {
 		return sensorMap.values();
+	}
+	
+	public HashSet<String> getSensorDependencySources(String sensorName) {
+		HashSet<String> collector = new HashSet<String>();
+		HashSet<String> visitied = new HashSet<String>();
+		getSensorDependencySources(sensorName, collector, visitied);
+		return collector;
+	}
+	
+	public void getSensorDependencySources(String sensorName, Set<String> collector, Set<String> visited) {
+		visited.add(sensorName);
+		Sensor sensor = sensorMap.get(sensorName);
+		if(sensor == null || sensor.dependency == null) {
+			collector.add(sensorName);
+		} else {
+			for(String dependency:sensor.dependency) {
+				if(!visited.contains(dependency)) {
+					getSensorDependencySources(dependency, collector, visited);
+				}
+			}
+		}
 	}
 
 	//*********************************************** end Sensor **********************************************************

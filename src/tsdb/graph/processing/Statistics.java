@@ -1,14 +1,10 @@
 package tsdb.graph.processing;
 
 
-import org.tinylog.Logger;
-
 import tsdb.graph.node.Node;
 import tsdb.util.iterator.TsIterator;
 
 public class Statistics {
-	@SuppressWarnings("unused")
-	
 	
 	public static class StatisticsData {
 		public final long columns;

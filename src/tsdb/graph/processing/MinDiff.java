@@ -16,8 +16,7 @@ import tsdb.iterator.MinDiffIterator;
 import tsdb.util.Util;
 import tsdb.util.iterator.TsIterator;
 
-public class MinDiff implements Continuous {
-	
+public class MinDiff implements Continuous {	
 	
 	private final Continuous target;
 	private final List<Continuous> sources; //not null
@@ -85,9 +84,9 @@ public class MinDiff implements Continuous {
 	}
 	
 	@Override
-	public long[] getTimestampInterval() {//maximum interval
+	public long[] getTimeInterval() {//maximum interval
 		long[] interval = new long[]{Long.MAX_VALUE,Long.MIN_VALUE};
-		sources.stream().map(s->s.getTimestampInterval()).filter(Util::notNull).forEach(i->{
+		sources.stream().map(s->s.getTimeInterval()).filter(Util::notNull).forEach(i->{
 			if(i[0]<interval[0]) {
 				interval[0] = i[0];
 			}
@@ -100,5 +99,21 @@ public class MinDiff implements Continuous {
 		}
 		return interval;
 	}
-
+	
+	@Override
+	public int[] getSensorTimeInterval(String sensorName) { // maximum interval
+		int[] interval = new int[]{Integer.MAX_VALUE, Integer.MIN_VALUE};
+		sources.stream().map(s -> s.getSensorTimeInterval(sensorName)).filter(i -> i != null).forEach(i -> {
+			if(i[0] < interval[0]) {
+				interval[0] = i[0];
+			}
+			if(i[1] > interval[1]) {
+				interval[1] = i[1];
+			}
+		});		
+		if(interval[0] == Integer.MAX_VALUE || interval[1] == Integer.MIN_VALUE) {
+			return null;
+		}
+		return interval;
+	}
 }

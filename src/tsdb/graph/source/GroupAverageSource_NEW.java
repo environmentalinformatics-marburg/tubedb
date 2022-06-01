@@ -113,14 +113,17 @@ public class GroupAverageSource_NEW extends Continuous.Abstract {
 	}
 	
 	@Override
-	public long[] getTimestampInterval() {
-		return tsdb.streamCache.getStationTimeInterval(group);
-	}
-
-	@Override
 	public String getSourceName() {
 		return group;
 	}
 	
-	
+	@Override
+	public long[] getTimeInterval() {
+		return tsdb.streamCache.getStationTimeInterval(group);
+	}
+
+	@Override
+	public int[] getSensorTimeInterval(String sensorName) {
+		return tsdb.streamCache.getSensorTimeInterval(group, sensorName);
+	}	
 }

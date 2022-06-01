@@ -66,7 +66,12 @@ public class StationRawSource extends RawSource.Abstract {
 	}
 	
 	@Override
-	public long[] getTimestampInterval() {
+	public long[] getTimeInterval() {
 		return tsdb.getTimeInterval(station.stationID);
+	}
+
+	@Override
+	public int[] getSensorTimeInterval(String sensorName) {
+		return tsdb.streamStorage.getSensorTimeInterval(station.stationID, sensorName);		
 	}
 }

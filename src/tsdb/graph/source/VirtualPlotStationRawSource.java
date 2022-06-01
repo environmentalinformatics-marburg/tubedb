@@ -5,9 +5,6 @@ import static tsdb.util.AssumptionCheck.throwNulls;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import org.tinylog.Logger;
-
 import tsdb.Station;
 import tsdb.StationProperties;
 import tsdb.TsDB;
@@ -113,7 +110,12 @@ public class VirtualPlotStationRawSource extends RawSource.Abstract {
 	}
 	
 	@Override
-	public long[] getTimestampInterval() {
-		return virtualPlot.getTimestampInterval();
+	public long[] getTimeInterval() {
+		return virtualPlot.getTimeInterval();
+	}
+
+	@Override
+	public int[] getSensorTimeInterval(String sensorName) {
+		return virtualPlot.getSensorTimeInterval(sensorName);
 	}
 }

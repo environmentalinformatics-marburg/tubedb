@@ -23,8 +23,7 @@ import tsdb.util.iterator.TsIterator;
  * @author woellauer
  *
  */
-public class Averaged extends Continuous.Abstract {
-	
+public class Averaged extends Continuous.Abstract {	
 
 	private final List<Continuous> sources; //not null
 	private final String[] schema; //not null
@@ -127,28 +126,44 @@ public class Averaged extends Continuous.Abstract {
 	}
 	
 	@Override
-	public long[] getTimestampInterval() {//maximum interval
+	public long[] getTimeInterval() { // maximum interval
 		long[] interval = new long[]{Long.MAX_VALUE,Long.MIN_VALUE};
-		sources.stream().map(s->s.getTimestampInterval()).forEach(i->{
-			if(i[0]<interval[0]) {
+		sources.stream().map(s -> s.getTimeInterval()).forEach(i -> {
+			if(i[0] < interval[0]) {
 				interval[0] = i[0];
 			}
-			if(i[1]>interval[1]) {
+			if(i[1] > interval[1]) {
 				interval[1] = i[1];
 			}
 		});		
-		if(interval[0]==Long.MAX_VALUE || interval[1]==Long.MIN_VALUE) {
+		if(interval[0] == Long.MAX_VALUE || interval[1] == Long.MIN_VALUE) {
+			return null;
+		}
+		return interval;
+	}
+	
+	@Override
+	public int[] getSensorTimeInterval(String sensorName) { // maximum interval
+		int[] interval = new int[]{Integer.MAX_VALUE, Integer.MIN_VALUE};
+		sources.stream().map(s -> s.getSensorTimeInterval(sensorName)).filter(i -> i != null).forEach(i -> {
+			if(i[0] < interval[0]) {
+				interval[0] = i[0];
+			}
+			if(i[1] > interval[1]) {
+				interval[1] = i[1];
+			}
+		});		
+		if(interval[0] == Integer.MAX_VALUE || interval[1] == Integer.MIN_VALUE) {
 			return null;
 		}
 		return interval;
 	}
 	
 	public String getSourceText() {
-		String s="";
-		for(Continuous source:sources) {
-			s+=source.getSourceName()+" ";
+		String s = "";
+		for(Continuous source : sources) {
+			s+=source.getSourceName() + " ";
 		}
 		return s;
 	}
-
 }

@@ -2,13 +2,11 @@ package tsdb.graph.processing;
 
 import static tsdb.util.AssumptionCheck.throwNulls;
 
-
 import org.tinylog.Logger;
 
-import tsdb.Station;
 import tsdb.TsDB;
-import tsdb.VirtualPlot;
 import tsdb.graph.node.Continuous;
+import tsdb.graph.source.DelegateContinuousAbstract;
 import tsdb.graph.source.GroupAverageSource_NEW;
 import tsdb.iterator.EmpiricalIterator;
 import tsdb.util.iterator.TsIterator;
@@ -18,25 +16,17 @@ import tsdb.util.iterator.TsIterator;
  * @author woellauer
  *
  */
-public class EmpiricalFiltered_NEW extends Continuous.Abstract {
+public class EmpiricalFiltered_NEW extends DelegateContinuousAbstract {	
 
-	
-
-	private final Continuous source; //not null
 	private final Continuous compareSource; //not null	
 	private final String stationName; //not null
 
-
 	public EmpiricalFiltered_NEW(TsDB tsdb, Continuous source, Continuous compareSource, String stationName) {
-		super(tsdb);
-		throwNulls(source,compareSource,stationName);
-		if(!source.isContinuous()) {
-			throw new RuntimeException("QualityChecked needs continuous source");
-		}
+		super(tsdb, source);
+		throwNulls(compareSource, stationName);
 		if(!compareSource.isContinuous()) {
 			throw new RuntimeException("QualityChecked needs continuous compare source");
 		}
-		this.source = source;
 		this.compareSource = compareSource;
 		this.stationName = stationName;
 	}
@@ -80,40 +70,5 @@ public class EmpiricalFiltered_NEW extends Continuous.Abstract {
 		//Logger.info("refValues "+Arrays.toString(refValues));
 		EmpiricalIterator empirical_iterator = new EmpiricalIterator(input_iterator, compare_iterator, maxDiff, refValues);
 		return empirical_iterator;
-	}
-
-	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
-	@Override
-	public String[] getSchema() {
-		return source.getSchema();
-	}
-
-	@Override
-	public TsIterator getExactly(long start, long end) {
-		return get(start,end);
-	}
-
-	@Override
-	public boolean isContinuous() {
-		return source.isContinuous();
-	}
-
-	@Override
-	public boolean isConstantTimestep() {
-		return source.isContinuous();
-	}
-	
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-	
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
+	}	
 }

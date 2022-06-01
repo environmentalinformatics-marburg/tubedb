@@ -76,7 +76,12 @@ public class StationBase extends Base.Abstract {
 	}
 	
 	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
+	public long[] getTimeInterval() {
+		return source.getTimeInterval();
+	}
+	
+	@Override
+	public int[] getSensorTimeInterval(String sensorName) {
+		return source.getSensorTimeInterval(sensorName);
 	}
 }

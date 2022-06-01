@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,6 +40,7 @@ import tsdb.util.DataRow;
 import tsdb.util.Measurement;
 import tsdb.util.Pair;
 import tsdb.util.TimeSeriesMask;
+import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.TimestampSeries;
@@ -50,7 +52,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class ServerTsDB implements RemoteTsDB {
-	
+
 
 	private final TsDB tsdb; //not null
 
@@ -506,9 +508,9 @@ public class ServerTsDB implements RemoteTsDB {
 	public void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask) {
 		tsdb.streamStorage.setTimeSeriesMask(stationName, sensorName, timeSeriesMask, true);
 	}
-	
+
 	// ----- monitoring -------
-	
+
 	@Override
 	public ArrayList<PlotStatus> getPlotStatuses() {
 		return collectPlotStatuses(tsdb.getPlotNames());
@@ -620,7 +622,7 @@ public class ServerTsDB implements RemoteTsDB {
 						}
 					}
 					if(node != null ) {
-						long[] sensorInterval = node.getTimestampInterval();
+						long[] sensorInterval = node.getTimeInterval();
 						if(sensorInterval != null && sensorInterval[1] + (60*24) >= interval[1]) {
 							TsIterator tsIt = node.get(sensorInterval[1], sensorInterval[1]);
 							if(tsIt != null && tsIt.hasNext()) {
@@ -644,21 +646,49 @@ public class ServerTsDB implements RemoteTsDB {
 		});		
 		return result;
 	}
-	
+
 	// ----- monitoring -------
-	
+
 	@Override
 	public ArrayList<Measurement> getMonitoring(String[] plotIDs, String[] sensorNames) throws RemoteException {
 		ArrayList<Measurement> result = new ArrayList<Measurement>();
 		for(String plotID : plotIDs) {
 			DataEntry[] dataEntries = new DataEntry[sensorNames.length];			
 			for (int i = 0; i < sensorNames.length; i++) {
-				DataEntry dataEntry = DataEntry.NA;
+				/*DataEntry dataEntry = DataEntry.NA;
 				int[] sensorInterval = tsdb.streamStorage.getSensorTimeInterval(plotID, sensorNames[i]);
 				if(sensorInterval != null) {
 					StreamIterator it = tsdb.streamStorage.getRawSensorIterator(plotID, sensorNames[i], (long)sensorInterval[1], (long)sensorInterval[1]);
 					if(it != null && it.hasNext()) {
 						dataEntry = it.next();						
+					}
+				}
+				dataEntries[i] = dataEntry;*/
+				DataEntry dataEntry = DataEntry.NA;
+				String sensorName = sensorNames[i];
+				String[] supplementedSchema = tsdb.supplementSchema(new String[] {sensorName}, tsdb.getSensorNamesOfPlotWithVirtual(plotID));			
+				String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plotID, supplementedSchema);
+				if(validSchema.length > 0) {
+					//Logger.info(plotID + "   " + sensorName + " --> " + Arrays.toString(validSchema));
+					Node node = QueryPlan.plot(tsdb, plotID, validSchema, AggregationInterval.RAW, DataQuality.Na, false);
+					if(node != null) {	
+						//Logger.info("node " + node);
+						//int[] timeInterval = node.getSensorTimeInterval(sensorName);
+						int[] timeInterval = getSensorTimeInterval(sensorName, node);
+						if(timeInterval != null) {
+							//Logger.info("interval " + TimeUtil.oleMinutesToText(timeInterval[0]) + " - " + TimeUtil.oleMinutesToText(timeInterval[1]));
+							TsIterator it = node.get((long) timeInterval[1], (long) timeInterval[1]);
+							if(it != null && it.hasNext()) {
+								TsEntry tsEntry = it.next();
+								dataEntry = new DataEntry((int) tsEntry.timestamp, tsEntry.data[0]);
+							}						
+						}
+						/*long[] timeInterval = node.getTimestampInterval();
+						TsIterator it = node.get(timeInterval[1], timeInterval[1]);
+						if(it != null && it.hasNext()) {
+							TsEntry tsEntry = it.next();
+							dataEntry = new DataEntry((int) tsEntry.timestamp, tsEntry.data[0]);
+						}*/
 					}
 				}
 				dataEntries[i] = dataEntry;
@@ -667,6 +697,31 @@ public class ServerTsDB implements RemoteTsDB {
 			result.add(measurement);
 		}		
 		return result;
+	}
+	
+	private int[] getSensorTimeInterval(String sensorName, Node node) {
+		HashSet<String> sensorNames = tsdb.getSensorDependencySources(sensorName);
+		int[] timeInterval = null;
+		for(String s : sensorNames) {
+			int[] i = node.getSensorTimeInterval(s);
+			if(i == null) {
+				return null;
+			}
+			if(timeInterval == null) {
+				timeInterval = i;
+			} else {
+				if(i[0] > timeInterval[1] || i[1] < timeInterval[0]) {
+					return null;
+				}
+				if(i[0] > timeInterval[0]) {
+					timeInterval[0] = i[0];
+				}
+				if(i[1] < timeInterval[1]) {
+					timeInterval[1] = i[1];
+				}
+			}
+		}
+		return timeInterval;
 	}
 
 	// ----- info -------

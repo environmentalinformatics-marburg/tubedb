@@ -3,16 +3,14 @@ package tsdb.graph.processing;
 import java.util.Arrays;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
-
 import org.tinylog.Logger;
 
-import tsdb.Station;
 import tsdb.TsDB;
-import tsdb.VirtualPlot;
 import tsdb.component.Sensor;
 import tsdb.component.iterator.FillIterator;
 import tsdb.graph.node.Continuous;
 import tsdb.graph.node.ContinuousGen;
+import tsdb.graph.source.DelegateContinuousAbstract;
 import tsdb.iterator.InterpolationAverageLinearIterator;
 import tsdb.util.AggregationInterval;
 import tsdb.util.Pair;
@@ -20,14 +18,12 @@ import tsdb.util.TimeUtil;
 import tsdb.util.Util;
 import tsdb.util.iterator.TsIterator;
 
-public class InterpolatedAverageLinear extends Continuous.Abstract {
-	
+public class InterpolatedAverageLinear extends DelegateContinuousAbstract {
 
 	private static final int MAX_TRAINING_PLOT_COUNT = 15;
 	private static final int MIN_TRAINING_VALUE_COUNT_HOUR = 4*7*24; // four weeks with one hour time interval
 	private static final int MIN_TRAINING_VALUE_COUNT_DAY = 4*7; // four weeks with one day time interval
 
-	private final Continuous source;
 	private final Continuous trainingTarget;
 	private Continuous[] trainingSources;
 	private final String[] interpolationSchema;
@@ -35,8 +31,7 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 	private final double[] maxMSEs;
 
 	public InterpolatedAverageLinear(TsDB tsdb, Continuous source, Continuous trainingTarget, Continuous[] trainingSources, String[] interpolationSchema, AggregationInterval sourceAgg, double[] maxMSEs) {
-		super(tsdb);
-		this.source = source;
+		super(tsdb, source);
 		this.trainingTarget = trainingTarget;
 		this.trainingSources = trainingSources;
 		this.interpolationSchema = interpolationSchema;
@@ -180,33 +175,8 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 			}
 		}
 
-
 		TsIterator sourceIterator = new FillIterator(source.getExactly(start, end));
 		TsIterator[] interpolationIterators = Arrays.stream(trainingSources).map(s->new FillIterator(s.getExactly(start, end))).toArray(TsIterator[]::new);
-
-
-
-
-		/*TsIterator it = new TsIterator(sourceIterator.getSchema()) {
-
-			@Override
-			public boolean hasNext() {
-				// TODO Auto-generated method stub
-				return it.hasNext();
-			}
-
-			@Override
-			public TsEntry next() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-		};*/
-
-		/*if(sourceIterator==null) {
-			Logger.error("no interpolation source");
-			//return null;
-		}*/
 
 		if(interpolationIterators[0]==null) {
 			Logger.error("no interpolation training sources");
@@ -229,30 +199,5 @@ public class InterpolatedAverageLinear extends Continuous.Abstract {
 			}
 		}		
 		return getExactly(start, end);
-	}
-
-	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
-
-	@Override
-	public boolean isConstantTimestep() {
-		return source.isConstantTimestep();
-	}
-
-	@Override
-	public String[] getSchema() {
-		return source.getSchema();
-	}
+	}	
 }

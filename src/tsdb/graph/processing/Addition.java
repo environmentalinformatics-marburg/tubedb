@@ -1,10 +1,7 @@
 package tsdb.graph.processing;
 
-import static tsdb.util.AssumptionCheck.throwNull;
-
-import tsdb.Station;
-import tsdb.VirtualPlot;
 import tsdb.graph.node.Continuous;
+import tsdb.graph.source.DelegateContinuous;
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.InputProcessingIterator;
 import tsdb.util.iterator.TsIterator;
@@ -14,14 +11,12 @@ import tsdb.util.iterator.TsIterator;
  * @author woellauer
  *
  */
-public class Addition implements Continuous {
+public class Addition extends DelegateContinuous {
 	
-	private final Continuous source;
 	private final float value;
 	
 	protected Addition(Continuous source, float value) {
-		throwNull(source);
-		this.source = source;
+		super(source);
 		this.value = value;
 	}
 	
@@ -45,41 +40,11 @@ public class Addition implements Continuous {
 				TsEntry element = input_iterator.next();
 				float[] data = element.data;
 				float[] result = new float[data.length];
-				for(int i=0;i<data.length;i++) {
-					result[i] = data[i]+value;
+				for(int i = 0; i < data.length; i++) {
+					result[i] = data[i] + value;
 				}
 				return new TsEntry(element.timestamp, result);
 			}			
 		};
-	}
-
-	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
-	@Override
-	public boolean isConstantTimestep() {
-		return source.isConstantTimestep();
-	}
-
-	@Override
-	public String[] getSchema() {
-		return source.getSchema();
-	}
-
-	@Override
-	public TsIterator getExactly(long start, long end) {
-		return get(start,end);
-	}
-
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-	
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
+	}	
 }

@@ -12,6 +12,7 @@ import java.util.TreeSet;
 import org.tinylog.Logger;
 
 import tsdb.util.BaseAggregationTimeUtil;
+import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
 import tsdb.util.Util;
 
@@ -21,8 +22,6 @@ import tsdb.util.Util;
  *
  */
 public class VirtualPlot {
-
-	
 
 	protected final TsDB tsdb; //not null
 
@@ -241,8 +240,36 @@ public class VirtualPlot {
 	public String toString() {
 		return plotID;
 	}
+	
+	public long[] getTimeInterval() {
+		int imin = Integer.MAX_VALUE;
+		int imax = Integer.MIN_VALUE;
+		
+		for(TimestampInterval<StationProperties> entryInterval:intervalList) {
+			String entryStation = entryInterval.value.get_serial();
+			int entryMin = entryInterval.start == null ? Integer.MIN_VALUE : entryInterval.start.intValue();
+			int entryMax = entryInterval.end == null ? Integer.MAX_VALUE : entryInterval.end.intValue();			
+			if(entryMin < imin || entryMax > imax) {
+				int[] interval = tsdb.streamStorage.getStationTimeInterval(entryStation, entryMin, entryMax);
+				if(interval != null) {
+					if(interval[0] < imin) {
+						imin = interval[0];
+					}
+					if(interval[1] > imax) {
+						imax = interval[1];
+					}
+				}
+			}
+		}
+		if(imin == Integer.MAX_VALUE || imax == Integer.MIN_VALUE) {
+			return null;
+		}
+		long[] interval = new long[]{imin, imax};
+		Logger.info("interval " + TimeUtil.oleMinutesToText(interval[0]) + " - " + TimeUtil.oleMinutesToText(interval[1]) + "  " + plotID);
+		return interval;		
+	}
 
-	public long[] getTimestampInterval() {
+	public long[] getTimeInterval_OLD() {
 		long[] result = null;
 		for(TimestampInterval<StationProperties> entry:intervalList) {
 			long[] interval = tsdb.getTimeInterval(entry.value.get_serial());
@@ -295,11 +322,90 @@ public class VirtualPlot {
 	}
 
 	public long[] getTimestampBaseInterval() {
-		long[] interval = getTimestampInterval();
+		long[] interval = getTimeInterval();
 		if(interval==null) {
 			return null;
 		}
 		return new long[]{BaseAggregationTimeUtil.alignQueryTimestampToBaseAggregationTime(interval[0]),BaseAggregationTimeUtil.alignQueryTimestampToBaseAggregationTime(interval[1])};
+	}
+	
+	public int[] getSensorTimeInterval(String sensorName) {
+		int imin = Integer.MAX_VALUE;
+		int imax = Integer.MIN_VALUE;
+		
+		for(TimestampInterval<StationProperties> entryInterval:intervalList) {
+			String entryStation = entryInterval.value.get_serial();
+			int entryMin = entryInterval.start == null ? Integer.MIN_VALUE : entryInterval.start.intValue();
+			int entryMax = entryInterval.end == null ? Integer.MAX_VALUE : entryInterval.end.intValue();			
+			if(entryMin < imin || entryMax > imax) {
+				int[] interval = tsdb.streamStorage.getSensorTimeInterval(entryStation, sensorName, entryMin, entryMax);
+				if(interval != null) {
+					if(interval[0] < imin) {
+						imin = interval[0];
+					}
+					if(interval[1] > imax) {
+						imax = interval[1];
+					}
+				}
+			}
+		}
+		if(imin == Integer.MAX_VALUE || imax == Integer.MIN_VALUE) {
+			return null;
+		}
+		int[] interval = new int[]{imin, imax};
+		//Logger.info("interval " + TimeUtil.oleMinutesToText(interval[0]) + " - " + TimeUtil.oleMinutesToText(interval[1]) + "  " + plotID + " " + sensorName);
+		return interval;
+	}
+	
+	public int[] getSensorTimeInterval_OLD(String sensorName) {
+		int[] result = null;
+		for(TimestampInterval<StationProperties> entry:intervalList) {
+			int[] interval = tsdb.streamStorage.getSensorTimeInterval(entry.value.get_serial(), sensorName);
+			if(interval != null) {
+				Long partStart = entry.value.get_date_start();
+				if(partStart != null) {
+					if(interval[1] < partStart) {
+						interval = null;
+					} else if(interval[0] < partStart) {
+						interval[0] = partStart.intValue();				
+					}
+				}
+			}
+			if(interval != null) {
+				Long partEnd = entry.value.get_date_end();
+				if(partEnd != null) {
+					if(partEnd < interval[0]) {
+						interval = null;
+					} else if(partEnd < interval[1]) {
+						interval[1] = partEnd.intValue();
+					}
+				}
+			}
+			if(interval != null) {				
+				Long partStart = entry.value.get_date_start();
+				if(partStart != null && interval[0] < partStart) {
+					interval[0] = partStart.intValue();
+				}
+				Long partEnd = entry.value.get_date_end();
+				if(partEnd != null && partEnd < interval[1]) {
+					interval[1] = partEnd.intValue();
+				}
+				if(interval[0] > interval[1]) {
+					Logger.info("interval[0] > interval[1]" + interval[0] + "  " + interval[1] + "    " + entry.value.get_date_start() + "  " + entry.value.get_date_end());
+				}
+				if(result == null) {
+					result = interval;
+				} else {
+					if(interval[0] < result[0]) {
+						result[0] = interval[0];
+					}
+					if(result[1] < interval[1]) {
+						result[1] = interval[1];
+					}
+				}
+			}
+		}
+		return result;	
 	}
 
 	public boolean isValidSchema(String[] querySchema) {

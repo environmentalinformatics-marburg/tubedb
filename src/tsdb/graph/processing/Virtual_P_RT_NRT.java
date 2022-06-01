@@ -1,13 +1,10 @@
 package tsdb.graph.processing;
 
-import static tsdb.util.AssumptionCheck.throwNull;
-
 import java.util.Arrays;
 
-import tsdb.Station;
 import tsdb.TsDB;
-import tsdb.VirtualPlot;
 import tsdb.graph.node.Node;
+import tsdb.graph.source.DelegateNode;
 import tsdb.util.Util;
 import tsdb.util.iterator.TsIterator;
 import tsdb.util.iterator.Virtual_P_RT_NRT_Iterator;
@@ -17,16 +14,13 @@ import tsdb.util.iterator.Virtual_P_RT_NRT_Iterator;
  * @author woellauer
  *
  */
-public class Virtual_P_RT_NRT extends Node.Abstract{
+public class Virtual_P_RT_NRT extends DelegateNode {
 	
-	private final Node source;
 	private final int pos_P_container_RT;
 	private final int pos_P_RT_NRT;
 	
 	protected Virtual_P_RT_NRT(TsDB tsdb, Node source, int pos_P_container_RT, int pos_P_RT_NRT) {
-		super(tsdb);
-		throwNull(source);
-		this.source = source;
+		super(tsdb, source);
 		this.pos_P_container_RT = pos_P_container_RT;
 		this.pos_P_RT_NRT = pos_P_RT_NRT;
 	}
@@ -57,35 +51,5 @@ public class Virtual_P_RT_NRT extends Node.Abstract{
 		}
 			
 		return virtual_it;
-	}
-
-	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
-	@Override
-	public String[] getSchema() {
-		return source.getSchema();
-	}
-	
-	@Override
-	public boolean isContinuous() {
-		return source.isContinuous();
-	}
-
-	@Override
-	public boolean isConstantTimestep() {
-		return source.isConstantTimestep();
-	}
-	
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-	
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
+	}	
 }

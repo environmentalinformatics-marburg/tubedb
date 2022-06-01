@@ -1,28 +1,23 @@
 package tsdb.graph.processing;
 
-import static tsdb.util.AssumptionCheck.throwNulls;
-
+import static tsdb.util.AssumptionCheck.throwNull;
 
 import org.tinylog.Logger;
 
-import tsdb.Station;
 import tsdb.TsDB;
-import tsdb.VirtualPlot;
 import tsdb.graph.node.Node;
+import tsdb.graph.source.DelegateNode;
 import tsdb.iterator.MaskIterator;
 import tsdb.util.TimeSeriesMask;
 import tsdb.util.iterator.TsIterator;
 
-public class Mask extends Node.Abstract{
+public class Mask extends DelegateNode {	
 	
-	
-	private final Node source;
 	private final TimeSeriesMask[] masks;
 
 	protected Mask(TsDB tsdb, Node source, TimeSeriesMask[] masks) {
-		super(tsdb);
-		throwNulls(source, masks);
-		this.source = source;
+		super(tsdb, source);
+		throwNull(masks);
 		this.masks = masks;
 	}
 	
@@ -54,35 +49,5 @@ public class Mask extends Node.Abstract{
 		//Logger.info("with mask !!!");
 		MaskIterator it = new MaskIterator(input_iterator,masks);
 		return it;
-	}
-
-	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
-	@Override
-	public String[] getSchema() {
-		return source.getSchema();
-	}
-	
-	@Override
-	public boolean isContinuous() {
-		return source.isContinuous();
-	}
-
-	@Override
-	public boolean isConstantTimestep() {
-		return source.isConstantTimestep();
-	}
-	
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-	
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
+	}	
 }

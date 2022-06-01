@@ -54,8 +54,8 @@ public class ChunkMeta {
 
 	public static final Serializer<ChunkMeta> SERIALIZER = new ChunkMetaSerializer();
 
-	public static Iterator<ChunkMeta> createIterator(BTreeMap<Integer, ChunkMeta> chunkMetaMap,int minTimestamp, int maxTimestamp) {
-		return new ChunkMetaIterator(chunkMetaMap,minTimestamp,maxTimestamp);
+	public static Iterator<ChunkMeta> createIterator(BTreeMap<Integer, ChunkMeta> chunkMetaMap, int minTimestamp, int maxTimestamp) {
+		return new ChunkMetaIterator(chunkMetaMap, minTimestamp, maxTimestamp);
 	}
 
 	private static class ChunkMetaIterator implements Iterator<ChunkMeta> {
@@ -69,8 +69,8 @@ public class ChunkMeta {
 			it = chunkMetaMap.values().iterator();
 			while(it.hasNext()) {
 				current = it.next();
-				if(minTimestamp<=current.lastTimestamp) {
-					if(current.firstTimestamp<=maxTimestamp) {
+				if(minTimestamp <= current.lastTimestamp) {
+					if(current.firstTimestamp <= maxTimestamp) {
 						return;
 					} else {
 						it = null;
@@ -85,7 +85,7 @@ public class ChunkMeta {
 
 		@Override
 		public boolean hasNext() {
-			return current!=null;
+			return current != null;
 		}
 
 		@Override
@@ -93,7 +93,7 @@ public class ChunkMeta {
 			ChunkMeta r = current;
 			if(it.hasNext()) {
 				current = it.next();
-				if(maxTimestamp<current.firstTimestamp) {
+				if(maxTimestamp < current.firstTimestamp) {
 					current = null;
 				}
 			} else {

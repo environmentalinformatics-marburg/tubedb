@@ -68,8 +68,12 @@ public class CSVSource implements Node {
 	}
 	
 	@Override
-	public long[] getTimestampInterval() {//TODO
+	public long[] getTimeInterval() {//TODO
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public int[] getSensorTimeInterval(String sensorName) {//TODO
+		throw new UnsupportedOperationException();
+	}
 }

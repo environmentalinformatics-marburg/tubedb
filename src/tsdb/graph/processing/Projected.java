@@ -2,9 +2,8 @@ package tsdb.graph.processing;
 
 import static tsdb.util.AssumptionCheck.throwNull;
 
-import tsdb.Station;
-import tsdb.VirtualPlot;
 import tsdb.graph.node.Continuous;
+import tsdb.graph.source.DelegateContinuous;
 import tsdb.iterator.ProjectionFillIterator;
 import tsdb.util.iterator.TsIterator;
 
@@ -13,22 +12,19 @@ import tsdb.util.iterator.TsIterator;
  * @author woellauer
  *
  */
-public class Projected implements Continuous {
+public class Projected extends DelegateContinuous {
 	
-	private final Continuous source;
 	private final String[] targetSchema;
-
 	
-	protected Projected(Continuous source, String[] targetSchema) {
-		throwNull(source);
-		this.source = source;
+	private Projected(Continuous source, String[] targetSchema) {
+		super(source);
+		throwNull(targetSchema);
 		this.targetSchema = targetSchema;
 	}
 	
 	public static Projected of(Continuous source, String[] targetSchema) {
 		return new Projected(source, targetSchema);
-	}
-	
+	}	
 	
 	@Override
 	public TsIterator get(Long start, Long end) {
@@ -44,32 +40,7 @@ public class Projected implements Continuous {
 	}
 
 	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
-	@Override
-	public boolean isConstantTimestep() {
-		return source.isConstantTimestep();
-	}
-
-	@Override
 	public String[] getSchema() {
 		return targetSchema;
-	}
-
-	@Override
-	public TsIterator getExactly(long start, long end) {
-		return get(start,end);
-	}
-	
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-	
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
+	}	
 }

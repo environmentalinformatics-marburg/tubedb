@@ -5,12 +5,15 @@ import static tsdb.util.AssumptionCheck.throwNullArray;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
-
 import org.tinylog.Logger;
+
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
@@ -437,7 +440,7 @@ public class StreamDB {
 		throwNull(chunkMap);
 		throwNull(chunk);
 		chunkMap.put(chunk.data[0].timestamp, chunk);
-		chunkMetaMap.put(chunk.data[0].timestamp, new ChunkMeta(chunk.data[0].timestamp,chunk.data[chunk.data.length-1].timestamp,chunk.data.length));
+		chunkMetaMap.put(chunk.data[0].timestamp, new ChunkMeta(chunk.data[0].timestamp, chunk.data[chunk.data.length - 1].timestamp, chunk.data.length));
 	}
 
 	public NavigableSet<String> getStationNames() {
@@ -480,6 +483,59 @@ public class StreamDB {
 		BTreeMap<Integer, Chunk> chunkMap = getSensorChunkMap(sensorMeta);
 		BTreeMap<Integer, ChunkMeta> chunkMetaMap = getSensorChunkMetaMap(sensorMeta);
 		return new StreamIterator(sensorMeta, chunkMetaMap, chunkMap, minTimestamp, maxTimestamp);	
+	}
+	
+	public int getSensorTimeMin(SensorMeta sensorMeta, int minTimestamp, int maxTimestamp) {
+		throwNull(sensorMeta);
+		BTreeMap<Integer, ChunkMeta> chunkMetaMap = getSensorChunkMetaMap(sensorMeta);
+		BTreeMap<Integer, Chunk> chunkMap = getSensorChunkMap(sensorMeta);
+		Iterator<ChunkMeta> chunkMetaIterator = ChunkMeta.createIterator(chunkMetaMap, minTimestamp, maxTimestamp);
+		while(chunkMetaIterator.hasNext()) {
+			ChunkMeta chunkMeta = chunkMetaIterator.next();
+			if(minTimestamp <= chunkMeta.firstTimestamp && maxTimestamp >= chunkMeta.firstTimestamp) {
+				return chunkMeta.firstTimestamp;
+			}
+			Chunk chunk = chunkMap.get(chunkMeta.firstTimestamp);
+			for(DataEntry e : chunk.data) {
+				if(minTimestamp <= e.timestamp) {
+					if(maxTimestamp < e.timestamp) {
+						return Integer.MAX_VALUE;
+					}
+					return e.timestamp;
+				}
+			}
+		}
+		return Integer.MAX_VALUE;		
+	}
+	
+	public int getSensorTimeMax(SensorMeta sensorMeta, int minTimestamp, int maxTimestamp) {
+		throwNull(sensorMeta);
+		BTreeMap<Integer, ChunkMeta> chunkMetaMap = getSensorChunkMetaMap(sensorMeta);
+		BTreeMap<Integer, Chunk> chunkMap = getSensorChunkMap(sensorMeta);
+		Iterator<ChunkMeta> chunkMetaIterator = ChunkMeta.createIterator(chunkMetaMap, minTimestamp, maxTimestamp);
+		List<ChunkMeta> chunkMetas = new ArrayList<ChunkMeta>();
+		while(chunkMetaIterator.hasNext()) {
+			ChunkMeta chunkMeta = chunkMetaIterator.next();
+			chunkMetas.add(chunkMeta);
+		}
+		Collections.reverse(chunkMetas);
+		for(ChunkMeta chunkMeta : chunkMetas) {
+			if(minTimestamp <= chunkMeta.lastTimestamp && maxTimestamp >= chunkMeta.lastTimestamp) {
+				return chunkMeta.lastTimestamp;
+			}
+			Chunk chunk = chunkMap.get(chunkMeta.firstTimestamp);
+			DataEntry[] chunkData = chunk.data;
+			for(int i = chunkData.length - 1; i >= 0; i--) {
+				DataEntry e = chunkData[i];
+				if(maxTimestamp >= e.timestamp) {
+					if(minTimestamp > e.timestamp) {
+						return Integer.MIN_VALUE;
+					}
+					return e.timestamp;
+				}
+			}
+		}
+		return Integer.MIN_VALUE;
 	}
 
 
@@ -533,11 +589,11 @@ public class StreamDB {
 
 	public int[] getSensorTimeInterval(String stationName, String sensorName) {
 		SensorMeta sensorMeta = getSensorMeta(stationName, sensorName);
-		if(sensorMeta==null) {
+		if(sensorMeta == null) {
 			return null;
 		}
 		return getSensorTimeInterval(sensorMeta);
-	}
+	}	
 
 	public int[] getSensorTimeInterval(SensorMeta sensorMeta) {
 		throwNull(sensorMeta);
@@ -545,7 +601,67 @@ public class StreamDB {
 		if(chunkMetaMap.isEmpty()) {
 			return null;
 		}
-		return new int[]{chunkMetaMap.firstKey(),chunkMetaMap.lastEntry().getValue().lastTimestamp};
+		int[] interval = new int[]{chunkMetaMap.firstKey(), chunkMetaMap.lastEntry().getValue().lastTimestamp};
+		Logger.info("interval " + TimeUtil.oleMinutesToText(interval[0]) + " - " + TimeUtil.oleMinutesToText(interval[1]) + "  " + sensorMeta.stationName + " " + sensorMeta.sensorName);
+		return interval;
+	}
+	
+	public int[] getSensorTimeInterval(String stationName, String sensorName, int min, int max) {
+		SensorMeta sensorMeta = getSensorMeta(stationName, sensorName);
+		if(sensorMeta == null) {
+			return null;
+		}
+		return getSensorTimeInterval(sensorMeta, min, max);
+	}
+	
+	public int[] getSensorTimeInterval(SensorMeta sensorMeta, int min, int max) {
+		int imin = getSensorTimeMin(sensorMeta, min, max);
+		int imax = getSensorTimeMax(sensorMeta, min, max);
+		//Logger.info("interval " + imin + " " + imax);
+		if(imin == Integer.MAX_VALUE || imax == Integer.MIN_VALUE) {
+			return null;
+		}
+		int[] interval = new int[]{imin, imax};
+		//Logger.info("interval " + TimeUtil.oleMinutesToText(interval[0]) + " - " + TimeUtil.oleMinutesToText(interval[1]) + "  " + sensorMeta.stationName + " " + sensorMeta.sensorName);
+		return interval;
+	}
+	
+	public int[] getSensorTimeInterval_OLD(SensorMeta sensorMeta, int min, int max) {
+		throwNull(sensorMeta);
+		BTreeMap<Integer, ChunkMeta> chunkMetaMap = getSensorChunkMetaMap(sensorMeta);
+		if(chunkMetaMap.isEmpty()) {
+			return null;
+		}
+		int imin = chunkMetaMap.firstKey();
+		if(imin > max) {
+			return null;
+		}
+		int imax = chunkMetaMap.lastEntry().getValue().lastTimestamp;
+		if(imax < min) {
+			return null;
+		}
+		if(imin < min) {
+			StreamIterator it = getSensorIterator(sensorMeta, min, max);
+			if(!it.hasNext()) {
+				return null;
+			}
+			DataEntry e = it.next();
+			imin = e.timestamp;
+		}
+		if(imax > max) {
+			StreamIterator it = getSensorIterator(sensorMeta, min, max);
+			DataEntry e = null;
+			while(it.hasNext()) {
+				e = it.next();
+			}
+			if(e == null) {
+				return null;
+			}
+			imax = e.timestamp;
+		}
+		int[] interval = new int[]{imin, imax};
+		Logger.info("interval " + TimeUtil.oleMinutesToText(interval[0]) + " - " + TimeUtil.oleMinutesToText(interval[1]) + "  " + sensorMeta.stationName + " " + sensorMeta.sensorName);
+		return interval;
 	}
 
 	public int[] getStationTimeInterval(String stationName) {
@@ -570,7 +686,32 @@ public class StreamDB {
 		if(minTimestamp == Integer.MAX_VALUE || maxTimestamp == Integer.MIN_VALUE) {
 			return null;
 		}
-		return new int[]{minTimestamp,maxTimestamp};	
+		return new int[]{minTimestamp, maxTimestamp};	
+	}
+	
+	public int[] getStationTimeInterval(String stationName, int min, int max) {
+		throwNull(stationName);
+		BTreeMap<String, SensorMeta> sensorMap = getSensorMap(stationName);
+		if(sensorMap == null||sensorMap.isEmpty()) {
+			return null;
+		}
+		int minTimestamp = Integer.MAX_VALUE;
+		int maxTimestamp = Integer.MIN_VALUE;
+		for(SensorMeta sensorMeta:sensorMap.values()) {
+			int[] interval = getSensorTimeInterval(sensorMeta, min, max);
+			if(interval != null) {
+				if(interval[0] < minTimestamp) {
+					minTimestamp = interval[0];
+				}
+				if(maxTimestamp < interval[1]) {
+					maxTimestamp = interval[1];
+				}
+			}
+		}
+		if(minTimestamp == Integer.MAX_VALUE || maxTimestamp == Integer.MIN_VALUE) {
+			return null;
+		}
+		return new int[]{minTimestamp, maxTimestamp};	
 	}
 
 	public void printStatistics() {
@@ -620,5 +761,4 @@ public class StreamDB {
 		BTreeMap<String, TimeSeriesMask> maskMap = db.getTreeMap(stationMeta.db_name_sensor_time_series_mask_map);
 		maskMap.clear();		
 	}
-
 }

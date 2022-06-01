@@ -38,15 +38,17 @@ public interface Node {
 		return getSourcePlot().getPlotID();
 	}
 
-	public long[] getTimestampInterval();
+	public long[] getTimeInterval();
 
 	public default long[] getTimestampBaseInterval() {
-		long[] interval = getTimestampInterval();
+		long[] interval = getTimeInterval();
 		if(interval==null) {
 			return null;
 		}
 		return new long[]{BaseAggregationTimeUtil.alignQueryTimestampToBaseAggregationTime(interval[0]),BaseAggregationTimeUtil.alignQueryTimestampToBaseAggregationTime(interval[1])};
 	}
+	
+	public int[] getSensorTimeInterval(String sensorName);
 
 	/**
 	 * true => no time gaps in data stream, time steps do not need to be constant

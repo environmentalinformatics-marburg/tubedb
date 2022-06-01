@@ -1,6 +1,5 @@
 package tsdb.util;
 
-
 import org.tinylog.Logger;
 
 import tsdb.util.TsSchema.Aggregation;
@@ -11,9 +10,7 @@ public enum AggregationInterval {
 	DAY, 
 	WEEK, 
 	MONTH, 
-	YEAR;
-	
-	
+	YEAR;	
 	
 	public static AggregationInterval getBaseAggregation() {
 		return HOUR;
@@ -122,7 +119,5 @@ public enum AggregationInterval {
 	
 	public boolean isDayOrHigher() {
 		return isDay() || isWeek() || isMonth() || isYear();
-	}
-	
-	
+	}	
 }

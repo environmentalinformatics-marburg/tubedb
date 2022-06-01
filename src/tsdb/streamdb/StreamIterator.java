@@ -5,12 +5,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-
-import org.tinylog.Logger;
 import org.mapdb.BTreeMap;
 
 import tsdb.util.DataEntry;
-import tsdb.util.TimeUtil;
 import tsdb.util.processingchain.ProcessingChainNode;
 
 /**
@@ -19,8 +16,6 @@ import tsdb.util.processingchain.ProcessingChainNode;
  *
  */
 public class StreamIterator implements Iterator<DataEntry>, ProcessingChainNode {	
-	@SuppressWarnings("unused")
-	
 
 	private final BTreeMap<Integer, Chunk> sensorChunkMap;
 	public final int minQueryTimestamp;
@@ -34,10 +29,10 @@ public class StreamIterator implements Iterator<DataEntry>, ProcessingChainNode 
 	
 	private static int getDataMinTimestamp(BTreeMap<Integer, ChunkMeta> chunkMetaMap, int minTimestamp) {
 		Entry<Integer, ChunkMeta> entry = chunkMetaMap.firstEntry();
-		if(entry==null) {
+		if(entry == null) {
 			return minTimestamp;
 		}
-		if(minTimestamp<entry.getValue().firstTimestamp) {
+		if(minTimestamp < entry.getValue().firstTimestamp) {
 			return entry.getValue().firstTimestamp;
 		}
 		return minTimestamp;
@@ -45,10 +40,10 @@ public class StreamIterator implements Iterator<DataEntry>, ProcessingChainNode 
 	
 	private static int getDataMaxTimestamp(BTreeMap<Integer, ChunkMeta> chunkMetaMap, int maxTimestamp) {
 		Entry<Integer, ChunkMeta> entry = chunkMetaMap.lastEntry();
-		if(entry==null) {
+		if(entry == null) {
 			return maxTimestamp;
 		}
-		if(maxTimestamp>entry.getValue().lastTimestamp) {
+		if(maxTimestamp > entry.getValue().lastTimestamp) {
 			return entry.getValue().lastTimestamp;
 		}
 		return maxTimestamp;

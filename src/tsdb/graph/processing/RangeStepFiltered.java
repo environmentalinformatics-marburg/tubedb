@@ -1,14 +1,13 @@
 package tsdb.graph.processing;
 
-import static tsdb.util.AssumptionCheck.throwNulls;
+import static tsdb.util.AssumptionCheck.throwNull;
 
-import tsdb.Station;
 import tsdb.TsDB;
-import tsdb.VirtualPlot;
 import tsdb.component.Sensor;
 import tsdb.component.iterator.PeakFlagIterator;
 import tsdb.component.iterator.PhysicalFlagIterator;
 import tsdb.graph.node.Node;
+import tsdb.graph.source.DelegateNode;
 import tsdb.util.DataQuality;
 import tsdb.util.iterator.LowQualityToNanIterator;
 import tsdb.util.iterator.TsIterator;
@@ -18,15 +17,13 @@ import tsdb.util.iterator.TsIterator;
  * @author woellauer
  *
  */
-public class RangeStepFiltered extends Node.Abstract{ // just range and step
+public class RangeStepFiltered extends DelegateNode { // just range and step
 	
-	private final Node source;
 	private final DataQuality dataQuality;
 
 	protected RangeStepFiltered(TsDB tsdb, Node source, DataQuality dataQuality) {
-		super(tsdb);
-		throwNulls(source, dataQuality);
-		this.source = source;
+		super(tsdb, source);
+		throwNull(dataQuality);
 		this.dataQuality = dataQuality;
 	}
 	
@@ -59,35 +56,5 @@ public class RangeStepFiltered extends Node.Abstract{ // just range and step
 			return null;
 		}		
 		return bqi;
-	}
-
-	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
-	@Override
-	public String[] getSchema() {
-		return source.getSchema();
-	}
-	
-	@Override
-	public boolean isContinuous() {
-		return source.isContinuous();
-	}
-
-	@Override
-	public boolean isConstantTimestep() {
-		return source.isConstantTimestep();
-	}
-	
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-	
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
+	}	
 }

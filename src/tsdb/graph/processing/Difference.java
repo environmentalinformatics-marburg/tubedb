@@ -2,13 +2,11 @@ package tsdb.graph.processing;
 
 import static tsdb.util.AssumptionCheck.throwNulls;
 
-
 import org.tinylog.Logger;
 
-import tsdb.Station;
 import tsdb.TsDB;
-import tsdb.VirtualPlot;
 import tsdb.graph.node.Continuous;
+import tsdb.graph.source.DelegateContinuousAbstract;
 import tsdb.iterator.DifferenceIterator;
 import tsdb.util.Util;
 import tsdb.util.iterator.TsIterator;
@@ -18,31 +16,24 @@ import tsdb.util.iterator.TsIterator;
  * @author woellauer
  *
  */
-public class Difference extends Continuous.Abstract {
+public class Difference extends DelegateContinuousAbstract {
 	
-	
-	
-	private final Continuous source;
 	private final Continuous compareSource;
 	private final String stationName;
 	private final boolean absoluteDifference;
 
 	protected Difference(TsDB tsdb, Continuous source, Continuous compareSource, String stationName, boolean absoluteDifference) {
-		super(tsdb);
-		throwNulls(source,compareSource,stationName);
-		if(!source.isContinuous()) {
-			throw new RuntimeException("QualityChecked needs continuous source");
-		}
+		super(tsdb, source);
+		throwNulls(compareSource, stationName);
 		if(!compareSource.isContinuous()) {
 			throw new RuntimeException("QualityChecked needs continuous compare source");
 		}
-		if(source.isConstantTimestep()!=compareSource.isConstantTimestep()) {
+		if(source.isConstantTimestep() != compareSource.isConstantTimestep()) {
 			throw new RuntimeException("source and compare source are not compatible");
 		}
 		if(!Util.isContained(source.getSchema(), compareSource.getSchema())) {
 			throw new RuntimeException("source and compare source are not compatible");
 		}
-		this.source = source;
 		this.compareSource = compareSource;
 		this.stationName = stationName;
 		this.absoluteDifference = absoluteDifference;
@@ -86,30 +77,4 @@ public class Difference extends Continuous.Abstract {
 		}
 		return getExactly(start, end);
 	}
-
-	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
-	@Override
-	public boolean isConstantTimestep() {
-		return source.isConstantTimestep();
-	}
-
-	@Override
-	public String[] getSchema() {
-		return source.getSchema();
-	}
-	
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-	
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
-
 }

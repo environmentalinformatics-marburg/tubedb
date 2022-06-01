@@ -11,6 +11,7 @@ import tsdb.TsDB;
 import tsdb.VirtualPlot;
 import tsdb.graph.node.Continuous;
 import tsdb.graph.node.ContinuousGen;
+import tsdb.graph.source.DelegateContinuousAbstract;
 import tsdb.iterator.BadInterpolatedRemoveIterator;
 import tsdb.util.Util;
 import tsdb.util.iterator.Interpolator;
@@ -25,13 +26,12 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 @Deprecated
-public class Interpolated extends Continuous.Abstract {
+public class Interpolated extends DelegateContinuousAbstract {
 
 	public final static int MIN_STATION_INTERPOLATION_COUNT = 2; //multilinear interpolation needs at least two sources
 	public final static int STATION_INTERPOLATION_COUNT = 15;		
 	public final static int TRAINING_TIME_INTERVAL = 60*24*7*4; // in minutes;  four weeks
 
-	final Continuous source;  //not null
 	final Continuous[] interpolationSources;  //not null
 	final String[] interpolationSchema;  //not null
 
@@ -43,12 +43,8 @@ public class Interpolated extends Continuous.Abstract {
 	 * @param interpolationSchema
 	 */
 	protected Interpolated(TsDB tsdb, Continuous source, Continuous[] interpolationSources, String[] interpolationSchema) {		
-		super(tsdb);
-		throwNulls(source,interpolationSources,interpolationSchema);
-		if(!source.isContinuous()) {
-			throw new RuntimeException("source not continuous");
-		}
-		this.source = source;
+		super(tsdb, source);
+		throwNulls(interpolationSources,interpolationSchema);
 		for(Continuous interpolationSource:interpolationSources) {
 			if(!interpolationSource.isContinuous()) {
 				throw new RuntimeException("interpolation source not continuous");
@@ -212,40 +208,5 @@ public class Interpolated extends Continuous.Abstract {
 			resultIterator = new BadInterpolatedRemoveIterator(tsdb, clipIterator);
 		}
 		return resultIterator;
-	}
-
-	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
-	@Override
-	public String[] getSchema() {
-		return source.getSchema();
-	}
-
-	@Override
-	public TsIterator getExactly(long start, long end) {
-		return get(start,end);
-	}
-	
-	@Override
-	public boolean isContinuous() {
-		return source.isContinuous();
 	}	
-
-	@Override
-	public boolean isConstantTimestep() {
-		return source.isConstantTimestep();
-	}
-	
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-	
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
 }

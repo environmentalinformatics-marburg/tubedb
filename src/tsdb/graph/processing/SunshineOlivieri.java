@@ -1,11 +1,8 @@
 package tsdb.graph.processing;
 
-import static tsdb.util.AssumptionCheck.throwNull;
-
-import tsdb.Station;
 import tsdb.TsDB;
-import tsdb.VirtualPlot;
 import tsdb.graph.node.Node;
+import tsdb.graph.source.DelegateNode;
 import tsdb.iterator.SunshineOlivieriIterator;
 import tsdb.util.iterator.TsIterator;
 
@@ -14,16 +11,13 @@ import tsdb.util.iterator.TsIterator;
  * @author woellauer
  *
  */
-public class SunshineOlivieri extends Node.Abstract{
+public class SunshineOlivieri extends DelegateNode {
 	
-	private final Node source;
 	private final double latitude_DEG;
 	private final double longitude_DEG;
 	
 	protected SunshineOlivieri(TsDB tsdb,Node source) {
-		super(tsdb);
-		throwNull(source);
-		this.source = source;
+		super(tsdb, source);
 		double[] latlon = source.getSourcePlot().getLatLon();
 		//System.out.println(Arrays.toString(latlon));
 		this.latitude_DEG = latlon[0];
@@ -41,35 +35,5 @@ public class SunshineOlivieri extends Node.Abstract{
 			return null;
 		}			
 		return new SunshineOlivieriIterator(input_iterator, latitude_DEG, longitude_DEG);
-	}
-
-	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
-	@Override
-	public boolean isContinuous() {
-		return source.isContinuous();
-	}
-
-	@Override
-	public boolean isConstantTimestep() {
-		return source.isConstantTimestep();
-	}
-
-	@Override
-	public String[] getSchema() {
-		return source.getSchema();
-	}
-	
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-	
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
+	}	
 }

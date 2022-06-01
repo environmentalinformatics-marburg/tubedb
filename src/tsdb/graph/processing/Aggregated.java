@@ -1,14 +1,12 @@
 package tsdb.graph.processing;
 
-import static tsdb.util.AssumptionCheck.throwNulls;
-
+import static tsdb.util.AssumptionCheck.throwNull;
 
 import org.tinylog.Logger;
 
-import tsdb.Station;
 import tsdb.TsDB;
-import tsdb.VirtualPlot;
 import tsdb.graph.node.Continuous;
+import tsdb.graph.source.DelegateContinuousAbstract;
 import tsdb.iterator.DayAggregationIterator;
 import tsdb.iterator.MonthAggregationIterator;
 import tsdb.iterator.WeekAggregationIterator;
@@ -23,22 +21,16 @@ import tsdb.util.iterator.TsIterator;
  * @author woellauer
  *
  */
-public class Aggregated extends Continuous.Abstract {	
+public class Aggregated extends DelegateContinuousAbstract {	
 	
-
-	private final Continuous source; //not null
 	private final AggregationInterval aggregationInterval; //not null
 	private final Mutator dayMutator; // nullable
 
 	protected Aggregated(TsDB tsdb, Continuous source, AggregationInterval aggregationInterval, Mutator dayMutator) {
-		super(tsdb);
-		throwNulls(source,aggregationInterval);
-		this.source = source;
+		super(tsdb, source);
+		throwNull(aggregationInterval);
 		this.aggregationInterval = aggregationInterval;
 		this.dayMutator = dayMutator;
-		if(!source.isContinuous()) {
-			throw new RuntimeException("source needs to be continuous");
-		}
 	}
 
 	public static Aggregated of(TsDB tsdb, Continuous source, AggregationInterval aggregationInterval, Mutator dayMutator) {
@@ -86,22 +78,7 @@ public class Aggregated extends Continuous.Abstract {
 		new RuntimeException().printStackTrace();
 		Logger.warn("unknown aggregation: "+aggregationInterval);
 		return null;
-	}
-
-	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
-	@Override
-	public String[] getSchema() {
-		return source.getSchema();
-	}
-
-	@Override
-	public TsIterator getExactly(long start, long end) {
-		return get(start, end);
-	}
+	}	
 
 	@Override
 	public boolean isContinuous() {
@@ -121,15 +98,5 @@ public class Aggregated extends Continuous.Abstract {
 		default:
 			throw new RuntimeException("unknown aggregation interval");	
 		}
-	}
-	
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-	
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
+	}	
 }

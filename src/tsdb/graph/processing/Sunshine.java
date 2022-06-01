@@ -1,11 +1,8 @@
 package tsdb.graph.processing;
 
-import static tsdb.util.AssumptionCheck.throwNull;
-
-import tsdb.Station;
 import tsdb.TsDB;
-import tsdb.VirtualPlot;
 import tsdb.graph.node.Node;
+import tsdb.graph.source.DelegateNode;
 import tsdb.iterator.SunshineIterator;
 import tsdb.util.iterator.TsIterator;
 
@@ -14,13 +11,12 @@ import tsdb.util.iterator.TsIterator;
  * @author woellauer
  *
  */
-public class Sunshine extends Node.Abstract{
+public class Sunshine extends DelegateNode {
 	
 	private final Node source;
 	
-	protected Sunshine(TsDB tsdb,Node source) {
-		super(tsdb);
-		throwNull(source);
+	protected Sunshine(TsDB tsdb, Node source) {
+		super(tsdb, source);
 		this.source = source;
 	}
 	
@@ -35,35 +31,5 @@ public class Sunshine extends Node.Abstract{
 			return null;
 		}			
 		return new SunshineIterator(input_iterator);
-	}
-
-	@Override
-	public Station getSourceStation() {
-		return source.getSourceStation();
-	}
-
-	@Override
-	public boolean isContinuous() {
-		return source.isContinuous();
-	}
-
-	@Override
-	public boolean isConstantTimestep() {
-		return source.isConstantTimestep();
-	}
-
-	@Override
-	public String[] getSchema() {
-		return source.getSchema();
-	}
-	
-	@Override
-	public VirtualPlot getSourceVirtualPlot() {
-		return source.getSourceVirtualPlot();
-	}
-	
-	@Override
-	public long[] getTimestampInterval() {
-		return source.getTimestampInterval();
-	}
+	}	
 }
