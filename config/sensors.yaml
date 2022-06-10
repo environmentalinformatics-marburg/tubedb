@@ -1723,6 +1723,10 @@ tt_air_temperature:
   aggregation: average  
   category: temperature
   derived: false
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7  
 
 tt_air_relative_humidity:
   description: Relative air humidity
@@ -2152,6 +2156,10 @@ tt_air_temperature_min:
   aggregation: minimum  
   category: temperature
   derived: false
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7  
 
 tt_air_temperature_max:
   description: Maximum value of tt_air_temperature
@@ -2160,7 +2168,11 @@ tt_air_temperature_max:
   raw_func: "tt_air_temperature" 
   aggregation: maximum  
   category: temperature
-  derived: false    
+  derived: false
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7  
 
 tt_air_temperature_DTR:  
   description: DTR (Diurnal Temperature Range) of tt_air_temperature

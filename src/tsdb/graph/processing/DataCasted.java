@@ -15,7 +15,7 @@ import tsdb.util.Util;
 import tsdb.util.iterator.TsIterator;
 
 public class DataCasted extends Continuous.Abstract {
-	
+
 	private final String[] schema; //not null
 	private final List<Continuous> sources; //not null
 	private final boolean _constant_timestep;
@@ -79,15 +79,24 @@ public class DataCasted extends Continuous.Abstract {
 	@Override
 	public TsIterator get(Long start, Long end) {
 		if(start==null||end==null) {
-			long[] interval = new long[]{Long.MAX_VALUE,Long.MIN_VALUE};
-			sources.stream().map(s->tsdb.getBaseTimeInterval(s.getSourceStation().stationID)).forEach(i->{
-				if(i[0]<interval[0]) {
-					interval[0] = i[0];
-				}
-				if(i[1]>interval[1]) {
-					interval[1] = i[1];
-				}
-			});
+			long[] interval = new long[]{Long.MAX_VALUE, Long.MIN_VALUE};
+			sources.stream().map(					
+					s -> {
+						return s.getTimestampBaseInterval();
+						/*Logger.info(s);
+						Station sourceStation = s.getSourceStation();
+						String sourceStationID = sourceStation.stationID;
+						return tsdb.getBaseTimeInterval(sourceStationID);*/
+					}
+					).forEach(
+							i -> {
+								if(i[0] < interval[0]) {
+									interval[0] = i[0];
+								}
+								if(i[1] > interval[1]) {
+									interval[1] = i[1];
+								}
+							});
 			/*if(interval==null) {
 				return null;
 			}*/
@@ -148,7 +157,7 @@ public class DataCasted extends Continuous.Abstract {
 		}
 		return interval;
 	}
-	
+
 	@Override
 	public int[] getSensorTimeInterval(String sensorName) { // maximum interval
 		int[] interval = new int[]{Integer.MAX_VALUE, Integer.MIN_VALUE};

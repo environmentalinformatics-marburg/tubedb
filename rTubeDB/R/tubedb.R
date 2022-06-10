@@ -689,6 +689,8 @@ query_region_stations <- function(tubedb, regionID) {
 #' @param colMonth add numeric month column in resulting data.frame (1 to 12)
 #' @param colDay add numeric day column in resulting data.frame (1 to 31)
 #' @param colHour add numeric hour column in resulting data.frame (0 to 23)
+#' @param colWeek add numeric day of week column in resulting data.frame (1 to 53) (ISO week based)
+#' @param colDayOfWeek add numeric day of week column in resulting data.frame (1 to 7) (ISO week based)
 #' @return data.frame time series with datetime column + sensor columns
 #' @author woellauer
 #' @seealso \link{TubeDB} \link{query_regions} \link{query_region_plots} \link{query_region_sensors} \link{POSIXct} \link{POSIXlt} \link{read_timeseries} \link{query_diagram} \link{query_heatmap}
@@ -714,7 +716,7 @@ query_region_stations <- function(tubedb, regionID) {
 #' # show time series
 #' plot(tsDF$datetime, tsDF$Ta_200)
 #' @export
-query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality = "physical", interpolated = FALSE, start = NULL, end = NULL, year = NULL, month = NULL, day = NULL, casted = FALSE, spatial_aggregated = FALSE, datetimeFormat = "character", colYear = FALSE, colPlot = TRUE, colMonth = FALSE, colDay = FALSE, colHour = FALSE) {
+query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality = "physical", interpolated = FALSE, start = NULL, end = NULL, year = NULL, month = NULL, day = NULL, casted = FALSE, spatial_aggregated = FALSE, datetimeFormat = "character", colYear = FALSE, colPlot = TRUE, colMonth = FALSE, colDay = FALSE, colHour = FALSE, colWeek = FALSE, colDayOfWeek = FALSE) {
   stopifnot(isClass(tubedb, TubeDB))
   args <- list(
     aggregation = aggregation,
@@ -734,7 +736,7 @@ query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality
   args <- c(plot, sensor, args)
   r <- apiGet(tubedb, "query_csv", args, FALSE)
   c <- textConnection(rawToChar(r$content))
-  t <- read_timeseries(c, datetimeFormat, colYear, colMonth, colDay, colHour)
+  t <- read_timeseries(c, datetimeFormat, colYear, colMonth, colDay, colHour, colWeek, colDayOfWeek)
   close(c)
   return(t)
 }
@@ -888,11 +890,13 @@ query_heatmap <- function(tubedb, plot, sensor, quality = "physical", interpolat
 #' @param colMonth add numeric month column in resulting data.frame (1 to 12)
 #' @param colDay add numeric day column in resulting data.frame (1 to 31)
 #' @param colHour add numeric hour column in resulting data.frame (0 to 23)
+#' @param colWeek add numeric day of week column in resulting data.frame (1 to 53) (ISO week based)
+#' @param colDayOfWeek add numeric day of week column in resulting data.frame (1 to 7) (ISO week based)
 #' @return data.frame time series with datetime column + sensor columns
 #' @author woellauer
 #' @seealso \link{POSIXct} \link{POSIXlt} \link{query_timeseries} \link{TubeDB} \link{query_regions} \link{query_region_plots} \link{query_region_sensors}
 #' @export
-read_timeseries <- function(file, datetimeFormat = "character", colYear = FALSE, colMonth = FALSE, colDay = FALSE, colHour = FALSE) {
+read_timeseries <- function(file, datetimeFormat = "character", colYear = FALSE, colMonth = FALSE, colDay = FALSE, colHour = FALSE, colWeek = FALSE, colDayOfWeek = FALSE) {
   t <- read.table(file, sep = ",", header = TRUE, stringsAsFactors = FALSE, colClasses = c(datetime="character"))
   if(colYear) {
     t$year <- getYear(t$datetime)
@@ -906,17 +910,33 @@ read_timeseries <- function(file, datetimeFormat = "character", colYear = FALSE,
   if(colHour) {
     t$hour <- getHour(t$datetime)
   }
+  if(colDayOfWeek) {
+    t$dayOfWeek <- getDayOfWeek(t$datetime)
+  }
+  if(colWeek) {
+    t$week <- getWeek(t$datetime)
+  }
   if(datetimeFormat == "character") {
     return(t)
   } else if(datetimeFormat == "POSIXct" || datetimeFormat == "POSIXlt") {
     datetime <- t$datetime
-    if(nchar(datetime[1]) == 4 || nchar(datetime[1]) == 7) {
+    if(nchar(datetime[1]) == 4 || nchar(datetime[1]) == 7 || nchar(datetime[1]) == 8) { # year or month or week
       datetime <- fillTimestamp(datetime)
     }
     format <- getTimestampFormat(datetime[1])
     if(datetimeFormat == "POSIXct") {
+      if(format == '%Y-W%V-%d') {
+        date <- ISOweek::ISOweek2date(datetime)
+        datetime <- as.character(date)
+        format <- '%Y-%m-%d'
+      }
       t$datetime <- as.POSIXct(datetime, format = format)
     } else {
+      if(format == '%Y-W%V-%d') {
+        date <- ISOweek::ISOweek2date(datetime)
+        datetime <- as.character(date)
+        format <- '%Y-%m-%d'
+      }
       t$datetime <- as.POSIXlt(datetime, format = format)
     }
     return(t)
@@ -930,6 +950,11 @@ getYear <- function(datetime) {
     datetime <- fillTimestamp(datetime)
   }
   format <- getTimestampFormat(datetime[1])
+  if(format == '%Y-W%V-%d') {
+    date <- ISOweek::ISOweek2date(datetime)
+    datetime <- as.character(date)
+    format <- '%Y-%m-%d'
+  }
   t <- as.POSIXlt(datetime, format = format)
   year <- 1900 + t$year
   return(year)
@@ -940,6 +965,11 @@ getMonth <- function(datetime) {
     datetime <- fillTimestamp(datetime)
   }
   format <- getTimestampFormat(datetime[1])
+  if(format == '%Y-W%V-%d') {
+    date <- ISOweek::ISOweek2date(datetime)
+    datetime <- as.character(date)
+    format <- '%Y-%m-%d'
+  }
   t <- as.POSIXlt(datetime, format = format)
   month <- t$mon + 1
   return(month)
@@ -950,6 +980,11 @@ getDay <- function(datetime) {
     datetime <- fillTimestamp(datetime)
   }
   format <- getTimestampFormat(datetime[1])
+  if(format == '%Y-W%V-%d') {
+    date <- ISOweek::ISOweek2date(datetime)
+    datetime <- as.character(date)
+    format <- '%Y-%m-%d'
+  }
   t <- as.POSIXlt(datetime, format = format)
   day <- t$mday
   return(day)
@@ -960,18 +995,57 @@ getHour <- function(datetime) {
     datetime <- fillTimestamp(datetime)
   }
   format <- getTimestampFormat(datetime[1])
+  if(format == '%Y-W%V-%d') {
+    date <- ISOweek::ISOweek2date(datetime)
+    datetime <- as.character(date)
+    format <- '%Y-%m-%d'
+  }
   t <- as.POSIXlt(datetime, format = format)
   hour <- t$hour
   return(hour)
 }
 
+getWeek <- function(datetime) {
+  if(nchar(datetime[1]) == 4 || nchar(datetime[1]) == 7) {
+    datetime <- fillTimestamp(datetime)
+  }
+  format <- getTimestampFormat(datetime[1])
+  if(format == '%Y-W%V-%d') {
+    date <- ISOweek::ISOweek2date(datetime)
+    datetime <- as.character(date)
+    format <- '%Y-%m-%d'
+  }
+  t <- as.POSIXlt(datetime, format = format)
+  yearWeek <- ISOweek::ISOweek(t)
+  week <- as.integer(substr(yearWeek, 7, 8))
+  return(week)
+}
+
+getDayOfWeek <- function(datetime) {
+  if(nchar(datetime[1]) == 4 || nchar(datetime[1]) == 7) {
+    datetime <- fillTimestamp(datetime)
+  }
+  format <- getTimestampFormat(datetime[1])
+  if(format == '%Y-W%V-%d') {
+    date <- ISOweek::ISOweek2date(datetime)
+    datetime <- as.character(date)
+    format <- '%Y-%m-%d'
+  }
+  t <- as.POSIXlt(datetime, format = format)
+  dayOfWeek <- ISOweek::ISOweekday(t)
+  return(dayOfWeek)
+}
+
 fillTimestamp <- function(timestamp) {
   n <- nchar(timestamp[1])
-  if(n == 4) {
+  if(n == 4) { # year
     return(paste0(timestamp, "-01-01"))
   }
-  if(n == 7) {
+  if(n == 7) { # month
     return(paste0(timestamp, "-01"))
+  }
+  if(n == 8) { # week
+    return(paste0(timestamp, "-1"))
   }
   return(timestamp)
 }
@@ -979,7 +1053,11 @@ fillTimestamp <- function(timestamp) {
 getTimestampFormat <- function(timestamp) {
   n <- nchar(timestamp[1])
   if(n == 10) {
-    return("%Y-%m-%d")
+    if(grepl('W', timestamp)) { # week
+      return("%Y-W%V-%d") # %V is not implemented (on windows)
+    } else {
+      return("%Y-%m-%d")
+    }
   }
   if(n == 13) {
     return("%Y-%m-%dT%H")

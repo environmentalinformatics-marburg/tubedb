@@ -763,16 +763,17 @@ public final class TimeUtil implements Serializable {
 	private static final TemporalField yearOfWeek = WeekFields.of(Locale.GERMANY).weekBasedYear();
 
 	public static char[] fastDateWriteWeeks(LocalDate localDate) {		
-		char[] c = new char[7];
+		char[] c = new char[8];
 		int y = localDate.get(yearOfWeek);
 		c[0] = (char) ('0'+  y/1000);
 		c[1] = (char) ('0'+ ((y%1000)/100)  );
 		c[2] = (char) ('0'+ ((y%100)/10)  );
 		c[3] = (char) ('0'+ (y%10)  );
-		c[4] = (char) ('W');
+		c[4] = (char) ('-');
+		c[5] = (char) ('W');
 		int w = localDate.get(weekOfYear);
-		c[5] = (char) ('0'+(w/10));
-		c[6] = (char) ('0'+(w%10));
+		c[6] = (char) ('0'+(w/10));
+		c[7] = (char) ('0'+(w%10));
 		return c;
 	}
 
