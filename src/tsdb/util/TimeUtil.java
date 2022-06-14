@@ -626,7 +626,8 @@ public final class TimeUtil implements Serializable {
 				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T00:00"));
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T23:00"));
 			case WEEK:
-				throw new RuntimeException("week aggregation can not be applied to shortened end date");
+				//throw new RuntimeException("week aggregation can not be applied to shortened end date");
+				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T23:00"));
 			case MONTH:
 				Logger.warn("correct day for end date not checked");
 				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T00:00"));
