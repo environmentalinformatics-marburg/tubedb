@@ -229,14 +229,14 @@ SM_35:
 #************************************
 
 PAR_200:
-  description: Photosynthetically activ radiation at 2 meters height
+  description: Photosynthetically active radiation at 2 meters height
   unit: µmol/(m^2*s) (micromol photons per square meter per second)
   aggregation: average
   physical_range: [0.0, 3000.0]
   step_range: [0.0, 1000.0]
   
 PAR_300:
-  description: Photosynthetically activ radiation at 3 meters height
+  description: Photosynthetically active radiation at 3 meters height
   unit: µmol/(m^2*s) (micromol photons per square meter per second) 
   aggregation: average
   physical_range: [0.0, 3000.0]
@@ -477,14 +477,14 @@ LWUR_3700:
   derived: false # raw_func converts unit only 
   
 PAR_2000:
-  description: Photosynthetically activ radiation at 20 meters height
+  description: Photosynthetically active radiation at 20 meters height
   unit: µmol/(m^2*s) (micromol photons per square meter per second) 
   aggregation: average
   physical_range: [0.0, 3000.0]
   interpolation_mse: 40000   
   
 PAR_1000:
-  description: Photosynthetically activ radiation at 10 meters height
+  description: Photosynthetically active radiation at 10 meters height
   unit: µmol/(m^2*s) (micromol photons per square meter per second) 
   aggregation: average
   physical_range: [0.0, 3000.0]
@@ -1087,7 +1087,7 @@ LWDR_300_U:
   visibility: internal
   
 PAR_200_U:
-  description: (raw) Photosynthetically activ radiation at 2 meters height
+  description: (raw) Photosynthetically active radiation at 2 meters height
   unit: mV (millivolt)
   aggregation: none
   physical_range: [0.0, 50.0]
@@ -1095,7 +1095,7 @@ PAR_200_U:
   visibility: internal
   
 PAR_300_U:
-  description: (raw) Photosynthetically activ radiation at 3 meters height
+  description: (raw) Photosynthetically active radiation at 3 meters height
   unit: mV (millivolt)
   aggregation: none
   physical_range: [0.0, 50.0]
@@ -1636,7 +1636,7 @@ precipitation_radolan:
 
 #added 2018-04-04 generic PAR
 PAR:
-  description: Photosynthetically activ radiation
+  description: Photosynthetically active radiation
   unit: µmol/(m^2*s) (micromol photons per square meter per second) 
   raw_source: [PAR_200, PAR_300, PAR_1000, PAR_2000] # use first available sensor in list
   aggregation: average
@@ -2585,7 +2585,7 @@ Ta_200_IAK:
   category: temperature
   
 PAR_300_02:
-  description: Photosynthetically activ radiation at 3 meters height (special PAR_300_02)
+  description: Photosynthetically active radiation at 3 meters height (special PAR_300_02)
   unit: µmol/(m^2*s) (micromol photons per square meter per second) 
   aggregation: average
   physical_range: [0.0, 3000.0]
@@ -2594,7 +2594,7 @@ PAR_300_02:
   interpolation_mse: 10000
 
 PAR_300_02_T:
-  description: Photosynthetically activ radiation at 3 meters height (special PAR_300_02_T)
+  description: Photosynthetically active radiation at 3 meters height (special PAR_300_02_T)
   unit: µmol/(m^2*s) (micromol photons per square meter per second) 
   aggregation: average
   physical_range: [0.0, 3000.0]
@@ -2603,7 +2603,7 @@ PAR_300_02_T:
   interpolation_mse: 10000
 
 PAR_300_02_T2:
-  description: Photosynthetically activ radiation at 3 meters height (special PAR_300_02_T2)
+  description: Photosynthetically active radiation at 3 meters height (special PAR_300_02_T2)
   unit: µmol/(m^2*s) (micromol photons per square meter per second) 
   aggregation: average
   physical_range: [0.0, 3000.0]

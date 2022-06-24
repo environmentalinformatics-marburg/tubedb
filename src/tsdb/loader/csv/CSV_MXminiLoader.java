@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.validation.constraints.NotNull;
 
 import org.tinylog.Logger;
 
@@ -18,10 +19,12 @@ import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
+import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataRow;
+import tsdb.util.Interval;
 import tsdb.util.TimeUtil;
 
 public class CSV_MXminiLoader {
@@ -116,6 +119,8 @@ public class CSV_MXminiLoader {
 				sensorNames[i] = row6[i + 1];
 			}
 
+			long timestampMin = Integer.MAX_VALUE;
+			long timestampMax = Integer.MIN_VALUE;
 			ArrayList<DataRow> dataRows = new ArrayList<>();
 			String[] row = csvReader.readNext();
 			while(row != null) {
@@ -133,14 +138,27 @@ public class CSV_MXminiLoader {
 				DataRow dataRow = new DataRow(data, timestamp);
 				//Logger.info(dataRow);
 				dataRows.add(dataRow);
+				if(timestamp < timestampMin) {
+					timestampMin = timestamp;
+				}
+				if(timestamp > timestampMax) {
+					timestampMax = timestamp;
+				}
 				} else {
 					Logger.warn("skip invalid line sensor columns: " + (row.length - 1) + " should be: " + sensorNamesLen + "   in " + filePath + "  line: " + Arrays.toString(row));
 				}
 				row = csvReader.readNext();
 			}
 			if(!dataRows.isEmpty()) {
-				tsdb.streamStorage.insertDataRows(stationID, sensorNames, dataRows);
-				tsdb.sourceCatalog.insert(SourceEntry.of(stationID, sensorNames, dataRows, filePath));
+				String[] correctedSensorNames = sensorNames;
+				Station station = tsdb.getStation(stationID);
+				if(station != null) {
+					Logger.info(Arrays.toString(sensorNames));
+					Interval interval = Interval.of((int) timestampMin, (int) timestampMax);
+					correctedSensorNames = station.correctRawSensorNames(sensorNames, interval);
+				}				
+				tsdb.streamStorage.insertDataRows(stationID, correctedSensorNames, dataRows);
+				tsdb.sourceCatalog.insert(SourceEntry.of(stationID, sensorNames, correctedSensorNames, dataRows, filePath));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

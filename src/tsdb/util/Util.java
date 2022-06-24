@@ -501,19 +501,21 @@ public final class Util {
 		StringBuilder b = new StringBuilder();
 		b.append('[');
 		for (int i = 0; ; i++) {			
-			if(a[i]==null) {
+			if(a[i] == null) {
 			} else {
 				b.append(String.valueOf(a[i]));
 			}
 			if (i == iMax) {
 				return b.append(']').toString();
 			}
-			if(a[i+1]==null) {
+			if(a[i+1] == null) {
 				//b.append(',');
-				b.append(' ');
+				//b.append(' ');
+				b.append('|');
 			} else {
 				//b.append(", ");
-				b.append(' ');
+				//b.append(' ');
+				b.append('|');
 			}
 		}
 	}

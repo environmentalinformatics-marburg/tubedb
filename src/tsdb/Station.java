@@ -151,6 +151,14 @@ public class Station {
 		}
 		return null;
 	}
+	
+	public @NotNull String[] correctRawSensorNames(@NotNull String[] rawNames, @NotNull Interval fileTimeInterval) {
+		String[] correctedNames = new String[rawNames.length];
+		for (int i = 0; i < rawNames.length; i++) {
+			correctedNames[i] = correctRawSensorName(rawNames[i], fileTimeInterval);
+		}
+		return correctedNames;
+	}
 
 	/**
 	 * Applys sensor name corrections.
@@ -161,14 +169,14 @@ public class Station {
 	 */
 	public @NotNull String correctRawSensorName(@NotNull String rawName, @NotNull Interval fileTimeInterval) {
 		AssumptionCheck.throwNulls(rawName, fileTimeInterval);
-		if(sensorNameCorrectionMap==null) {
+		if(sensorNameCorrectionMap == null) {
 			return rawName;
 		}
 		NamedInterval[] corrected = sensorNameCorrectionMap.get(rawName);
-		if(corrected==null) {
+		if(corrected == null) {
 			return rawName;
 		}
-		for(NamedInterval namedInterval:corrected) {
+		for(NamedInterval namedInterval : corrected) {
 			if(namedInterval.covers(fileTimeInterval)) {
 				Logger.info("sensor name corrected in "+stationID+"    "+rawName+" -> "+namedInterval.name);
 				return namedInterval.name;

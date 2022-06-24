@@ -512,12 +512,12 @@ public class Table {
 		for(int i=0;i<columnNames.length;i++) {
 			if(map.containsKey(columnNames[i])) {
 				int nameNumber = 2;
-				String name2 = columnNames[i]+nameNumber;
+				String name2 = columnNames[i] + nameNumber;
 				while(map.containsKey(name2)) {
 					nameNumber++;
-					name2 = columnNames[i]+nameNumber;
+					name2 = columnNames[i] + nameNumber;
 				}
-				Logger.warn("dublicate name: "+columnNames[i]+ " replaced with "+name2);
+				Logger.warn("dublicate name: '"+columnNames[i] + "' replaced with '" + name2 + "'");
 				columnNames[i] = name2;
 				map.put(columnNames[i], i);
 			} else {

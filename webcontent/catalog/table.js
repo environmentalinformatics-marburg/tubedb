@@ -167,7 +167,7 @@ methods: {
 	},
 	getTranslation: function(row) {
 		var trans = [];
-		row[5].slice(1, -1).split(' ').forEach(function (entry) {
+		row[5].slice(1, -1).split('|').forEach(function (entry) {
 			if(entry.indexOf('->')>=0) {
 				trans.push(entry.split('->'));
 			} else {

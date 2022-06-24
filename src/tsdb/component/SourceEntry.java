@@ -52,6 +52,12 @@ public class SourceEntry implements Serializable {
 		return new SourceEntry(filename, stationName, firstTimestamp, lastTimestamp, dataRows.size(), sensorNames, sensorNames, TsSchema.NO_CONSTANT_TIMESTEP);
 	}
 	
+	public static SourceEntry of(String stationName, String[] sensorNames, String[] correctedSensorNames, ArrayList<DataRow> dataRows, Path filename) {
+		long firstTimestamp = dataRows.get(0).timestamp;
+		long lastTimestamp = dataRows.get(dataRows.size()-1).timestamp;
+		return new SourceEntry(filename, stationName, firstTimestamp, lastTimestamp, dataRows.size(), sensorNames, correctedSensorNames, TsSchema.NO_CONSTANT_TIMESTEP);
+	}
+	
 	public static SourceEntry ofDataEntry(String stationName, String sensorSrcName, String sensorDstName, ArrayList<DataEntry> dataEntryList, Path filename) {
 		long firstTimestamp = dataEntryList.get(0).timestamp;
 		long lastTimestamp = dataEntryList.get(dataEntryList.size()-1).timestamp;
