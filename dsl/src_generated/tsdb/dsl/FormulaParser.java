@@ -25,7 +25,7 @@ public class FormulaParser extends Parser {
 	public static final String[] tokenNames = {
 		"<INVALID>", "'ELSE'", "'!='", "':'", "'>='", "'AND'", "'||'", "'=='", 
 		"'<'", "'&&'", "'|'", "'='", "'NOT'", "'IF'", "'>'", "'OR'", "'?'", "'<='", 
-		"'!'", "'THEN'", "'<>'", "'&'", "'('", "')'", "'+'", "'-'", "'*'", "'/'", 
+		"'!'", "'THEN'", "'<>'", "'&'", "'('", "')'", "'+'", "SUB", "'*'", "'/'", 
 		"'.'", "'^'", "'_'", "LETTER", "DIGIT", "WS"
 	};
 	public static final int

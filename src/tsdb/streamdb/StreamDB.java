@@ -602,7 +602,7 @@ public class StreamDB {
 			return null;
 		}
 		int[] interval = new int[]{chunkMetaMap.firstKey(), chunkMetaMap.lastEntry().getValue().lastTimestamp};
-		Logger.info("interval " + TimeUtil.oleMinutesToText(interval[0]) + " - " + TimeUtil.oleMinutesToText(interval[1]) + "  " + sensorMeta.stationName + " " + sensorMeta.sensorName);
+		//Logger.info("interval " + TimeUtil.oleMinutesToText(interval[0]) + " - " + TimeUtil.oleMinutesToText(interval[1]) + "  " + sensorMeta.stationName + " " + sensorMeta.sensorName);
 		return interval;
 	}
 	

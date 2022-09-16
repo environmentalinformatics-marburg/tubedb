@@ -265,7 +265,7 @@ public class VirtualPlot {
 			return null;
 		}
 		long[] interval = new long[]{imin, imax};
-		Logger.info("interval " + TimeUtil.oleMinutesToText(interval[0]) + " - " + TimeUtil.oleMinutesToText(interval[1]) + "  " + plotID);
+		//Logger.info("interval " + TimeUtil.oleMinutesToText(interval[0]) + " - " + TimeUtil.oleMinutesToText(interval[1]) + "  " + plotID);
 		return interval;		
 	}
 

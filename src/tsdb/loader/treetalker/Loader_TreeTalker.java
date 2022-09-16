@@ -11,12 +11,10 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeSet;
-
 
 import org.tinylog.Logger;
 
@@ -125,7 +123,7 @@ public class Loader_TreeTalker {
 						continue;
 					}
 					String timeID = row[0];
-					String tt_ID = "tt_" + timeID.substring(timeID.indexOf(',') + 1);
+					String tt_ID = "tt_" + timeID.substring(timeID.indexOf(',') + 1); // If ',' is missing start from 0 is correct for raw TreeTalker data with out receive timestamp.
 					//Logger.info(tt_ID);
 
 

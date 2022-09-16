@@ -1378,6 +1378,19 @@ Ta_200_max_m:
   aggregation_year: maximum # aggregation from month to year
   category: temperature
   
+Ta_200_wet_bulb_temperature:  
+  description: Wet-Bulb Temperature based on Ta_200 and rH_200
+  unit: °C (degree Celcius, -40 to 60))
+  dependency: [Ta_200, rH_200]
+  # reference publication "Wet-Bulb Temperature from Relative Humidity and Air Temperature"  https://doi.org/10.1175/JAMC-D-11-0143.1
+  raw_func: "Ta_200 * arctan(0.151977 * (rH_200 + 8.313659)^(1/2)) + arctan(Ta_200 + rH_200) - arctan(rH_200 - 1.676331) + 0.00391838 * rH_200^(3/2) * arctan(0.023101 * rH_200) - 4.686035"
+  aggregation: average
+  category: temperature
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7  
+  
 P_RT_NRT_m:
   description: monthly precipitation
   unit: mm (millimeter)
@@ -2202,6 +2215,14 @@ tt_air_relative_humidity_DMR:
   dependency: [tt_air_relative_humidity_min, tt_air_relative_humidity_max]
   post_day_func: "tt_air_relative_humidity_max - tt_air_relative_humidity_min"
   aggregation: average
+  
+tt_wet_bulb_temperature:  
+  description: Wet-Bulb Temperature based on tt_air_temperature and tt_air_relative_humidity
+  unit: °C (degree Celcius, -40 to 60))
+  dependency: [tt_air_temperature, tt_air_relative_humidity]
+  raw_func: "tt_air_temperature * arctan(0.151977 * (tt_air_relative_humidity + 8.313659)^(1/2)) + arctan(tt_air_temperature + tt_air_relative_humidity) - arctan(tt_air_relative_humidity - 1.676331) + 0.00391838 * tt_air_relative_humidity^(3/2) * arctan(0.023101 * tt_air_relative_humidity) - 4.686035"
+  aggregation: average
+  category: temperature
 
 #added 2020-08_24 Nature 4.0 Audio 
 

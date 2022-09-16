@@ -154,7 +154,7 @@ ADD
 
 
 SUB
-   : '-'
+   : '-' | '−' // two different minus characters
    ;
 
 
