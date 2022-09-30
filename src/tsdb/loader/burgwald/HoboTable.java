@@ -1,15 +1,10 @@
 package tsdb.loader.burgwald;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-
-import org.tinylog.Logger;
 
 import com.opencsv.CSVReader;
 
@@ -22,7 +17,7 @@ public class HoboTable extends Table {
 	public final String[] columnsHeader;
 
 
-	public HoboTable(String filename) throws FileNotFoundException, IOException {
+	public HoboTable(String filename) throws Exception {
 		try(CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8))) {			
 			String[] firstLine = reader.readNext();			
 			if(firstLine.length != 1) {

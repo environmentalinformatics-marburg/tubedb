@@ -18,8 +18,12 @@ import java.util.TreeSet;
 
 import org.tinylog.Logger;
 
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 
+import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
 import tsdb.util.AssumptionCheck;
@@ -89,9 +93,12 @@ public class Loader_TreeTalker {
 	}
 
 	static class TreeTalkerTable {
-		public TreeTalkerTable(TsDB tsdb, File file) throws IOException {
+		public TreeTalkerTable(TsDB tsdb, File file) throws Exception {
 			InputStreamReader in = new InputStreamReader(new FileInputStream(file),UTF8);
-			try(CSVReader reader = new CSVReader(in, SEPARATOR)) {
+			//try(CSVReader reader = new CSVReader(in, SEPARATOR)) {
+			CSVParser csvParser = new CSVParserBuilder().withSeparator(SEPARATOR).build();
+			try(CSVReader reader = new CSVReaderBuilder(in).withCSVParser(csvParser).build()) {		
+				
 				ArrayList<String[]> dataRowList = new ArrayList<String[]>();
 				String[] curRow = reader.readNext();
 				while(curRow != null){
@@ -488,7 +495,8 @@ public class Loader_TreeTalker {
 	}
 	
 	private static float parseFloat(String s) {
-		return s.isEmpty() ? Float.NaN : Float.parseFloat(s);
+		//return s.isEmpty() ? Float.NaN : Float.parseFloat(s);
+		return s.isEmpty() ? Float.NaN : (float) FastDoubleParser.parseDouble(s);
 	}
 	
 	private static String[] fillMissing(String[] src, int dstLen) {

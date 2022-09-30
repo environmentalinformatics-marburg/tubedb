@@ -10,9 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-
 import org.tinylog.Logger;
 
+import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
@@ -121,7 +121,8 @@ public class ImportGenericCSV {
 	}
 
 	protected int parseTimestamp(String timestampText) {
-		return TimeUtil.parseStartTimestamp(timestampText);
+		//return TimeUtil.parseStartTimestamp(timestampText);
+		return TimeUtil.parseNormalDatetime(timestampText);
 	}
 
 	protected int getDatetimeIndex(Table table) {
@@ -144,10 +145,19 @@ public class ImportGenericCSV {
 
 		ArrayList<DataRow> dataRows = new ArrayList<>(table.rows.length);
 
+		long numberParseErrorCount = 0;
+		String numberParseErrorLast = null;
+		long skipRowMissingTimestampCount = 0;
 		int prevTimestamp = -1;
+		long processingTime = System.currentTimeMillis();
 		for(String[] row:table.rows) {
+			long currentTime = System.currentTimeMillis();
+			if(processingTime + 1000 <= currentTime) {
+				processingTime = currentTime;
+				Logger.info(Arrays.toString(row));
+			}
 			if(row[0].isEmpty() || row[0].equals("NA")) {
-				Logger.warn("skip row with missing timestamp "+row[0]+" "+filePath);
+				skipRowMissingTimestampCount++;
 				continue;
 			}
 			int timestamp = parseTimestamp(row[0]);
@@ -156,7 +166,7 @@ public class ImportGenericCSV {
 				Logger.warn("skip duplicate timestamp "+row[0]+" "+filePath);
 				continue;
 			}
-
+			
 			float[] data = new float[sensors];
 			for(int i=0;i<sensors;i++) {
 				String text = row[i+1];
@@ -164,7 +174,8 @@ public class ImportGenericCSV {
 					data[i] = Float.NaN;
 				} else {
 					try {
-						float value = Float.parseFloat(text);
+						//float value = Float.parseFloat(text);
+						float value = (float) FastDoubleParser.parseDouble(text);
 						if( Float.isFinite(value) && value!= -9999 ) {
 							data[i] = value;
 						} else {
@@ -172,6 +183,9 @@ public class ImportGenericCSV {
 						}
 					} catch(Exception e) {
 						data[i] = Float.NaN;
+						numberParseErrorCount++;
+						numberParseErrorLast = text;
+						Logger.warn("parse error: |" + text + "|");
 					}
 				}
 			}
@@ -182,8 +196,16 @@ public class ImportGenericCSV {
 
 			prevTimestamp = timestamp;
 		}
+		if(skipRowMissingTimestampCount > 0) {
+			Logger.warn(skipRowMissingTimestampCount + " skipped rows with missing timestamps "+filePath);			
+		}
+		if(numberParseErrorCount > 0) {
+			Logger.warn(numberParseErrorCount + " number parse errors in " + filePath + "  last error : |" + numberParseErrorLast + "|");
+		}
 
 		//Logger.info("read done.");
+		
+		dataRows = sortAndRemoveDuplicates(dataRows);
 
 		if(!dataRows.isEmpty()) {
 			String[] sensorNames = Arrays.copyOfRange(table.names, 1, sensors + 1);
@@ -247,7 +269,8 @@ public class ImportGenericCSV {
 					data[i] = Float.NaN;
 				} else {
 					try {
-						float value = Float.parseFloat(text);
+						//float value = Float.parseFloat(text);
+						float value = (float) FastDoubleParser.parseDouble(text);
 						if( Float.isFinite(value) && value!= -9999 ) {
 							data[i] = value;
 						} else {

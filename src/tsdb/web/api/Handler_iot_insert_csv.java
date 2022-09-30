@@ -14,6 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 
 import org.tinylog.Logger;
+
+import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+
 import org.eclipse.jetty.server.Request;
 
 import tsdb.component.SourceEntry;
@@ -29,7 +32,7 @@ import tsdb.util.iterator.CSVTimeType;
  *
  */
 public class Handler_iot_insert_csv extends MethodHandler {	
-	
+
 
 	public Handler_iot_insert_csv(RemoteTsDB tsdb) {
 		super(tsdb, "insert_csv");
@@ -47,7 +50,12 @@ public class Handler_iot_insert_csv extends MethodHandler {
 		}
 
 		// needs to read before parameters !!!!
-		Table table = Table.readCSV(request.getReader(), ',');
+		Table table = null;		
+		try {
+			table = Table.readCSV(request.getReader(), ',');
+		} catch (Exception e) {
+			throw new RuntimeException("could not read data");
+		}
 
 		/*String request_data = Web.requestContentToString(request);  		
 		Logger.info("stream");
@@ -81,7 +89,6 @@ public class Handler_iot_insert_csv extends MethodHandler {
 		if(datetimeIndex != 0) {
 			throw new RuntimeException("missing 'datetime' column in CSV header");
 		}
-
 		final int sensors = table.names.length-1;
 		if(sensors <= 0) {
 			throw new RuntimeException("no sensors in CSV header");
@@ -114,7 +121,8 @@ public class Handler_iot_insert_csv extends MethodHandler {
 					data[i] = Float.NaN;
 				} else {
 					try {
-						float value = Float.parseFloat(text);
+						//float value = Float.parseFloat(text);
+						float value = (float) FastDoubleParser.parseDouble(text);
 						if(Float.isFinite(value)) {
 							data[i] = value;
 						} else {

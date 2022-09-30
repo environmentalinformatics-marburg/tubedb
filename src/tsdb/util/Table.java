@@ -5,7 +5,6 @@ import static tsdb.util.AssumptionCheck.throwFalse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
@@ -19,11 +18,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 
-
 import org.tinylog.Logger;
 
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 
+import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import tsdb.util.Table.ColumnReaderIntFunc.IntegerParser;
 
 /**
@@ -32,7 +34,7 @@ import tsdb.util.Table.ColumnReaderIntFunc.IntegerParser;
  *
  */
 public class Table {
-	
+
 
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 	private static final String UTF8_BOM = "\uFEFF";
@@ -89,7 +91,8 @@ public class Table {
 					}
 					return Float.NaN;
 				}
-				return Float.parseFloat(row[rowIndex]);
+				//return Float.parseFloat(row[rowIndex]);
+				return (float) FastDoubleParser.parseDouble(row[rowIndex]);
 			} catch(NumberFormatException e) {
 				if(row[rowIndex].toLowerCase().equals("na")||row[rowIndex].toLowerCase().equals("null")||row[rowIndex].toLowerCase().equals("nan")) {
 					return Float.NaN;
@@ -122,7 +125,7 @@ public class Table {
 			return missing;
 		}		
 	}
-	
+
 	public static class ColumnReaderDoubleMissing extends ColumnReaderDouble {
 		private double missing;
 		public ColumnReaderDoubleMissing(double missing) {
@@ -148,7 +151,8 @@ public class Table {
 					}
 					return Double.NaN;
 				}
-				return Double.parseDouble(row[rowIndex]);
+				//return Double.parseDouble(row[rowIndex]);
+				return FastDoubleParser.parseDouble(row[rowIndex]);
 			} catch(NumberFormatException e) {
 				if(row[rowIndex].toLowerCase().equals("na")||row[rowIndex].toLowerCase().equals("null")||row[rowIndex].toLowerCase().equals("nan")) {
 					return Double.NaN;
@@ -413,33 +417,33 @@ public class Table {
 		return readCSV(new File(filename), separator);
 	}
 
-	public static Table readCSV(Reader r, char separator) throws IOException {
+	public static Table readCSV(Reader r, char separator) throws Exception {
 		Table table = new Table();
-		CSVReader reader = new CSVReader(r,separator);
+		//CSVReader reader = new CSVReader(r,separator);		
+		CSVParser csvParser = new CSVParserBuilder().withSeparator(separator).build();
+		try(CSVReader reader = new CSVReaderBuilder(r).withCSVParser(csvParser).build()) {
+			//List<String[]> list = reader.readAll(); // very slow because of linkedlist for indexed access
+			String[] curRow = reader.readNext();
+			if(curRow != null) {
+				String[] columnsNames = curRow;
+				if(columnsNames.length>0) { // filter UTF8 BOM
+					if(columnsNames[0].startsWith(UTF8_BOM)) {
+						columnsNames[0] = columnsNames[0].substring(1, columnsNames[0].length());
+					}
+				}			
+				table.updateNames(columnsNames);
+				//Logger.info("names: "+Arrays.toString(table.names)+"   in "+filename);
 
-		//List<String[]> list = reader.readAll(); // very slow because of linkedlist for indexed access
-		
-		String[] curRow = reader.readNext();
-		if(curRow != null) {
-			String[] columnsNames = curRow;
-			if(columnsNames.length>0) { // filter UTF8 BOM
-				if(columnsNames[0].startsWith(UTF8_BOM)) {
-					columnsNames[0] = columnsNames[0].substring(1, columnsNames[0].length());
-				}
-			}			
-			table.updateNames(columnsNames);
-			//Logger.info("names: "+Arrays.toString(table.names)+"   in "+filename);
-			
-			ArrayList<String[]> dataRowList = new ArrayList<String[]>();
-			curRow = reader.readNext();
-			while(curRow != null){
-				dataRowList.add(curRow);
+				ArrayList<String[]> dataRowList = new ArrayList<String[]>();
 				curRow = reader.readNext();
-			}				
-			String[][] tabeRows = dataRowList.toArray(new String[0][]);
-			table.rows = tabeRows;
-		}			
-		reader.close();
+				while(curRow != null){
+					dataRowList.add(curRow);
+					curRow = reader.readNext();
+				}				
+				String[][] tabeRows = dataRowList.toArray(new String[0][]);
+				table.rows = tabeRows;
+			}			
+		}
 		return table;	 	
 	}
 
@@ -451,34 +455,32 @@ public class Table {
 	public static Table readCSV(File file, char separator) {
 		try {
 			Table table = new Table();
-
-			//CSVReader reader = new CSVReader(new FileReader(filename),separator);
 			InputStreamReader in = new InputStreamReader(new FileInputStream(file),UTF8);
-			CSVReader reader = new CSVReader(in,separator);
+			//CSVReader reader = new CSVReader(in,separator);		
+			CSVParser csvParser = new CSVParserBuilder().withSeparator(separator).build();
+			try(CSVReader reader = new CSVReaderBuilder(in).withCSVParser(csvParser).build()) {
+				//List<String[]> list = reader.readAll(); // very slow because of linkedlist for indexed access
+				String[] curRow = reader.readNext();
+				if(curRow != null) {
+					String[] columnsNames = curRow;
+					if(columnsNames.length>0) { // filter UTF8 BOM
+						if(columnsNames[0].startsWith(UTF8_BOM)) {
+							columnsNames[0] = columnsNames[0].substring(1, columnsNames[0].length());
+						}
+					}			
+					table.updateNames(columnsNames);
+					//Logger.info("names: "+Arrays.toString(table.names)+"   in "+filename);
 
-			//List<String[]> list = reader.readAll(); // very slow because of linkedlist for indexed access
-			
-			String[] curRow = reader.readNext();
-			if(curRow != null) {
-				String[] columnsNames = curRow;
-				if(columnsNames.length>0) { // filter UTF8 BOM
-					if(columnsNames[0].startsWith(UTF8_BOM)) {
-						columnsNames[0] = columnsNames[0].substring(1, columnsNames[0].length());
-					}
-				}			
-				table.updateNames(columnsNames);
-				//Logger.info("names: "+Arrays.toString(table.names)+"   in "+filename);
-				
-				ArrayList<String[]> dataRowList = new ArrayList<String[]>();
-				curRow = reader.readNext();
-				while(curRow != null){
-					dataRowList.add(curRow);
+					ArrayList<String[]> dataRowList = new ArrayList<String[]>();
 					curRow = reader.readNext();
-				}				
-				String[][] tabeRows = dataRowList.toArray(new String[0][]);
-				table.rows = tabeRows;
-			}			
-			reader.close();
+					while(curRow != null){
+						dataRowList.add(curRow);
+						curRow = reader.readNext();
+					}				
+					String[][] tabeRows = dataRowList.toArray(new String[0][]);
+					table.rows = tabeRows;
+				}			
+			}
 			return table;
 		} catch(Exception e) {
 			Logger.error(e);
@@ -531,20 +533,16 @@ public class Table {
 
 	public static Table readCSVFirstDataRow(String filename, char separator) {
 		try {
-			Table table = new Table();
-
-			CSVReader reader = new CSVReader(new FileReader(filename),separator);
-
+			Table table = new Table();			
+			//CSVReader reader = new CSVReader(new FileReader(filename),separator);		
+			CSVParser csvParser = new CSVParserBuilder().withSeparator(separator).build();
+			try(CSVReader reader = new CSVReaderBuilder(new FileReader(filename)).withCSVParser(csvParser).build()) {
 			String[] headerRow = reader.readNext();
 			String[] dataRow = reader.readNext();
-
-			reader.close();
-
 			table.updateNames(headerRow);
-
 			table.rows = new String[1][];
-			table.rows[0] = dataRow;			
-
+			table.rows[0] = dataRow;
+			}
 			return table;
 		} catch(Exception e) {
 			Logger.error(e);
@@ -639,7 +637,7 @@ public class Table {
 		}
 		return new ColumnReaderDouble(columnIndex);
 	}
-	
+
 	public ColumnReaderDouble createColumnReaderDouble(String name, double missing) {
 		int columnIndex = getColumnIndex(name);
 		if(columnIndex<0) {

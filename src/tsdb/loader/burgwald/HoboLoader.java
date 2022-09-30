@@ -1,16 +1,14 @@
 package tsdb.loader.burgwald;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Set;
 
-
 import org.tinylog.Logger;
 
+import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
 import tsdb.util.DataEntry;
@@ -47,7 +45,7 @@ public class HoboLoader {
 		}		
 	}
 
-	public void loadFile(Path filename) throws FileNotFoundException, IOException {
+	public void loadFile(Path filename) throws Exception {
 		//Logger.info("load Hobo File: "+filename);
 		HoboTable table = new HoboTable(filename.toString());
 
@@ -123,7 +121,8 @@ public class HoboLoader {
 					if(timestamps[rowIndex]!=-1) {
 						String text = rows[rowIndex][colIndex];
 						if(!text.isEmpty() && !text.equals("Protokolliert")) {
-							float v = Float.parseFloat(text);
+							//float v = Float.parseFloat(text);
+							float v = (float) FastDoubleParser.parseDouble(text);
 							if(Float.isFinite(v)) {
 								vList.add(new DataEntry(timestamps[rowIndex], v));
 							}

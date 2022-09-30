@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 import org.tinylog.Logger;
 
+import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import tsdb.util.DataRow;
 import tsdb.util.Table;
 import tsdb.util.TimeUtil;
@@ -160,7 +161,8 @@ public class Experiment implements AutoCloseable {
 						data[i] = Float.NaN;
 					} else {
 						try {
-							float value = Float.parseFloat(text);
+							//float value = Float.parseFloat(text);
+							float value = (float) FastDoubleParser.parseDouble(text);
 							if( Float.isFinite(value) && value!= -9999 ) {
 								data[i] = value;
 							} else {

@@ -19,7 +19,7 @@ public class TimestampSeriesCSVwriter {
 	/**
 	 * Platform neutral line separator (windows style)
 	 */
-	protected static final String LINE_SEPARATOR = "\r\n";
+	public static final String LINE_SEPARATOR = "\r\n";
 	protected static final LineBreak LINE_BREAK = LineBreak.WIN; //"\r\n"
 	
 	protected final boolean col_plotid;

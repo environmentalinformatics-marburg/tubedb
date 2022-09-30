@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
@@ -456,7 +457,8 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 	private void write_sensor_description_CSV(BufferedWriter bufferedWriter) {
 		try {
 			@SuppressWarnings("resource") //don't close stream
-			CSVWriter csvWriter = new CSVWriter(bufferedWriter, ',', '"', LINE_SEPARATOR);
+			//CSVWriter csvWriter = new CSVWriter(bufferedWriter, ',', '"', LINE_SEPARATOR);
+			CSVWriter csvWriter = new CSVWriter(bufferedWriter, ',', '"', '"', LINE_SEPARATOR);
 			csvWriter.writeNext(new String[]{"name", "description", "unit"}, false);
 			for(String sensorName:sensorNames) {
 				String sensorDescription = "";
@@ -487,8 +489,10 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 
 	private void write_plot_description_CSV(BufferedWriter bufferedWriter) {		
 		try {
+			//@SuppressWarnings("resource") //don't close stream
+			//CSVWriter csvWriter = new CSVWriter(bufferedWriter, ',', '"', LINE_SEPARATOR);
 			@SuppressWarnings("resource") //don't close stream
-			CSVWriter csvWriter = new CSVWriter(bufferedWriter, ',', '"', LINE_SEPARATOR);
+			CSVWriter csvWriter = new CSVWriter(bufferedWriter, ',', '"', '"', LINE_SEPARATOR);
 			PlotInfo[] plotInfos = tsdb.getPlots();
 			Map<String,PlotInfo> map = new HashMap<String,PlotInfo>();
 			for(PlotInfo plotInfo:plotInfos) {

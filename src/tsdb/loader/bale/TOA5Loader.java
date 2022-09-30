@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import org.tinylog.Logger;
 
+import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
@@ -47,7 +48,7 @@ public class TOA5Loader {
 		}		
 	}
 
-	public void loadFile(Path filename) throws FileNotFoundException, IOException {
+	public void loadFile(Path filename) throws Exception {
 		Logger.info("TOA5 load " + filename);
 		TOA5Table table = new TOA5Table(filename.toString());
 
@@ -131,7 +132,8 @@ public class TOA5Loader {
 					if(timestamps[rowIndex]!=-1) {
 						String text = rows[rowIndex][colIndex];
 						if(!text.equals("NAN")) {
-							float v = Float.parseFloat(text);
+							//float v = Float.parseFloat(text);
+							float v = (float) FastDoubleParser.parseDouble(text);
 							if(Float.isFinite(v)) {
 								vList.add(new DataEntry(timestamps[rowIndex], v));
 							}

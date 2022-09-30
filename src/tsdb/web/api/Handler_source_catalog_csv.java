@@ -14,6 +14,7 @@ import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 
 import com.opencsv.CSVWriter;
+import com.opencsv.CSVWriterBuilder;
 
 import tsdb.StationProperties;
 import tsdb.component.SourceEntry;
@@ -21,6 +22,7 @@ import tsdb.remote.RemoteTsDB;
 import tsdb.remote.VirtualPlotInfo;
 import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
+import tsdb.util.iterator.TimestampSeriesCSVwriter;
 import tsdb.web.util.Web;
 
 /**
@@ -83,7 +85,8 @@ public class Handler_source_catalog_csv extends MethodHandler {
 		}
 
 
-		CSVWriter writer = new CSVWriter(response.getWriter(), ',', CSVWriter.NO_QUOTE_CHARACTER);
+		//CSVWriter writer = new CSVWriter(response.getWriter(), ',', CSVWriter.NO_QUOTE_CHARACTER);
+		CSVWriter writer = new CSVWriter(response.getWriter(), ',', '\u0000', '\u0000', TimestampSeriesCSVwriter.LINE_SEPARATOR);
 
 		String[] headerLine = new String[]{"station", "first", "last", "rows", "timestep", "translation", "filename", "path"};
 		writer.writeNext(headerLine);		

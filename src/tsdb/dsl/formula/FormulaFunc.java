@@ -1,8 +1,6 @@
 package tsdb.dsl.formula;
 
 
-import org.tinylog.Logger;
-
 import tsdb.dsl.FormulaVisitor1;
 
 public class FormulaFunc extends Formula {

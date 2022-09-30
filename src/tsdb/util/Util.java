@@ -27,6 +27,9 @@ import java.util.stream.Stream;
 
 
 import org.tinylog.Logger;
+
+import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+
 import org.ini4j.Profile.Section;
 import org.ini4j.Wini;
 
@@ -269,8 +272,10 @@ public final class Util {
 			if(minmax.length != 2) {
 				throw new RuntimeException("could not parse FloatRange: "+s);
 			}
-			float min = Float.parseFloat(minmax[0]);
-			float max = Float.parseFloat(minmax[1]);
+			//float min = Float.parseFloat(minmax[0]);
+			//float max = Float.parseFloat(minmax[1]);
+			float min = (float) FastDoubleParser.parseDouble(minmax[0]);
+			float max = (float) FastDoubleParser.parseDouble(minmax[1]);
 			return new FloatRange(name, min, max);
 		}
 
@@ -286,8 +291,10 @@ public final class Util {
 		public static FloatRange parse(String name, String s) { // slower than parse_no_regex
 			Matcher matcher = PATTERN.matcher(s);
 			if(matcher.matches()) {
-				float min = Float.parseFloat(matcher.group("min"));
-				float max = Float.parseFloat(matcher.group("max"));
+				//float min = Float.parseFloat(matcher.group("min"));
+				//float max = Float.parseFloat(matcher.group("max"));
+				float min = (float) FastDoubleParser.parseDouble(matcher.group("min"));
+				float max = (float) FastDoubleParser.parseDouble(matcher.group("max"));
 				return new FloatRange(name, min, max);
 			} else {
 				throw new RuntimeException("could not parse FloatRange: "+s);

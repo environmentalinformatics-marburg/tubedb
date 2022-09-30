@@ -8,7 +8,7 @@ import java.util.Comparator;
  * immutable (Data values should not be changed.)
  * @author woellauer
  */
-public class DataRow {
+public class DataRow implements Comparable<DataRow> {
 	
 	public final long timestamp;
 	public final float[] data;
@@ -21,6 +21,11 @@ public class DataRow {
 	@Override
 	public String toString() {
 		return TimeUtil.oleMinutesToText(timestamp) + " " + Arrays.toString(data);
+	}
+	
+	@Override
+	public int compareTo(DataRow o) {
+		return Long.compare(this.timestamp, o.timestamp);
 	}
 	
 	public static final Comparator<DataRow> TIMESTAMP_COMPARATOR = new Comparator<DataRow>() {

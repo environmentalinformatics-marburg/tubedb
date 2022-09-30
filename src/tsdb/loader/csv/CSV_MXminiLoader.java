@@ -10,8 +10,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.validation.constraints.NotNull;
-
 import org.tinylog.Logger;
 
 import com.opencsv.CSVParser;
@@ -19,6 +17,7 @@ import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
+import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
@@ -132,7 +131,8 @@ public class CSV_MXminiLoader {
 					if(v.equals("nan")) {
 						data[i] = Float.NaN;
 					} else {
-						data[i] = Float.parseFloat(v.replace(',','.'));
+						//data[i] = Float.parseFloat(v.replace(',','.'));
+						data[i] = (float) FastDoubleParser.parseDouble(v.replace(',','.'));
 					}
 				}
 				DataRow dataRow = new DataRow(data, timestamp);

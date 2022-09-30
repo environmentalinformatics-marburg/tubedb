@@ -8,6 +8,9 @@ import java.util.List;
 
 
 import org.tinylog.Logger;
+
+import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Query;
@@ -108,7 +111,8 @@ public class InfluxLoader {
 								if(vObject instanceof Double) {
 									m = ((Double) vObject).floatValue();
 								} else {
-									m = Float.parseFloat(vObject.toString());
+									//m = Float.parseFloat(vObject.toString());
+									m = (float) FastDoubleParser.parseDouble(vObject.toString());
 								}
 								dataEntryList.add(new DataEntry(timestamp, m));
 								prevTimestamp = timestamp;

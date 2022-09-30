@@ -41,7 +41,7 @@ public class TestingTOA5import {
 		}
 
 	}
-	public static void testing(String[] args) throws IOException {
+	public static void testing(String[] args) throws Exception {
 
 		String filename = "c:/timeseriesdatabase_source/bale/BALE001_TableMetHour.dat";
 
@@ -196,10 +196,6 @@ public class TestingTOA5import {
 				}
 				Timer.stopAndPrint("DataEntryPreTime2");
 			}
-
 		}
-
-
 	}
-
 }

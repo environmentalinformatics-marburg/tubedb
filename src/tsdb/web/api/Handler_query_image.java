@@ -13,6 +13,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 
 import org.tinylog.Logger;
+
+import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+
 import org.eclipse.jetty.server.Request;
 
 import tsdb.component.Region;
@@ -413,8 +416,10 @@ public class Handler_query_image extends MethodHandler {
 			String valueMinText = request.getParameter("value_min");
 			String valueMaxText = request.getParameter("value_max");
 			if(valueMinText != null && valueMaxText != null) {
-				float valueMin = Float.parseFloat(valueMinText);
-				float valueMax = Float.parseFloat(valueMaxText);
+				//float valueMin = Float.parseFloat(valueMinText);
+				//float valueMax = Float.parseFloat(valueMaxText);
+				float valueMin = (float) FastDoubleParser.parseDouble(valueMinText);
+				float valueMax = (float) FastDoubleParser.parseDouble(valueMaxText);
 				valueRange = new float[] {valueMin, valueMax};
 			}
 

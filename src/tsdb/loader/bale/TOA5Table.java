@@ -1,8 +1,6 @@
 package tsdb.loader.bale;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import com.opencsv.CSVReader;
@@ -10,7 +8,6 @@ import com.opencsv.CSVReader;
 import tsdb.util.Table;
 
 public class TOA5Table extends Table {
-	//
 	
 	public final String[] metaHeader;
 	public final String[] columnsHeader;
@@ -19,7 +16,7 @@ public class TOA5Table extends Table {
 	
 	public final String recordingName;	
 
-	public TOA5Table(String filename) throws FileNotFoundException, IOException {
+	public TOA5Table(String filename) throws Exception {
 		try(CSVReader reader = new CSVReader(new FileReader(filename))) {
 			
 			this.metaHeader = reader.readNext();

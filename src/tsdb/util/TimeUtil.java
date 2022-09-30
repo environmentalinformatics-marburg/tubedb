@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -419,6 +420,9 @@ public final class TimeUtil implements Serializable {
 			return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+":00"));
 		}
 		case 16: {
+			return (int) dateTimeToOleMinutes(LocalDateTime.parse(text));
+		}
+		case 19: { // Format with seconds: 2009-01-01T00:00:00   (ignore seconds)
 			return (int) dateTimeToOleMinutes(LocalDateTime.parse(text));
 		}
 		default:
@@ -918,5 +922,322 @@ public final class TimeUtil implements Serializable {
 		Instant instant = Instant.ofEpochSecond(unixTime);
 		LocalDateTime datetime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
 		return datetime;
+	}
+	
+	public static int parseNormalDatetime(String s) {
+		s = s.trim();
+		switch(s.length()) {
+		case 1:
+			if(s.charAt(0)=='*') {
+				return Integer.MIN_VALUE;
+			} else {
+				throw new RuntimeException("unknown timestamp "+s);
+			}
+		case 4: // years 
+			return parseNormalDateTimeFormat4(s);
+		case 7: // months
+			return parseNormalDateTimeFormat7(s);
+		case 10: // days
+			return parseNormalDateTimeFormat10(s);
+		case 13: // hours
+			return parseNormalDateTimeFormat13(s);
+		case 16: // minutes
+		case 19: // Format with seconds: 2009-01-01T00:00:00   (ignore seconds)
+			return parseNormalDateTimeFormat16(s);
+		default:
+			throw new RuntimeException("unknown timestamp "+s);
+		}
+	}
+
+	public static int parseNormalDatetimeEnd(String s) {
+		s = s.trim();
+		switch(s.length()) {
+		case 1:
+			if(s.charAt(0)=='*') {
+				return Integer.MAX_VALUE;
+			} else {
+				throw new RuntimeException("unknown timestamp "+s);
+			}
+		case 4: // years 
+			return parseNormalDateTimeFormat4End(s);
+		case 7: // months
+			return parseNormalDateTimeFormat7End(s);
+		case 10: // days
+			return parseNormalDateTimeFormat10(s) + 23 * 60 + 59;
+		case 13: // hours
+			return parseNormalDateTimeFormat13(s) + 59;
+		case 16: // minutes
+		case 19: // Format with seconds: 2009-01-01T00:00:00   (ignore seconds)
+			return parseNormalDateTimeFormat16(s);
+		default:
+			throw new RuntimeException("unknown timestamp "+s);
+		}
+	}
+
+	private static int parseNormalDateTimeFormat16(String s) {
+		int y1000 = (s.charAt(0)-'0');
+		int y100 = (s.charAt(1)-'0');
+		int y10 = (s.charAt(2)-'0');
+		int y1 = (s.charAt(3)-'0');
+		int m10 = (s.charAt(5)-'0');
+		int m1 = (s.charAt(6)-'0');
+		int d10 = (s.charAt(8)-'0');
+		int d1 = (s.charAt(9)-'0');
+		int h10 = (s.charAt(11)-'0');
+		int h1 = (s.charAt(12)-'0');
+		int n10 = (s.charAt(14)-'0');
+		int n1 = (s.charAt(15)-'0');
+		if(        y1000 < 0 || y1000 > 9
+				|| y100 < 0 || y100 > 9
+				|| y10 < 0 || y10 > 9
+				|| y1 < 0 || y1 > 9
+				|| m10 < 0 || m10 > 1
+				|| m1 < 0 || m1 > 9
+				|| d10 < 0 || d10 > 3
+				|| d1 < 0 || d1 > 9
+				|| h10 < 0 || h10 > 6
+				|| h1 < 0 || h1 > 9
+				|| n10 < 0 || n10 > 6
+				|| n1 < 0 || n1 > 9				
+				) {
+			throw new RuntimeException("timestamp error");
+		}
+		int year =  1000*y1000+100*y100+10*y10+y1;
+		int month = 10*m10+m1;
+		int day = 10*d10+d1;
+		int hour = 10*h10+h1;
+		int minute = 10*n10+n1;
+		//return (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, day, hour, minute));
+		return datetimeToOleMinutes(year, month, day, hour, minute);
+	}
+
+	private static int parseNormalDateTimeFormat13(String s) {
+		int y1000 = (s.charAt(0)-'0');
+		int y100 = (s.charAt(1)-'0');
+		int y10 = (s.charAt(2)-'0');
+		int y1 = (s.charAt(3)-'0');
+		int m10 = (s.charAt(5)-'0');
+		int m1 = (s.charAt(6)-'0');
+		int d10 = (s.charAt(8)-'0');
+		int d1 = (s.charAt(9)-'0');
+		int h10 = (s.charAt(11)-'0');
+		int h1 = (s.charAt(12)-'0');
+		if(        y1000 < 0 || y1000 > 9
+				|| y100 < 0 || y100 > 9
+				|| y10 < 0 || y10 > 9
+				|| y1 < 0 || y1 > 9
+				|| m10 < 0 || m10 > 1
+				|| m1 < 0 || m1 > 9
+				|| d10 < 0 || d10 > 3
+				|| d1 < 0 || d1 > 9
+				|| h10 < 0 || h10 > 6
+				|| h1 < 0 || h1 > 9			
+				) {
+			throw new RuntimeException("timestamp error");
+		}
+		int year =  1000*y1000+100*y100+10*y10+y1;
+		int month = 10*m10+m1;
+		int day = 10*d10+d1;
+		int hour = 10*h10+h1;
+		//return (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, day, hour, 0));
+		return datetimeToOleMinutes(year, month, day, hour, 0);
+	}
+
+	private static int parseNormalDateTimeFormat10(String s) {
+		int y1000 = (s.charAt(0)-'0');
+		int y100 = (s.charAt(1)-'0');
+		int y10 = (s.charAt(2)-'0');
+		int y1 = (s.charAt(3)-'0');
+		int m10 = (s.charAt(5)-'0');
+		int m1 = (s.charAt(6)-'0');
+		int d10 = (s.charAt(8)-'0');
+		int d1 = (s.charAt(9)-'0');
+		if(        y1000 < 0 || y1000 > 9
+				|| y100 < 0 || y100 > 9
+				|| y10 < 0 || y10 > 9
+				|| y1 < 0 || y1 > 9
+				|| m10 < 0 || m10 > 1
+				|| m1 < 0 || m1 > 9
+				|| d10 < 0 || d10 > 3
+				|| d1 < 0 || d1 > 9		
+				) {
+			throw new RuntimeException("timestamp error");
+		}
+		int year =  1000*y1000+100*y100+10*y10+y1;
+		int month = 10*m10+m1;
+		int day = 10*d10+d1;
+		//return (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, day, 0, 0));
+		return datetimeToOleMinutes(year, month, day, 0, 0);
+	}
+
+	private static int parseNormalDateTimeFormat7(String s) {
+		int y1000 = (s.charAt(0)-'0');
+		int y100 = (s.charAt(1)-'0');
+		int y10 = (s.charAt(2)-'0');
+		int y1 = (s.charAt(3)-'0');
+		int m10 = (s.charAt(5)-'0');
+		int m1 = (s.charAt(6)-'0');
+		if(        y1000 < 0 || y1000 > 9
+				|| y100 < 0 || y100 > 9
+				|| y10 < 0 || y10 > 9
+				|| y1 < 0 || y1 > 9
+				|| m10 < 0 || m10 > 1
+				|| m1 < 0 || m1 > 9	
+				) {
+			throw new RuntimeException("timestamp error");
+		}
+		int year =  1000*y1000+100*y100+10*y10+y1;
+		int month = 10*m10+m1;
+		//return (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, 1, 0, 0));
+		return datetimeToOleMinutes(year, month, 1, 0, 0);
+	}
+
+	private static int parseNormalDateTimeFormat7End(String s) {
+		int y1000 = (s.charAt(0)-'0');
+		int y100 = (s.charAt(1)-'0');
+		int y10 = (s.charAt(2)-'0');
+		int y1 = (s.charAt(3)-'0');
+		int m10 = (s.charAt(5)-'0');
+		int m1 = (s.charAt(6)-'0');
+		if(        y1000 < 0 || y1000 > 9
+				|| y100 < 0 || y100 > 9
+				|| y10 < 0 || y10 > 9
+				|| y1 < 0 || y1 > 9
+				|| m10 < 0 || m10 > 1
+				|| m1 < 0 || m1 > 9	
+				) {
+			throw new RuntimeException("timestamp error");
+		}
+		int year =  1000*y1000+100*y100+10*y10+y1;
+		int month = 10*m10+m1;
+		//return (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, month, 1, 0, 0));
+		return yearMonthEndtoOleMinutes(year, month);
+	}
+
+	private static int parseNormalDateTimeFormat4(String s) {
+		int y1000 = (s.charAt(0)-'0');
+		int y100 = (s.charAt(1)-'0');
+		int y10 = (s.charAt(2)-'0');
+		int y1 = (s.charAt(3)-'0');
+		if(        y1000 < 0 || y1000 > 9
+				|| y100 < 0 || y100 > 9
+				|| y10 < 0 || y10 > 9
+				|| y1 < 0 || y1 > 9
+				) {
+			throw new RuntimeException("timestamp error");
+		}
+		int year =  1000*y1000+100*y100+10*y10+y1;
+		//return (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, 1, 1, 0, 0));
+		return datetimeToOleMinutes(year, 1, 1, 0, 0);
+	}
+
+	private static int parseNormalDateTimeFormat4End(String s) {
+		int y1000 = (s.charAt(0)-'0');
+		int y100 = (s.charAt(1)-'0');
+		int y10 = (s.charAt(2)-'0');
+		int y1 = (s.charAt(3)-'0');
+		if(        y1000 < 0 || y1000 > 9
+				|| y100 < 0 || y100 > 9
+				|| y10 < 0 || y10 > 9
+				|| y1 < 0 || y1 > 9
+				) {
+			throw new RuntimeException("timestamp error");
+		}
+		int year =  1000*y1000+100*y100+10*y10+y1;
+		//return (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(year, 1, 1, 0, 0));
+		return yearEndtoOleMinutes(year);
+	}
+
+	private static int toLookupMonth(int y, int m) {
+		return (y-1) * 12 + (m-1);
+	}
+
+	private static final int LOOKUP_YEAR_START = 1990;
+	private static final int LOOKUP_YEAR_END = 2030;
+
+	private static final LocalDateTime DATETIME_LOOKUP_START_DAY = LocalDateTime.of(LOOKUP_YEAR_START,01,01,0,0);
+	private static final int DATETIME_LOOKUP_START_DAY_OLE_MINUTES = (int) TimeUtil.dateTimeToOleMinutes(DATETIME_LOOKUP_START_DAY);
+	private static final int TIMELINE_MONTH_START = toLookupMonth(LOOKUP_YEAR_START, 1);
+	private static final int TIMELINE_MONTH_END = toLookupMonth(LOOKUP_YEAR_END, 12);
+	private static final int LOOKUP_MONTH_COUNT = TIMELINE_MONTH_END - TIMELINE_MONTH_START + 1;
+
+	private static final byte[] LOOKUP_TABLE_MONTH_DAYS = new byte[LOOKUP_MONTH_COUNT];
+	private static final int[] LOOKUP_TABLE_START_DAY = new int[LOOKUP_MONTH_COUNT];	
+
+	static {
+		for(int y = LOOKUP_YEAR_START; y <= LOOKUP_YEAR_END; y++) {
+			for(int m = 1; m <= 12; m++) {			
+				int i = toLookupMonth(y, m) - TIMELINE_MONTH_START;
+				int maxD = YearMonth.of(y, m).lengthOfMonth();
+				LOOKUP_TABLE_MONTH_DAYS[i] = (byte) maxD;
+				long dayStart = Duration.between(DATETIME_LOOKUP_START_DAY, LocalDateTime.of(y, m, 1, 0, 0)).toDays();				
+				LOOKUP_TABLE_START_DAY[i] = (int) dayStart;
+			}
+		}
+	}
+
+	private static int datetimeToOleMinutes(int y, int m, int d, int h, int mm) {
+		if(y < LOOKUP_YEAR_START || LOOKUP_YEAR_END < y) {
+			System.out.println("system path");
+			int t = (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(y, m, d, h, mm));
+			return t;
+		} else {
+			if(m < 1 || m > 12) {
+				throw new RuntimeException("timestamp error");
+			}
+			int i = toLookupMonth(y, m) - TIMELINE_MONTH_START;
+			if(d < 1 || d > LOOKUP_TABLE_MONTH_DAYS[i]) {
+				throw new RuntimeException("timestamp error");
+			}
+			if(h < 0 || h > 23 || mm < 0 || mm > 59) {
+				throw new RuntimeException("timestamp error");
+			}
+			int t = ((LOOKUP_TABLE_START_DAY[i] + (d - 1)) * 24 + h) * 60 + mm + DATETIME_LOOKUP_START_DAY_OLE_MINUTES;
+			/*int tS = (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(y, m, d, h, mm));
+			if(t != tS) {
+				throw new RuntimeException("timestamp error + " + t + "  " + tS);
+			}*/
+			return t;
+		}
+	}
+
+	private static LocalDateTime yearMonthToDateTime(int y, int m) {
+		int d = YearMonth.of(y, m).lengthOfMonth();
+		return LocalDateTime.of(y, m, d, 23, 59);		
+	}
+
+	private static int yearMonthEndtoOleMinutes(int y, int m) {
+		if(y < LOOKUP_YEAR_START || LOOKUP_YEAR_END < y) {
+			System.out.println("system path");
+			int t = (int) TimeUtil.dateTimeToOleMinutes(yearMonthToDateTime(y, m));
+			return t;
+		} else {
+			if(m < 1 || m > 12) {
+				throw new RuntimeException("timestamp error");
+			}
+			int i = toLookupMonth(y, m) - TIMELINE_MONTH_START;
+			int t = ((LOOKUP_TABLE_START_DAY[i] + (LOOKUP_TABLE_MONTH_DAYS[i] - 1)) * 24 + 23) * 60 + 59 + DATETIME_LOOKUP_START_DAY_OLE_MINUTES;
+			/*int tS = (int) TimeUtil.dateTimeToOleMinutes(toDateTimeEndSlow(y, m));
+			if(t != tS) {
+				throw new RuntimeException("timestamp error + " + t + "  " + tS);
+			}*/
+			return t;
+		}
+	}
+
+	private static int yearEndtoOleMinutes(int y) {
+		if(y < LOOKUP_YEAR_START || LOOKUP_YEAR_END < y) {
+			System.out.println("system path");
+			int t = (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(y, 12, 31, 23, 59));
+			return t;
+		} else {
+			int i = toLookupMonth(y, 12) - TIMELINE_MONTH_START;
+			int t = ((LOOKUP_TABLE_START_DAY[i] + (31 - 1)) * 24 + 23) * 60 + 59 + DATETIME_LOOKUP_START_DAY_OLE_MINUTES;
+			/*int tS = (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(y, m, d, h, mm));
+			if(t != tS) {
+				throw new RuntimeException("timestamp error + " + t + "  " + tS);
+			}*/
+			return t;
+		}
 	}
 }
