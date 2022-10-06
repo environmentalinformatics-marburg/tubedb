@@ -14,9 +14,9 @@ import tsdb.TsDBFactory;
 import tsdb.util.Table;
 import tsdb.util.TimeSeriesArchivWriter;
 import tsdb.util.TsEntry;
-import tsdb.util.Table.ColumnReaderFloat;
-import tsdb.util.Table.ColumnReaderMonthNameTimestamp;
-import tsdb.util.Table.ColumnReaderString;
+import tsdb.util.AbstractTable.ColumnReaderFloat;
+import tsdb.util.AbstractTable.ColumnReaderMonthNameTimestamp;
+import tsdb.util.AbstractTable.ColumnReaderString;
 import tsdb.util.iterator.TimestampSeries;
 import tsdb.util.Util;
 

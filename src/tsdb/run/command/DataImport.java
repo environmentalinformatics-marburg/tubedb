@@ -33,6 +33,7 @@ import tsdb.loader.treetalker.Loader_TreeTalker;
 import tsdb.loader.tsa.TsaImport;
 import tsdb.util.Interval;
 import tsdb.util.TimeUtil;
+import tsdb.util.Timer;
 
 public class DataImport {
 	
@@ -41,8 +42,10 @@ public class DataImport {
 
 	public static void main(String[] args) {
 		try(TsDB tsdb = TsDBFactory.createDefault()) {
+			Timer.start("data import");
 			DataImport dataImport = new DataImport(tsdb);
 			dataImport.run("import.ini");
+			Logger.info(Timer.stop("data import"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			Logger.error(e);

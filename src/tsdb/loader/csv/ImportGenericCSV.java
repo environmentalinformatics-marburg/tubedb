@@ -1,5 +1,6 @@
 package tsdb.loader.csv;
 
+import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,8 +19,10 @@ import tsdb.TsDB;
 import tsdb.component.SourceEntry;
 import tsdb.component.labeledproperty.LabeledProperty;
 import tsdb.component.labeledproperty.PropertyComputation;
+import tsdb.util.AbstractTable;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataRow;
+import tsdb.util.StreamTable;
 import tsdb.util.Table;
 import tsdb.util.TimeUtil;
 import tsdb.util.Util;
@@ -79,7 +82,7 @@ public class ImportGenericCSV {
 	public void loadFile(Path filePath) {
 		try {
 			Logger.info("load file "+filePath);			
-			Table table = Table.readCSV(filePath,',');
+			StreamTable table = StreamTable.readCSV(filePath,',');
 
 			int stationIndex = getStationIndex(table);
 			if(stationIndex > 0) {
@@ -125,15 +128,15 @@ public class ImportGenericCSV {
 		return TimeUtil.parseNormalDatetime(timestampText);
 	}
 
-	protected int getDatetimeIndex(Table table) {
+	protected int getDatetimeIndex(AbstractTable table) {
 		return table.getColumnIndex("datetime");
 	}
 
-	protected int getStationIndex(Table table) {
+	protected int getStationIndex(AbstractTable table) {
 		return table.getColumnIndex("plotID", false);
 	}
 
-	private void loadSingleStationFile(Table table, Path filePath) {
+	private void loadSingleStationFile(StreamTable table, Path filePath) throws IOException {
 		String stationName = parseStationName(filePath);
 		Logger.trace("station "+stationName);
 		Station station = tsdb.getStation(stationName);
@@ -143,14 +146,16 @@ public class ImportGenericCSV {
 
 		final int sensors = table.names.length-1;
 
-		ArrayList<DataRow> dataRows = new ArrayList<>(table.rows.length);
+		//ArrayList<DataRow> dataRows = new ArrayList<>(table.rows.length);
+		ArrayList<DataRow> dataRows = new ArrayList<>();
 
 		long numberParseErrorCount = 0;
 		String numberParseErrorLast = null;
 		long skipRowMissingTimestampCount = 0;
 		int prevTimestamp = -1;
 		long processingTime = System.currentTimeMillis();
-		for(String[] row:table.rows) {
+		//for(String[] row:table.rows) {
+		for(String[] row = table.readNext(); row != null; row = table.readNext()) {
 			long currentTime = System.currentTimeMillis();
 			if(processingTime + 1000 <= currentTime) {
 				processingTime = currentTime;
@@ -234,7 +239,7 @@ public class ImportGenericCSV {
 		}
 	}
 
-	private void loadMultiStationFile(Table table, Path filePath) {
+	private void loadMultiStationFile(StreamTable table, Path filePath) throws IOException {
 		final int sensors = table.names.length - 2;
 
 		HashMap<String, ArrayList<DataRow>> dataRowsMap = new HashMap<String, ArrayList<DataRow>>();
@@ -243,7 +248,8 @@ public class ImportGenericCSV {
 		String cacheStationName = "";
 		ArrayList<DataRow> cacheDataRows = null;
 
-		for(String[] row:table.rows) {
+		//for(String[] row:table.rows) {
+		for(String[] row = table.readNext(); row != null; row = table.readNext()) {
 			if(row.length < 3) {
 				Logger.warn("skip row with missing columns  " + filePath);
 				continue;

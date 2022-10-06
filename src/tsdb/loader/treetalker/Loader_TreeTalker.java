@@ -2,7 +2,6 @@ package tsdb.loader.treetalker;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
@@ -99,13 +98,13 @@ public class Loader_TreeTalker {
 			CSVParser csvParser = new CSVParserBuilder().withSeparator(SEPARATOR).build();
 			try(CSVReader reader = new CSVReaderBuilder(in).withCSVParser(csvParser).build()) {		
 				
-				ArrayList<String[]> dataRowList = new ArrayList<String[]>();
+				/*ArrayList<String[]> dataRowList = new ArrayList<String[]>();
 				String[] curRow = reader.readNext();
 				while(curRow != null){
 					dataRowList.add(curRow);
 					curRow = reader.readNext();
 				}				
-				String[][] tabeRows = dataRowList.toArray(new String[0][]);
+				String[][] tabeRows = dataRowList.toArray(new String[0][]);*/
 
 				//ArrayList<DataEntry> tt4B_Battery_level = new ArrayList<DataEntry>();
 				//int tt4B_Battery_level_prev = -1;
@@ -119,8 +118,9 @@ public class Loader_TreeTalker {
 				//ArrayList<DataRow> tt4D_data = new ArrayList<DataRow>();
 				//int tt4D_data_prev = -1;
 
-				for (int i = 0; i < tabeRows.length; i++) {
-					String[] row = tabeRows[i];
+				//for (int i = 0; i < tabeRows.length; i++) {
+					//String[] row = tabeRows[i];
+				for(String[] row = reader.readNextSilently(); row != null; row = reader.readNextSilently()) {
 					if(row.length == 0 || row[0].isEmpty()) {
 						//Logger.info("skip empty line");
 						continue;

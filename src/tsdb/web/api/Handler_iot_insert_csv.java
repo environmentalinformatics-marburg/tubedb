@@ -52,7 +52,7 @@ public class Handler_iot_insert_csv extends MethodHandler {
 		// needs to read before parameters !!!!
 		Table table = null;		
 		try {
-			table = Table.readCSV(request.getReader(), ',');
+			table = Table.readCSVThrow(request.getReader(), ',');
 		} catch (Exception e) {
 			throw new RuntimeException("could not read data");
 		}

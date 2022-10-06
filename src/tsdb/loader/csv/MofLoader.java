@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import org.tinylog.Logger;
 
 import tsdb.TsDB;
-import tsdb.util.Table;
+import tsdb.util.AbstractTable;
 import tsdb.util.TimeUtil;
 
 public class MofLoader extends ImportGenericCSV {
@@ -42,7 +42,7 @@ public class MofLoader extends ImportGenericCSV {
 	}
 	
 	@Override
-	protected int getDatetimeIndex(Table table) {
+	protected int getDatetimeIndex(AbstractTable table) {
 		return table.getColumnIndex("Time (s)");
 	}
 }

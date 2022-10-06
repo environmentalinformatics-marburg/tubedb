@@ -16,8 +16,8 @@ import tsdb.util.Interval;
 import tsdb.util.Table;
 import tsdb.util.TimeSeriesMask;
 import tsdb.util.TimeUtil;
-import tsdb.util.Table.ColumnReaderIntFunc;
-import tsdb.util.Table.ColumnReaderString;
+import tsdb.util.AbstractTable.ColumnReaderIntFunc;
+import tsdb.util.AbstractTable.ColumnReaderString;
 
 public class LoadMasks {
 	

@@ -11,6 +11,7 @@ import java.util.Arrays;
 import org.tinylog.Logger;
 
 import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import tsdb.util.AbstractTable;
 import tsdb.util.DataRow;
 import tsdb.util.Table;
 import tsdb.util.TimeUtil;
@@ -208,7 +209,7 @@ public class Experiment implements AutoCloseable {
 		return TimeUtil.parseStartTimestamp(timestampText);
 	}
 
-	protected int getDatetimeIndex(Table table) {
+	protected int getDatetimeIndex(AbstractTable table) {
 		return table.getColumnIndex("datetime");
 	}
 

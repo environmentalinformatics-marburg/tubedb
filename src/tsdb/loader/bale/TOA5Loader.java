@@ -15,8 +15,8 @@ import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
 import tsdb.util.DataEntry;
-import tsdb.util.Table.ColumnReaderFloat;
-import tsdb.util.Table.ColumnReaderSpaceTimestamp;
+import tsdb.util.AbstractTable.ColumnReaderFloat;
+import tsdb.util.AbstractTable.ColumnReaderSpaceTimestamp;
 
 public class TOA5Loader {
 	

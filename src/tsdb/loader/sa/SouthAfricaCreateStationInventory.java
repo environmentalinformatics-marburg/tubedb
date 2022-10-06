@@ -15,7 +15,7 @@ import com.opencsv.CSVWriter;
 
 import tsdb.TsDBFactory;
 import tsdb.util.Table;
-import tsdb.util.Table.ColumnReaderString;
+import tsdb.util.AbstractTable.ColumnReaderString;
 
 /**
  * creates station inventroy from data files of external Southafrica stations

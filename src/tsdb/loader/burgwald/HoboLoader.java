@@ -12,8 +12,8 @@ import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
 import tsdb.util.DataEntry;
-import tsdb.util.Table.ColumnReaderDayFirstAmPmTimestamp;
-import tsdb.util.Table.ColumnReaderFloat;
+import tsdb.util.AbstractTable.ColumnReaderDayFirstAmPmTimestamp;
+import tsdb.util.AbstractTable.ColumnReaderFloat;
 
 public class HoboLoader {
 	

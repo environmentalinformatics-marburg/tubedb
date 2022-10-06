@@ -23,8 +23,8 @@ import tsdb.remote.GeneralStationInfo;
 import tsdb.remote.PlotInfo;
 import tsdb.remote.RemoteTsDB;
 import tsdb.util.Table;
-import tsdb.util.Table.ColumnReaderInt;
-import tsdb.util.Table.ColumnReaderString;
+import tsdb.util.AbstractTable.ColumnReaderInt;
+import tsdb.util.AbstractTable.ColumnReaderString;
 import tsdb.web.util.Web;
 
 /**
