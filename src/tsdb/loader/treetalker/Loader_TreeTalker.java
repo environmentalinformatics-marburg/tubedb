@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,9 +32,7 @@ import tsdb.util.DataRow;
 import tsdb.util.TimeUtil;
 
 public class Loader_TreeTalker {
-	
 
-	private static final Charset UTF8 = Charset.forName("UTF-8");
 	private static final char SEPARATOR = ';';
 	private static final LocalDateTime UNIX_EPOCH = LocalDateTime.of(1970,1,1,0,0);
 	private static final int UNIX_EPOCH_OLE_AUTOMATION_TIME_DIFFERENCE_MINUTES = (int) Duration.between(TimeUtil.OLE_AUTOMATION_TIME_START, UNIX_EPOCH).toMinutes();
@@ -93,7 +92,7 @@ public class Loader_TreeTalker {
 
 	static class TreeTalkerTable {
 		public TreeTalkerTable(TsDB tsdb, File file) throws Exception {
-			InputStreamReader in = new InputStreamReader(new FileInputStream(file),UTF8);
+			InputStreamReader in = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
 			//try(CSVReader reader = new CSVReader(in, SEPARATOR)) {
 			CSVParser csvParser = new CSVParserBuilder().withSeparator(SEPARATOR).build();
 			try(CSVReader reader = new CSVReaderBuilder(in).withCSVParser(csvParser).build()) {		

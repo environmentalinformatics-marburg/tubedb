@@ -82,7 +82,7 @@ public class ImportGenericCSV {
 	public void loadFile(Path filePath) {
 		try {
 			Logger.info("load file "+filePath);			
-			StreamTable table = StreamTable.readCSV(filePath,',');
+			StreamTable table = StreamTable.openCSV(filePath,',');
 
 			int stationIndex = getStationIndex(table);
 			if(stationIndex > 0) {

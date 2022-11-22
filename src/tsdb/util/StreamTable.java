@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 import org.tinylog.Logger;
@@ -21,7 +22,7 @@ public class StreamTable extends AbstractTable {
 		return openCSV(new File(filename), separator);
 	}
 
-	public static StreamTable readCSV(Path filename, char separator) throws FileNotFoundException, IOException {
+	public static StreamTable openCSV(Path filename, char separator) throws FileNotFoundException, IOException {
 		return openCSV(filename.toFile(),separator);
 	}
 
@@ -38,14 +39,14 @@ public class StreamTable extends AbstractTable {
 	}
 
 	public static StreamTable openCSV(InputStream in, char separator) throws IOException {
-		Reader reader = new InputStreamReader(in, Table.UTF8);
+		Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
 		return openCSV(reader, separator);	
 	}
 
 	public static StreamTable openCSV(Reader reader, char separator) throws IOException {
 		StreamTable table = new StreamTable();
-		CSVReader csvReader = Table.buildCSVReader(reader, separator);
-		if(Table.readHeader(table, csvReader)) {
+		CSVReader csvReader = TableUtil.buildCSVReader(reader, separator);
+		if(TableUtil.readHeader(table, csvReader)) {
 			table.csvReader = csvReader;
 			return table;
 		} else {

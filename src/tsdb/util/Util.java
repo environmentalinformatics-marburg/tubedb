@@ -5,6 +5,7 @@ import static tsdb.util.AssumptionCheck.throwNulls;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -39,7 +40,6 @@ import org.ini4j.Wini;
  *
  */
 public final class Util {
-	public static final Charset CHARSET_UTF_8 = Charset.forName("UTF-8");
 
 	private Util(){}
 
@@ -772,7 +772,7 @@ public final class Util {
 		if(!inComment && i<=size_max) {
 			result[r++] = data[i++];
 		}
-		return new String(result, 0, r, CHARSET_UTF_8);
+		return new String(result, 0, r, StandardCharsets.UTF_8);
 	}
 
 	/**

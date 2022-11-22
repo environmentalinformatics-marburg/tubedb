@@ -7,8 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 
 import org.tinylog.Logger;
 import org.yaml.snakeyaml.DumperOptions;
@@ -48,8 +46,6 @@ import tsdb.util.iterator.TimestampSeriesCSVwriter;
  *
  */
 public class ZipExport extends TimestampSeriesCSVwriter{
-
-	private static final Charset charset = Charset.forName("UTF-8");
 
 	private final RemoteTsDB tsdb;
 
@@ -188,7 +184,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 
 			if(desc_settings) {
 				zipOutputStream.putNextEntry(new ZipEntry("processing_settings.yaml"));
-				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
+				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, StandardCharsets.UTF_8);
 				BufferedWriter bufferedWriter = new BufferedWriter(writer);
 				write_settings_YAML(bufferedWriter);
 				bufferedWriter.flush();
@@ -197,7 +193,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 
 			if(desc_sensor) {
 				zipOutputStream.putNextEntry(new ZipEntry("sensor_description.csv"));
-				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
+				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, StandardCharsets.UTF_8);
 				BufferedWriter bufferedWriter = new BufferedWriter(writer);
 				write_sensor_description_CSV(bufferedWriter);
 				bufferedWriter.flush();
@@ -206,7 +202,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 
 			if(desc_plot) {
 				zipOutputStream.putNextEntry(new ZipEntry("plot_description.csv"));
-				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
+				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, StandardCharsets.UTF_8);
 				BufferedWriter bufferedWriter = new BufferedWriter(writer);
 				write_plot_description_CSV(bufferedWriter);
 				bufferedWriter.flush();
@@ -216,7 +212,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 			if(info) {
 				if(region.description != null && !region.description.isEmpty()) {
 					zipOutputStream.putNextEntry(new ZipEntry("info.txt"));
-					OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
+					OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, StandardCharsets.UTF_8);
 					BufferedWriter bufferedWriter = new BufferedWriter(writer);
 					write_info(bufferedWriter);
 					bufferedWriter.flush();
@@ -227,7 +223,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 			if(plots_aggregate) {
 				printLine("processing plots_aggregate ...");
 				zipOutputStream.putNextEntry(new ZipEntry("plots_aggregated.csv"));
-				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
+				OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, StandardCharsets.UTF_8);
 				BufferedWriter bufferedWriter = new BufferedWriter(writer);
 				if(write_header) {
 					writeCSVHeader(bufferedWriter, sensorNames, false);
@@ -254,7 +250,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 					if(casted) {
 						printLine("processing plots_casted ...");
 						zipOutputStream.putNextEntry(new ZipEntry("plots.csv"));
-						OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
+						OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, StandardCharsets.UTF_8);
 						BufferedWriter bufferedWriter = new BufferedWriter(writer);
 						try {
 							TimestampSeries timeseries = tsdb.plots_casted(plotIDs, sensorNames, aggregationInterval, dataQuality, interpolated, startTimestamp, endTimestamp);
@@ -278,7 +274,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 						writer.flush();						
 					} else {
 						zipOutputStream.putNextEntry(new ZipEntry("plots.csv"));
-						OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
+						OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, StandardCharsets.UTF_8);
 						BufferedWriter bufferedWriter = new BufferedWriter(writer);
 						if(write_header) {
 							writeCSVHeader(bufferedWriter, sensorNames, col_plotid);
@@ -316,7 +312,7 @@ public class ZipExport extends TimestampSeriesCSVwriter{
 								TimestampSeries timeseries = tsdb.plot(null,plotID, schema, aggregationInterval, dataQuality, interpolated, startTimestamp, endTimestamp);
 								if(timeseries!=null) {
 									zipOutputStream.putNextEntry(new ZipEntry(plotID+".csv"));
-									OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, charset);
+									OutputStreamWriter writer = new OutputStreamWriter(zipOutputStream, StandardCharsets.UTF_8);
 									BufferedWriter bufferedWriter = new BufferedWriter(writer);
 									if(write_header) {
 										writeCSVHeader(bufferedWriter, sensorNames, col_plotid);

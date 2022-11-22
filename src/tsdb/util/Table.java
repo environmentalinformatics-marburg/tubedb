@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
@@ -24,9 +24,6 @@ import com.opencsv.CSVReaderBuilder;
  *
  */
 public class Table extends AbstractTable {
-
-	static final Charset UTF8 = Charset.forName("UTF-8");
-	private static final String UTF8_BOM = "\uFEFF";
 
 	/**
 	 * table rows of csv file
@@ -58,7 +55,7 @@ public class Table extends AbstractTable {
 	}
 	
 	public static Table readCSV(InputStream in, char separator) {
-		try(InputStreamReader reader = new InputStreamReader(in, UTF8)) {
+		try(InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
 			return readCSV(reader, separator);			
 		} catch(Exception e) {
 			Logger.error(e);
@@ -69,9 +66,9 @@ public class Table extends AbstractTable {
 	public static Table readCSV(Reader reader, char separator) {
 		try {
 			Table table = new Table();
-			try(CSVReader csvReader = buildCSVReader(reader, separator)) {
+			try(CSVReader csvReader = TableUtil.buildCSVReader(reader, separator)) {
 				//List<String[]> list = reader.readAll(); // very slow because of linkedlist for indexed access
-				if(Table.readHeader(table, csvReader)) {
+				if(TableUtil.readHeader(table, csvReader)) {
 					table.readRows(csvReader);
 				}
 			}
@@ -84,9 +81,9 @@ public class Table extends AbstractTable {
 
 	public static Table readCSVThrow(Reader reader, char separator) throws Exception {
 		Table table = new Table();
-		try(CSVReader csvReader = buildCSVReader(reader, separator)) {
+		try(CSVReader csvReader = TableUtil.buildCSVReader(reader, separator)) {
 			//List<String[]> list = reader.readAll(); // very slow because of linkedlist for indexed access
-			if(Table.readHeader(table, csvReader)) {
+			if(TableUtil.readHeader(table, csvReader)) {
 				table.readRows(csvReader);
 			}
 		}
@@ -105,8 +102,8 @@ public class Table extends AbstractTable {
 	public static Table readCSVFirstDataRow(Reader reader, char separator) {
 		try {
 			Table table = new Table();
-			try(CSVReader csvReader = buildCSVReader(reader, separator)) {
-				if(Table.readHeader(table, csvReader)) {
+			try(CSVReader csvReader = TableUtil.buildCSVReader(reader, separator)) {
+				if(TableUtil.readHeader(table, csvReader)) {
 					String[] dataRow = csvReader.readNext();
 					if(dataRow != null) {
 						table.rows = new String[][] {dataRow};
@@ -121,28 +118,6 @@ public class Table extends AbstractTable {
 		} catch(Exception e) {
 			Logger.error(e);
 			return null;
-		}
-	}
-	
-	static CSVReader buildCSVReader(Reader reader, char separator) {
-		CSVParser csvParser = new CSVParserBuilder().withSeparator(separator).build();
-		return new CSVReaderBuilder(reader).withCSVParser(csvParser).build();
-	}
-
-	static boolean readHeader(AbstractTable table, CSVReader csvReader) throws IOException {
-		String[] curRow = csvReader.readNextSilently();
-		if(curRow != null) {
-			String[] columnsNames = curRow;
-			if(columnsNames.length>0) { // filter UTF8 BOM
-				if(columnsNames[0].startsWith(UTF8_BOM)) {
-					columnsNames[0] = columnsNames[0].substring(1, columnsNames[0].length());
-				}
-			}			
-			table.updateNames(columnsNames);
-			//Logger.info("names: "+Arrays.toString(table.names)+"   in "+filename);
-			return true;
-		} else {
-			return false;
 		}
 	}
 
