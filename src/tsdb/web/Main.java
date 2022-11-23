@@ -431,6 +431,9 @@ public class Main {
 
 
 	private static ContextHandler createContextWebDownload() {
+		if(!new File(TsDBFactory.WEBDOWNLOAD_PATH).mkdirs()) {
+			Logger.warn("could not create web download folder");
+		}
 		ContextHandler contextHandler = new ContextHandler(TsDBFactory.WEB_SERVER_PREFIX_BASE_URL+DOWNLOAD_PART_URL);
 		ResourceHandler resourceHandler = new ResourceHandler();
 		//resourceHandler.setStopTimeout(FILE_DOWNLOAD_TIMEOUT_MILLISECONDS);

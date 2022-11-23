@@ -2,8 +2,12 @@ package tsdb.util.iterator;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 
@@ -54,10 +58,10 @@ public class CSV {
 	}
 	
 	public static void write(TsIterator it, boolean header, String filename, String separator, String nanText, CSVTimeType csvTimeType, boolean qualityFlag, boolean qualityCounter, AggregationInterval datetimeFormat) {
-		try {
-			FileOutputStream out = new FileOutputStream(filename);
+		try(PrintWriter out = new PrintWriter(filename, StandardCharsets.UTF_8)) {
+			//FileOutputStream out = new FileOutputStream(filename);			
 			write(it, header, out, separator, nanText, csvTimeType, qualityFlag, qualityCounter, datetimeFormat, null);
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -75,7 +79,7 @@ public class CSV {
 	 * @param datetimeFormat
 	 * @param plotLabel nullable, if present write column plot
 	 */
-	public static void write(TsIterator it, boolean header, OutputStream out, String separator, String nanText, CSVTimeType csvTimeType, boolean qualityFlag, boolean qualityCounter, AggregationInterval datetimeFormat, String plotLabel) {		
+	public static void write(TsIterator it, boolean header, PrintWriter out, String separator, String nanText, CSVTimeType csvTimeType, boolean qualityFlag, boolean qualityCounter, AggregationInterval datetimeFormat, String plotLabel) {		
 		boolean writePlot = plotLabel != null;
 		String plotWithSeperator = writePlot ? plotLabel + separator : "";
 		
@@ -87,7 +91,8 @@ public class CSV {
 			time=true;
 		}
 
-			PrintStream printStream = new PrintStream(out,true);
+			//PrintStream printStream = new PrintStream(out,true);
+		PrintWriter printStream = out;
 
 			if(header) {
 				

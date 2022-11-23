@@ -1,6 +1,8 @@
 package tsdb.web.api;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -52,7 +54,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class Handler_query_csv extends MethodHandler {	
-	
+
 
 	public Handler_query_csv(RemoteTsDB tsdb) {
 		super(tsdb, "query_csv");
@@ -142,7 +144,7 @@ public class Handler_query_csv extends MethodHandler {
 				casted = false;				
 			}
 		}
-		
+
 		String spatial_aggregated_text = request.getParameter("spatial_aggregated");
 		boolean spatial_aggregated = false;
 		if(spatial_aggregated_text != null) {
@@ -321,38 +323,39 @@ public class Handler_query_csv extends MethodHandler {
 			}
 			String[] processingSensorNames = processingSensorNameCollector.toArray(new String[0]);
 
-			ServletOutputStream out = response.getOutputStream();
+			try(PrintWriter out = new PrintWriter(response.getOutputStream(), false, StandardCharsets.UTF_8)) {
 
-			if(spatial_aggregated) {
-				TimestampSeries ts = tsdb.plots_aggregate(plots, processingSensorNames, agg, dataQuality, isInterpolated, startTime, endTime);
-				if(ts != null) {
-					TsIterator it = ts.tsIterator();
-					CSV.write(it, true, out, ",", nanText, csvTimeType, false, false, agg, null);
-				}
-			} else {
-				if(casted) {
-					TimestampSeries ts = tsdb.plots_casted(plots, processingSensorNames, agg, dataQuality, isInterpolated, startTime, endTime);
+				if(spatial_aggregated) {
+					TimestampSeries ts = tsdb.plots_aggregate(plots, processingSensorNames, agg, dataQuality, isInterpolated, startTime, endTime);
 					if(ts != null) {
 						TsIterator it = ts.tsIterator();
 						CSV.write(it, true, out, ",", nanText, csvTimeType, false, false, agg, null);
 					}
 				} else {
-					boolean firstPlot = true;			
-					for(String plot:plots) {
-						sensorNames = tsdb.supplementSchema(sensorNames, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
-						String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, sensorNames);
-						try {
-							Logger.info("load of "+Arrays.toString(validSchema));
-							TimestampSeries ts = tsdb.plot(null, plot, validSchema, agg, dataQuality, isInterpolated, startTime, endTime);
-							if(ts != null) {					
-								ProjectionFillIterator it = new ProjectionFillIterator(ts.tsIterator(), processingSensorNames);
-								String plot_text = col_plot ? plot : null;
-								CSV.write(it, firstPlot, out, ",", nanText, csvTimeType, false, false, agg, plot_text);
-								firstPlot = false;
+					if(casted) {
+						TimestampSeries ts = tsdb.plots_casted(plots, processingSensorNames, agg, dataQuality, isInterpolated, startTime, endTime);
+						if(ts != null) {
+							TsIterator it = ts.tsIterator();
+							CSV.write(it, true, out, ",", nanText, csvTimeType, false, false, agg, null);
+						}
+					} else {
+						boolean firstPlot = true;			
+						for(String plot:plots) {
+							sensorNames = tsdb.supplementSchema(sensorNames, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
+							String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, sensorNames);
+							try {
+								Logger.info("load of "+Arrays.toString(validSchema));
+								TimestampSeries ts = tsdb.plot(null, plot, validSchema, agg, dataQuality, isInterpolated, startTime, endTime);
+								if(ts != null) {					
+									ProjectionFillIterator it = new ProjectionFillIterator(ts.tsIterator(), processingSensorNames);
+									String plot_text = col_plot ? plot : null;
+									CSV.write(it, firstPlot, out, ",", nanText, csvTimeType, false, false, agg, plot_text);
+									firstPlot = false;
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+								Logger.error(e);
 							}
-						} catch (Exception e) {
-							e.printStackTrace();
-							Logger.error(e);
 						}
 					}
 				}
