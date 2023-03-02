@@ -49,7 +49,7 @@ public class Command_export_csv {
 					if(sensorNames != null) {
 						Logger.info(stationName + "/" + Arrays.toString(sensorNames));
 						TsIterator it = tsdb.streamStorage.getRawIterator(stationName, sensorNames, null, null);
-						CSV.write(it, path + "/" + stationName + ".csv", ",", "", CSVTimeType.DATETIME, AggregationInterval.RAW);
+						CSV.write(it, path + "/" + stationName + ".csv", ',', "", CSVTimeType.DATETIME, AggregationInterval.RAW);
 					}
 				} catch(Exception e) {
 					Logger.error(e);

@@ -8,7 +8,7 @@ requirements:
 
 - Java 11 or newer: Oracle JDK or OpenJDK
 
-- (optional, for local desktop GUI) JavaFX 11 or newer: included in (some) Oracle JDKs or OpenJFX
+- (optional, for local desktop GUI) JavaFX 11 or newer
 
 - TubeDB package: 
   - **prebuild package**: (recommended) includes [example data and example configuration](../../usage/example).
@@ -49,7 +49,7 @@ Linux (Ubuntu)
 Windows
 ---
 
-- install [Oracle Java 11](https://www.oracle.com/java/technologies/downloads/#java11-windows) (JavaFX is included) or [other Java runtime](https://adoptopenjdk.net)
+- install [Oracle Java 11](https://www.oracle.com/java/technologies/downloads/#java11-windows) or [other Java runtime](https://adoptopenjdk.net)
 
 - extract package.zip
 

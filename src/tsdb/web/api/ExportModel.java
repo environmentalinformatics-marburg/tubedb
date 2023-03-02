@@ -54,7 +54,6 @@ public class ExportModel{
 	
 	public enum SpatialAggregation {
 		SEPARATE, AGGREGATED, SEPARATE_AND_AGGREGATED;
-
 		public static SpatialAggregation parseText(String text) {
 			if(text==null) {
 				Logger.warn("unknown SpatialAggregation null");

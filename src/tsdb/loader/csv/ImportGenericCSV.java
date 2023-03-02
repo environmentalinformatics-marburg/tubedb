@@ -23,7 +23,6 @@ import tsdb.util.AbstractTable;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataRow;
 import tsdb.util.StreamTable;
-import tsdb.util.Table;
 import tsdb.util.TimeUtil;
 import tsdb.util.Util;
 
@@ -190,7 +189,7 @@ public class ImportGenericCSV {
 						data[i] = Float.NaN;
 						numberParseErrorCount++;
 						numberParseErrorLast = text;
-						Logger.warn("parse error: |" + text + "|");
+						//Logger.warn("parse error: |" + text + "|" + "   at " + filePath);
 					}
 				}
 			}

@@ -36,8 +36,8 @@ public class TimestampSeriesCSVwriter {
 	private final boolean short_datetime = true;
 	private final String missing_value_placeholder = "NA";
 	
-	private static final DecimalFormat decimalFormat2 = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.ENGLISH));
-	private static final DecimalFormat decimalFormat5 = new DecimalFormat("0.00000", new DecimalFormatSymbols(Locale.ENGLISH));
+	//private static final DecimalFormat decimalFormat2 = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.ENGLISH));
+	public static final DecimalFormat DECIMAL_FORMAT_5 = new DecimalFormat("0.00000", new DecimalFormatSymbols(Locale.ENGLISH));
 	
 	public TimestampSeriesCSVwriter(boolean col_plotid, boolean col_timestamp, boolean col_datetime, boolean col_qualitycounter, boolean col_year, boolean col_month, boolean col_day, boolean col_hour, boolean col_day_of_year) {
 		this.col_plotid = col_plotid;
@@ -210,7 +210,7 @@ public class TimestampSeriesCSVwriter {
 					//formatter.format(Locale.ENGLISH, "%.2f", v);
 					//bufferedWriter.write(Util.fastWriteFloat(v));
 					//bufferedWriter.write(decimalFormat2.format(v));
-					bufferedWriter.write(decimalFormat5.format(v));
+					bufferedWriter.write(DECIMAL_FORMAT_5.format(v));
 				}
 			}
 			if(col_qualitycounter) {

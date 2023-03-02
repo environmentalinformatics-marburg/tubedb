@@ -22,7 +22,7 @@ import tsdb.util.Util;
  * @author woellauer
  */
 public final class TsDBFactory {
-	
+
 
 	private static final String PATH_CONFIG_FILENAME = "tsdb_paths.ini";
 	private static final String TSDB_PATH_SECTION = "tsdb_paths"; 
@@ -193,16 +193,16 @@ public final class TsDBFactory {
 	}
 
 	public static TsDB createDefault(String databaseDirectory,String configPath, String cacheDirectory, String streamdbPathPrefix) {
-		String configDirectory = configPath+"/";
+		String configDirectory = configPath + "/";
 
 		try {
 			TsDB tsdb = new TsDB(databaseDirectory, cacheDirectory, streamdbPathPrefix, configDirectory);
 			ConfigLoader configLoader = new ConfigLoader(tsdb);			
 
 			//*** global config start
-			configLoader.readSensorMetaData(configDirectory+"sensors.yaml"); // read sensor meta data
+			configLoader.readSensorMetaData(configDirectory + "sensors.yaml"); // read sensor meta data
 			tsdb.createSensorDependencies();
-			configLoader.readIgnoreSensorName(configDirectory+"sensor_ignore.ini"); // read and insert sensor names that should be not inserted in database
+			configLoader.readIgnoreSensorName(configDirectory + "sensor_ignore.ini"); // read and insert sensor names that should be not inserted in database
 			//*** global config end			
 
 			//*** region config start
@@ -211,19 +211,25 @@ public final class TsDBFactory {
 					String dir = path.toString();
 					//Logger.info("dir  "+path+"  "+path.getFileName());
 					try {
-						Region region = configLoader.readRegion(dir+"/region.ini", JUST_ONE_REGION);
-						if(region!=null) {
-							configLoader.readGeneralStation(dir+"/general_stations.ini");
-							configLoader.readLoggerTypeSchema(dir+"/logger_type_schema.ini");
-							configLoader.readPlotInventory(dir+"/plot_inventory.csv");
-							configLoader.readOptionalStationInventory(dir+"/station_inventory.csv"); // If all plots are stations then this file is not required.
-							configLoader.readOptinalSensorTranslation(dir+"/sensor_translation.ini");
-							configLoader.readOptionalSensorNameCorrection(dir+"/sensor_name_correction.json");  // read sensor translation and insert it into existing stations
-							configLoader.readOptionalStationProperties(dir+"/station_properties.yaml");
+						String regionFilePath = dir + "/region.ini";
+						File regionFile = new File(regionFilePath);
+						if(regionFile.exists()) {
+							Region region = configLoader.readRegion(regionFilePath, JUST_ONE_REGION);
+							if(region!=null) {
+								configLoader.readGeneralStation(dir + "/general_stations.ini");
+								configLoader.readLoggerTypeSchema(dir + "/logger_type_schema.ini");
+								configLoader.readPlotInventory(dir + "/plot_inventory.csv");
+								configLoader.readOptionalStationInventory(dir + "/station_inventory.csv"); // If all plots are stations then this file is not required.
+								configLoader.readOptinalSensorTranslation(dir + "/sensor_translation.ini");
+								configLoader.readOptionalSensorNameCorrection(dir + "/sensor_name_correction.json");  // read sensor translation and insert it into existing stations
+								configLoader.readOptionalStationProperties(dir + "/station_properties.yaml");
+							}
+						} else {
+							Logger.warn("no region config at  " + path + "    missing config file  " + regionFilePath);
 						}
 					} catch(Exception e) {
 						e.printStackTrace();
-						Logger.info("could not load meta data of  "+path+"  "+e);
+						Logger.info("could not load meta data of  " + path + "  " + e);
 					}
 				}
 			}
