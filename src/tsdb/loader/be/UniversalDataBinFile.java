@@ -20,9 +20,7 @@ import tsdb.util.TimeUtil;
  * @author woellauer
  *
  */
-public class UniversalDataBinFile {
-
-	
+public class UniversalDataBinFile {	
 
 	final int MAX_VALID_ROW_ID = 30000;
 
@@ -82,16 +80,16 @@ public class UniversalDataBinFile {
 
 	private void initFile() throws IOException {
 		try(FileChannel fileChannel = FileChannel.open(filename, StandardOpenOption.READ)) {
-			if(fileChannel.size()>Integer.MAX_VALUE) {
-				throw new RuntimeException("File > Integer.MAX_VALUE: "+fileChannel.size());
+			if(fileChannel.size() > Integer.MAX_VALUE) {
+				throw new RuntimeException("File > Integer.MAX_VALUE: " + fileChannel.size());
 			}
 			fileSize = (int) fileChannel.size();
-			empty = fileSize==0;
+			empty = fileSize == 0;
 			byteBuffer = ByteBuffer.allocateDirect(fileSize);
 			byteBuffer.rewind();
 			fileChannel.position(0);
 			int ret = fileChannel.read(byteBuffer);
-			if(ret!=fileSize) {
+			if(ret != fileSize) {
 				throw new RuntimeException("file read error");
 			}
 			byteBuffer.rewind();
@@ -104,12 +102,12 @@ public class UniversalDataBinFile {
 		byte isBigEndian = byteBuffer.get();
 		//System.out.println(isBigEndian+"\tisBigEndian");
 		if(isBigEndian!=1) {
-			throw new RuntimeException("no readable Universal-Data-Bin-File header: not big endian: "+isBigEndian);
+			throw new RuntimeException("no readable Universal-Data-Bin-File header: not big endian: " + isBigEndian);
 		}		
 		short version = byteBuffer.getShort();
 		//System.out.println(version+"\tversion");
 		if(version!=107) {
-			throw new RuntimeException("just Universal-Data-Bin-File version 1.07 implemented: "+version);
+			throw new RuntimeException("just Universal-Data-Bin-File version 1.07 implemented: " + version);
 		}
 		short typeVendorLen  = byteBuffer.getShort();
 		//System.out.println(typeVendorLen+"\ttypeVendorLen");
@@ -122,7 +120,7 @@ public class UniversalDataBinFile {
 		short moduleAdditionalDataLen = byteBuffer.getShort();
 		//System.out.println(moduleAdditionalDataLen+"\tmoduleAdditionalDataLen");
 		if(moduleAdditionalDataLen>0) {
-			throw new RuntimeException("reading of additional optional data in header not implemented: "+moduleAdditionalDataLen);
+			throw new RuntimeException("reading of additional optional data in header not implemented: " + moduleAdditionalDataLen);
 		}
 		this.startTimeToDayFactor = byteBuffer.getDouble();
 		//Logger.info(startTimeToDayFactor+"\tstartTimeToDayFactor");
@@ -235,14 +233,8 @@ public class UniversalDataBinFile {
 			variableCount = (short) sensorHeaders.length;
 		}		
 	}
-
-	/**
-	 * Reads all data rows from file without further processing.
-	 * @return Array of Datarows
-	 */
-	public DataRow[] readDataRows() {
-		byteBuffer.position(dataSectionStartFilePosition);
-		//int dataRowByteSize = (variableCount+1)*4;
+	
+	private int getDataRowByteSize() {
 		int dataRowByteSize = dataRowTimestampByteSize;
 		for(int sensorID=0;sensorID<variableCount;sensorID++) {
 			switch(sensorHeaders[sensorID].dataType) {
@@ -262,8 +254,18 @@ public class UniversalDataBinFile {
 				throw new RuntimeException("type not implemented:\t"+sensorHeaders[sensorID].dataType);
 			}			
 		}
+		return dataRowByteSize;
+	}
 
-		if((fileSize-dataSectionStartFilePosition)%dataRowByteSize!=0){
+	/**
+	 * Reads all data rows from file without further processing.
+	 * @return Array of Datarows
+	 */
+	public DataRow[] readDataRows() {
+		byteBuffer.position(dataSectionStartFilePosition);
+		int dataRowByteSize = getDataRowByteSize();
+
+		if((fileSize-dataSectionStartFilePosition) % dataRowByteSize != 0){
 			Logger.warn("file end not at row boundary: "+filename+"\t"+fileSize+"\t"+dataSectionStartFilePosition+"\t"+dataRowByteSize+"\t"+(fileSize-dataSectionStartFilePosition)%dataRowByteSize+"\t"+timeConverter.getStartDateTime());
 			//return null;
 		}
@@ -339,6 +341,84 @@ public class UniversalDataBinFile {
 		}	
 
 		return datarows;
+	}
+	
+	public int[] readRowIDs() {
+		byteBuffer.position(dataSectionStartFilePosition);
+		int dataRowByteSize = getDataRowByteSize();
+
+		if((fileSize-dataSectionStartFilePosition) % dataRowByteSize != 0){
+			Logger.warn("file end not at row boundary: "+filename+"\t"+fileSize+"\t"+dataSectionStartFilePosition+"\t"+dataRowByteSize+"\t"+(fileSize-dataSectionStartFilePosition)%dataRowByteSize+"\t"+timeConverter.getStartDateTime());
+			//return null;
+		}
+
+		int dataEntryCount = (fileSize-dataSectionStartFilePosition)/dataRowByteSize;
+
+		int[] rowIDs = new int[dataEntryCount];
+
+		switch(dActTimeDataType) {
+		case 7: // UnSignedInt32 (default for loggers)
+		case 6: // SignedInt32
+			for(int i=0;i<dataEntryCount;i++) {
+				byteBuffer.position(dataSectionStartFilePosition + i * dataRowByteSize);
+				int rowID = byteBuffer.getInt();
+				rowIDs[i] = rowID;
+			}
+			break;
+		case 12: {// Double
+			double offsetMinutes = startTime*startTimeToDayFactor*24*60;
+			double dActTimeToMinuteFactor = dActTimeToSecondFactor/60;
+			for(int i=0;i<dataEntryCount;i++) {
+				int rowID = (int) (byteBuffer.getDouble()*dActTimeToMinuteFactor + offsetMinutes);				
+				rowIDs[i] = rowID;
+			}
+			break;
+		}
+		default:
+			throw new RuntimeException("timestamp data type unknown "+dActTimeDataType);
+		}	
+
+		return rowIDs;
+	}
+	
+	public void wirteRowIDs(int[] rowIDs) {
+		byteBuffer.position(dataSectionStartFilePosition);
+		int dataRowByteSize = getDataRowByteSize();
+
+		if((fileSize-dataSectionStartFilePosition) % dataRowByteSize != 0){
+			Logger.warn("file end not at row boundary: "+filename+"\t"+fileSize+"\t"+dataSectionStartFilePosition+"\t"+dataRowByteSize+"\t"+(fileSize-dataSectionStartFilePosition)%dataRowByteSize+"\t"+timeConverter.getStartDateTime());
+			//return null;
+		}
+
+		int dataEntryCount = (fileSize-dataSectionStartFilePosition)/dataRowByteSize;
+
+		if(rowIDs.length != dataEntryCount) {
+			throw new RuntimeException("wrong row length");
+		}
+		
+		switch(dActTimeDataType) {
+		case 7: // UnSignedInt32 (default for loggers)
+		case 6: // SignedInt32
+			for(int i=0;i<dataEntryCount;i++) {
+				int pos = dataSectionStartFilePosition + i * dataRowByteSize;
+				int rowID = rowIDs[i];
+				byteBuffer.putInt(pos, rowID);
+			}
+			break;
+		case 12: {// Double
+			double offsetMinutes = startTime*startTimeToDayFactor*24*60;
+			double dActTimeToMinuteFactor = dActTimeToSecondFactor/60;
+			for(int i=0;i<dataEntryCount;i++) {
+				int pos = dataSectionStartFilePosition + i * dataRowByteSize;
+				int rowID = rowIDs[i];
+				double timestamp = (rowID - offsetMinutes) /dActTimeToMinuteFactor;				
+				byteBuffer.putDouble(pos, timestamp);
+			}
+			break;
+		}
+		default:
+			throw new RuntimeException("timestamp data type unknown "+dActTimeDataType);
+		}
 	}
 
 	public UDBFTimestampSeries getUDBFTimeSeries() {
@@ -535,9 +615,29 @@ public class UniversalDataBinFile {
 
 		return new UDBFTimestampSeries(filename, sensorHeaders, timeConverter, time, data);
 	}
+	
+	public short get_dActTimeDataType() {
+		return dActTimeDataType;
+	}
+	
+	public TimeConverter getTimeConverter() {
+		return timeConverter;		
+	}
 
 	@Override
 	public String toString() {
 		return "udbf "+timeConverter.getStartDateTime()+"  "+"  "+timeConverter;
+	}
+
+	public void saveToFile(Path writeFilename) throws IOException {
+		try(FileChannel fileChannel = FileChannel.open(writeFilename, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
+			byteBuffer.rewind();
+			int ret = fileChannel.write(byteBuffer);
+			byteBuffer.rewind();			
+			if(ret != fileSize) {
+				throw new RuntimeException("file write error");
+			}
+			byteBuffer.rewind();
+		}		
 	}
 }

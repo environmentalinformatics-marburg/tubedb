@@ -22,7 +22,6 @@ public class PropertyReassign {
 		this.target = target;
 	}
 
-
 	public static PropertyReassign parse(YamlMap map) {		
 		String[] source = map.optList("source").asStringArray();
 		String[] target = map.optList("target").asStringArray();

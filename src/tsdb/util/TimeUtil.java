@@ -1178,7 +1178,6 @@ public final class TimeUtil implements Serializable {
 
 	private static int datetimeToOleMinutes(int y, int m, int d, int h, int mm) {
 		if(y < LOOKUP_YEAR_START || LOOKUP_YEAR_END < y) {
-			System.out.println("system path");
 			int t = (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(y, m, d, h, mm));
 			return t;
 		} else {
@@ -1208,7 +1207,6 @@ public final class TimeUtil implements Serializable {
 
 	private static int yearMonthEndtoOleMinutes(int y, int m) {
 		if(y < LOOKUP_YEAR_START || LOOKUP_YEAR_END < y) {
-			System.out.println("system path");
 			int t = (int) TimeUtil.dateTimeToOleMinutes(yearMonthToDateTime(y, m));
 			return t;
 		} else {
@@ -1227,7 +1225,6 @@ public final class TimeUtil implements Serializable {
 
 	private static int yearEndtoOleMinutes(int y) {
 		if(y < LOOKUP_YEAR_START || LOOKUP_YEAR_END < y) {
-			System.out.println("system path");
 			int t = (int) TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(y, 12, 31, 23, 59));
 			return t;
 		} else {

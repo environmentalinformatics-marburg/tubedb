@@ -32,6 +32,14 @@ public final class TimeConverter {
 	public LocalDateTime offsetToDateTime(int offset) {
 		return TimeUtil.oleAutomatonTimeToDateTime(offsetToOleAutomatonTime(offset));
 	}
+	
+	public double offsetToOleAutomatonTime(long offset) {
+		return startTime*startTimeToDayFactor + (offset*dActTimeToSecondFactor)/86400d;		
+	}
+	
+	public LocalDateTime offsetToDateTime(long offset) {
+		return TimeUtil.oleAutomatonTimeToDateTime(offsetToOleAutomatonTime(offset));
+	}
 
 	public double getStartOleAutomatonTime() {
 		return startTime*startTimeToDayFactor;
