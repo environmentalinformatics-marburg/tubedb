@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 
 import org.tinylog.Logger;
 
-import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
@@ -179,7 +179,7 @@ public class ImportGenericCSV {
 				} else {
 					try {
 						//float value = Float.parseFloat(text);
-						float value = (float) FastDoubleParser.parseDouble(text);
+						float value = JavaFloatParser.parseFloat(text);
 						if( Float.isFinite(value) && value!= -9999 ) {
 							data[i] = value;
 						} else {
@@ -275,7 +275,7 @@ public class ImportGenericCSV {
 				} else {
 					try {
 						//float value = Float.parseFloat(text);
-						float value = (float) FastDoubleParser.parseDouble(text);
+						float value = JavaFloatParser.parseFloat(text);
 						if( Float.isFinite(value) && value!= -9999 ) {
 							data[i] = value;
 						} else {

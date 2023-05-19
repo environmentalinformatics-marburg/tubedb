@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.tinylog.Logger;
 
-import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 
 import org.eclipse.jetty.server.Request;
 
@@ -122,7 +122,7 @@ public class Handler_iot_insert_csv extends MethodHandler {
 				} else {
 					try {
 						//float value = Float.parseFloat(text);
-						float value = (float) FastDoubleParser.parseDouble(text);
+						float value = JavaFloatParser.parseFloat(text);
 						if(Float.isFinite(value)) {
 							data[i] = value;
 						} else {

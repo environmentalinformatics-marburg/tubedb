@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 import org.tinylog.Logger;
 
-import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import tsdb.util.AbstractTable;
 import tsdb.util.DataRow;
 import tsdb.util.Table;
@@ -163,7 +163,7 @@ public class Experiment implements AutoCloseable {
 					} else {
 						try {
 							//float value = Float.parseFloat(text);
-							float value = (float) FastDoubleParser.parseDouble(text);
+							float value = JavaFloatParser.parseFloat(text);
 							if( Float.isFinite(value) && value!= -9999 ) {
 								data[i] = value;
 							} else {

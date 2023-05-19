@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.tinylog.Logger;
 
-import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
@@ -112,7 +112,7 @@ public class InfluxLoader {
 									m = ((Double) vObject).floatValue();
 								} else {
 									//m = Float.parseFloat(vObject.toString());
-									m = (float) FastDoubleParser.parseDouble(vObject.toString());
+									m = JavaFloatParser.parseFloat(vObject.toString());
 								}
 								dataEntryList.add(new DataEntry(timestamp, m));
 								prevTimestamp = timestamp;

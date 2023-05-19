@@ -1,6 +1,6 @@
 package tsdb.dsl.formula;
 
-import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import tsdb.dsl.FormulaVisitor1;
 
 public class FormulaNum extends Formula {
@@ -53,7 +53,7 @@ public class FormulaNum extends Formula {
 
 	public static FormulaNum parse(String s) {
 		//return of(Float.parseFloat(s));
-		return of((float) FastDoubleParser.parseDouble(s));
+		return of(JavaFloatParser.parseFloat(s));
 	}
 
 	@Override

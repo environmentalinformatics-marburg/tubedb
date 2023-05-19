@@ -12,7 +12,7 @@ import java.util.Map;
 
 import org.tinylog.Logger;
 
-import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
 
@@ -78,7 +78,7 @@ public class StationProperties implements Serializable{
 		if(text!=null) {
 			try {
 				//return Float.parseFloat(text);
-				return (float) FastDoubleParser.parseDouble(text);
+				return JavaFloatParser.parseFloat(text);
 			} catch(Exception e) {
 				Logger.warn("error in read float: "+e+"  for propery  "+key+" and value  "+text+"   at "+traceText);
 				return Float.NaN;

@@ -15,7 +15,7 @@ import java.util.HashSet;
 
 import org.tinylog.Logger;
 
-import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import tsdb.util.Pair;
 import tsdb.util.TimeUtil;
 import tsdb.util.TsEntry;
@@ -165,7 +165,7 @@ public class AscParser {
 				for(int i=0;i<sensorNames.length;i++) {
 					try {
 						//data[i] = Float.parseFloat(columns[i+2]);
-						data[i] = (float) FastDoubleParser.parseDouble(columns[i+2]);
+						data[i] = JavaFloatParser.parseFloat(columns[i+2]);
 					} catch (Exception e) {
 						Logger.warn(e+" in "+filename);
 						data[i] = Float.NaN;

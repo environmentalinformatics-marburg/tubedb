@@ -17,7 +17,7 @@ import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
-import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
@@ -132,7 +132,7 @@ public class CSV_MXminiLoader {
 						data[i] = Float.NaN;
 					} else {
 						//data[i] = Float.parseFloat(v.replace(',','.'));
-						data[i] = (float) FastDoubleParser.parseDouble(v.replace(',','.'));
+						data[i] = JavaFloatParser.parseFloat(v.replace(',','.'));
 					}
 				}
 				DataRow dataRow = new DataRow(data, timestamp);

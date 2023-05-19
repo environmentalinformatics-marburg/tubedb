@@ -68,7 +68,7 @@ dependencies {
   	implementation group: 'ar.com.hjg', name: 'pngj', version: '2.1.0'
   	implementation group: 'com.github.luben', name: 'zstd-jni', version: '1.5.5-2' // caution: newer versions may break storage layout (last tested 1.4.5-6)
   	implementation group: 'me.lemire.integercompression', name: 'JavaFastPFOR', version: '0.1.12' // caution: newer versions may break strorage layout
-  	implementation group: 'ch.randelshofer', name: 'fastdoubleparser', version: '0.3.0'
+  	implementation group: 'ch.randelshofer', name: 'fastdoubleparser', version: '0.9.0'
   	
   	implementation group: 'org.eclipse.jetty', name: 'jetty-server', version: '11.0.15'
   	implementation group: 'org.eclipse.jetty', name: 'jetty-security', version: '11.0.15'

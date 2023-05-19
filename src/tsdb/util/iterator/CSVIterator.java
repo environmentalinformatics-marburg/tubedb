@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 import org.tinylog.Logger;
 
-import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import tsdb.util.Table;
 import tsdb.util.TimeUtil;
 import tsdb.util.TsEntry;
@@ -91,7 +91,7 @@ public class CSVIterator extends TsIterator {
 			try {
 				if( !(row[colIndex+2].isEmpty() || row[colIndex+2].equals("NA")) ) {
 					//data[colIndex] = Float.parseFloat(row[colIndex+2]);
-					data[colIndex] = (float) FastDoubleParser.parseDouble(row[colIndex+2]);
+					data[colIndex] = JavaFloatParser.parseFloat(row[colIndex+2]);
 				} else {
 					data[colIndex] = Float.NaN;
 				}

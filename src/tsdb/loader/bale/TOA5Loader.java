@@ -1,22 +1,19 @@
 package tsdb.loader.bale;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-
 import org.tinylog.Logger;
 
-import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
-import tsdb.util.DataEntry;
 import tsdb.util.AbstractTable.ColumnReaderFloat;
 import tsdb.util.AbstractTable.ColumnReaderSpaceTimestamp;
+import tsdb.util.DataEntry;
 
 public class TOA5Loader {
 	
@@ -133,7 +130,7 @@ public class TOA5Loader {
 						String text = rows[rowIndex][colIndex];
 						if(!text.equals("NAN")) {
 							//float v = Float.parseFloat(text);
-							float v = (float) FastDoubleParser.parseDouble(text);
+							float v = JavaFloatParser.parseFloat(text);
 							if(Float.isFinite(v)) {
 								vList.add(new DataEntry(timestamps[rowIndex], v));
 							}

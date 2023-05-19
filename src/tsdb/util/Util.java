@@ -4,7 +4,6 @@ import static tsdb.util.AssumptionCheck.throwNulls;
 
 import java.io.File;
 import java.lang.reflect.Array;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -26,13 +25,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
-import org.tinylog.Logger;
-
-import ch.randelshofer.fastdoubleparser.FastDoubleParser;
-
 import org.ini4j.Profile.Section;
 import org.ini4j.Wini;
+import org.tinylog.Logger;
+
+import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 
 /**
  * Some utilities
@@ -274,8 +271,8 @@ public final class Util {
 			}
 			//float min = Float.parseFloat(minmax[0]);
 			//float max = Float.parseFloat(minmax[1]);
-			float min = (float) FastDoubleParser.parseDouble(minmax[0]);
-			float max = (float) FastDoubleParser.parseDouble(minmax[1]);
+			float min = JavaFloatParser.parseFloat(minmax[0]);
+			float max = JavaFloatParser.parseFloat(minmax[1]);
 			return new FloatRange(name, min, max);
 		}
 
@@ -293,8 +290,8 @@ public final class Util {
 			if(matcher.matches()) {
 				//float min = Float.parseFloat(matcher.group("min"));
 				//float max = Float.parseFloat(matcher.group("max"));
-				float min = (float) FastDoubleParser.parseDouble(matcher.group("min"));
-				float max = (float) FastDoubleParser.parseDouble(matcher.group("max"));
+				float min = JavaFloatParser.parseFloat(matcher.group("min"));
+				float max = JavaFloatParser.parseFloat(matcher.group("max"));
 				return new FloatRange(name, min, max);
 			} else {
 				throw new RuntimeException("could not parse FloatRange: "+s);

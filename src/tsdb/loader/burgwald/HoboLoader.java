@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.tinylog.Logger;
 
-import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
 import tsdb.util.DataEntry;
@@ -122,7 +122,7 @@ public class HoboLoader {
 						String text = rows[rowIndex][colIndex];
 						if(!text.isEmpty() && !text.equals("Protokolliert")) {
 							//float v = Float.parseFloat(text);
-							float v = (float) FastDoubleParser.parseDouble(text);
+							float v = JavaFloatParser.parseFloat(text);
 							if(Float.isFinite(v)) {
 								vList.add(new DataEntry(timestamps[rowIndex], v));
 							}

@@ -3,7 +3,6 @@ package tsdb.loader.treetalker;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -23,7 +22,7 @@ import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
-import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
 import tsdb.util.AssumptionCheck;
@@ -495,7 +494,7 @@ public class Loader_TreeTalker {
 	
 	private static float parseFloat(String s) {
 		//return s.isEmpty() ? Float.NaN : Float.parseFloat(s);
-		return s.isEmpty() ? Float.NaN : (float) FastDoubleParser.parseDouble(s);
+		return s.isEmpty() ? Float.NaN : JavaFloatParser.parseFloat(s);
 	}
 	
 	private static String[] fillMissing(String[] src, int dstLen) {

@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.tinylog.Logger;
 
-import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 
 import org.eclipse.jetty.server.Request;
 
@@ -80,8 +80,8 @@ public class Handler_iot_sensor extends MethodHandler {
 						int timestamp = (int) TimeUtil.dateTimeToOleMinutes(datetime);
 						//float value_lon = Float.parseFloat(data[1]);
 						//float value_lat = Float.parseFloat(data[2]);
-						float value_lon = (float) FastDoubleParser.parseDouble(data[1]);
-						float value_lat = (float) FastDoubleParser.parseDouble(data[2]);
+						float value_lon = JavaFloatParser.parseFloat(data[1]);
+						float value_lat = JavaFloatParser.parseFloat(data[2]);
 						Logger.info("insert " + timestamp + "   " + value_lon + " " + value_lat);
 						tsdb.insertOneValue(stationID, "location_lon", timestamp, value_lon * lat_lon_add_factor);
 						tsdb.insertOneValue(stationID, "location_lat", timestamp, value_lat * lat_lon_add_factor);
@@ -89,7 +89,7 @@ public class Handler_iot_sensor extends MethodHandler {
 						writer.println("inserted " + stationID + "/" + "location_lat" + "@" + TimeUtil.oleMinutesToText(timestamp) + "  " + value_lat);
 						if(data.length == 4) {
 							//float value_sat = Float.parseFloat(data[3]);
-							float value_sat = (float) FastDoubleParser.parseDouble(data[3]);
+							float value_sat = JavaFloatParser.parseFloat(data[3]);
 							tsdb.insertOneValue(stationID, "location_sat", timestamp, value_sat);
 							writer.println("inserted " + stationID + "/" + "location_sat" + "@" + TimeUtil.oleMinutesToText(timestamp) + "  " + value_sat);
 						}
@@ -118,7 +118,7 @@ public class Handler_iot_sensor extends MethodHandler {
 						LocalDateTime datetime = TimeUtil.unixTimeToLocalDateTime(unixTime);
 						int timestamp = (int) TimeUtil.dateTimeToOleMinutes(datetime);
 						//float value = Float.parseFloat(data[1]);
-						float value = (float) FastDoubleParser.parseDouble(data[1]);
+						float value = JavaFloatParser.parseFloat(data[1]);
 						Logger.info("insert " + timestamp + "   " + value);
 						tsdb.insertOneValue(stationID, sensorID, timestamp, value);
 						writer.println("inserted " + stationID + "/" + sensorID + "@" + TimeUtil.oleMinutesToText(timestamp) + "  " + value);
