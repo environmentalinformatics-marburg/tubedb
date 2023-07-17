@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.TreeMap;
 
 
@@ -138,11 +139,43 @@ public class StreamStorageStreamDB implements StreamStorage {
 		return new long[]{interval[0],interval[1]};
 	}
 	
+	/**
+	 * 
+	 * @param streamName
+	 * @param excludeSensorNames nullable
+	 * @return
+	 */
+	public long[] getStationTimeInterval(String streamName, Set<String> excludeSensorNames) {
+		if(!streamdb.existStation(streamName)) {
+			return null;
+		}
+		int[] interval = streamdb.getStationTimeInterval(streamName, excludeSensorNames);
+		if(interval == null) {
+			return null;
+		}
+		return new long[]{interval[0],interval[1]};
+	}
+	
 	public int[] getStationTimeInterval(String streamName, int min, int max) {
 		if(!streamdb.existStation(streamName)) {
 			return null;
 		}
 		int[] interval = streamdb.getStationTimeInterval(streamName, min, max);
+		return interval;
+	}
+	/**
+	 * 
+	 * @param streamName
+	 * @param min
+	 * @param max
+	 * @param excludeSensorNames  nullable
+	 * @return
+	 */
+	public int[] getStationTimeInterval(String streamName, int min, int max, Set<String> excludeSensorNames) {
+		if(!streamdb.existStation(streamName)) {
+			return null;
+		}
+		int[] interval = streamdb.getStationTimeInterval(streamName, min, max, excludeSensorNames);
 		return interval;
 	}
 

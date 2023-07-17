@@ -33,7 +33,7 @@ import tsdb.util.Util;
  */
 public class TsDB implements AutoCloseable {
 	
-	public static final String tubedb_version = "1.23.1";
+	public static final String tubedb_version = "1.23.2";
 
 	/**
 	 * map regionName -> Region
@@ -96,6 +96,8 @@ public class TsDB implements AutoCloseable {
 	public SourceCatalog sourceCatalog; 
 
 	public final String configDirectory;
+	
+	public final Set<String> excludeStatusSensorNames;
 
 
 	//*** end persistent information ***
@@ -130,7 +132,8 @@ public class TsDB implements AutoCloseable {
 		this.sourceCatalog = new SourceCatalog(databasePath);
 
 		this.configDirectory = configDirectory;
-
+		
+		this.excludeStatusSensorNames = new HashSet<String>(Arrays.asList(new String[] {}));
 	}	
 
 	/**
@@ -333,6 +336,20 @@ public class TsDB implements AutoCloseable {
 			return virtualPlot.getTimeInterval();
 		}
 		return streamStorage.getStationTimeInterval(stationName);
+	}
+	
+	/**
+	 * Gets first and last timestamp of virtualplot or station.
+	 * Excluding sensor names that are not relevant for status of measuring stations.
+	 * @param stationName
+	 * @return null if empty
+	 */
+	public long[] getStatusTimeInterval(String stationName) {
+		VirtualPlot virtualPlot = getVirtualPlot(stationName);
+		if(virtualPlot!=null) {
+			return virtualPlot.getTimeInterval(excludeStatusSensorNames);
+		}
+		return streamStorage.getStationTimeInterval(stationName, excludeStatusSensorNames);
 	}
 
 	/**

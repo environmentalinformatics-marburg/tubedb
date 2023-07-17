@@ -547,8 +547,8 @@ public class ServerTsDB implements RemoteTsDB {
 		Map<String, PlotMessage> messageMap = m;
 
 		plotIDstream.forEach(plotID->{
-			long[] interval = tsdb.getTimeInterval(plotID);
-			if(interval!=null) {
+			long[] interval = tsdb.getStatusTimeInterval(plotID);
+			if(interval != null) {
 				float voltage = Float.NaN;
 				float voltage_min_watch = 0;
 				float voltage_min_good = 0;
@@ -567,7 +567,7 @@ public class ServerTsDB implements RemoteTsDB {
 						it = tsdb.streamStorage.getRawSensorIterator(plotID, sensorName, (long)sensorInterval[1], (long)sensorInterval[1]);
 					}
 				}
-				if(it==null) {
+				if(it == null) {
 					scale = 1;
 					String sensorName = "UB";
 					voltage_min_watch = 11.8f;

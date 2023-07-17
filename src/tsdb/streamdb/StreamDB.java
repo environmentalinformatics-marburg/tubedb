@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.tinylog.Logger;
@@ -31,7 +32,7 @@ import tsdb.util.iterator.TsIterator;
  */
 public class StreamDB {
 
-	
+
 
 	private DB db;
 
@@ -484,7 +485,7 @@ public class StreamDB {
 		BTreeMap<Integer, ChunkMeta> chunkMetaMap = getSensorChunkMetaMap(sensorMeta);
 		return new StreamIterator(sensorMeta, chunkMetaMap, chunkMap, minTimestamp, maxTimestamp);	
 	}
-	
+
 	public int getSensorTimeMin(SensorMeta sensorMeta, int minTimestamp, int maxTimestamp) {
 		throwNull(sensorMeta);
 		BTreeMap<Integer, ChunkMeta> chunkMetaMap = getSensorChunkMetaMap(sensorMeta);
@@ -507,7 +508,7 @@ public class StreamDB {
 		}
 		return Integer.MAX_VALUE;		
 	}
-	
+
 	public int getSensorTimeMax(SensorMeta sensorMeta, int minTimestamp, int maxTimestamp) {
 		throwNull(sensorMeta);
 		BTreeMap<Integer, ChunkMeta> chunkMetaMap = getSensorChunkMetaMap(sensorMeta);
@@ -605,7 +606,7 @@ public class StreamDB {
 		//Logger.info("interval " + TimeUtil.oleMinutesToText(interval[0]) + " - " + TimeUtil.oleMinutesToText(interval[1]) + "  " + sensorMeta.stationName + " " + sensorMeta.sensorName);
 		return interval;
 	}
-	
+
 	public int[] getSensorTimeInterval(String stationName, String sensorName, int min, int max) {
 		SensorMeta sensorMeta = getSensorMeta(stationName, sensorName);
 		if(sensorMeta == null) {
@@ -613,7 +614,7 @@ public class StreamDB {
 		}
 		return getSensorTimeInterval(sensorMeta, min, max);
 	}
-	
+
 	public int[] getSensorTimeInterval(SensorMeta sensorMeta, int min, int max) {
 		int imin = getSensorTimeMin(sensorMeta, min, max);
 		int imax = getSensorTimeMax(sensorMeta, min, max);
@@ -625,7 +626,7 @@ public class StreamDB {
 		//Logger.info("interval " + TimeUtil.oleMinutesToText(interval[0]) + " - " + TimeUtil.oleMinutesToText(interval[1]) + "  " + sensorMeta.stationName + " " + sensorMeta.sensorName);
 		return interval;
 	}
-	
+
 	public int[] getSensorTimeInterval_OLD(SensorMeta sensorMeta, int min, int max) {
 		throwNull(sensorMeta);
 		BTreeMap<Integer, ChunkMeta> chunkMetaMap = getSensorChunkMetaMap(sensorMeta);
@@ -688,7 +689,40 @@ public class StreamDB {
 		}
 		return new int[]{minTimestamp, maxTimestamp};	
 	}
-	
+
+	/**
+	 * 
+	 * @param stationName
+	 * @param excludeSensorNames  nullable
+	 * @return
+	 */
+	public int[] getStationTimeInterval(String stationName, Set<String> excludeSensorNames) {
+		throwNull(stationName);
+		BTreeMap<String, SensorMeta> sensorMap = getSensorMap(stationName);
+		if(sensorMap==null||sensorMap.isEmpty()) {
+			return null;
+		}
+		int minTimestamp = Integer.MAX_VALUE;
+		int maxTimestamp = Integer.MIN_VALUE;
+		for(SensorMeta sensorMeta:sensorMap.values()) {
+			if(excludeSensorNames == null || !excludeSensorNames.contains(sensorMeta.sensorName)) {
+				int[] interval = getSensorTimeInterval(sensorMeta);
+				if(interval!=null) {
+					if(interval[0]<minTimestamp) {
+						minTimestamp = interval[0];
+					}
+					if(maxTimestamp<interval[1]) {
+						maxTimestamp = interval[1];
+					}
+				}
+			}
+		}
+		if(minTimestamp == Integer.MAX_VALUE || maxTimestamp == Integer.MIN_VALUE) {
+			return null;
+		}
+		return new int[]{minTimestamp, maxTimestamp};	
+	}
+
 	public int[] getStationTimeInterval(String stationName, int min, int max) {
 		throwNull(stationName);
 		BTreeMap<String, SensorMeta> sensorMap = getSensorMap(stationName);
@@ -705,6 +739,41 @@ public class StreamDB {
 				}
 				if(maxTimestamp < interval[1]) {
 					maxTimestamp = interval[1];
+				}
+			}
+		}
+		if(minTimestamp == Integer.MAX_VALUE || maxTimestamp == Integer.MIN_VALUE) {
+			return null;
+		}
+		return new int[]{minTimestamp, maxTimestamp};	
+	}
+
+	/**
+	 * 
+	 * @param stationName
+	 * @param min
+	 * @param max
+	 * @param excludeSensorNames  nullable
+	 * @return
+	 */
+	public int[] getStationTimeInterval(String stationName, int min, int max, Set<String> excludeSensorNames) {
+		throwNull(stationName);
+		BTreeMap<String, SensorMeta> sensorMap = getSensorMap(stationName);
+		if(sensorMap == null||sensorMap.isEmpty()) {
+			return null;
+		}
+		int minTimestamp = Integer.MAX_VALUE;
+		int maxTimestamp = Integer.MIN_VALUE;
+		for(SensorMeta sensorMeta:sensorMap.values()) {
+			if(excludeSensorNames == null || !excludeSensorNames.contains(sensorMeta.sensorName)) {
+				int[] interval = getSensorTimeInterval(sensorMeta, min, max);
+				if(interval != null) {
+					if(interval[0] < minTimestamp) {
+						minTimestamp = interval[0];
+					}
+					if(maxTimestamp < interval[1]) {
+						maxTimestamp = interval[1];
+					}
 				}
 			}
 		}

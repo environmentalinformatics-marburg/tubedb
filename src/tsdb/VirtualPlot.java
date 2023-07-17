@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 
@@ -251,6 +252,39 @@ public class VirtualPlot {
 			int entryMax = entryInterval.end == null ? Integer.MAX_VALUE : entryInterval.end.intValue();			
 			if(entryMin < imin || entryMax > imax) {
 				int[] interval = tsdb.streamStorage.getStationTimeInterval(entryStation, entryMin, entryMax);
+				if(interval != null) {
+					if(interval[0] < imin) {
+						imin = interval[0];
+					}
+					if(interval[1] > imax) {
+						imax = interval[1];
+					}
+				}
+			}
+		}
+		if(imin == Integer.MAX_VALUE || imax == Integer.MIN_VALUE) {
+			return null;
+		}
+		long[] interval = new long[]{imin, imax};
+		//Logger.info("interval " + TimeUtil.oleMinutesToText(interval[0]) + " - " + TimeUtil.oleMinutesToText(interval[1]) + "  " + plotID);
+		return interval;		
+	}
+	
+	/**
+	 * 
+	 * @param excludeSensorNames  nullable
+	 * @return
+	 */
+	public long[] getTimeInterval(Set<String> excludeSensorNames) {
+		int imin = Integer.MAX_VALUE;
+		int imax = Integer.MIN_VALUE;
+		
+		for(TimestampInterval<StationProperties> entryInterval:intervalList) {
+			String entryStation = entryInterval.value.get_serial();
+			int entryMin = entryInterval.start == null ? Integer.MIN_VALUE : entryInterval.start.intValue();
+			int entryMax = entryInterval.end == null ? Integer.MAX_VALUE : entryInterval.end.intValue();			
+			if(entryMin < imin || entryMax > imax) {
+				int[] interval = tsdb.streamStorage.getStationTimeInterval(entryStation, entryMin, entryMax, excludeSensorNames);
 				if(interval != null) {
 					if(interval[0] < imin) {
 						imin = interval[0];

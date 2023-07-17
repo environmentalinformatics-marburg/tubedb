@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,9 @@ public class ParseReceiverLogFile {
 				try {
 					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 					LocalDateTime datetime = LocalDateTime.parse(line.subSequence(0, line.indexOf('-')-1), formatter);
+					if(datetime.getSecond() != 0) {
+						datetime = LocalDateTime.of(datetime.toLocalDate(), LocalTime.of(datetime.getHour(), datetime.getMinute()));
+					}
 					if(datetime.isAfter(lastDateTime)) {
 						lastDateTime = datetime;
 					}

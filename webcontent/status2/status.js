@@ -158,7 +158,7 @@ Vue.component('demo-grid', {
 	
 	isOutdated: function(entry) {
 		if(entry.message_date != undefined) {
-				return (entry.message_date<entry.last_datetime);
+				return (entry.message_date < entry.last_datetime);
 		}
 		return false;
 	},
