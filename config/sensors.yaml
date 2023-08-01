@@ -2645,5 +2645,11 @@ audio:
   description: audio recording events 
   unit: count
   aggregation: sum_always
+  category: water
+
+precipitation_dwd_year:
+  description: DWD yearly precipitation
+  unit: mm (millimeter)
+  aggregation: last # pass-through yearly values from raw to year aggregation
   category: water  
   

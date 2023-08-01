@@ -512,15 +512,12 @@ public final class TimeUtil implements Serializable {
 			case HOUR:
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-12-31T23:00"));
 			case DAY:
-				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-12-31T00:00"));
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-12-31T23:00"));
 			case WEEK:
 				throw new RuntimeException("week aggregation can not be applied to shortened end date");
 			case MONTH:
-				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-12-01T00:00"));
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-12-31T23:00"));
 			case YEAR:
-				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-01-01T00:00"));
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-12-31T23:00"));
 			default:
 				throw new RuntimeException("unknown aggregation");
@@ -557,19 +554,6 @@ public final class TimeUtil implements Serializable {
 					}
 				}
 			case DAY:
-				/*try {
-					return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-31T00:00"));
-				} catch (DateTimeParseException e) {
-					try {
-						return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-30T00:00"));
-					} catch (DateTimeParseException e1) {
-						try {
-							return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-29T00:00"));
-						} catch (DateTimeParseException e2) {
-							return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-28T00:00"));
-						}
-					}
-				}*/
 				try {
 					return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-31T23:00"));
 				} catch (DateTimeParseException e) {
@@ -586,7 +570,6 @@ public final class TimeUtil implements Serializable {
 			case WEEK:
 				throw new RuntimeException("week aggregation can not be applied to shortened end date");
 			case MONTH:
-				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-01T00:00"));
 				try {
 					return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-31T23:00"));
 				} catch (DateTimeParseException e) {
@@ -602,7 +585,6 @@ public final class TimeUtil implements Serializable {
 				}
 			case YEAR:
 				Logger.warn("correct month for end date not checked");
-				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-01T00:00"));
 				try {
 					return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"-31T23:00"));
 				} catch (DateTimeParseException e) {
@@ -627,18 +609,15 @@ public final class TimeUtil implements Serializable {
 			case HOUR:
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T23:00"));
 			case DAY:
-				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T00:00"));
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T23:00"));
 			case WEEK:
 				//throw new RuntimeException("week aggregation can not be applied to shortened end date");
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T23:00"));
 			case MONTH:
 				Logger.warn("correct day for end date not checked");
-				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T00:00"));
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T23:00"));
 			case YEAR:
 				Logger.warn("correct month and day for end date not checked");
-				//return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T00:00"));
 				return (int) dateTimeToOleMinutes(LocalDateTime.parse(text+"T23:00"));
 			default:
 				throw new RuntimeException("unknown aggregation");

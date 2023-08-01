@@ -52,6 +52,7 @@
             title="Leave empty to select all sensors."
             v-if="selectedSet !== undefined"  
           />
+          <q-checkbox size="xs" v-model="showAllTimestamps" label="show timestamps for sensors" v-if="selectedSet !== undefined" />
         </q-toolbar>
         <q-btn @click="refresh" :loading="dataLoading" icon="refresh" v-if="selectedSet !== undefined" >refresh</q-btn>
         
@@ -114,6 +115,7 @@ export default {
         page: 1,    
         rowsPerPage: 0, 
       },
+      showAllTimestamps: false,
       monitoring_meta: {
         sets: [
           {
@@ -186,6 +188,21 @@ export default {
               {sensor: 'tt_battery_voltage', ok: [3700, 5000], warn: [3500, 5000]},              
               {sensor: 'tt_air_temperature', ok: [-20, 35], warn: [-40, 40]},
               {sensor: 'tt_air_relative_humidity', ok: [15, 100], warn: [0, 100]},
+              {sensor: 'ttraw_gms_fq_1', ok: [10000, 20000], warn: [5000, 25000]},
+              {sensor: 'ttraw_gms_fq_2', ok: [10000, 20000], warn: [5000, 25000]},
+              {sensor: 'ttraw_gms_fq_3', ok: [10000, 20000], warn: [5000, 25000]},
+              {sensor: 'ttraw_gms_ntc_1', ok: [40000, 45000], warn: [35000, 50000]},
+              {sensor: 'ttraw_gms_ntc_2', ok: [40000, 45000], warn: [35000, 50000]},
+              {sensor: 'ttraw_gms_ntc_3', ok: [40000, 45000], warn: [35000, 50000]},
+              {sensor: 'tt_gms_T_1', ok: [-20, 35], warn: [-40, 40]}, 
+              {sensor: 'tt_gms_T_2', ok: [-20, 35], warn: [-40, 40]}, 
+              {sensor: 'tt_gms_T_3', ok: [-20, 35], warn: [-40, 40]}, 
+              {sensor: 'tt_gms_ECf_T_1', ok: [-200, -0], warn: [-400, 200]},
+              {sensor: 'tt_gms_ECf_T_2', ok: [-200, -0], warn: [-400, 200]},
+              {sensor: 'tt_gms_ECf_T_3', ok: [-200, -0], warn: [-400, 200]},
+              {sensor: 'tt_gms_delta_ECf_1', ok: [-500, 500], warn: [-1000, 2000]},
+              {sensor: 'tt_gms_delta_ECf_2', ok: [-500, 500], warn: [-1000, 2000]},
+              {sensor: 'tt_gms_delta_ECf_3', ok: [-500, 500], warn: [-1000, 2000]},
             ],
           },
           {
@@ -293,6 +310,21 @@ export default {
               {sensor: 'tt_battery_voltage', ok: [3700, 5000], warn: [3500, 5000]},              
               {sensor: 'tt_air_temperature', ok: [-20, 35], warn: [-40, 40]},
               {sensor: 'tt_air_relative_humidity', ok: [15, 100], warn: [0, 100]},
+              {sensor: 'ttraw_gms_fq_1', ok: [10000, 20000], warn: [5000, 25000]},
+              {sensor: 'ttraw_gms_fq_2', ok: [10000, 20000], warn: [5000, 25000]},
+              {sensor: 'ttraw_gms_fq_3', ok: [10000, 20000], warn: [5000, 25000]},
+              {sensor: 'ttraw_gms_ntc_1', ok: [40000, 45000], warn: [35000, 50000]},
+              {sensor: 'ttraw_gms_ntc_2', ok: [40000, 45000], warn: [35000, 50000]},
+              {sensor: 'ttraw_gms_ntc_3', ok: [40000, 45000], warn: [35000, 50000]},
+              {sensor: 'tt_gms_T_1', ok: [-20, 35], warn: [-40, 40]}, 
+              {sensor: 'tt_gms_T_2', ok: [-20, 35], warn: [-40, 40]}, 
+              {sensor: 'tt_gms_T_3', ok: [-20, 35], warn: [-40, 40]}, 
+              {sensor: 'tt_gms_ECf_T_1', ok: [-200, -0], warn: [-400, 200]},
+              {sensor: 'tt_gms_ECf_T_2', ok: [-200, -0], warn: [-400, 200]},
+              {sensor: 'tt_gms_ECf_T_3', ok: [-200, -0], warn: [-400, 200]},
+              {sensor: 'tt_gms_delta_ECf_1', ok: [-500, 500], warn: [-1000, 2000]},
+              {sensor: 'tt_gms_delta_ECf_2', ok: [-500, 500], warn: [-1000, 2000]},
+              {sensor: 'tt_gms_delta_ECf_3', ok: [-500, 500], warn: [-1000, 2000]},
             ],
           },
           {
@@ -402,6 +434,21 @@ export default {
               {sensor: 'tt_battery_voltage', ok: [3700, 5000], warn: [3500, 5000]},              
               {sensor: 'tt_air_temperature', ok: [-20, 35], warn: [-40, 40]},
               {sensor: 'tt_air_relative_humidity', ok: [15, 100], warn: [0, 100]},
+              {sensor: 'ttraw_gms_fq_1', ok: [10000, 20000], warn: [5000, 25000]},
+              {sensor: 'ttraw_gms_fq_2', ok: [10000, 20000], warn: [5000, 25000]},
+              {sensor: 'ttraw_gms_fq_3', ok: [10000, 20000], warn: [5000, 25000]},
+              {sensor: 'ttraw_gms_ntc_1', ok: [40000, 45000], warn: [35000, 50000]},
+              {sensor: 'ttraw_gms_ntc_2', ok: [40000, 45000], warn: [35000, 50000]},
+              {sensor: 'ttraw_gms_ntc_3', ok: [40000, 45000], warn: [35000, 50000]},
+              {sensor: 'tt_gms_T_1', ok: [-20, 35], warn: [-40, 40]}, 
+              {sensor: 'tt_gms_T_2', ok: [-20, 35], warn: [-40, 40]}, 
+              {sensor: 'tt_gms_T_3', ok: [-20, 35], warn: [-40, 40]}, 
+              {sensor: 'tt_gms_ECf_T_1', ok: [-200, -0], warn: [-400, 200]},
+              {sensor: 'tt_gms_ECf_T_2', ok: [-200, -0], warn: [-400, 200]},
+              {sensor: 'tt_gms_ECf_T_3', ok: [-200, -0], warn: [-400, 200]},
+              {sensor: 'tt_gms_delta_ECf_1', ok: [-500, 500], warn: [-1000, 2000]},
+              {sensor: 'tt_gms_delta_ECf_2', ok: [-500, 500], warn: [-1000, 2000]},
+              {sensor: 'tt_gms_delta_ECf_3', ok: [-500, 500], warn: [-1000, 2000]},
             ],
           },
           {
@@ -457,15 +504,19 @@ export default {
         align: 'left',
       }];
       if(this.selectedSet !== undefined && this.data !== undefined) {
+        let isFirst = true;
         this.data.sensors.forEach(sensorName => {
           const sensor = this.selectedSet.sensors.find(sensor => sensor.sensor === sensorName);
           const timename = sensor.sensor + '.datetime';
-          result.push({
-            name: timename,
-            field: timename,
-            label: 'datetime',
-            sortable: true,
-          });
+          if(this.showAllTimestamps || isFirst) {
+            isFirst = false;
+            result.push({
+              name: timename,
+              field: timename,
+              label: 'Timestamp',
+              sortable: true,
+            });
+          }
           result.push({
             name: sensor.sensor,
             field: sensor.sensor,

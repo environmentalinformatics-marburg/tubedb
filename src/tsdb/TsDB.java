@@ -33,7 +33,7 @@ import tsdb.util.Util;
  */
 public class TsDB implements AutoCloseable {
 	
-	public static final String tubedb_version = "1.23.2";
+	public static final String tubedb_version = "1.23.3";
 
 	/**
 	 * map regionName -> Region
@@ -133,7 +133,7 @@ public class TsDB implements AutoCloseable {
 
 		this.configDirectory = configDirectory;
 		
-		this.excludeStatusSensorNames = new HashSet<String>(Arrays.asList(new String[] {}));
+		this.excludeStatusSensorNames = new HashSet<String>(Arrays.asList(new String[] {"precipitation_radolan", "precipitation_dwd_year"}));
 	}	
 
 	/**
