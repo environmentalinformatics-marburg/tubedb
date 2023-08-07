@@ -362,6 +362,7 @@ public abstract class AbstractTable {
 	public void updateNames(String[] columnNames) {
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
 	
+		StringBuilder dublicatesReplaced = null;
 		for(int i=0;i<columnNames.length;i++) {
 			if(map.containsKey(columnNames[i])) {
 				int nameNumber = 2;
@@ -370,12 +371,23 @@ public abstract class AbstractTable {
 					nameNumber++;
 					name2 = columnNames[i] + nameNumber;
 				}
-				Logger.warn("dublicate name: '"+columnNames[i] + "' replaced with '" + name2 + "'");
+				if(dublicatesReplaced == null) {
+					dublicatesReplaced = new StringBuilder();
+				}
+				dublicatesReplaced.append(" '");
+				dublicatesReplaced.append(columnNames[i]);
+				dublicatesReplaced.append("'->'");
+				dublicatesReplaced.append(name2);
+				dublicatesReplaced.append("'");
+				//Logger.warn("dublicate name: '"+columnNames[i] + "' replaced with '" + name2 + "'");
 				columnNames[i] = name2;
 				map.put(columnNames[i], i);
 			} else {
 				map.put(columnNames[i], i);
 			}
+		}
+		if(dublicatesReplaced != null) {
+			Logger.warn("dublicatesReplaced:" + dublicatesReplaced.toString());
 		}
 	
 		this.names = columnNames;

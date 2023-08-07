@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeSet;
@@ -42,7 +41,6 @@ public class Loader_TreeTalker {
 		AssumptionCheck.throwNull(tsdb);
 		this.tsdb = tsdb;
 	}
-
 
 	public void loadDirectoryRecursive(Path path) {
 		Logger.info("TreeTalker import Directory "+path);
@@ -92,32 +90,18 @@ public class Loader_TreeTalker {
 	static class TreeTalkerTable {
 		public TreeTalkerTable(TsDB tsdb, File file) throws Exception {
 			InputStreamReader in = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
-			//try(CSVReader reader = new CSVReader(in, SEPARATOR)) {
 			CSVParser csvParser = new CSVParserBuilder().withSeparator(SEPARATOR).build();
 			try(CSVReader reader = new CSVReaderBuilder(in).withCSVParser(csvParser).build()) {		
-				
-				/*ArrayList<String[]> dataRowList = new ArrayList<String[]>();
-				String[] curRow = reader.readNext();
-				while(curRow != null){
-					dataRowList.add(curRow);
-					curRow = reader.readNext();
-				}				
-				String[][] tabeRows = dataRowList.toArray(new String[0][]);*/
-
-				//ArrayList<DataEntry> tt4B_Battery_level = new ArrayList<DataEntry>();
-				//int tt4B_Battery_level_prev = -1;
 
 				HashMap<String, ArrayList<DataRow>> tt49_dataMap = new HashMap<String, ArrayList<DataRow>>();
 				HashMap<String, ArrayList<DataRow>> tt4B_dataMap = new HashMap<String, ArrayList<DataRow>>();	
 				HashMap<String, ArrayList<DataRow>> tt4C_dataMap = new HashMap<String, ArrayList<DataRow>>();	
 				HashMap<String, ArrayList<DataRow>> tt4D_dataMap = new HashMap<String, ArrayList<DataRow>>();
 				HashMap<String, ArrayList<DataRow>> tt53_dataMap = new HashMap<String, ArrayList<DataRow>>();
+				HashMap<String, ArrayList<DataRow>> tt54_dataMap = new HashMap<String, ArrayList<DataRow>>();
+				
+				TreeSet<String> missingTypeCollector = new TreeSet<String>();
 
-				//ArrayList<DataRow> tt4D_data = new ArrayList<DataRow>();
-				//int tt4D_data_prev = -1;
-
-				//for (int i = 0; i < tabeRows.length; i++) {
-					//String[] row = tabeRows[i];
 				for(String[] row = reader.readNextSilently(); row != null; row = reader.readNextSilently()) {
 					if(row.length == 0 || row[0].isEmpty()) {
 						//Logger.info("skip empty line");
@@ -130,8 +114,6 @@ public class Loader_TreeTalker {
 					String timeID = row[0];
 					String tt_ID = "tt_" + timeID.substring(timeID.indexOf(',') + 1); // If ',' is missing start from 0 is correct for raw TreeTalker data with out receive timestamp.
 					//Logger.info(tt_ID);
-
-
 
 					String tt_Type = row[2];
 
@@ -156,7 +138,8 @@ public class Loader_TreeTalker {
 								parseFloat(row[14]),
 								parseFloat(row[15]),
 								parseFloat(row[16]),
-								parseFloat(row[17])};
+								parseFloat(row[17])
+						};
 						ArrayList<DataRow> tt49_data = tt49_dataMap.get(tt_ID);
 						if(tt49_data == null) {
 							tt49_data = new ArrayList<DataRow>();
@@ -178,7 +161,8 @@ public class Loader_TreeTalker {
 								parseFloat(row[7]),
 								parseFloat(row[8]),
 								parseFloat(row[9]),
-								parseFloat(row[10])};
+								parseFloat(row[10])
+						};
 						//parseFloat(row[11]) // Firmware Version is not a number							
 						ArrayList<DataRow> tt4B_data = tt4B_dataMap.get(tt_ID);
 						if(tt4B_data == null) {
@@ -253,7 +237,8 @@ public class Loader_TreeTalker {
 								parseFloat(row[17]),
 								parseFloat(row[18]),
 								parseFloat(row[19]),
-								parseFloat(row[20])};
+								parseFloat(row[20])
+						};
 						ArrayList<DataRow> tt4D_data = tt4D_dataMap.get(tt_ID);
 						if(tt4D_data == null) {
 							tt4D_data = new ArrayList<DataRow>();
@@ -285,7 +270,8 @@ public class Loader_TreeTalker {
 								parseFloat(row[17]),
 								parseFloat(row[18]),
 								parseFloat(row[19]),
-								parseFloat(row[20])};
+								parseFloat(row[20])
+						};
 						ArrayList<DataRow> tt53_data = tt53_dataMap.get(tt_ID);
 						if(tt53_data == null) {
 							tt53_data = new ArrayList<DataRow>();
@@ -294,21 +280,56 @@ public class Loader_TreeTalker {
 						tt53_data.add(new DataRow(data, timestamp));
 						break;
 					}
+					case "54": {
+						//Logger.info(tt_Type);					
+						int timestamp = toTimestamp(row[3]);
+						if(row.length < 21) {
+							row = fillMissing(row, 21);
+						}
+						float[] data = new float[]{
+								parseFloat(row[4]),
+								parseFloat(row[5]),
+								parseFloat(row[6]),
+								parseFloat(row[7]),
+								parseFloat(row[8]),
+								parseFloat(row[9]),
+								parseFloat(row[10]),
+								parseFloat(row[11]),
+								parseFloat(row[12]),
+								parseFloat(row[13]),
+								parseFloat(row[14]),
+								parseFloat(row[15]),
+								parseFloat(row[16]),
+								parseFloat(row[17]),
+								parseFloat(row[18]),
+								parseFloat(row[19]),
+								parseFloat(row[20])
+						};
+						ArrayList<DataRow> tt54_data = tt54_dataMap.get(tt_ID);
+						if(tt54_data == null) {
+							tt54_data = new ArrayList<DataRow>();
+							tt54_dataMap.put(tt_ID, tt54_data);
+						}
+						tt54_data.add(new DataRow(data, timestamp));
+						break;
+					}
 					default: {
-						Logger.warn("unknown tt_Type " +tt_Type);
 						/*long timeStampSeconds = Long.parseLong(row[3]);
-					LocalDateTime datetime = TIME_START.plusSeconds(timeStampSeconds);
-					Logger.info(row[0] + "   " + timeStampText + "  " + datetime + row[3]);*/
+						LocalDateTime datetime = TIME_START.plusSeconds(timeStampSeconds);
+						Logger.info(row[0] + "   " + timeStampText + "  " + datetime + row[3]);*/
+						//Logger.warn("unknown tt_Type " +tt_Type);
+						missingTypeCollector.add(tt_Type);
 					}
 					}
-
-
 				}
-
-				/*DataEntry[] a = tt4B_Battery_level.toArray(new DataEntry[0]);			
-			Logger.info(Arrays.toString(a));
-			tsdb.streamStorage.insertDataEntryArray("treetalker_test_plot1", "sensor_1", a);*/
-
+				
+				if(!missingTypeCollector.isEmpty()) {
+					String s = "unknown tt_Type:";
+					for(String station:missingTypeCollector) {
+						s += "\n" + station;
+					}
+					Logger.warn(s);
+				}
 
 				String[] tt49_sensors = new String[] {
 						"ttraw_AS7263_610",
@@ -395,21 +416,34 @@ public class Loader_TreeTalker {
 						"ttraw_g_y_std", 
 						"ttraw_g_x", 
 						"ttraw_g_x_std", 
-						/*"ttraw_gms_fq_1", // frequency of ground moisture sensor #1
-					"ttraw_gms_ntc_1", // ntc value of ground moisture sensor #1
-					"ttraw_gms_fq_2", // frequency of ground moisture sensor #2
-					"ttraw_gms_ntc_2", // ntc value of ground moisture sensor #2
-					"ttraw_gms_fq_3", // frequency of ground moisture sensor #3
-					"ttraw_gms_ntc_3", // ntc value of ground moisture sensor #3*/
-						"ttraw_gms_ntc_1", // ntc value of ground moisture sensor #1 !! swapped !!					
-						"ttraw_gms_fq_1", // frequency of ground moisture sensor #1 !! swapped !!
-						"ttraw_gms_ntc_2", // ntc value of ground moisture sensor #2 !! swapped !!
-						"ttraw_gms_fq_2", // frequency of ground moisture sensor #2 !! swapped !!
-						"ttraw_gms_ntc_3", // ntc value of ground moisture sensor #3 !! swapped !!
-						"ttraw_gms_fq_3", // frequency of ground moisture sensor #3 !! swapped !!
+						"ttraw_gms_ntc_1", // ntc value of ground moisture sensor #1
+						"ttraw_gms_fq_1", // frequency of ground moisture sensor #1
+						"ttraw_gms_ntc_2", // ntc value of ground moisture sensor #2
+						"ttraw_gms_fq_2", // frequency of ground moisture sensor #2
+						"ttraw_gms_ntc_3", // ntc value of ground moisture sensor #3
+						"ttraw_gms_fq_3", // frequency of ground moisture sensor #3
 						"ttraw_adc_Vbat",
 				};
 
+				String[] tt54_sensors = new String[] {
+						"ttraw_adc_bandgap",
+						"ttraw_bits",
+						"tt_air_relative_humidity",
+						"ttraw_air_temperature",
+						"ttraw_g_z",
+						"ttraw_g_z_std", 
+						"ttraw_g_y", 
+						"ttraw_g_y_std", 
+						"ttraw_g_x", 
+						"ttraw_g_x_std", 
+						"ttraw_gms_ntc_1", // ntc value of ground moisture sensor #1
+						"ttraw_gms_fq_1", // frequency of ground moisture sensor #1
+						"ttraw_gms_ntc_2", // ntc value of ground moisture sensor #2
+						"ttraw_gms_fq_2", // frequency of ground moisture sensor #2
+						"ttraw_gms_ntc_3", // ntc value of ground moisture sensor #3
+						"ttraw_gms_fq_3", // frequency of ground moisture sensor #3
+						"ttraw_adc_Vbat",
+				};
 
 				TreeSet<String> missingStationsCollector = new TreeSet<String>();
 
@@ -439,6 +473,11 @@ public class Loader_TreeTalker {
 				}catch(Exception e) {
 					Logger.warn("at tt53 " + e.getMessage());
 				}
+				try {
+					insert(tsdb, tt54_dataMap, tt54_sensors, missingStationsCollector, file.toPath());
+				}catch(Exception e) {
+					Logger.warn("at tt54 " + e.getMessage());
+				}
 
 				if(!missingStationsCollector.isEmpty()) {
 					String s = "missing stations";
@@ -456,13 +495,7 @@ public class Loader_TreeTalker {
 				ArrayList<DataRow> dataRows = e.getValue();
 				//Logger.info("insert in " + tt_ID + "  " + dataRows.size());
 				//Logger.info(dataRows.toString());
-				dataRows.sort(new Comparator<DataRow>() {
-					@Override
-					public int compare(DataRow o1, DataRow o2) {
-						return Long.compare(o1.timestamp, o2.timestamp);
-					}
-				});
-
+				dataRows.sort(DataRow.TIMESTAMP_COMPARATOR);
 
 				int sensors = ttx_sensors.length;
 				ArrayList<DataEntry> dataEntryList = new ArrayList<DataEntry>(dataRows.size());
@@ -491,12 +524,11 @@ public class Loader_TreeTalker {
 		}
 
 	}
-	
+
 	private static float parseFloat(String s) {
-		//return s.isEmpty() ? Float.NaN : Float.parseFloat(s);
 		return s.isEmpty() ? Float.NaN : JavaFloatParser.parseFloat(s);
 	}
-	
+
 	private static String[] fillMissing(String[] src, int dstLen) {
 		int srcLen = src.length;
 		if(srcLen >= dstLen) {

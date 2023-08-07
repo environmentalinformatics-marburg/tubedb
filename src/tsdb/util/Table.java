@@ -13,10 +13,7 @@ import java.util.ArrayList;
 
 import org.tinylog.Logger;
 
-import com.opencsv.CSVParser;
-import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
 
 /**
  * Helper class to read csv files and get data as a table
