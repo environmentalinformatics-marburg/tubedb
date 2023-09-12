@@ -102,7 +102,7 @@ data: {
 mounted: function () {
 	var self = this;
 	self.message = "init map ...";
-	this.backgroundMap = 'StamenTerrain';
+	this.backgroundMap = 'OTM';
 	self.createMap();
 	this.refreshBackgroundMap();
 	self.message = "query plots ...";
