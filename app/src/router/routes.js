@@ -23,7 +23,12 @@ const routes = [
   {
     path: '/monitoring',
     component: () => import('layouts/MonitoringLayout.vue'),
-  },  
+  },
+
+  {
+    path: '/plot_status',
+    component: () => import('layouts/StatusLayout.vue'),
+  },
 
   {
     path: '',

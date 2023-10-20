@@ -30,9 +30,6 @@ import org.ini4j.Wini;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Construct;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
-import org.yaml.snakeyaml.nodes.Tag;
 
 import tsdb.GeneralStation.GeneralStationBuilder;
 import tsdb.component.LoggerType;
@@ -51,6 +48,7 @@ import tsdb.util.TimeUtil;
 import tsdb.util.Util;
 import tsdb.util.yaml.YamlList;
 import tsdb.util.yaml.YamlMap;
+import tsdb.util.yaml.YamlTimestampSafeConstructor;
 
 /**
  * Reads config files and inserts meta data into TimeSeriesDatabase
@@ -765,19 +763,12 @@ public class ConfigLoader {
 		}
 	}
 
-	private static class MyConstructor extends SafeConstructor {
-		MyConstructor() {
-			Construct stringConstructor = this.yamlConstructors.get(Tag.STR);
-			this.yamlConstructors.put(Tag.TIMESTAMP, stringConstructor);
-		}
-	}
-
 	public void readOptionalStationProperties(String yamlFile) {
 		Logger.trace("read yaml");
 		try {
 			File file = new File(yamlFile);
 			if(file.exists()) {
-				Yaml yaml = new Yaml(new MyConstructor());
+				Yaml yaml = new Yaml(new YamlTimestampSafeConstructor());
 				InputStream in = new FileInputStream(file);
 				Object yamlObject = yaml.load(in);
 				YamlList yamlList = new YamlList(yamlObject);
@@ -798,7 +789,7 @@ public class ConfigLoader {
 		try {
 			File file = new File(yamlFile);
 			if(file.exists()) {
-				Yaml yaml = new Yaml(new MyConstructor());
+				Yaml yaml = new Yaml(new YamlTimestampSafeConstructor());
 				InputStream in = new FileInputStream(file);
 				Object yamlObject = yaml.load(in);
 				YamlMap yamlMap = YamlMap.ofObject(yamlObject);

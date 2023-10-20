@@ -512,37 +512,44 @@ public class ServerTsDB implements RemoteTsDB {
 	// ----- monitoring -------
 
 	@Override
-	public ArrayList<PlotStatus> getPlotStatuses() {
-		return collectPlotStatuses(tsdb.getPlotNames());
+	public ArrayList<PlotStatus> getPlotStatus(String plotName, boolean withPlotMessage) {
+		return collectPlotStatuses(Stream.of(plotName), withPlotMessage);
+	}
+	
+	@Override
+	public ArrayList<PlotStatus> getPlotStatuses(boolean withPlotMessage) {
+		return collectPlotStatuses(tsdb.getPlotNames(), withPlotMessage);
 	}
 
 	@Override
-	public ArrayList<PlotStatus> getPlotStatusesOfGeneralStation(String generalStationName) {		
+	public ArrayList<PlotStatus> getPlotStatusesOfGeneralStation(String generalStationName, boolean withPlotMessage) {		
 		GeneralStation generalStation = tsdb.getGeneralStation(generalStationName);
 		if(generalStation==null) {
 			Logger.warn("generalStationName not found: "+generalStationName);
 			return null;
 		}		
-		return collectPlotStatuses(generalStation.getStationAndVirtualPlotNames());
+		return collectPlotStatuses(generalStation.getStationAndVirtualPlotNames(), withPlotMessage);
 	}
 
 	@Override
-	public ArrayList<PlotStatus> getPlotStatusesOfRegion(String regionName) {
-		return collectPlotStatuses(tsdb.getGeneralStationsByRegion(regionName).flatMap(g->g.getStationAndVirtualPlotNames()));
+	public ArrayList<PlotStatus> getPlotStatusesOfRegion(String regionName, boolean withPlotMessage) {
+		return collectPlotStatuses(tsdb.getGeneralStationsByRegion(regionName).flatMap(g->g.getStationAndVirtualPlotNames()), withPlotMessage);
 	}
 
-	private ArrayList<PlotStatus> collectPlotStatuses(Stream<String> plotIDstream) {
-		return collectPlotStatuses(plotIDstream, new ArrayList<PlotStatus>());
+	private ArrayList<PlotStatus> collectPlotStatuses(Stream<String> plotIDstream, boolean withPlotMessage) {
+		return collectPlotStatuses(plotIDstream, new ArrayList<PlotStatus>(), withPlotMessage);
 	}
 
-	private ArrayList<PlotStatus> collectPlotStatuses(Stream<String> plotIDstream, ArrayList<PlotStatus> result) {
+	private ArrayList<PlotStatus> collectPlotStatuses(Stream<String> plotIDstream, ArrayList<PlotStatus> result, boolean withPlotMessage) {
 		Map<String, PlotMessage> m = null;
-		try {
-			ParseReceiverLogFile prlf = new ParseReceiverLogFile();
-			prlf.insertDirectory(TsDBFactory.WEBFILES_PATH+"/supplement/log");
-			m = prlf.plotMap;
-		} catch(Exception e) {
-			Logger.error(e);
+		if(withPlotMessage) {
+			try {
+				ParseReceiverLogFile prlf = new ParseReceiverLogFile();
+				prlf.insertDirectory(TsDBFactory.WEBFILES_PATH+"/supplement/log");
+				m = prlf.plotMap;
+			} catch(Exception e) {
+				Logger.error(e);
+			}
 		}
 		Map<String, PlotMessage> messageMap = m;
 
@@ -652,10 +659,11 @@ public class ServerTsDB implements RemoteTsDB {
 	@Override
 	public ArrayList<Measurement> getMonitoring(String[] plotIDs, String[] sensorNames) throws RemoteException {
 		ArrayList<Measurement> result = new ArrayList<Measurement>();
-		for(String plotID : plotIDs) {
-			DataEntry[] dataEntries = new DataEntry[sensorNames.length];			
-			for (int i = 0; i < sensorNames.length; i++) {
-				/*DataEntry dataEntry = DataEntry.NA;
+		if(plotIDs != null) {
+			for(String plotID : plotIDs) {
+				DataEntry[] dataEntries = new DataEntry[sensorNames.length];			
+				for (int i = 0; i < sensorNames.length; i++) {
+					/*DataEntry dataEntry = DataEntry.NA;
 				int[] sensorInterval = tsdb.streamStorage.getSensorTimeInterval(plotID, sensorNames[i]);
 				if(sensorInterval != null) {
 					StreamIterator it = tsdb.streamStorage.getRawSensorIterator(plotID, sensorNames[i], (long)sensorInterval[1], (long)sensorInterval[1]);
@@ -664,41 +672,42 @@ public class ServerTsDB implements RemoteTsDB {
 					}
 				}
 				dataEntries[i] = dataEntry;*/
-				DataEntry dataEntry = DataEntry.NA;
-				String sensorName = sensorNames[i];
-				String[] supplementedSchema = tsdb.supplementSchema(new String[] {sensorName}, tsdb.getSensorNamesOfPlotWithVirtual(plotID));			
-				String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plotID, supplementedSchema);
-				if(validSchema.length > 0) {
-					//Logger.info(plotID + "   " + sensorName + " --> " + Arrays.toString(validSchema));
-					Node node = QueryPlan.plot(tsdb, plotID, validSchema, AggregationInterval.RAW, DataQuality.Na, false);
-					if(node != null) {	
-						//Logger.info("node " + node);
-						//int[] timeInterval = node.getSensorTimeInterval(sensorName);
-						int[] timeInterval = getSensorTimeInterval(sensorName, node);
-						if(timeInterval != null) {
-							//Logger.info("interval " + TimeUtil.oleMinutesToText(timeInterval[0]) + " - " + TimeUtil.oleMinutesToText(timeInterval[1]));
-							TsIterator it = node.get((long) timeInterval[1], (long) timeInterval[1]);
-							if(it != null && it.hasNext()) {
-								TsEntry tsEntry = it.next();
-								dataEntry = new DataEntry((int) tsEntry.timestamp, tsEntry.data[0]);
-							}						
-						}
-						/*long[] timeInterval = node.getTimestampInterval();
+					DataEntry dataEntry = DataEntry.NA;
+					String sensorName = sensorNames[i];
+					String[] supplementedSchema = tsdb.supplementSchema(new String[] {sensorName}, tsdb.getSensorNamesOfPlotWithVirtual(plotID));			
+					String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plotID, supplementedSchema);
+					if(validSchema.length > 0) {
+						//Logger.info(plotID + "   " + sensorName + " --> " + Arrays.toString(validSchema));
+						Node node = QueryPlan.plot(tsdb, plotID, validSchema, AggregationInterval.RAW, DataQuality.Na, false);
+						if(node != null) {	
+							//Logger.info("node " + node);
+							//int[] timeInterval = node.getSensorTimeInterval(sensorName);
+							int[] timeInterval = getSensorTimeInterval(sensorName, node);
+							if(timeInterval != null) {
+								//Logger.info("interval " + TimeUtil.oleMinutesToText(timeInterval[0]) + " - " + TimeUtil.oleMinutesToText(timeInterval[1]));
+								TsIterator it = node.get((long) timeInterval[1], (long) timeInterval[1]);
+								if(it != null && it.hasNext()) {
+									TsEntry tsEntry = it.next();
+									dataEntry = new DataEntry((int) tsEntry.timestamp, tsEntry.data[0]);
+								}						
+							}
+							/*long[] timeInterval = node.getTimestampInterval();
 						TsIterator it = node.get(timeInterval[1], timeInterval[1]);
 						if(it != null && it.hasNext()) {
 							TsEntry tsEntry = it.next();
 							dataEntry = new DataEntry((int) tsEntry.timestamp, tsEntry.data[0]);
 						}*/
+						}
 					}
+					dataEntries[i] = dataEntry;
 				}
-				dataEntries[i] = dataEntry;
-			}
-			Measurement measurement = new Measurement(plotID, dataEntries);
-			result.add(measurement);
-		}		
+				Measurement measurement = new Measurement(plotID, dataEntries);
+				result.add(measurement);
+			}		
+		}
 		return result;
 	}
-	
+
 	private int[] getSensorTimeInterval(String sensorName, Node node) {
 		HashSet<String> sensorNames = tsdb.getSensorDependencySources(sensorName);
 		int[] timeInterval = null;

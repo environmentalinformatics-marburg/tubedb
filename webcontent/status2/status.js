@@ -239,6 +239,7 @@ var statusApp = new Vue({
 		
 		var self = this;
 		var url = url_plot_status+"?"+((newPlotgroup=='*')?('region='+this.project):('generalstation='+newPlotgroup));
+		url += '&plot_message';
 		console.log(url);
 	    Helper.getJSON(url, 
 	    function(json) {

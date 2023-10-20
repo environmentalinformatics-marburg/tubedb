@@ -15,7 +15,7 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "eslint-loader": "^4.0.2",
-    "quasar": "^2.6.6",
+    "quasar": "^2.13.0",
     "uplot": "^1.6.19",
     "vue": "^3.2.33",
     "vue-router": "^4.0.15",

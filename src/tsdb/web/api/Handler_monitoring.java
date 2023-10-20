@@ -33,10 +33,12 @@ public class Handler_monitoring extends MethodHandler {
 
 		JSONWriter json = new JSONWriter(response.getWriter());
 		json.object();
-		json.key("sensors");
+		json.key("sensors");			
 		json.array();
-		for(String sensorName:sensorNames) {
-			json.value(sensorName);
+		if(sensorNames != null) {
+			for(String sensorName:sensorNames) {
+				json.value(sensorName);
+			}
 		}
 		json.endArray();
 		json.key("measurements");

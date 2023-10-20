@@ -107,7 +107,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 
 	@Override
 	public StreamIterator getRawSensorIterator(String stationName, String sensorName, Long start, Long end) {
-		Logger.info("StreamDB get raw sensor "+stationName+" with "+sensorName+"     at "+TimeUtil.oleMinutesToText(start)+" - "+TimeUtil.oleMinutesToText(end));
+		//Logger.info("StreamDB get raw sensor "+stationName+" with "+sensorName+"     at "+TimeUtil.oleMinutesToText(start)+" - "+TimeUtil.oleMinutesToText(end));
 		int minTimestamp;
 		int maxTimestamp;
 		if(start==null) {

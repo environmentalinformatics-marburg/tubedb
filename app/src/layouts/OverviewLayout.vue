@@ -14,7 +14,7 @@
           </q-card-section>
           <q-card-actions>
             <q-btn outline to="/model" label="View sensors" />
-          </q-card-actions>          
+          </q-card-actions>
           <q-separator inset />
           <q-card-section>
             Besides actual time series data, TubeDB contains metadata about plots, stations and sensors.
@@ -27,7 +27,7 @@
           </q-card-section>
           <q-card-actions>
             <q-btn outline to="/diagram" label="View diagrams" />
-          </q-card-actions>          
+          </q-card-actions>
           <q-separator inset />
           <q-card-section>
             Interactive visualisations of time series data.
@@ -40,10 +40,23 @@
           </q-card-section>
           <q-card-actions>
             <q-btn outline to="/monitoring" label="View station and sensor status" />
-          </q-card-actions>          
+          </q-card-actions>
           <q-separator inset />
           <q-card-section>
             Monitoring operability of measuring stations and sensors.
+          </q-card-section>
+        </q-card>
+
+        <q-card bordered class="overview-item">
+          <q-card-section>
+            <div class="text-h6">Plot status</div>
+          </q-card-section>
+          <q-card-actions>
+            <q-btn outline to="/plot_status" label="View plot status" />
+          </q-card-actions>
+          <q-separator inset />
+          <q-card-section>
+            Plot status.
           </q-card-section>
         </q-card>
 

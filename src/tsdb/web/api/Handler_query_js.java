@@ -3,24 +3,20 @@ package tsdb.web.api;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Arrays;
 import java.util.List;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-
-import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.tinylog.Logger;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import tsdb.remote.RemoteTsDB;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataQuality;
-import tsdb.util.TimeUtil;
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.TimestampSeries;
 

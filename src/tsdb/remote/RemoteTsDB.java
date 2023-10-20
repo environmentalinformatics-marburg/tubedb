@@ -99,9 +99,10 @@ public interface RemoteTsDB extends Remote {
 	void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask) throws RemoteException;
 	
 	// status
-	ArrayList<PlotStatus> getPlotStatuses() throws RemoteException;
-	ArrayList<PlotStatus> getPlotStatusesOfGeneralStation(String generalStationName) throws RemoteException;
-	ArrayList<PlotStatus> getPlotStatusesOfRegion(String regionName) throws RemoteException;
+	ArrayList<PlotStatus> getPlotStatus(String plotName, boolean withPlotMessage) throws RemoteException;
+	ArrayList<PlotStatus> getPlotStatuses(boolean withPlotMessage) throws RemoteException;
+	ArrayList<PlotStatus> getPlotStatusesOfGeneralStation(String generalStationName, boolean withPlotMessage) throws RemoteException;
+	ArrayList<PlotStatus> getPlotStatusesOfRegion(String regionName, boolean withPlotMessage) throws RemoteException;
 	
 	//monitoring
 	ArrayList<Measurement> getMonitoring(String[] plotIDs, String[] sensorNames) throws RemoteException;

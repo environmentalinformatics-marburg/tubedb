@@ -26,17 +26,18 @@ export default {
         {title: 'Metadata', link: '/model'},
         {title: 'Diagrams', link: '/diagram'},
         {title: 'Monitoring', link: '/monitoring'},
+        {title: 'Plot status', link: '/plot_status'},
       ],
     }
-  },  
-  computed: {     
+  },
+  computed: {
   },
   methods: {
   },
   watch: {
-  },  
+  },
   async mounted() {
-  },  
+  },
 };
 </script>
 
