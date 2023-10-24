@@ -30,7 +30,7 @@
     </q-item>
 
     <q-item>
-      <q-item-section side><q-icon name="info" /></q-item-section>
+      <q-item-section side><q-icon name="cell_tower" /></q-item-section>
       <q-item-section><q-input outlined v-model="row.status" label="Status" stack-label dense /></q-item-section>
     </q-item>
 
@@ -130,8 +130,7 @@ export default {
     async onSubmit() {
       try {
         this.submitting = true;
-        const response = await this.apiPOST(['tsdb', 'status'], this.row);
-        console.log(response);
+        await this.apiPOST(['tsdb', 'status'], this.row);
         this.$emit("changed");
         this.shown = false;
       } catch(e) {

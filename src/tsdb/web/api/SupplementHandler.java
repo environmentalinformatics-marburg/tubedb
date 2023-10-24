@@ -40,7 +40,7 @@ public class SupplementHandler extends AbstractHandler {
 		page = page.replace('.', '_');
 
 
-		String vis_tsm_path = TsDBFactory.WEBFILES_PATH+"/supplement";
+		String vis_tsm_path = TsDBFactory.WEBFILES_PATH + "/supplement";
 		Path rootDirectory = Paths.get(vis_tsm_path,page);
 		Logger.info(rootDirectory);
 

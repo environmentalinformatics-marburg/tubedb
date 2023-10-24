@@ -1,4 +1,4 @@
-package tsdb.web.api;
+package tsdb.web.api; 
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,23 +13,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Set;
-import java.util.TreeMap;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-
-import org.tinylog.Logger;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
 import org.json.JSONObject;
 import org.json.JSONString;
 import org.json.JSONTokener;
 import org.json.JSONWriter;
+import org.tinylog.Logger;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import tsdb.TsDBFactory;
 import tsdb.remote.PlotStatus;
 import tsdb.remote.RemoteTsDB;
 import tsdb.util.TimeUtil;
@@ -48,8 +46,9 @@ import tsdb.web.util.Web;
  * @author woellauer
  *
  */
-public class Handler_status extends MethodHandler {	
+public class Handler_status extends MethodHandler {
 
+	private final String yamlFile;
 
 	private static class JSONFloat implements JSONString {		
 		public final float value;		
@@ -64,6 +63,8 @@ public class Handler_status extends MethodHandler {
 
 	public Handler_status(RemoteTsDB tsdb) {
 		super(tsdb, "status");
+		//yamlFile =TsDBFactory.WEBFILES_PATH + "/supplement/" + "testingyamlfile.yaml";
+		yamlFile =TsDBFactory.WEBFILES_PATH + "/testingyamlfile.yaml";
 	}
 
 	@Override
@@ -185,7 +186,6 @@ public class Handler_status extends MethodHandler {
 		}
 	}
 
-	private final static String yamlFile = "testingyamlfile.yaml";
 	private final static Set<String> SYSTEM_PROPERTIES = Set.of(
 			"plot",
 			"first_timestamp",
@@ -202,9 +202,12 @@ public class Handler_status extends MethodHandler {
 			"voltage_min_error",
 			"voltage_min_good",
 			"datetime",
-			"author"
+			"author",
+			"status",
+			"tasks",
+			"notes"
 			);
-	
+
 	private final static Set<String> DYNAMIC_PROPERTIES = Set.of(
 			"plot",
 			"first_timestamp",
@@ -222,6 +225,16 @@ public class Handler_status extends MethodHandler {
 			"voltage_min_good"
 			);
 
+	private static void optPut(String key, JSONObject jsonReq, LinkedHashMap<String,Object> map) {
+		Object obj = jsonReq.opt(key);
+		if(obj != null) {
+			String value = obj.toString();
+			if(!value.isBlank()) {
+				map.put(key, value);
+			}
+		}
+	}
+
 	public synchronized void handlePOST(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		baseRequest.setHandled(true);
 		response.setContentType("application/json;charset=utf-8");
@@ -235,14 +248,6 @@ public class Handler_status extends MethodHandler {
 		options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 		Yaml yaml = new Yaml(options);
 
-		LinkedHashMap<String,Object> map = new LinkedHashMap<String,Object>();
-		for(String key : jsonReq.keySet()) {
-			if(!SYSTEM_PROPERTIES.contains(key)) {
-				Object value = jsonReq.get(key);
-				map.put(key, value);
-			}
-		}
-
 		String userName = "anonymous";
 		UserIdentity identity = Web.getUserIdentity(baseRequest);
 		if(identity != null) {
@@ -252,9 +257,20 @@ public class Handler_status extends MethodHandler {
 			}
 		}
 
-		map.put("datetime", TimeUtil.oleMinutesToText(TimeUtil.dateTimeToOleMinutes(LocalDateTime.now())));
-		map.put("author", userName);
+		LinkedHashMap<String,Object> map = new LinkedHashMap<String,Object>();
 		map.put("plot", plot);
+		optPut("status", jsonReq, map);
+		optPut("tasks", jsonReq, map);
+		optPut("notes", jsonReq, map);
+
+		for(String key : jsonReq.keySet()) {
+			if(!SYSTEM_PROPERTIES.contains(key)) {				
+				optPut(key, jsonReq, map);				
+			}
+		}
+
+		map.put("author", userName);
+		map.put("datetime", TimeUtil.oleMinutesToText(TimeUtil.dateTimeToOleMinutes(LocalDateTime.now())));		
 
 		File file = new File(yamlFile);
 		try(FileOutputStream out = new FileOutputStream(file, true)) {

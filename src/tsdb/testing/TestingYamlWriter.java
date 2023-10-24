@@ -11,12 +11,16 @@ import org.yaml.snakeyaml.Yaml;
 public class TestingYamlWriter {
 
 	public static void main(String[] args) throws IOException {
+		//test1();
+		test2();
+	}
 
 
+	private static void test1() throws IOException {
 		TreeMap<String,Object> map = new TreeMap<String,Object>();
 		map.put("creation", "now");
 		map.put("quality checks", 2);
-		map.put("list",Arrays.asList(1,2,3,4,5,6,7,8,9));
+		map.put("list", Arrays.asList(1,2,3,4,5,6,7,8,9));
 		map.put("text", "long     text   long     text   long     text   long     text   long     text   long     text   long     text   long     text   long     text   long     text   long     text");
 
 
@@ -24,6 +28,25 @@ public class TestingYamlWriter {
 		options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 		Yaml yaml = new Yaml(options);
 		OutputStreamWriter writer = new OutputStreamWriter(System.out);
+		yaml.dump(map, writer);
+		writer.flush();
+	}
+
+	private static void test2() throws IOException {
+		TreeMap<String,Object> map = new TreeMap<String,Object>();
+		map.put("creation", "now");
+		map.put("quality checks", 2);
+		map.put("list", Arrays.asList(1,2,3,4,5,6,7,8,9));
+		map.put("text", "long     text   long     text   long     text   long     text   long     text   long     text   long     text   long     text   long     text   long     text   long     text");
+
+
+		DumperOptions options = new DumperOptions();
+		options.setExplicitStart(true);
+		options.setExplicitEnd(true);
+		options.setPrettyFlow(true);
+		Yaml yaml = new Yaml(options);
+		OutputStreamWriter writer = new OutputStreamWriter(System.out);
+		yaml.dump(map, writer);
 		yaml.dump(map, writer);
 		writer.flush();
 	}

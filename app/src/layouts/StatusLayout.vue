@@ -6,7 +6,7 @@
     </q-header>
 
     <q-page-container class="row justify-center">
-      <q-page padding class="column justify-center">
+      <q-page padding class="column" v-if="model !== undefined">
 
         <q-card bordered class="overview-item">
           <q-table
@@ -20,10 +20,63 @@
             binary-state-sort
             @row-click="onRowClick"
             table-header-class="table-header"
+            :filter="filter"
           >
 
-          <template v-slot:top>
-            Select plot
+          <template v-slot:top-left>
+            <q-select
+              v-model="project"
+              :options="projects"
+              label="Project"
+              option-label="title"
+              filled
+              :readonly="projects.length <= 1"
+            />
+            /
+            <q-select
+              v-model="group"
+              :options="groups"
+              label="Group"
+              option-label="title"
+              filled
+              :readonly="groups.length <= 1"
+            />
+            /
+            <q-select
+              v-model="plot"
+              :options="plots"
+              label="Plot"
+              option-label="title"
+              filled
+              :readonly="plots.length <= 1"
+              :display-value="plot === undefined || plot === null || plot.length === 0 ? '(all)' : (plot.length === 1 ? plot[0] : '(multiple)')"
+              multiple
+              clearable
+            />
+          </template>
+
+          <template v-slot:top-right>
+            <q-input
+              debounce="300"
+              v-model="filter"
+              stack-label
+              label="Search"
+              filled
+              clearable
+            >
+              <template v-slot:append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </template>
+
+          <template v-slot:body-cell-plot="props">
+            <q-td :props="props">
+              <a :href="api('content/visualisation_meta/visualisation_meta.html?pinned_project=' + project.id + '&pinned_plot=' + props.row.plot)" target="_blank">
+                <q-icon name="timeline" @click.stop=""/>
+              </a>
+              {{props.row.plot}}
+            </q-td>
           </template>
 
           <template v-slot:body-cell-first_datetime="props">
@@ -48,10 +101,15 @@
 
           </q-table>
         </q-card>
-
-
-
       </q-page>
+      <div v-else>
+        <div v-if="modelLoading">
+          <q-spinner-ios color="primary" size="2em" />
+          Loading metadata...
+        </div>
+        <div v-else-if="modelError">Error loading metadata. <q-btn @click="$store.dispatch('model/refresh')">try again</q-btn></div>
+        <div v-else>Metadata not loaded.</div>
+      </div>
     </q-page-container>
 
     <plot-status-dialog
@@ -63,7 +121,7 @@
 
 <script>
 
-import { mapGetters } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 
 import pagesToolbar from 'components/pages-toolbar.vue';
 import plotStatusDialog from 'components/plot-status-dialog.vue';
@@ -81,7 +139,7 @@ export default {
           field: 'plot',
           label: 'Plot',
           headerStyle: 'text-align: center; border-right: 1px solid #c6c6c6;',
-          align: 'center',
+          align: 'left',
           sortable: true,
           classes: 'plot',
         },
@@ -90,7 +148,7 @@ export default {
           field: 'first_datetime',
           label: 'Earliest data',
           headerStyle: 'text-align: center;',
-          align: 'center',
+          align: 'left',
           sortable: true,
         },
         {
@@ -98,7 +156,7 @@ export default {
           field: 'last_datetime',
           label: 'Latest data',
           headerStyle: 'text-align: center;',
-          align: 'center',
+          align: 'left',
           sortable: true,
         },
         {
@@ -123,45 +181,91 @@ export default {
           name: 'status',
           field: 'status',
           label: 'Status',
-          headerStyle: 'text-align: center;',
+          headerStyle: 'text-align: center; min-width: 150px; max-width: 150px;',
           align: 'left',
           sortable: true,
-          style: 'max-width: 150px; overflow: hidden; text-overflow: ellipsis; background-color: rgba(0, 0, 255, 0.02);',
+          style: 'min-width: 150px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; background-color: rgba(0, 0, 255, 0.02);',
         },
         {
           name: 'tasks',
           field: 'tasks',
           label: 'Tasks',
-          headerStyle: 'text-align: center;',
+          headerStyle: 'text-align: center; min-width: 150px; max-width: 150px;',
           align: 'left',
           sortable: true,
-          style: 'max-width: 300px; overflow: hidden; text-overflow: ellipsis; background-color: #fff;',
+          style: 'min-width: 300px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; background-color: #fff;',
         },
       ],
       pagination: {
         rowsPerPage: 0,
         sortBy: 'last_datetime',
       },
-      rows: [],
+      rawRows: [],
       rowsLoading: false,
+      project: undefined,
+      group: undefined,
+      plot: undefined,
+      filter: undefined
     }
   },
   computed: {
+    ...mapState({
+      model: state => state.model.data,
+      modelLoading: state => state.model.loading,
+      modelError: state => state.model.error,
+    }),
     ...mapGetters({
+      api: 'api',
       apiGET: 'apiGET',
     }),
+    projects() {
+      if(this.model === undefined) {
+        return [];
+      }
+      return Object.values(this.model.projects);
+    },
+    groups() {
+      if(this.project === undefined) {
+        return [];
+      }
+      return this.project.groups.map(id => this.model.groups[id]);
+    },
+    plots() {
+      if(this.group === undefined) {
+        return [];
+      }
+      return this.group.plots;
+    },
+    rows() {
+      if(this.rawRows === undefined || this.rawRows.length === 0) {
+        return [];
+      }
+      if(this.plot === undefined || this.plot === null || this.plot.length === 0) {
+        return this.rawRows;
+      }
+      if(this.plot.length === 1) {
+        const p = this.plot[0];
+        return this.rawRows.filter(row => row.plot === p);
+      }
+      const ps = this.plot;
+      return this.rawRows.filter(row => ps.includes(row.plot));
+    }
   },
   methods: {
     async refresh() {
+      if(this.group === undefined) {
+        this.rawRows = [];
+        return;
+      }
       try {
         this.rowsLoading = true;
         const params = new URLSearchParams();
-        params.append('generalstation', 'HEG');
-        //params.append('region', 'BE');
+        params.append('generalstation', this.group.id);
+        //params.append('region', this.project.id);
         params.append('plot_status', '');
         const response = await this.apiGET(['tsdb', 'status'], {params});
-        let rows = response.data;
-        rows.forEach(row => {
+        let rawRows = response.data;
+        rawRows.forEach(row => {
           {
             const a = row.first_datetime.split('T');
             row.first_date = a[0];
@@ -173,9 +277,9 @@ export default {
             row.last_time = a[1];
           }
         });
-        this.rows = rows;
+        this.rawRows = rawRows;
       } catch(e) {
-        this.rows = [];
+        this.rawRows = [];
         console.log(e);
         this.$q.notify({message: 'Error loading data.', type: 'negative'});
       } finally {
@@ -212,13 +316,55 @@ export default {
       return voltageMark;
     },
     onRowClick(e, row) {
-      console.log(row.plot);
       this.$refs.plotStatusDialog.show(row.plot);
     },
   },
   watch: {
+    projects: {
+      handler() {
+        if(this.projects === undefined || this.projects.length === 0) {
+          this.project = undefined;
+        } else if(this.projects.length === 1) {
+          this.project = this.projects[0];
+        } else {
+          //this.project = undefined;
+          this.project = this.projects[0];
+        }
+      },
+      immediate: true,
+    },
+    /*project() {
+      this.refresh();
+    },*/
+    groups: {
+      handler() {
+        if(this.groups === undefined || this.groups.length === 0) {
+          this.group = undefined;
+        } else if(this.groups.length === 1) {
+          this.group = this.groups[0];
+        } else {
+          //this.group = undefined;
+          this.group = this.groups[0];
+        }
+      },
+      immediate: true,
+    },
+    group() {
+      this.refresh();
+    },
+    plots() {
+      if(this.plots === undefined || this.plots.length === 0) {
+        this.plot = undefined;
+      } else if(this.plots.length === 1) {
+        this.plot = this.plots[0];
+      } else {
+        this.plot = undefined;
+        //this.plot = this.plots[0];
+      }
+    },
   },
   async mounted() {
+    this.$store.dispatch('model/init');
     this.refresh();
   },
 }
@@ -254,9 +400,18 @@ td.timeMarkOneWeek { background-color: #ffff44; }
 td.timeMarkNow { background-color: #44ff44; }
 
 td.plot {
-  /*font-weight: bold;*/
   background-color: #f4f4f4;
   border-right: 1px solid #c6c6c6;
+  /*font-weight: bold;
+  font-family: monospace;*/
+}
+
+td.plot a {
+  cursor: zoom-in;
+}
+
+td.plot a:hover {
+  background-color: white;
 }
 
 </style>
