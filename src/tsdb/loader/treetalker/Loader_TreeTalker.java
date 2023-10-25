@@ -99,7 +99,7 @@ public class Loader_TreeTalker {
 				HashMap<String, ArrayList<DataRow>> tt4D_dataMap = new HashMap<String, ArrayList<DataRow>>();
 				HashMap<String, ArrayList<DataRow>> tt53_dataMap = new HashMap<String, ArrayList<DataRow>>();
 				HashMap<String, ArrayList<DataRow>> tt54_dataMap = new HashMap<String, ArrayList<DataRow>>();
-				
+
 				TreeSet<String> missingTypeCollector = new TreeSet<String>();
 
 				for(String[] row = reader.readNextSilently(); row != null; row = reader.readNextSilently()) {
@@ -322,7 +322,7 @@ public class Loader_TreeTalker {
 					}
 					}
 				}
-				
+
 				if(!missingTypeCollector.isEmpty()) {
 					String s = "unknown tt_Type:";
 					for(String station:missingTypeCollector) {

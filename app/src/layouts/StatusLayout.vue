@@ -72,7 +72,11 @@
 
           <template v-slot:body-cell-plot="props">
             <q-td :props="props">
-              <a :href="api('content/visualisation_meta/visualisation_meta.html?pinned_project=' + project.id + '&pinned_plot=' + props.row.plot)" target="_blank">
+              <a
+                :href="api('content/visualisation_meta/visualisation_meta.html?pinned_project=' + project.id + '&pinned_plot=' + props.row.plot)"
+                target="_blank"
+                title="Open timeseries diagram in a new tab."
+              >
                 <q-icon name="timeline" @click.stop=""/>
               </a>
               {{props.row.plot}}
@@ -316,7 +320,7 @@ export default {
       return voltageMark;
     },
     onRowClick(e, row) {
-      this.$refs.plotStatusDialog.show(row.plot);
+      this.$refs.plotStatusDialog.show(this.project, row.plot);
     },
   },
   watch: {

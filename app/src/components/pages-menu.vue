@@ -1,6 +1,6 @@
 <template>
-<q-btn color="primary" round icon="menu">
-  <q-menu transition-show="scale" transition-hide="scale">
+<q-btn flat round dense icon="menu">
+  <q-menu transition-show="scale" transition-hide="scale"  class="bg-grey-1 text-grey-8">
     <q-list style="min-width: 100px">
       <q-item v-for="item in items" :key="item.title" :to="item.link" clickable :class="{activeitem: active === item.link}">
         <q-item-section>
@@ -45,7 +45,12 @@ export default {
 <style scoped>
 
 .activeitem {
-  background-color: #0202021f;
+  background-color: #7373731f;
+  color: #313131;
+  font-weight: bold;
+  border-style: dotted;
+  border-color: #0000002e;
+  border-width: 2px;
 }
 
 </style>

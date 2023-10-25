@@ -18,6 +18,17 @@
 <q-page-container class="text-black" v-if="!loading && !error">
   <q-list>
     <q-item>
+      <q-item-section side>
+        <q-btn
+          flat
+          round
+          color="primary"
+          icon="timeline"
+          :href="api('content/visualisation_meta/visualisation_meta.html?pinned_project=' + project.id + '&pinned_plot=' + plot)"
+          target="_blank"
+          title="Open timeseries diagram in a new tab."
+        />
+      </q-item-section>
       <q-item-section>
         <span class="info">
           <span v-if="row.first_date !== undefined">Measurements from <span>{{row.first_date}}</span> <span>{{row.first_time}}</span></span>
@@ -44,6 +55,33 @@
       <q-item-section><q-input outlined v-model="row.notes" label="Notes" stack-label dense type="textarea" /></q-item-section>
     </q-item>
   </q-list>
+
+
+
+  <q-expansion-item
+    dense
+    expand-separator
+    icon="history"
+    label="History"
+    :disable="row.history === undefined || row.history.length === 0"
+  >
+  <q-list v-if="row.history !== undefined && row.history.length > 0">
+    <template v-for="e in row.history" :key="e.datetime">
+      <q-item>
+        <q-item-section>
+          <q-item-label><b>{{e.status}}</b> {{e.tasks}}</q-item-label>
+          <q-item-label caption>{{e.notes}}</q-item-label>
+        </q-item-section>
+
+        <q-item-section top side>
+          <q-item-label caption><i>{{e.author}}</i> {{e.datetime}}</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-separator spaced inset />
+    </template>
+  </q-list>
+  </q-expansion-item>
+
 </q-page-container>
 
 <q-footer elevated class="bg-grey-1" v-if="!loading && !error">
@@ -80,13 +118,15 @@ export default {
   },
   computed: {
     ...mapGetters({
+      api: 'api',
       apiGET: 'apiGET',
       apiPOST: 'apiPOST',
     }),
   },
   methods: {
-    show(plot) {
+    show(project, plot) {
       this.shown = true;
+      this.project = project;
       this.plot = plot;
       this.refresh();
     },
@@ -96,6 +136,7 @@ export default {
         const params = new URLSearchParams();
         params.append('plot', this.plot);
         params.append('plot_status', '');
+        params.append('history', '');
         const response = await this.apiGET(['tsdb', 'status'], {params});
         let rows = response.data;
         rows.forEach(row => {

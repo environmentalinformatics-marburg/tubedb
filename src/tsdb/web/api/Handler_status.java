@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
@@ -90,6 +91,7 @@ public class Handler_status extends MethodHandler {
 		String regionName = request.getParameter("region");
 		boolean withPlotMessage = request.getParameter("plot_message") != null;
 		boolean withPlotStatus = request.getParameter("plot_status") != null;
+		boolean withHistory = request.getParameter("history") != null;
 
 
 		if(
@@ -167,14 +169,18 @@ public class Handler_status extends MethodHandler {
 				if(withPlotStatus && statusMap != null) {
 					YamlMap inf = statusMap.get(status.plotID);					
 					if(inf != null) {
-						for(String key : inf.keys()) {
-							if(!DYNAMIC_PROPERTIES.contains(key)) {
-								Object value = inf.getObject(key);
-								json_output.key(key);
-								json_output.value(value);
-							}
-						}
+						write(inf, json_output);
 					}	
+				}
+				if(withHistory) {
+					json_output.key("history");
+					json_output.array();
+					forEachEntriesOfPlot(status.plotID, yamlMap -> {
+						json_output.object();
+						write(yamlMap, json_output);
+						json_output.endObject();
+					});
+					json_output.endArray();
 				}
 				json_output.endObject();
 			}
@@ -183,6 +189,16 @@ public class Handler_status extends MethodHandler {
 		} catch (Exception e) {
 			Logger.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	private static void write(YamlMap inf, JSONWriter json_output) {
+		for(String key : inf.keys()) {
+			if(!DYNAMIC_PROPERTIES.contains(key)) {
+				Object value = inf.getObject(key);
+				json_output.key(key);
+				json_output.value(value);
+			}
 		}
 	}
 
@@ -205,7 +221,8 @@ public class Handler_status extends MethodHandler {
 			"author",
 			"status",
 			"tasks",
-			"notes"
+			"notes",
+			"history"
 			);
 
 	private final static Set<String> DYNAMIC_PROPERTIES = Set.of(
@@ -222,7 +239,8 @@ public class Handler_status extends MethodHandler {
 			"voltage",
 			"voltage_min_watch",
 			"voltage_min_error",
-			"voltage_min_good"
+			"voltage_min_good",
+			"history"
 			);
 
 	private static void optPut(String key, JSONObject jsonReq, LinkedHashMap<String,Object> map) {
@@ -298,5 +316,20 @@ public class Handler_status extends MethodHandler {
 			}
 		}
 		return map;
+	}
+
+	public synchronized void forEachEntriesOfPlot(String plot, Consumer<YamlMap> consumer) throws FileNotFoundException, IOException {
+		File file = new File(yamlFile);
+		Yaml yaml = new Yaml(new YamlTimestampSafeConstructor());
+		try(InputStream in = new FileInputStream(file)) {
+			Iterable<Object> it = yaml.loadAll(in);
+			for(Object yamlObject : it) {
+				YamlMap yamlMap = YamlMap.ofObject(yamlObject);
+				String plotID = yamlMap.getString("plot");
+				if(plot.equals(plotID)) {
+					consumer.accept(yamlMap);
+				}
+			}
+		}
 	}
 }
