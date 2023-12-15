@@ -304,6 +304,9 @@ public class Handler_status extends MethodHandler {
 		HashMap<String, YamlMap> map = new HashMap<String, YamlMap>();
 
 		File file = new File(yamlFile);
+		if(!file.exists()) {
+			file.createNewFile();
+		}
 		Yaml yaml = new Yaml(new YamlTimestampSafeConstructor());
 		try(InputStream in = new FileInputStream(file)) {
 			Iterable<Object> it = yaml.loadAll(in);

@@ -35,9 +35,9 @@
 			<template v-else>
 				<td v-if="key=='voltage'" v-bind:class="['column_'+key, voltageStyle(entry)]">{{entry.voltage === undefined ? '-' : entry.voltage.toFixed(2)}}</td>
 				<template v-else>
-					<td v-if="key=='message_date'" v-bind:class="['column_'+key, isOutdated(entry)?'messageOutdated':'messageCurrent']">{{entry.message_date}} {{isOutdated(entry)?'(outdated)':''}}</td>
+					<td v-if="key=='message_date'" v-bind:class="['column_'+key, isOutdated(entry) ? 'messageOutdated' : 'messageCurrent']">{{entry.message_date}} {{isOutdated(entry) ? '(outdated)' : ''}}</td>
 					<template v-else>
-					<td v-if="key=='message'" v-bind:class="['column_'+key, isOutdated(entry)?'messageOutdated':'messageCurrent']">{{entry.message}}</td>
+					<td v-if="key=='message'" v-bind:class="['column_'+key, isOutdated(entry) ? 'messageOutdated' : 'messageCurrent']">{{entry.message}}</td>
 					<td v-else v-bind:class="'column_'+key">{{entry[key]}}</td>
 					</template>
 				</template>

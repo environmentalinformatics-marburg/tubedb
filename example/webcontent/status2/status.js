@@ -158,7 +158,7 @@ Vue.component('demo-grid', {
 	
 	isOutdated: function(entry) {
 		if(entry.message_date != undefined) {
-				return (entry.message_date<entry.last_datetime);
+				return (entry.message_date < entry.last_datetime);
 		}
 		return false;
 	},
@@ -239,6 +239,7 @@ var statusApp = new Vue({
 		
 		var self = this;
 		var url = url_plot_status+"?"+((newPlotgroup=='*')?('region='+this.project):('generalstation='+newPlotgroup));
+		url += '&plot_message';
 		console.log(url);
 	    Helper.getJSON(url, 
 	    function(json) {

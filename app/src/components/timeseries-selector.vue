@@ -4,25 +4,23 @@
 
     <q-item tag="label" >
       <q-item-section>
-        <q-select 
-          v-model="selectedProjectsModel" 
-          :options="projects" 
-          option-value="id" 
-          for="id" 
-          option-label="title" 
-          label="Projects" 
-          stack-label 
-          borderless 
-          dense 
-          options-dense 
-          options-cover 
+        <q-select
+          v-model="selectedProjectsModel"
+          :options="projects"
+          option-value="id"
+          for="id"
+          option-label="title"
+          label="Projects"
+          stack-label
+          borderless
+          dense
+          options-dense
+          options-cover
           :multiple="multiTimeseries"
             transition-show="scale"
-            transition-hide="scale"         
+            transition-hide="scale"
+            clearable
         >
-          <template v-if="selectedProjects.length > 0" v-slot:append>
-            <q-icon name="cancel" @click.stop="selectedProjectsModel = null" class="cursor-pointer" />
-          </template>
         </q-select>
       </q-item-section>
     </q-item>
@@ -30,77 +28,71 @@
     <template v-if="selectedProjects.length > 0">
       <q-item tag="label">
         <q-item-section>
-          <q-select 
-            v-model="selectedGroupsModel" 
-            :options="groups" 
-            option-value="id" 
-            for="id" 
-            option-label="title" 
-            label="Groups" 
-            stack-label 
-            borderless 
-            dense 
-            options-dense 
-            options-cover 
-            :multiple="multiTimeseries" 
+          <q-select
+            v-model="selectedGroupsModel"
+            :options="groups"
+            option-value="id"
+            for="id"
+            option-label="title"
+            label="Groups"
+            stack-label
+            borderless
+            dense
+            options-dense
+            options-cover
+            :multiple="multiTimeseries"
             transition-show="scale"
             transition-hide="scale"
+            clearable
           >
-            <template v-if="selectedGroups.length > 0" v-slot:append>
-              <q-icon name="cancel" @click.stop="selectedGroupsModel = null" class="cursor-pointer" />
-            </template>
-          </q-select>          
+          </q-select>
         </q-item-section>
       </q-item>
 
       <template v-if="selectedGroups.length > 0">
         <q-item tag="label" >
           <q-item-section>
-            <q-select 
-              v-model="selectedPlotsModel" 
-              :options="plots" 
-              label="Plots" 
-              stack-label 
-              borderless 
-              dense 
-              options-dense 
-              options-cover 
+            <q-select
+              v-model="selectedPlotsModel"
+              :options="plots"
+              label="Plots"
+              stack-label
+              borderless
+              dense
+              options-dense
+              options-cover
               :multiple="multiTimeseries"
               transition-show="scale"
-              transition-hide="scale"              
+              transition-hide="scale"
+              clearable
             >
-              <template v-if="selectedPlots.length > 0" v-slot:append>
-                <q-icon name="cancel" @click.stop="selectedPlotsModel = null" class="cursor-pointer" />
-              </template>
             </q-select>
             <q-item-label caption v-if="plotstations.length === 1 && selectedPlots.length === 1  && plotstations[0].id !== selectedPlots[0].id">
               {{plotstations[0].id}}
-            </q-item-label>  
+            </q-item-label>
           </q-item-section>
         </q-item>
 
         <template v-if="selectedPlots.length > 0">
           <q-item tag="label" v-if="plotstations.length > 1 && selectedPlotsHaveMultipleStations">
             <q-item-section>
-              <q-select 
-              v-model="selectedPlotstationsModel" 
-              :options="plotstations" 
-              option-value="id" 
-              for="id" 
-              option-label="id" 
-              label="Plot-Stations" 
-              stack-label 
-              borderless 
-              dense 
-              options-dense 
-              options-cover 
+              <q-select
+              v-model="selectedPlotstationsModel"
+              :options="plotstations"
+              option-value="id"
+              for="id"
+              option-label="id"
+              label="Plot-Stations"
+              stack-label
+              borderless
+              dense
+              options-dense
+              options-cover
               :multiple="multiTimeseries"
               transition-show="scale"
-              transition-hide="scale"               
+              transition-hide="scale"
+              clearable
               >
-                <template v-if="selectedPlotstationsModel !== null" v-slot:append>
-                  <q-icon name="cancel" @click.stop="selectedPlotstationsModel = null" class="cursor-pointer" />
-                </template>
                 <template v-slot:option="{itemProps, itemEvents, opt}">
                   <q-item v-bind="itemProps" v-on="itemEvents" class="selection-not-active" active-class="selection-active">
                     <q-item-section>
@@ -109,55 +101,53 @@
                       <q-item-label v-else>{{opt.plot}}&nbsp;&nbsp;&nbsp;<b>{{opt.station}}</b></q-item-label>
                     </q-item-section>
                   </q-item>
-                </template>                
-              </q-select>                
+                </template>
+              </q-select>
             </q-item-section>
           </q-item>
 
           <template v-if="selectedPlotstations.length > 0">
-            
+
             <q-item tag="label" >
               <q-item-section v-if="sensors.length > 0">
-                <q-select 
-                  v-model="selectedSensorsModel" 
-                  :options="sensors" 
-                  option-value="id" 
-                  for="id" 
-                  option-label="id" 
-                  label="Sensors" 
-                  stack-label 
-                  borderless 
-                  dense 
-                  options-dense 
-                  options-cover 
+                <q-select
+                  v-model="selectedSensorsModel"
+                  :options="sensors"
+                  option-value="id"
+                  for="id"
+                  option-label="id"
+                  label="Sensors"
+                  stack-label
+                  borderless
+                  dense
+                  options-dense
+                  options-cover
                   :multiple="multiTimeseries"
                   transition-show="scale"
-                  transition-hide="scale"                                   
+                  transition-hide="scale"
+                  clearable
                 >
-                  <template v-if="selectedSensors.length > 0" v-slot:append>
-                    <q-icon name="cancel" @click.stop="selectedSensorsModel = null" class="cursor-pointer" />
+                  <template v-slot:option="scope">
+                    <q-item v-bind="scope.itemProps" :title="scope.opt === undefined ? '?' : scope.opt.description"  :disable="scope.opt === undefined || (timeAggregation !== 'none' && scope.opt.aggregation_hour === 'none')">
+                      <q-item-section v-if="scope.opt !== undefined">
+                        <q-item-label v-if="scope.opt.aggregation_hour === 'none'" class="text-deep-orange-10">{{scope.opt.id}} (raw)</q-item-label>
+                        <q-item-label v-else-if="scope.opt.derived" class="text-teal-10">{{scope.opt.id}}</q-item-label>
+                        <q-item-label v-else  class="text-black">{{scope.opt.id}}</q-item-label>
+                      </q-item-section>
+                    </q-item>
                   </template>
-                <template v-slot:option="{itemProps, itemEvents, opt}">
-                  <q-item v-bind="itemProps" v-on="itemEvents" :title="opt.description"  :disable="timeAggregation !== 'none' && opt.aggregation_hour === 'none'" class="selection-not-active" active-class="selection-active">
-                    <q-item-section>
-                      <q-item-label v-if="opt.aggregation_hour === 'none'" class="text-deep-orange-10">{{opt.id}} (raw)</q-item-label>
-                      <q-item-label v-else-if="opt.derived" class="text-teal-10">{{opt.id}}</q-item-label>
-                      <q-item-label v-else  class="text-black">{{opt.id}}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </template>                   
-                </q-select>                
+                </q-select>
               </q-item-section>
               <q-item-section v-if="sensors.length === 0" avatar ><q-icon name="info" color="blue-14"/></q-item-section>
               <q-item-section v-if="sensors.length === 0">No sensors available for selected plots / stations.</q-item-section>
             </q-item>
 
-            <template v-if="selectedSensors.length > 0">            
+            <template v-if="selectedSensors.length > 0">
             </template>
             <q-item v-else-if="sensors.length !== 0">
               <q-item-section avatar ><q-icon name="error_outline" color="red-14"/></q-item-section>
               <q-item-section>No sensor selected.</q-item-section>
-            </q-item>            
+            </q-item>
 
           </template>
           <q-item v-else>
@@ -168,18 +158,18 @@
         <q-item v-else>
           <q-item-section avatar ><q-icon name="error_outline" color="red-14"/></q-item-section>
           <q-item-section>No plot selected.</q-item-section>
-        </q-item>        
+        </q-item>
       </template>
       <q-item v-else>
         <q-item-section avatar ><q-icon name="error_outline" color="red-14"/></q-item-section>
         <q-item-section>No group selected.</q-item-section>
       </q-item>
-    </template>             
+    </template>
     <q-item v-else>
       <q-item-section avatar ><q-icon name="error_outline" color="red-14"/></q-item-section>
       <q-item-section>No project selected.</q-item-section>
-    </q-item>    
-  </q-list>         
+    </q-item>
+  </q-list>
 </q-item-section>
 </template>
 
@@ -200,12 +190,12 @@ export default {
       selectedPlotstationsModel: null,
       selectedSensorsModel: null,
     }
-  },  
+  },
   computed: {
     ...mapState({
-      model: state => state.model.data,  
+      model: state => state.model.data,
       modelLoading: state => state.model.loading,
-      modelError: state => state.model.error,    
+      modelError: state => state.model.error,
     }),
     ...mapGetters({
       api: 'api',
@@ -285,8 +275,8 @@ export default {
           return 1;
         }
         return 0;
-      });      
-      return result;      
+      });
+      return result;
     },
     groups() {
       if(this.model === undefined || this.selectedProjects.length === 0) {
@@ -307,7 +297,7 @@ export default {
           return 1;
         }
         return 0;
-      });      
+      });
       return result;
     },
     plots() {
@@ -385,7 +375,7 @@ export default {
         end = 2000000000;
       }
       return [start, end];
-    },   
+    },
   },
   methods: {
     onPlotSensorChanged() {
@@ -406,7 +396,7 @@ export default {
           }
         }
       },
-      immediate: true,      
+      immediate: true,
     },
     groups: {
       handler() {
@@ -429,7 +419,7 @@ export default {
           }
         }
       },
-      immediate: true,       
+      immediate: true,
     },
     plots: {
       handler() {
@@ -452,7 +442,7 @@ export default {
           }
         }
       },
-      immediate: true,       
+      immediate: true,
     },
     /*plotstations: {
       handler() {
@@ -465,7 +455,7 @@ export default {
           }
         }
       },
-      immediate: true, 
+      immediate: true,
     },*/
     sensors: {
       handler() {
@@ -492,7 +482,7 @@ export default {
     },
     selectedPlots: {
       handler(selectedPlots, oldSelectedPlots) {
-        let stayingSelectedPlots = selectedPlots.filter(selectedPlot => oldSelectedPlots === undefined || oldSelectedPlots.some(oldSelectedPlot => selectedPlot.id === oldSelectedPlot.id));        
+        let stayingSelectedPlots = selectedPlots.filter(selectedPlot => oldSelectedPlots === undefined || oldSelectedPlots.some(oldSelectedPlot => selectedPlot.id === oldSelectedPlot.id));
         //console.log("stayingSelectedPlots: " + JSON.stringify(stayingSelectedPlots.map(stayingSelectedPlot => stayingSelectedPlot.id)));
         let newSelectedPlots = selectedPlots.filter(selectedPlot => oldSelectedPlots === undefined || !oldSelectedPlots.some(oldSelectedPlot => selectedPlot.id === oldSelectedPlot.id));
         //console.log("newSelectedPlots: " + JSON.stringify(newSelectedPlots.map(newSelectedPlot => newSelectedPlot.id)));
@@ -508,25 +498,25 @@ export default {
         }
         let newSelectedPlotStations = newSelectedPlots.map(newSelectedPlot => this.plotstations.find(plotstation => plotstation.plot === newSelectedPlot.id));
         //console.log("newSelectedPlotStations: " + JSON.stringify(newSelectedPlotStations.map(newSelectedPlotStation => newSelectedPlotStation.id)));
-        let currSelectedPlotStations = [];        
+        let currSelectedPlotStations = [];
         if(this.selectedPlotstationsModel !== null) {
-          if(this.multiTimeseries) {          
+          if(this.multiTimeseries) {
             currSelectedPlotStations = this.selectedPlotstationsModel.filter(selectedPlotstation => stayingSelectedPlots.some(stayingSelectedPlot => selectedPlotstation.plot === stayingSelectedPlot.id));
           } else {
             if(stayingSelectedPlots.some(stayingSelectedPlot => this.selectedPlotstationsModel.plot === stayingSelectedPlot.id)) {
               currSelectedPlotStations = [this.selectedPlotstationsModel];
             }
           }
-        }  
-        //console.log("currSelectedPlotStations: " + JSON.stringify(currSelectedPlotStations.map(currSelectedPlotStation => currSelectedPlotStation.id)));      
+        }
+        //console.log("currSelectedPlotStations: " + JSON.stringify(currSelectedPlotStations.map(currSelectedPlotStation => currSelectedPlotStation.id)));
         currSelectedPlotStations = currSelectedPlotStations.concat(newSelectedPlotStations);
-        //console.log("currSelectedPlotStations: " + JSON.stringify(currSelectedPlotStations.map(currSelectedPlotStation => currSelectedPlotStation.id)));        
+        //console.log("currSelectedPlotStations: " + JSON.stringify(currSelectedPlotStations.map(currSelectedPlotStation => currSelectedPlotStation.id)));
         if(currSelectedPlotStations.length > 0) {
           if(this.multiTimeseries) {
             this.selectedPlotstationsModel = currSelectedPlotStations;
           } else {
             this.selectedPlotstationsModel = currSelectedPlotStations[0];
-          }        
+          }
         } else {
           this.selectedPlotstationsModel = null;
         }
@@ -537,14 +527,14 @@ export default {
     selectedPlotstations() {
       //console.log("selectedPlotstations changed");
       this.$nextTick(() => this.onPlotSensorChanged());
-    },    
-    selectedSensors() {      
+    },
+    selectedSensors() {
       this.$nextTick(() => this.onPlotSensorChanged());
     },
     timeAggregation(timeAggregation, prevTimeAggregation) {
       if(prevTimeAggregation === 'none' && this.selectedSensorsModel !== null) {
         if(this.multiTimeseries) {
-          this.selectedSensorsModel = this.selectedSensorsModel.filter(selectedSensor => selectedSensor.aggregation_hour !== 'none');          
+          this.selectedSensorsModel = this.selectedSensorsModel.filter(selectedSensor => selectedSensor.aggregation_hour !== 'none');
         } else {
           if(this.selectedSensorsModel.aggregation_hour === 'none') {
             this.selectedSensorsModel = null;
@@ -552,10 +542,10 @@ export default {
         }
       }
     },
-  },  
+  },
   async mounted() {
     this.$store.dispatch('model/init');
-  },  
+  },
 };
 </script>
 

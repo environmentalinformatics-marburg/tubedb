@@ -1,0 +1,102 @@
+---
+plot: plotRed
+status: manual data collection
+author: anonymous
+datetime: 2023-12-15T11:51
+---
+plot: plotGreen
+status: manual data collection
+author: anonymous
+datetime: 2023-12-15T11:51
+---
+plot: plot1
+status: LTE data transmission
+author: anonymous
+datetime: 2023-12-15T11:52
+---
+plot: plot2
+status: LTE data transmission
+author: anonymous
+datetime: 2023-12-15T11:52
+---
+plot: plot3
+status: LTE data transmission
+author: anonymous
+datetime: 2023-12-15T11:52
+---
+plot: plot4
+status: LTE data transmission
+author: anonymous
+datetime: 2023-12-15T11:52
+---
+plot: stationA
+status: station removed
+author: anonymous
+datetime: 2023-12-15T11:53
+---
+plot: stationB
+status: quarterly manual data collection
+author: anonymous
+datetime: 2023-12-15T11:54
+---
+plot: stationC
+status: quarterly manual data collection
+author: anonymous
+datetime: 2023-12-15T11:54
+---
+plot: stationD
+status: quarterly manual data collection
+author: anonymous
+datetime: 2023-12-15T11:55
+---
+plot: stationA
+status: station removed
+tasks: install new station
+author: anonymous
+datetime: 2023-12-15T11:55
+---
+plot: stationA
+status: station removed
+tasks: install new station
+notes: new station already ordered
+author: anonymous
+datetime: 2023-12-15T11:56
+---
+plot: plotRed
+status: manual data collection
+tasks: install LTE data sender
+author: anonymous
+datetime: 2023-12-15T11:56
+---
+plot: plotGreen
+status: manual data collection
+notes: no LTE connection possible at location
+author: anonymous
+datetime: 2023-12-15T11:57
+---
+plot: plot3
+status: LTE data transmission
+tasks: check voltage reading problem
+author: anonymous
+datetime: 2023-12-15T11:57
+---
+plot: stationC
+status: quarterly manual data collection
+tasks: replace battery
+notes: current barrery has low power
+author: anonymous
+datetime: 2023-12-15T11:58
+---
+plot: plotRed
+status: manual data collection
+tasks: install LTE data sender
+notes: aleady LTE connection test performed
+author: anonymous
+datetime: 2023-12-15T11:59
+---
+plot: plot1
+status: LTE data transmission
+tasks: callibrate temperature sensor
+notes: measurement inaccuracies have been reported
+author: anonymous
+datetime: 2023-12-15T12:01

@@ -1,3 +1,3 @@
 ip,user,comment
-127.0.0.1,admin,"local admin account"
-0:0:0:0:0:0:0:1,admin,"local admin account"
+#127.0.0.1,admin,"local admin account, commented out with # at beginning of line"
+#0:0:0:0:0:0:0:1,admin,"local admin account, commented out with # at beginning of line"

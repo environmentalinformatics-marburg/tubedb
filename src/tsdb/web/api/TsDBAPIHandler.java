@@ -36,7 +36,7 @@ import tsdb.web.util.Web;
  */
 public class TsDBAPIHandler extends AbstractHandler {
 
-	
+
 
 	private final RemoteTsDB tsdb;
 
@@ -80,9 +80,6 @@ public class TsDBAPIHandler extends AbstractHandler {
 		if(userAuthentication!=null&&userAuthentication.isUserInRole(null, "admin")) {
 			Logger.info("is admin");
 		}*/
-
-
-
 
 		//response.setHeader("Server", "");
 		//response.setHeader("Date", null);
@@ -225,17 +222,34 @@ public class TsDBAPIHandler extends AbstractHandler {
 
 	private boolean handle_plot_info(PrintWriter writer, String region, UserIdentity userIdentity) {
 		try {
+			HashMap<String, GeneralStationInfo> assigned_plotMap = new HashMap<String, GeneralStationInfo>();
+			GeneralStationInfo[] generalStationInfos = region != null ? tsdb.getGeneralStationsOfRegion(region) : tsdb.getGeneralStations();
+			if(generalStationInfos != null) {
+				for(GeneralStationInfo generalStationInfo : generalStationInfos) {
+					if(generalStationInfo.assigned_plots != null && Web.isAllowed(userIdentity, generalStationInfo.region.name)) {
+						for(String assigned_plot : generalStationInfo.assigned_plots) {
+							assigned_plotMap.put(assigned_plot, generalStationInfo);
+						}
+					}
+				}
+			} else {
+				Logger.error("generalStationInfos null: ");
+				return false;			
+			}
+
 			PlotInfo[] plotInfos = tsdb.getPlots();
 			JSONWriter json_output = new JSONWriter(writer);
 			json_output.array();
 			for(PlotInfo plotInfo:plotInfos) {
-				
-				if(region!=null && !region.equals(plotInfo.generalStationInfo.region.name)) {
-					continue;
-				}
-				
-				if(!Web.isAllowed(userIdentity, plotInfo.generalStationInfo.region.name)) {
-					continue;
+
+				if(!assigned_plotMap.containsKey(plotInfo.name)) {
+					if(region != null && !region.equals(plotInfo.generalStationInfo.region.name)) {
+						continue;
+					}
+
+					if(!Web.isAllowed(userIdentity, plotInfo.generalStationInfo.region.name)) {
+						continue;
+					}
 				}
 
 				json_output.object();
@@ -291,7 +305,7 @@ public class TsDBAPIHandler extends AbstractHandler {
 			if(generalStationInfos == null) {
 				return false;
 			}
-			
+
 			HashMap<String, GeneralStationInfo> assigned_plotMap = new HashMap<String, GeneralStationInfo>();
 			for(GeneralStationInfo generalStationInfo : generalStationInfos) {
 				if(generalStationInfo.assigned_plots != null) {
@@ -300,7 +314,7 @@ public class TsDBAPIHandler extends AbstractHandler {
 					}
 				}				
 			}			
-			
+
 			PlotInfo[] plotInfos = tsdb.getPlots();
 			if(plotInfos != null) {
 				String[] webList = Arrays.stream(plotInfos)
