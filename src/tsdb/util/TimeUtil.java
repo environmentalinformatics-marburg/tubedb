@@ -284,7 +284,7 @@ public final class TimeUtil implements Serializable {
 	public static int roundNextMonth(int timestamp) {
 		LocalDateTime datetime = oleMinutesToLocalDateTime(timestamp);
 		int m = datetime.getMonthValue();
-		if(m<12) {
+		if(m < 12) {
 			return (int) dateTimeToOleMinutes(LocalDateTime.of(datetime.getYear(),m + 1,1,0,0));
 		} else {
 			return (int) dateTimeToOleMinutes(LocalDateTime.of(datetime.getYear()+1,1,1,0,0));	

@@ -184,33 +184,42 @@ methods: {
 					var label = feature.get('plot_info').name;
 					//console.log(label);
 					var style = new ol.style.Style({
-						image: new ol.style.Circle({
-							radius: (isSelected?15:10)*scale,
-							stroke: new ol.style.Stroke({
-								color: '#fff'
+						image: new ol.style.RegularShape({
+						  stroke: new ol.style.Stroke({
+								color: isSelected? '#33FF33CC' : '#FF3333CC',
+								width: 2,
 							}),
 							fill: new ol.style.Fill({
-								color: isSelected?'#AAEEFFAA':'#88CCFFAA',
-							})
+								color: isSelected? 'rgba(123, 193, 255, 0.64)' : 'rgba(123, 193, 255, 0.64)',
+							}),
+						  points: 4,
+						  radius: (isSelected ? 20 : 20) * scale,
+						  radius2: (isSelected ? 5 : 5) * scale,
+						  angle: Math.PI / 4,
 						}),
 						text: new ol.style.Text({
 							text: label,
-							fill: new ol.style.Fill({
-								color: '#000'
+							stroke: new ol.style.Stroke({
+								color: '#000000',
+								width: 5,
 							}),
-							font: isSelected?'14px sans-serif':'12px sans-serif',
+							fill: new ol.style.Fill({
+								color: '#DDDDFF'
+							}),
+							font: '14px sans-serif',
 						})
 					});
 					return style;
 				} else {
 					var style = new ol.style.Style({
 						image: new ol.style.Circle({
-							radius: (isSelected?20:15)*scale,
+							radius: (isSelected ? 15 : 15) * scale,
 							stroke: new ol.style.Stroke({
-								color: '#fff'
+								color: isSelected? '#33FF33FF' : '#FF3333FF',
+								width: 2,
 							}),
 							fill: new ol.style.Fill({
-								color: isSelected?'#3399FFAA':'#3399CCAA',
+								color: isSelected? 'rgba(123, 193, 255, 0.64)' : 'rgba(123, 193, 255, 0.64)',
 							})
 						}),
 						text: new ol.style.Text({
@@ -218,7 +227,7 @@ methods: {
 							fill: new ol.style.Fill({
 								color: '#fff'
 							}),
-							font: isSelected?'14px sans-serif':'12px sans-serif',
+							font: '14px sans-serif',
 						})
 					});							
 					return style;

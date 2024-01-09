@@ -66,7 +66,7 @@
     :disable="row.history === undefined || row.history.length === 0"
   >
   <q-list v-if="row.history !== undefined && row.history.length > 0">
-    <template v-for="e in row.history" :key="e.datetime">
+    <template v-for="e in row.history.slice().reverse()" :key="e.datetime">
       <q-item>
         <q-item-section>
           <q-item-label><b>{{e.status}}</b> {{e.tasks}}</q-item-label>

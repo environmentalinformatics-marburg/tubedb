@@ -3,6 +3,7 @@ package tsdb.util.gui;
 import static tsdb.util.AssumptionCheck.throwNull;
 import static tsdb.util.AssumptionCheck.throwNulls;
 
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class TimeSeriesDiagram {
 	private static final int ELEMENT_INDEX_Q3 = 4;
 	private static final int ELEMENT_INDEX_MEDIAN = 3;
 
-	
+
 
 	private static final float MIN_VALUE_RANGE = 0.01f;
 
@@ -114,22 +115,22 @@ public class TimeSeriesDiagram {
 		aggregationTimeInterval = 60;
 		switch(aggregationInterval) {
 		case RAW:
-			aggregationTimeInterval=365*24*60; //pre
+			aggregationTimeInterval = 365*24*60; //pre
 			break;
 		case HOUR:
-			aggregationTimeInterval=60;
+			aggregationTimeInterval = 60;
 			break;
 		case DAY:
-			aggregationTimeInterval=1*24*60;
+			aggregationTimeInterval = 1*24*60;
 			break;
 		case WEEK:
-			aggregationTimeInterval=7*24*60;
+			aggregationTimeInterval = 7*24*60;
 			break;
 		case MONTH:
-			aggregationTimeInterval=30*24*60;//28*24*60;
+			aggregationTimeInterval = 30*24*60;//28*24*60;
 			break;
 		case YEAR:
-			aggregationTimeInterval=365*24*60;
+			aggregationTimeInterval = 365*24*60;
 			break;
 		default:
 			Logger.warn("error in agg");
@@ -221,7 +222,7 @@ public class TimeSeriesDiagram {
 				}
 			}*/
 		}
-		
+
 		if(valueRange != null) {
 			dataMinValue = Math.min(valueRange[0], valueRange[1]);
 			dataMaxValue = Math.max(valueRange[0], valueRange[1]);
@@ -515,7 +516,8 @@ public class TimeSeriesDiagram {
 			if(!Float.isNaN(valueMin)) {
 				float valueMax = entry.data[ELEMENT_INDEX_MAX];
 				int x0 = calcDiagramX(timestamp);
-				int x1 = calcDiagramX(timestamp+aggregationTimeInterval);
+				long currAggregationTimeInterval = aggInter(timestamp);
+				int x1 = calcDiagramX(timestamp + currAggregationTimeInterval);
 				int y0 = calcDiagramY(valueMin);
 				int y1 = calcDiagramY(valueMax);
 				tsp.fillRect(x0, y1, x1, y0);
@@ -641,6 +643,17 @@ public class TimeSeriesDiagram {
 		}
 	}
 
+	private long aggInter(long timestamp) {
+		switch(aggregationInterval) {
+		case YEAR:
+			return TimeUtil.roundNextYear((int) timestamp) - timestamp;
+		case MONTH:
+			return TimeUtil.roundNextMonth((int) timestamp) - timestamp;			
+		default:
+			return aggregationTimeInterval;
+		}
+	}
+
 
 	private void drawGraph(TimeSeriesPainter tsp, TimestampSeries ts, boolean isPrimary, AggregatedConnectionType aggregatedConnectionType, RawConnectionType rawConnectionType) {
 
@@ -672,7 +685,8 @@ public class TimeSeriesDiagram {
 					}
 				} else {
 					int x0 = calcDiagramX(timestamp);
-					int x1 = calcDiagramX(timestamp + aggregationTimeInterval);
+					long currAggregationTimeInterval = aggInter(timestamp);
+					int x1 = calcDiagramX(timestamp + currAggregationTimeInterval);
 					int y = calcDiagramY(value);
 					valueLineList.add(new ValueLine(x0, x1, y));
 					if(hasPrev) {

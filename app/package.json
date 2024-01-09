@@ -10,12 +10,12 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@quasar/app-webpack": "^3.5.1",
-    "@quasar/extras": "^1.13.6",
+    "@quasar/app-webpack": "^3.12.1",
+    "@quasar/extras": "^1.16.9",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "eslint-loader": "^4.0.2",
-    "quasar": "^2.13.0",
+    "quasar": "^2.14.2",
     "uplot": "^1.6.19",
     "vue": "^3.2.33",
     "vue-router": "^4.0.15",

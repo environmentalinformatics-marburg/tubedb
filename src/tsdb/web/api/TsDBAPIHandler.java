@@ -241,13 +241,11 @@ public class TsDBAPIHandler extends AbstractHandler {
 			JSONWriter json_output = new JSONWriter(writer);
 			json_output.array();
 			for(PlotInfo plotInfo:plotInfos) {
-
-				if(!assigned_plotMap.containsKey(plotInfo.name)) {
-					if(region != null && !region.equals(plotInfo.generalStationInfo.region.name)) {
-						continue;
-					}
-
-					if(!Web.isAllowed(userIdentity, plotInfo.generalStationInfo.region.name)) {
+				GeneralStationInfo generalStationInfo = plotInfo.generalStationInfo;
+				if((region != null && !region.equals(generalStationInfo.region.name)) || 
+						(!Web.isAllowed(userIdentity, generalStationInfo.region.name))) {
+					generalStationInfo = assigned_plotMap.get(plotInfo.name);
+					if(generalStationInfo == null) {
 						continue;
 					}
 				}
@@ -256,7 +254,9 @@ public class TsDBAPIHandler extends AbstractHandler {
 				json_output.key("name");
 				json_output.value(plotInfo.name);
 				json_output.key("general");
-				json_output.value(plotInfo.generalStationInfo.longName);
+				json_output.value(generalStationInfo.name);
+				json_output.key("general_long_name");
+				json_output.value(generalStationInfo.longName);
 
 				if(Double.isFinite(plotInfo.geoPosLatitude)) {
 					json_output.key("lat");
@@ -271,7 +271,9 @@ public class TsDBAPIHandler extends AbstractHandler {
 					json_output.value(plotInfo.elevation);
 				}
 				json_output.key("region");
-				json_output.value(plotInfo.generalStationInfo.region.name);
+				json_output.value(generalStationInfo.region.name);
+				json_output.key("region_long_name");
+				json_output.value(generalStationInfo.region.longName);
 				json_output.endObject();
 			}
 			json_output.endArray();

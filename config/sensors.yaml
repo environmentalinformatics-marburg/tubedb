@@ -1009,9 +1009,12 @@ SM_15_U:
   visibility: internal
   
 UOtt:
-  aggregation: none
-  physical_range: [0.0, 30.0]   
-  visibility: internal
+  description: Datalogger Battery Voltage measurement
+  unit: V (volt) 
+  aggregation: average
+  physical_range: [0.0, 24.0]
+  step_range: [0.0, 1000.0]   
+  #visibility: internal
   
 SM_50_U:
   aggregation: none
@@ -1075,10 +1078,10 @@ SM_40_U:
 UB:
   description: Datalogger Battery Voltage measurement
   unit: V (volt)  
-  aggregation: none
-  physical_range: [0.0, 30.0]
+  aggregation: average
+  physical_range: [0.0, 24.0]
   step_range: [0.0, 1000.0]
-  visibility: internal
+  #visibility: internal
   
 LWDR_300_U:
   aggregation: none
@@ -1105,11 +1108,6 @@ PAR_300_U:
 SM_50_U:
   aggregation: none
   physical_range: [0.0, 1.5]
-  step_range: [0.0, 1000.0]
-  visibility: internal
-  
-UOtt:
-  aggregation: none
   step_range: [0.0, 1000.0]
   visibility: internal
   
