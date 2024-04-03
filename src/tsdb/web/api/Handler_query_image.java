@@ -274,7 +274,7 @@ public class Handler_query_image extends MethodHandler {
 				endTime = (long) region.viewTimeRange.end;
 			} else {			
 				startTime = TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(2008, 1, 1, 0, 0)); ////TODO !!!!!!!!!!!! fixed start and end time
-				endTime = TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(2015, 12, 31, 23, 0)); ///TODO !!!!!!!!!!!!!!!
+				endTime = TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(2024, 12, 31, 23, 0)); ///TODO !!!!!!!!!!!!!!!
 			}
 		}
 
@@ -422,8 +422,24 @@ public class Handler_query_image extends MethodHandler {
 				float valueMax = JavaFloatParser.parseFloat(valueMaxText);
 				valueRange = new float[] {valueMin, valueMax};
 			}
+			
+			String markGapsText = request.getParameter("mark_gaps");
+			boolean markGaps = false;
+			if(markGapsText != null) {
+				switch(markGapsText) {
+				case "true":
+					markGaps = true;
+					break;
+				case "false":
+					markGaps = false;
+					break;
+				default:
+					Logger.warn("unknown value for parameter mark_gaps: " + markGapsText);
+					markGaps = false;				
+				}
+			}
 
-			TimeSeriesDiagram tsd = new TimeSeriesDiagram(ts, agg, diagramType, boxplot, aggregatedConnection, rawConnection, aggregatedValue, rawValue, valueRange);
+			TimeSeriesDiagram tsd = new TimeSeriesDiagram(ts, agg, diagramType, boxplot, aggregatedConnection, rawConnection, aggregatedValue, rawValue, valueRange, markGaps);
 
 			if(agg != null && startTime != null && endTime !=null && agg == AggregationInterval.RAW) {
 				tsd.setDiagramTimestampRange(startTime, endTime);

@@ -157,6 +157,7 @@ data: function () {
 		yAxisValueRange: false,
 		yAxisValueRangeMin: undefined,
 		yAxisValueRangeMax: undefined,
+		markGaps: false,
 		
 		views: [],
 		viewsDone: 0,
@@ -630,6 +631,9 @@ methods: {
 						view.value_min = self.yAxisValueRangeMin;
 						view.value_max = self.yAxisValueRangeMax;
 					}
+					if(self.viewType == 'diagram' && self.markGaps) {
+						view.mark_gaps = true;
+					}
 					views.push(view);
 				}
 			});
@@ -681,6 +685,7 @@ methods: {
 		if(a.raw_value !== b.raw_value) return false;		
 		if(a.value_min !== b.value_min) return false;
 		if(a.value_max !== b.value_max) return false;
+		if(a.mark_gaps !== b.mark_gaps) return false;
 		return true;
 	},
 	compareViews: function(va, vb) {
@@ -753,6 +758,9 @@ methods: {
 		}
 		if(view.hasOwnProperty('value_max')) {
 			params.value_max = view.value_max;
+		}
+		if(view.hasOwnProperty('mark_gaps')) {
+			params.mark_gaps = view.mark_gaps;
 		}
 		
 		var url= 'unknown';
@@ -1004,7 +1012,10 @@ watch: {
 	},
 	yAxisValueRangeMax: function() {
 		this.updateViews();
-	},	
+	},
+	markGaps: function() {
+		this.updateViews();
+	},
 	groupViewYearRange: function() {
 		if(this.groupViewYearRange != undefined) {
 			var startYear = this.groupViewYearRange.start;

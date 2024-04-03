@@ -183,6 +183,11 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 	public void setColorConnectLineUnknownSecondary() {
 		gc.setColor(new Color(132,150,99));		
 	}
+	
+	@Override
+	public void setColorRectGap() {
+		gc.setColor(new Color(0, 150, 0));		
+	}
 
 	@Override
 	public void setColorRectWater() {

@@ -82,6 +82,7 @@ public class TimeSeriesDiagram {
 	private final RawConnectionType rawConnectionType;
 	private final AggregatedValueType aggregatedValue;
 	private final RawValueType rawValue;
+	private final boolean markGaps;
 
 	/**
 	 * 
@@ -95,12 +96,13 @@ public class TimeSeriesDiagram {
 	 * @param rawValue
 	 * @param valueRange  null or min and max value for diagram y-axis
 	 */
-	public TimeSeriesDiagram(TimestampSeries timestampseries, AggregationInterval aggregationInterval, SensorCategory diagramType, boolean boxplot, AggregatedConnectionType aggregatedConnectionType, RawConnectionType rawConnectionType, AggregatedValueType aggregatedValue, RawValueType rawValue, float[] valueRange) {
+	public TimeSeriesDiagram(TimestampSeries timestampseries, AggregationInterval aggregationInterval, SensorCategory diagramType, boolean boxplot, AggregatedConnectionType aggregatedConnectionType, RawConnectionType rawConnectionType, AggregatedValueType aggregatedValue, RawValueType rawValue, float[] valueRange, boolean markGaps) {
 
 		this.aggregatedConnectionType = aggregatedConnectionType;
 		this.rawConnectionType = rawConnectionType;
 		this.aggregatedValue = aggregatedValue;
 		this.rawValue = rawValue;
+		this.markGaps = markGaps;
 
 		if(scale_right) {
 			borderRight = 50;
@@ -279,6 +281,15 @@ public class TimeSeriesDiagram {
 		return new float[]{diagramMinX,diagramMaxX};
 	}
 
+	private static class GapMark {
+		public final float x0;
+		public final float x1;
+		public GapMark(float x0, float x1) {
+			this.x0 = x0;
+			this.x1 = x1;
+		}
+	}
+
 	private static class ValueLine {
 		public final float x0;
 		public final float x1;
@@ -402,9 +413,9 @@ public class TimeSeriesDiagram {
 			drawBoxplot(tsp);
 		} else {
 			if(compareTs!=null) {
-				drawGraph(tsp,compareTs,false, aggregatedConnectionType, rawConnectionType);
+				drawGraph(tsp, compareTs, false, aggregatedConnectionType, rawConnectionType);
 			}
-			drawGraph(tsp,timestampseries,true, aggregatedConnectionType, rawConnectionType);
+			drawGraph(tsp, timestampseries, true, aggregatedConnectionType, rawConnectionType);
 		}
 
 
@@ -660,14 +671,17 @@ public class TimeSeriesDiagram {
 		if(aggregationInterval != AggregationInterval.RAW) { // aggregated
 			boolean hasPrev = false;
 			float prevY = 0;
+			int prevValidX = Integer.MIN_VALUE;
 			List<ValueLine> valueLineList = new ArrayList<ValueLine>(ts.entryList.size());
 			List<ConnectLine> connectLineList = new ArrayList<ConnectLine>(ts.entryList.size());
 			List<List<RawPoint>> curveList = new ArrayList<List<RawPoint>>();
 
 			List<RawPoint> currentCurve = new ArrayList<RawPoint>();
 
+			List<GapMark> gapMarkList = markGaps ? new ArrayList<GapMark>() : null;
+
 			for(TsEntry entry:ts) {
-				if(entry.timestamp<diagramMinTimestamp) {
+				if(entry.timestamp < diagramMinTimestamp) {
 					continue;
 				}
 
@@ -687,12 +701,21 @@ public class TimeSeriesDiagram {
 					int x0 = calcDiagramX(timestamp);
 					long currAggregationTimeInterval = aggInter(timestamp);
 					int x1 = calcDiagramX(timestamp + currAggregationTimeInterval);
+
 					int y = calcDiagramY(value);
 					valueLineList.add(new ValueLine(x0, x1, y));
 					if(hasPrev) {
 						connectLineList.add(new ConnectLine(x0, prevY, y));
 					}
 					prevY = y;
+
+					if(markGaps) {
+						if((!hasPrev) && prevValidX != Integer.MIN_VALUE) {
+							gapMarkList.add(new GapMark(prevValidX, x0));
+						}
+						prevValidX = x1;
+					}
+
 					hasPrev = true;
 					if(currentCurve == null) {
 						currentCurve = new ArrayList<RawPoint>();
@@ -700,13 +723,20 @@ public class TimeSeriesDiagram {
 					currentCurve.add(new RawPoint((x0 + x1) / 2, y));
 				}
 
-				if(entry.timestamp>diagramMaxTimestamp) {
+				if(entry.timestamp > diagramMaxTimestamp) {
 					break;
 				}
 
 			}
 			if(currentCurve.size() > 1) {
 				curveList.add(currentCurve);
+			}
+
+			if(markGaps && gapMarkList != null && !gapMarkList.isEmpty()) {
+				tsp.setColorRectGap();
+				for(GapMark gapMark : gapMarkList) {
+					tsp.fillRect(gapMark.x0, diagramMinY, gapMark.x1, diagramMaxY);
+				}
 			}
 
 			switch(diagramType) {
@@ -730,10 +760,12 @@ public class TimeSeriesDiagram {
 
 			ArrayList<RawPoint> pointList = new ArrayList<RawPoint>();
 			ArrayList<RawConnect> connectList = new ArrayList<RawConnect>();
+			List<GapMark> gapMarkList = markGaps ? new ArrayList<GapMark>() : null;
 
 			boolean hasPrev = false;
 			float prevX = 0;
 			float prevY = 0;
+			long prevValidTimestamp = Integer.MIN_VALUE;
 			for(TsEntry entry:ts) {
 
 				if(entry.timestamp<diagramMinTimestamp) {
@@ -746,11 +778,10 @@ public class TimeSeriesDiagram {
 				if(Float.isNaN(value)) {
 					hasPrev = false;
 				} else {
-
-					long check = TimeUtil.dateTimeToOleMinutes(TimeUtil.oleMinutesToLocalDateTime(timestamp));
-					if(check!=timestamp) {
+					/*long check = TimeUtil.dateTimeToOleMinutes(TimeUtil.oleMinutesToLocalDateTime(timestamp));
+					if(check != timestamp) {
 						throw new RuntimeException();
-					}
+					}*/
 
 					int x = calcDiagramX(timestamp);
 					int y = calcDiagramY(value);
@@ -761,12 +792,26 @@ public class TimeSeriesDiagram {
 					prevX = x;
 					prevY = y;
 					hasPrev = true;
+					if(markGaps) {
+						if(prevValidTimestamp != Integer.MIN_VALUE && (prevValidTimestamp + 60) < timestamp) {
+							gapMarkList.add(new GapMark(calcDiagramX(prevValidTimestamp), x));
+						}
+						prevValidTimestamp = timestamp;
+					}
 				}
 
 				if(entry.timestamp>diagramMaxTimestamp) {
 					break;
 				}
-			}			
+			}
+
+			if(markGaps && gapMarkList != null && !gapMarkList.isEmpty()) {
+				tsp.setColorRectGap();
+				for(GapMark gapMark : gapMarkList) {
+					tsp.fillRect(gapMark.x0, diagramMinY, gapMark.x1, diagramMaxY);
+				}
+			}
+
 			drawDiagramRaw(tsp, pointList, connectList, isPrimary, rawConnectionType);
 		}
 	}
@@ -868,6 +913,7 @@ public class TimeSeriesDiagram {
 	}
 
 	private void drawDiagramTemperature(TimeSeriesPainter tsp, List<ValueLine> valueLineList, List<ConnectLine> connectLineList, boolean isPrimary, List<List<RawPoint>> curveList, AggregatedConnectionType connectionType) {
+
 		if(isPrimary) {
 			tsp.setColorConnectLineTemperature();
 		} else {
