@@ -68,7 +68,7 @@ import tsdb.web.api.TsDBExportAPIHandler;
  *
  */
 public class Main {
-	
+
 
 	private static final long DATA_TRANSFER_TIMEOUT_MILLISECONDS = 2*60*60*1000; // set timeout to 2 hours
 
@@ -84,7 +84,7 @@ public class Main {
 	private static final String WEB_SERVER_LOGIN_PROPERTIES_FILENAME = "realm.properties";
 	private static final String REALM_IP_CSV_FILENAME = "realm_ip.csv";
 	private static final String WEB_SERVER_HTTPS_KEY_STORE_FILENAME = "keystore.jks";
-	
+
 	private static HttpConfiguration createBaseHttpConfiguration() {
 		HttpConfiguration httpConfiguration = new HttpConfiguration();
 		httpConfiguration.setSendServerVersion(false);
@@ -238,7 +238,7 @@ public class Main {
 		});
 		//requestLogHandler.setHandler(gzipHandler); // GzipHandler (of new Jetty version?) breaks network text output
 		requestLogHandler.setHandler(contextCollection);
-		
+
 		DefaultSessionIdManager sessionIdManager = new DefaultSessionIdManager(server);
 		sessionIdManager.setWorkerName(null);
 		SessionHandler sessionHandler = new SessionHandler();
@@ -431,8 +431,11 @@ public class Main {
 
 
 	private static ContextHandler createContextWebDownload() {
-		if(!new File(TsDBFactory.WEBDOWNLOAD_PATH).mkdirs()) {
-			Logger.warn("could not create web download folder");
+		File webdownload = new File(TsDBFactory.WEBDOWNLOAD_PATH);
+		if(!webdownload.exists()) {
+			if(!webdownload.mkdirs()) {
+				Logger.warn("could not create web download folder: " + TsDBFactory.WEBDOWNLOAD_PATH);
+			}
 		}
 		ContextHandler contextHandler = new ContextHandler(TsDBFactory.WEB_SERVER_PREFIX_BASE_URL+DOWNLOAD_PART_URL);
 		ResourceHandler resourceHandler = new ResourceHandler();

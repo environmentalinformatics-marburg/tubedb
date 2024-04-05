@@ -56,7 +56,7 @@ import tsdb.util.yaml.YamlTimestampSafeConstructor;
  *
  */
 public class ConfigLoader {
-	
+
 
 	private final TsDB tsdb; //not null
 
@@ -129,7 +129,7 @@ public class ConfigLoader {
 					}
 				}
 			}
-			
+
 			Section section_general_station_plots = ini.get("general_station_assigned_plots"); //******************** [general_station_assigned_plots]
 			if(section_general_station_plots != null) {
 				for(Entry<String, String> entry : section_general_station_plots.entrySet()) {
@@ -526,7 +526,7 @@ public class ConfigLoader {
 					}
 				}
 			}
-			
+
 			section = ini.get("region_default_general_station");
 			if(section!=null) {
 				Map<String, String> defaultGeneralStationNameMap = Util.readIniSectionMap(section);
@@ -543,7 +543,7 @@ public class ConfigLoader {
 					}
 				}
 			}
-			
+
 			section = ini.get("region_time_zone");
 			if(section!=null) {
 				Map<String, String> defaultGeneralStationNameMap = Util.readIniSectionMap(section);
@@ -560,7 +560,7 @@ public class ConfigLoader {
 					}
 				}
 			}
-			
+
 			section = ini.get("region_time_zone_description");
 			if(section!=null) {
 				Map<String, String> defaultGeneralStationNameMap = Util.readIniSectionMap(section);
@@ -591,7 +591,7 @@ public class ConfigLoader {
 			Logger.warn("missing config file: " + configFile);
 			return;
 		}
-		
+
 		Table table = Table.readCSV(configFile,',');
 		ColumnReaderString cr_plot = table.createColumnReader("plot");
 		ColumnReaderString cr_general = table.createColumnReader("general");
@@ -688,41 +688,45 @@ public class ConfigLoader {
 			Map<String, List<StationProperties>> stationPropertiesListMap = new LinkedHashMap<String, List<StationProperties>>();
 
 			for(String[] row : table.rows) {
-				if(row.length == 0 || (row.length == 1 && row[0].trim().isEmpty())) { // skip empty rows
-					continue;
-				}
-				if(row[0].trim().startsWith("#")) { // row is marked as comment
-					continue;
-				}
-				
-				String plotID = cr_plot.get(row);
-				String loggerTypeName = cr_logger.get(row);
-				String serial = cr_serial.get(row);
-				String startText = cr_start.get(row);
-				String endText = cr_end.get(row);
-
-				Map<String, String> propertyMap = new TreeMap<String, String>();
-				propertyMap.put(StationProperties.PROPERTY_PLOTID, plotID);
-				propertyMap.put(StationProperties.PROPERTY_LOGGER, loggerTypeName);
-				propertyMap.put(StationProperties.PROPERTY_SERIAL, serial);
-				propertyMap.put(StationProperties.PROPERTY_START,startText);
-				propertyMap.put(StationProperties.PROPERTY_END,endText);
-
-				for(ColumnReaderString cr_property:cr_properties) {
-					String value = cr_property.get(row);
-					if(value!=null && !value.isEmpty()) {
-						String key = table.getName(cr_property);
-						propertyMap.put(key, value);
+				try {
+					if(row.length == 0 || (row.length == 1 && row[0].trim().isEmpty())) { // skip empty rows
+						continue;
 					}
-				}				
+					if(row[0].trim().startsWith("#")) { // row is marked as comment
+						continue;
+					}
 
-				List<StationProperties> list = stationPropertiesListMap.get(serial);
-				if(list==null) {
-					list = new ArrayList<StationProperties>();
-					stationPropertiesListMap.put(serial, list);
+					String plotID = cr_plot.get(row);
+					String loggerTypeName = cr_logger.get(row);
+					String serial = cr_serial.get(row);
+					String startText = cr_start.get(row);
+					String endText = cr_end.get(row);
+
+					Map<String, String> propertyMap = new TreeMap<String, String>();
+					propertyMap.put(StationProperties.PROPERTY_PLOTID, plotID);
+					propertyMap.put(StationProperties.PROPERTY_LOGGER, loggerTypeName);
+					propertyMap.put(StationProperties.PROPERTY_SERIAL, serial);
+					propertyMap.put(StationProperties.PROPERTY_START,startText);
+					propertyMap.put(StationProperties.PROPERTY_END,endText);
+
+					for(ColumnReaderString cr_property:cr_properties) {
+						String value = cr_property.get(row);
+						if(value!=null && !value.isEmpty()) {
+							String key = table.getName(cr_property);
+							propertyMap.put(key, value);
+						}
+					}				
+
+					List<StationProperties> list = stationPropertiesListMap.get(serial);
+					if(list==null) {
+						list = new ArrayList<StationProperties>();
+						stationPropertiesListMap.put(serial, list);
+					}
+					StationProperties stationProperties = new StationProperties(propertyMap);
+					list.add(stationProperties);
+				} catch(Exception e) {
+					Logger.warn(e.getMessage() + "  of  " + Arrays.toString(row) + "  in  " + configFile);
 				}
-				StationProperties stationProperties = new StationProperties(propertyMap);
-				list.add(stationProperties);				
 			}
 
 			for(List<StationProperties> list:stationPropertiesListMap.values()) {
