@@ -3,6 +3,7 @@ package tsdb.web.api;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jetty.server.Request;
@@ -21,7 +22,6 @@ import tsdb.util.TsEntry;
 import tsdb.util.iterator.TimestampSeries;
 
 public class Handler_query_js extends MethodHandler {	
-
 
 	public Handler_query_js(RemoteTsDB tsdb) {
 		super(tsdb, "query_js");
@@ -80,6 +80,11 @@ public class Handler_query_js extends MethodHandler {
 			String[] supplementedSchema = tsdb.supplementSchema(schema, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
 			String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, supplementedSchema);
 			resultTs = tsdb.plot(null, plot, validSchema, agg, dataQuality, interpolation, startTime, endTime);
+			
+			if(resultTs == null) {
+				resultTs = new TimestampSeries(plot, validSchema, new ArrayList<TsEntry>());
+			}
+			
 			if(limitTime && resultTs != null && resultTs.size() > 0 && (resultTs.getFirstTimestamp() < limitStart || resultTs.getLastTimestamp() > limitEnd)) {
 				resultTs = resultTs.limitTime(limitStart, limitEnd);
 			}
@@ -98,6 +103,11 @@ public class Handler_query_js extends MethodHandler {
 				String[] supplementedSchema = tsdb.supplementSchema(schema, tsdb.getSensorNamesOfPlotWithVirtual(plot));			
 				String[] validSchema =  tsdb.getValidSchemaWithVirtualSensors(plot, supplementedSchema);
 				tss[i] = tsdb.plot(null, plot, validSchema, agg, dataQuality, interpolation, startTime, endTime);
+				
+				if(tss[i] == null) {
+					tss[i] = new TimestampSeries(plot, validSchema, new ArrayList<TsEntry>());
+				}
+				
 				if(limitTime && tss[i] != null && tss[i].size() > 0 && (tss[i].getFirstTimestamp() < limitStart || tss[i].getLastTimestamp() > limitEnd)) {
 					tss[i] = tss[i].limitTime(limitStart, limitEnd);
 				}

@@ -17,10 +17,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-
-import org.tinylog.Logger;
 import org.mapdb.DataInput2;
 import org.mapdb.DataOutput2;
+import org.tinylog.Logger;
 
 import tsdb.util.DataEntry;
 import tsdb.util.TimeUtil;
