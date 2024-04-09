@@ -11,6 +11,8 @@ import org.tinylog.Logger;
 import org.ini4j.Config;
 import org.ini4j.InvalidFileFormatException;
 import org.ini4j.Profile.Section;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.ini4j.Wini;
 
 import tsdb.TsDB;
@@ -36,7 +38,7 @@ import tsdb.util.TimeUtil;
 import tsdb.util.Timer;
 
 public class DataImport {
-	
+
 
 	private final TsDB tsdb;
 
@@ -68,11 +70,15 @@ public class DataImport {
 			//Logger.info("section "+section);
 			String regionName = section.getName();
 			Region region = tsdb.getRegion(regionName);
-			if(region!=null) {
-				Logger.info("import "+region.name);
+			if(region != null) {
+				Logger.info("import " + region.name);
 				for(String key:section.keySet()) {
 					for(String value:section.getAll(key)) {
-						importPath(region,key,value);
+						try {
+							importPath(region, key, value.trim());
+						} catch (Exception e) {
+							Logger.warn("Error in import entry: " + key + " with " + value + "   " + e.getMessage());
+						}
 					}
 				}
 			} else {
@@ -81,13 +87,24 @@ public class DataImport {
 		}
 	}
 
-	private void importPath(Region region, String type, String path) {
-		Path rootDirectory = Paths.get(path);
-		if(rootDirectory.toFile().exists()) {
+	private void importPath(Region region, String type, String value) {
+		JSONObject jsonObject = null;
+		Path rootDirectory = null;
+		if(value.startsWith("{")) {
+			jsonObject = new JSONObject(value);
+			String path = jsonObject.optString("path", null);
+			if(path != null) {
+				rootDirectory = Paths.get(path);
+			}
+		} else {
+			rootDirectory = Paths.get(value);
+		}
+
+		if(rootDirectory != null && rootDirectory.toFile().exists()) {
 			switch(type.trim().toLowerCase()) {
 			case "udbf_be": {
 				Interval range = region.viewTimeRange;
-				long minTimestamp = range==null?TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(2008, 01, 01, 00, 00)):range.start;
+				long minTimestamp = range == null ? TimeUtil.dateTimeToOleMinutes(LocalDateTime.of(2008, 01, 01, 00, 00)) : range.start;
 				TimeSeriesLoaderBE timeseriesloaderBE = new TimeSeriesLoaderBE(tsdb, minTimestamp);
 				timeseriesloaderBE.loadDirectory_with_stations_flat(rootDirectory);
 				break;
@@ -150,14 +167,14 @@ public class DataImport {
 				break;
 			}
 			case "treetalker": {
-				new Loader_TreeTalker(tsdb).loadDirectoryRecursive(rootDirectory);
+				new Loader_TreeTalker(tsdb, jsonObject).loadDirectoryRecursive(rootDirectory);
 				break;
 			}
 			default:
-				Logger.error("unknown import type: "+type+" for "+region.name+" in "+path);
+				Logger.error("unknown import type: " + type + " for " + region.name + " with " + value);
 			}
 		} else {
-			Logger.warn("path not found, not imported: "+type+" for "+region.name+" in "+path);
+			Logger.warn("path not found, not imported: " + type + " for " + region.name + " with " + value);
 		}
 	}
 

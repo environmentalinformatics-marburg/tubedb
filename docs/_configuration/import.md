@@ -33,6 +33,26 @@ csv = data/caldern
 ~~~
 
 ---
+### Extended format
+
+The simple format is:
+~~~ ini
+IMPORT_TYPE = PATH
+~~~
+
+With extended format, parameters in addition to path can be specified. It is JSON format:
+~~~ ini
+IMPORT_TYPE = {KEY1: "VALUE1", KEY2: "VALUE2"}
+~~~
+
+Example
+~~~ ini
+[MyProject]
+treetalker = {path: "c:/data/treetalker_data1"}
+treetalker = {path: "c:/data/treetalker_data2", time_offset: "PT1H"}
+~~~
+
+---
 ### import types
 
 (For detailed file format description see [import formats](../../documentation/import_formats).)
@@ -47,7 +67,7 @@ csv = data/caldern
 
 * `csv_hobo`
 
-"hobo-logger" specific CSV-files.
+  "hobo-logger" specific CSV-files.
 
 * `tsa`
 
@@ -71,19 +91,39 @@ csv = data/caldern
 
 * `toa5`
 
-Data files in TOA5 format (CSV-like strucuture)
+  Data files in TOA5 format (CSV-like strucuture).
   
 * `influx`
 
-(Experimental) Online import of time series from InfluxDB server. Path specified YAML-config file with connection details (url, password, etc.).
+  (Experimental) Online import of time series from InfluxDB server. Path specified YAML-config file with connection details (url, password, etc.).
 
 * `mof`
 
-(Experimental) Data files in MOF format (CSV-like strucuture)  
+  (Experimental) Data files in MOF format (CSV-like strucuture).  
 
+* `treetalker`
 
+  Data files in treetalker text format. With parameter `time_offset` timestamps can be shifted for e.g. time zone translation ([time format specification](https://docs.oracle.com/javase/8/docs/api/java/time/Duration.html#parse-java.lang.CharSequence-)).
+ 
+  Example
+  ~~~ ini
+  [MyProject]
+  # No time shifting
+  treetalker = c:/data/treetalker_data1
+  treetalker = {path: "c:/data/treetalker_data2"}
+  
+  # Offset of one hour, e.g. shifting time from UTC to UTC+1
+  treetalker = {path: "c:/data/treetalker_data3", time_offset: "PT1H"}
 
+  # Offset of minus one hour, e.g. shifting time from UTC to UTC-1
+  treetalker = {path: "c:/data/treetalker_data4", time_offset: "-PT1H"}
 
+  # Offset of 15 minutes
+  treetalker = {path: "c:/data/treetalker_data5", time_offset: "PT15M"}
+
+  # Offset of 2 hours and 15 minutes
+  treetalker = {path: "c:/data/treetalker_data6", time_offset: "PT2H15M"}
+  ~~~
 
 
 
