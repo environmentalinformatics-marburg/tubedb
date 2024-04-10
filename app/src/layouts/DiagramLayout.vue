@@ -5,43 +5,67 @@
       <pages-toolbar title="TubeDB Diagram" active="/diagram"/>
     </q-header>
 
-    <q-drawer show-if-above side="left" behavior="desktop" content-class="bg-grey-4" :width="drawerWidth">    
+    <q-drawer show-if-above side="left" behavior="desktop" content-class="bg-grey-4" :width="drawerWidth">
       <div class="fit row">
-      <q-scroll-area class="col-grow" v-if="model !== undefined">  
+      <q-scroll-area class="col-grow" v-if="model !== undefined">
         <q-list>
 
-          <q-item tag="label" >
-            <q-item-section>
-              <q-select 
-                v-model="timeAggregation" 
-                :options="['none', 'hour', 'day', 'week', 'month', 'year']" 
-                label="Aggregation by time" 
-                stack-label 
-                borderless 
-                :dense="true" 
+          <q-item tag="label" title="Time format: e.g. 2024 or 2024-02 or 2024-02-28">
+            <q-item-section class="justify-evenly" style="display: flex; flex-direction: row;">
+              <q-input
+                v-model="startTime"
+                label="Start time"
+                stack-label
+                borderless
+                dense
+                :placeholder="endTime === undefined || endTime === null || endTime.trim().length === 0 ? '(no limit)' : ('(start ' + endTime.trim() + ')')"
+                maxlength="10"
+                style="width: 120px;"
+                title="Start. e.g. 2024 or 2024-02 or 2024-02-28"
+              />
+              <q-input
+                v-model="endTime"
+                label="End time"
+                stack-label
+                borderless
+                dense
+                :placeholder="startTime === undefined || startTime === null || startTime.trim().length === 0 ? '(no limit)' : ('(end ' + startTime.trim() + ')')"
+                maxlength="10"
+                style="width: 120px;"
+                title="End. e.g. 2024 or 2024-02 or 2024-02-28"
+              />
+              <q-select
+                class="col-grow"
+                v-model="timeAggregation"
+                :options="['none', 'hour', 'day', 'week', 'month', 'year']"
+                label="Time aggregation"
+                stack-label
+                borderless
+                :dense="true"
                 :options-dense="true"
                 transition-show="scale"
-                transition-hide="scale"                 
+                transition-hide="scale"
+                title="Time resolution."
               />
             </q-item-section>
           </q-item>
 
           <q-item tag="label" >
             <q-item-section>
-              <q-select 
-                v-model="quality" 
-                :options="qualities" 
-                label="Quality checks" 
-                stack-label 
-                borderless 
-                :dense="true" 
+              <q-select
+                v-model="quality"
+                :options="qualities"
+                label="Quality checks"
+                stack-label
+                borderless
+                :dense="true"
                 :options-dense="true"
                 :option-disable="opt => timeAggregation === 'none' && opt === 'empirical'"
                 transition-show="scale"
-                transition-hide="scale"                 
+                transition-hide="scale"
               />
             </q-item-section>
-          </q-item> 
+          </q-item>
 
           <q-item tag="label" style="user-select: none;" :disable="timeAggregation === 'none'">
             <q-item-section avatar>
@@ -58,12 +82,12 @@
           <q-separator />
 
           <q-item>
-            <timeseries-selector 
-              :multiTimeseries="multiTimeseries" 
-              :timeAggregation="timeAggregation" 
+            <timeseries-selector
+              :multiTimeseries="multiTimeseries"
+              :timeAggregation="timeAggregation"
               @plot-sensor-changed="selectedPlots = $event.plots; selectedSensors = $event.sensors;"
-              ref="timeseriesSelector" 
-            />            
+              ref="timeseriesSelector"
+            />
           </q-item>
 
           <q-separator />
@@ -81,7 +105,7 @@
               </q-item>
             </q-list>
           </template>
-                    
+
         </q-list>
       </q-scroll-area>
       <div v-else  class="fit">
@@ -94,12 +118,12 @@
       </div>
       <div v-touch-pan.prevent.mouse="onChangeDrawerWidth" class="drawerChanger">
       </div>
-      </div> 
+      </div>
     </q-drawer>
 
     <q-page-container>
       <div style="position: relative;">
-      <div v-if="dataRequestSentCounter > dataRequestReceivedCounter" style="position: absolute; top: 70px; left: 50px;">        
+      <div v-if="dataRequestSentCounter > dataRequestReceivedCounter" style="position: absolute; top: 70px; left: 50px;">
         <q-item>
           <q-item-section avatar ><q-icon name="error_outline" color="blue-14"/></q-item-section>
           <q-item-section>
@@ -118,7 +142,7 @@
         <table>
           <tr><td style="padding-right: 10px; text-align:center"><b>Zoom in/out</b></td><td>Place mouse on diagram and rotate the mouse wheel.</td></tr>
           <tr><td style="padding-right: 10px; text-align:center"><b>Move in time</b></td><td>Place mouse on diagram, press and hold left mouse button and move mouse left / right on the diagram.</td></tr>
-          <tr><td style="padding-right: 10px; text-align:center"><b>Inspect timeseries values</b></td><td>Move mouse over diagram without mouse buttons pressed to show time / measurement values.</td></tr>        
+          <tr><td style="padding-right: 10px; text-align:center"><b>Inspect timeseries values</b></td><td>Move mouse over diagram without mouse buttons pressed to show time / measurement values.</td></tr>
         </table>
       </div>
       <timeseries-diagram :data="data" :timeAggregation="timeAggregation" ref="timeseriesDiagram" />
@@ -158,7 +182,7 @@ function convertInt32ArrayToArray(a) {
 }
 
 export default {
-  name: 'DiagramLayout',  
+  name: 'DiagramLayout',
   components: {
     pagesToolbar,
     timeseriesSelector,
@@ -173,10 +197,12 @@ export default {
       dataRequestError: 'no data loaded',
       max_timeseries: 12,
 
+      startTime: undefined,
+      endTime: undefined,
       timeAggregation: 'hour',
       quality: 'step',
       interpolation: false,
-      
+
       selectedPlots: [],
       selectedSensors: [],
 
@@ -185,9 +211,9 @@ export default {
   },
   computed: {
     ...mapState({
-      model: state => state.model.data,  
+      model: state => state.model.data,
       modelLoading: state => state.model.loading,
-      modelError: state => state.model.error,    
+      modelError: state => state.model.error,
     }),
     ...mapGetters({
       api: 'api',
@@ -211,6 +237,12 @@ export default {
         }
       }
       return list;
+    },
+    validStartTime() {
+      return this.startTime !== undefined && this.startTime !== null && this.startTime.trim().length > 0;
+    },
+    validEndTime() {
+      return this.endTime !== undefined && this.endTime !== null && this.endTime.trim().length > 0;
     },
   },
   methods: {
@@ -243,8 +275,21 @@ export default {
           }
           let settings = {
             timeAggregation: this.timeAggregation,
-            quality: this.quality,            
+            quality: this.quality,
           };
+
+          if(this.validStartTime) {
+            settings.start_time = this.startTime;
+          } else if(this.validEndTime) {
+            settings.start_time = this.endTime;
+          }
+
+          if(this.validEndTime) {
+            settings.end_time = this.endTime;
+          } else if(this.validStartTime) {
+            settings.end_time = this.startTime;
+          }
+
           if(this.timeAggregation !== 'none') {
             settings.interpolation = this.interpolation;
           }
@@ -263,18 +308,18 @@ export default {
           this.dataRequestReceivedCounter = dataRequestCurrentCounter;
           //console.log(response);
           //console.timeEnd('apiPOST');
-          //console.time('prepare');         
+          //console.time('prepare');
           let arrayBuffer = response.data;
           let dataView = new DataView(arrayBuffer);
           let entryCount = dataView.getInt32(0, true);
-          let schemaCount = dataView.getInt32(4, true); 
+          let schemaCount = dataView.getInt32(4, true);
           console.log("entryCount: " + entryCount + "   schemaCount: " + schemaCount);
           let data = [];
           let timestamps = new Int32Array(arrayBuffer, 4 + 4, entryCount);
           //console.log(timestamps);
           data[0] = convertInt32ArrayToArray(timestamps);
           for(let i = 0; i < schemaCount; i++) {
-            let values = new Float32Array(arrayBuffer, 4 + 4 + 4 * entryCount * (i + 1), entryCount); 
+            let values = new Float32Array(arrayBuffer, 4 + 4 + 4 * entryCount * (i + 1), entryCount);
             data[i + 1] = convertFloat32ArrayToArray(values);
           }
           //console.log(data);
@@ -285,15 +330,30 @@ export default {
           if(dataRequestCurrentCounter < this.dataRequestSentCounter) {
             return;
           }
-          this.dataRequestError = "ERROR receiving data";
+          this.dataRequestError = "ERROR receiving data: " + e;
+          if(e.response && e.response.data) {
+            try {
+              const message = new TextDecoder("utf-8").decode(e.response.data);
+              this.dataRequestError += " ::  " + message;
+            } catch(e1) {
+              console.log(e1);
+            }
+          }
           this.dataRequestReceivedCounter = dataRequestCurrentCounter;
-        }       
+          this.data = undefined;
+        }
       }
     },
   },
   watch: {
     async model() {
       this.requestData();
+    },
+    startTime() {
+      this.settingsChanged();
+    },
+    endTime() {
+      this.settingsChanged();
     },
     timeAggregation: {
       handler() {
@@ -302,11 +362,11 @@ export default {
         }
         this.settingsChanged();
       },
-      immediate: true, 
+      immediate: true,
     },
     quality() {
       this.settingsChanged();
-    },    
+    },
     interpolation() {
       this.settingsChanged();
     },

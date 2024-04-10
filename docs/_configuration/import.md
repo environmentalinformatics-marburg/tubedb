@@ -91,7 +91,7 @@ treetalker = {path: "c:/data/treetalker_data2", time_offset: "PT1H"}
 
 * `toa5`
 
-  Data files in TOA5 format (CSV-like strucuture).
+  Data files in TOA5 format (CSV-like strcuture).
   
 * `influx`
 
@@ -99,7 +99,7 @@ treetalker = {path: "c:/data/treetalker_data2", time_offset: "PT1H"}
 
 * `mof`
 
-  (Experimental) Data files in MOF format (CSV-like strucuture).  
+  (Experimental) Data files in MOF format (CSV-like structure).  
 
 * `treetalker`
 
