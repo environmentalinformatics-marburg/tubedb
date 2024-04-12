@@ -128,11 +128,18 @@
                   clearable
                 >
                   <template v-slot:option="scope">
-                    <q-item v-bind="scope.itemProps" :title="scope.opt === undefined ? '?' : scope.opt.description"  :disable="scope.opt === undefined || (timeAggregation !== 'none' && scope.opt.aggregation_hour === 'none')">
+                    <q-item
+                      v-bind="scope.itemProps"
+                      :title="scope.opt === undefined ? '?' : scope.opt.description"
+                      :disable="scope.opt === undefined || ((timeAggregation !== 'none' && scope.opt.aggregation_hour === 'none') || (timeAggregation !== 'none' && scope.opt.aggregation_day === 'none') || (timeAggregation !== 'none' && scope.opt.aggregation_week === 'none') || (timeAggregation !== 'none' && scope.opt.aggregation_month === 'none') || (timeAggregation !== 'none' && scope.opt.aggregation_year === 'none'))"
+                    >
                       <q-item-section v-if="scope.opt !== undefined">
-                        <q-item-label v-if="scope.opt.aggregation_hour === 'none'" class="text-deep-orange-10">{{scope.opt.id}} (raw)</q-item-label>
-                        <q-item-label v-else-if="scope.opt.derived" class="text-teal-10">{{scope.opt.id}}</q-item-label>
-                        <q-item-label v-else  class="text-black">{{scope.opt.id}}</q-item-label>
+                        <q-item-label v-if="scope.opt.aggregation_hour !== 'none'"  :class="scope.selected ? '' : scope.opt.derived ? 'text-teal-10' : 'text-black'">{{scope.opt.id}}</q-item-label>
+                        <q-item-label v-else-if="scope.opt.aggregation_day !== 'none'"  :class="scope.selected ? '' : scope.opt.derived ? 'text-teal-10' : 'text-black'">{{scope.opt.id}} (hour)</q-item-label>
+                        <q-item-label v-else-if="scope.opt.aggregation_week !== 'none'"  :class="scope.selected ? '' : scope.opt.derived ? 'text-teal-10' : 'text-black'">{{scope.opt.id}} (day)</q-item-label>
+                        <q-item-label v-else-if="scope.opt.aggregation_month !== 'none'"  :class="scope.selected ? '' : scope.opt.derived ? 'text-teal-10' : 'text-black'">{{scope.opt.id}} (day)</q-item-label>
+                        <q-item-label v-else-if="scope.opt.aggregation_year !== 'none'"  :class="scope.selected ? '' : scope.opt.derived ? 'text-teal-10' : 'text-black'">{{scope.opt.id}} (month)</q-item-label>
+                        <q-item-label v-else :class="scope.selected ? '' : scope.opt.derived ? 'text-amber-10' : 'text-deep-orange-10'">{{scope.opt.id}} (raw)</q-item-label>
                       </q-item-section>
                     </q-item>
                   </template>
@@ -532,11 +539,11 @@ export default {
       this.$nextTick(() => this.onPlotSensorChanged());
     },
     timeAggregation(timeAggregation, prevTimeAggregation) {
-      if(prevTimeAggregation === 'none' && this.selectedSensorsModel !== null) {
+      if(prevTimeAggregation === 'none' && timeAggregation !== 'none' && this.selectedSensorsModel !== null) {
         if(this.multiTimeseries) {
-          this.selectedSensorsModel = this.selectedSensorsModel.filter(selectedSensor => selectedSensor.aggregation_hour !== 'none');
+          this.selectedSensorsModel = this.selectedSensorsModel.filter(selectedSensor => selectedSensor.aggregation_hour !== 'none' || selectedSensor.aggregation_day !== 'none' || selectedSensor.aggregation_week !== 'none' || selectedSensor.aggregation_month !== 'none' || selectedSensor.aggregation_year !== 'none');
         } else {
-          if(this.selectedSensorsModel.aggregation_hour === 'none') {
+          if(this.selectedSensorsModel.aggregation_hour === 'none' || this.selectedSensorsModel.aggregation_day === 'none' || this.selectedSensorsModel.aggregation_week === 'none' || this.selectedSensorsModel.aggregation_month === 'none' || this.selectedSensorsModel.aggregation_year === 'none') {
             this.selectedSensorsModel = null;
           }
         }

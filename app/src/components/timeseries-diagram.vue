@@ -1,5 +1,5 @@
 <template>
-  <div ref="diagram">        
+  <div ref="diagram">
     <q-resize-observer @resize="onChangeDiagramDimensions" debounce="250" />
   </div>
 </template>
@@ -58,8 +58,8 @@ function dragPlugin(opts) {
         }
       }
     });
-  }  
-  return {hooks: {ready}};  
+  }
+  return {hooks: {ready}};
 }
 
 function touchZoomPlugin(opts) {
@@ -171,7 +171,7 @@ function touchZoomPlugin(opts) {
     plot.addEventListener("touchend", function(e) {
       document.removeEventListener("touchmove", touchmove, {passive: true});
     });
-  }  
+  }
 
   return {
     hooks: {
@@ -293,11 +293,11 @@ function wheelZoomPlugin(opts) {
 }
 
 export default {
-  name: 'timeseries-diagram',  
+  name: 'timeseries-diagram',
   props: [
     'data',
     'timeAggregation',
-  ],  
+  ],
   components: {
   },
   data() {
@@ -308,12 +308,12 @@ export default {
     }
   },
   computed: {
-    ...mapState({ 
+    ...mapState({
     }),
     ...mapGetters({
     }),
   },
-  methods: {    
+  methods: {
     onChangeDiagramDimensions() {
       if(this.uplot !== undefined && this.$refs.diagram !== undefined) {
         const width = this.$refs.diagram.clientWidth;
@@ -327,8 +327,8 @@ export default {
         this.uplot.destroy();
         this.uplot = undefined;
       }
-      if(this.data === undefined) { 
-        return;   
+      if(this.data === undefined) {
+        return;
       }
 
       const width = this.$refs.diagram.clientWidth;
@@ -350,9 +350,10 @@ export default {
             // series style
             stroke: this.timeseriesStrokes[i],
             width: 1,
+            paths: uPlot.paths.spline(),
           });
         }
-      }           
+      }
 
       let opts = {
         width: width,
@@ -363,25 +364,25 @@ export default {
           drag: {
             x: false,
             y: false,
-          },          
+          },
         },
         plugins: [
           touchZoomPlugin({}),
           wheelZoomPlugin({factor: 0.75}),
           dragPlugin({}),
-        ],        
+        ],
         series: series,
       };
 
       this.$refs.diagram.innerHTML = '';
       this.uplot = new uPlot(opts, this.data, this.$refs.diagram);
 
-    },    
+    },
   },
   watch: {
     data() {
-      this.createDiagram();    
-    },    
+      this.createDiagram();
+    },
   },
   async mounted() {
   },
