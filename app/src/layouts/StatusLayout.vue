@@ -85,14 +85,18 @@
 
           <template v-slot:body-cell-first_datetime="props">
             <q-td :props="props">
-              {{props.row.first_date}}
+              <span>{{props.row.first_date.substring(0, 4)}}</span>
+              <span>{{props.row.first_date.substring(4, 7)}}</span>
+              <span>{{props.row.first_date.substring(7)}} </span>
               <span>{{props.row.first_time}}</span>
             </q-td>
           </template>
 
           <template v-slot:body-cell-last_datetime="props">
             <q-td :props="props">
-              {{props.row.last_date}}
+              <span>{{props.row.last_date.substring(0, 4)}}</span>
+              <span>{{props.row.last_date.substring(4, 7)}}</span>
+              <span>{{props.row.last_date.substring(7)}} </span>
               <span>{{props.row.last_time}}</span>
             </q-td>
           </template>
@@ -360,10 +364,10 @@ export default {
       if(this.plots === undefined || this.plots.length === 0) {
         this.plot = undefined;
       } else if(this.plots.length === 1) {
-        this.plot = this.plots[0];
+        this.plot = [this.plots[0]];
       } else {
         this.plot = undefined;
-        //this.plot = this.plots[0];
+        //this.plot = [this.plots[0]];
       }
     },
   },
@@ -379,8 +383,25 @@ export default {
   margin-bottom: 0px;
 }
 
-td span {
-  color: #999;
+td span:nth-child(1) {
+  color: #000;
+  font-weight: 700;
+}
+
+td span:nth-child(2) {
+  color: #000;
+  font-weight: 400;
+}
+
+td span:nth-child(3) {
+  color: #000000a3;
+  font-weight: 400;
+}
+
+td span:nth-child(4) {
+  padding-left: 7px;
+  color: #00000080;
+  font-weight: 400;
 }
 
 td.voltageMarkNaN{ background-color:#88888877; }

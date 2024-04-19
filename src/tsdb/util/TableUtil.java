@@ -21,7 +21,7 @@ public class TableUtil {
 		String[] curRow = csvReader.readNextSilently();
 		if(curRow != null) {
 			String[] columnsNames = curRow;
-			if(columnsNames.length>0) { // filter UTF8 BOM
+			if(columnsNames.length > 0) { // filter UTF8 BOM
 				if(columnsNames[0].startsWith(UTF8_BOM)) {
 					columnsNames[0] = columnsNames[0].substring(1, columnsNames[0].length());
 				}

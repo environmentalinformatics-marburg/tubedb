@@ -24,6 +24,7 @@ import tsdb.loader.burgwald.HoboLoader;
 import tsdb.loader.csv.CSV_MXminiLoader;
 import tsdb.loader.csv.ImportGenericCSV;
 import tsdb.loader.csv.MofLoader;
+import tsdb.loader.gp2.GP2Loader;
 import tsdb.loader.influx.InfluxLoader;
 import tsdb.loader.influx.InfluxLoaderConfig;
 import tsdb.loader.ki.TimeSeriesLoaderKiLi;
@@ -168,6 +169,10 @@ public class DataImport {
 			}
 			case "treetalker": {
 				new Loader_TreeTalker(tsdb, jsonObject).loadDirectoryRecursive(rootDirectory);
+				break;
+			}
+			case "gp2": {
+				new GP2Loader(tsdb, jsonObject).loadDirectoryRecursive(rootDirectory);
 				break;
 			}
 			default:

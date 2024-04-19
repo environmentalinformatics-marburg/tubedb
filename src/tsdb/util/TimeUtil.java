@@ -174,7 +174,7 @@ public final class TimeUtil implements Serializable {
 
 	private static final DateTimeFormatter DATE_TIME_FORMATER_MONTH_NAME_ONE_HOUR_DIGIT =  DateTimeFormatter.ofPattern("dd-MMM-yyyy   H:mm").withLocale(Locale.ENGLISH);
 	private static final DateTimeFormatter DATE_TIME_FORMATER_MONTH_NAME_TWO_HOUR_DIGITS = DateTimeFormatter.ofPattern("dd-MMM-yyyy  HH:mm").withLocale(Locale.ENGLISH);
-
+	
 	/**
 	 * example: 01-Jul-2010   3:25
 	 * example: 16-Dec-2010  14:55
