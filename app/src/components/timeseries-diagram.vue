@@ -318,7 +318,8 @@ export default {
       if(this.uplot !== undefined && this.$refs.diagram !== undefined) {
         const width = this.$refs.diagram.clientWidth;
         //const height = this.$refs.diagram.clientHeight;
-        const height = 400;
+        //const height = 400;
+        const height = 600;
         this.uplot.setSize({ width: width, height: height });
       }
     },
@@ -351,8 +352,12 @@ export default {
             stroke: this.timeseriesStrokes[i],
             width: 1,
             paths: uPlot.paths.spline(),
+            pxAlign: 0,
           });
         }
+        console.log(uPlot.paths);
+        console.log(uPlot);
+        console.log(uPlot.splineInterp);
       }
 
       let opts = {
@@ -372,6 +377,8 @@ export default {
           dragPlugin({}),
         ],
         series: series,
+        pxSnap: false,
+        pxAlign: 0,
       };
 
       this.$refs.diagram.innerHTML = '';

@@ -2479,8 +2479,135 @@ tt_Battery_level:
   aggregation: average
   physical_range: [0.0, 5000.0]
 
+tt_gms_vwc_1_s1: 
+  description: "Soil volumetric water content sensor #1, S1: Sand-Lake Bolsena; 1.622; 50"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_1] 
+  raw_func: "-3.100736e-10 * tt_gms_delta_ECf_1^3 + 3.7994259e-6 * tt_gms_delta_ECf_1^2 - 0.0159286 * tt_gms_delta_ECf_1 + 31.069942"  
+  aggregation: average
+  category: other  
 
-tt_gms_vwc_s1: 
+tt_gms_vwc_1_s2: 
+  description: "Soil volumetric water content sensor #1, S2: Clay-IT; 1.348; 50"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_1] 
+  raw_func: "-1.361451e-7 * tt_gms_delta_ECf_1^3 + 0.00015346 * tt_gms_delta_ECf_1^2 - 0.07561138 * tt_gms_delta_ECf_1 + 46.92195"  
+  aggregation: average
+  category: other 
+
+tt_gms_vwc_1_s3: 
+  description: "Soil volumetric water content sensor #1, S3: Loamy-FEM; 1.194; 50"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_1] 
+  raw_func: "-2.102348e-12 * tt_gms_delta_ECf_1^3 + 1.3827839e-7 * tt_gms_delta_ECf_1^2 - 0.002807791 * tt_gms_delta_ECf_1 + 33.1610487"  
+  aggregation: average
+  category: other 
+
+tt_gms_vwc_1_s4: 
+  description: "Soil volumetric water content sensor #1, S4: Loamy-DIBAF; 0.669; 2600"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_1] 
+  raw_func: "-2.5706259e-12 * tt_gms_delta_ECf_1^3 + 1.732926e-7 * tt_gms_delta_ECf_1^2 - 0.0044649 * tt_gms_delta_ECf_1 + 51.18664485"  
+  aggregation: average
+  category: other 
+
+tt_gms_vwc_1_s5: 
+  description: "Soil volumetric water content sensor #1, S5: Ghana-AF; 1.221; 2600"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_1] 
+  raw_func: "-3.78764796e-12 * tt_gms_delta_ECf_1^3 + 1.7303418e-7 * tt_gms_delta_ECf_1^2 - 0.00259877 * tt_gms_delta_ECf_1 + 50.0698917"  
+  aggregation: average
+  category: other 
+
+tt_gms_vwc_1_s6: 
+  description: "Soil volumetric water content sensor #1, S6: Azienda-Tuscia; 0.9708; 2600"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_1] 
+  raw_func: "-1.7915173e-17 * tt_gms_delta_ECf_1^3 + 9.5651517e-11 * tt_gms_delta_ECf_1^2 - 0.000128698 * tt_gms_delta_ECf_1 + 50.44138201"  
+  aggregation: average
+  category: other 
+
+tt_gms_vwc_1_s7: 
+  description: "Soil volumetric water content sensor #1, S7: Monte Maggio; 0.871; 2600"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_1] 
+  raw_func: "-2.294265e-9 * tt_gms_delta_ECf_1^3 + 1.7761325e-5 * tt_gms_delta_ECf_1^2 - 0.04928144 * tt_gms_delta_ECf_1 + 71.10535897"  
+  aggregation: average
+  category: other   
+  
+tt_gms_vwc_1_s8: 
+  description: "Soil volumetric water content sensor #1, S8: Compost-DIBAF; 0.3866; 2600"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_1] 
+  raw_func: "-6.4510246e-9 * tt_gms_delta_ECf_1^3 + 2.819836e-5 * tt_gms_delta_ECf_1^2 - 0.063075682 * tt_gms_delta_ECf_1 + 72.8730459"  
+  aggregation: average
+  category: other
+  
+tt_gms_vwc_2_s1: 
+  description: "Soil volumetric water content sensor #2, S1: Sand-Lake Bolsena; 1.622; 50"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_2] 
+  raw_func: "-3.100736e-10 * tt_gms_delta_ECf_2^3 + 3.7994259e-6 * tt_gms_delta_ECf_2^2 - 0.0159286 * tt_gms_delta_ECf_2 + 31.069942"  
+  aggregation: average
+  category: other  
+
+tt_gms_vwc_2_s2: 
+  description: "Soil volumetric water content sensor #2, S2: Clay-IT; 1.348; 50"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_2] 
+  raw_func: "-1.361451e-7 * tt_gms_delta_ECf_2^3 + 0.00015346 * tt_gms_delta_ECf_2^2 - 0.07561138 * tt_gms_delta_ECf_2 + 46.92195"  
+  aggregation: average
+  category: other 
+
+tt_gms_vwc_2_s3: 
+  description: "Soil volumetric water content sensor #2, S3: Loamy-FEM; 1.194; 50"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_2] 
+  raw_func: "-2.102348e-12 * tt_gms_delta_ECf_2^3 + 1.3827839e-7 * tt_gms_delta_ECf_2^2 - 0.002807791 * tt_gms_delta_ECf_2 + 33.1610487"  
+  aggregation: average
+  category: other 
+
+tt_gms_vwc_2_s4: 
+  description: "Soil volumetric water content sensor #2, S4: Loamy-DIBAF; 0.669; 2600"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_2] 
+  raw_func: "-2.5706259e-12 * tt_gms_delta_ECf_2^3 + 1.732926e-7 * tt_gms_delta_ECf_2^2 - 0.0044649 * tt_gms_delta_ECf_2 + 51.18664485"  
+  aggregation: average
+  category: other 
+
+tt_gms_vwc_2_s5: 
+  description: "Soil volumetric water content sensor #2, S5: Ghana-AF; 1.221; 2600"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_2] 
+  raw_func: "-3.78764796e-12 * tt_gms_delta_ECf_2^3 + 1.7303418e-7 * tt_gms_delta_ECf_2^2 - 0.00259877 * tt_gms_delta_ECf_2 + 50.0698917"  
+  aggregation: average
+  category: other 
+
+tt_gms_vwc_2_s6: 
+  description: "Soil volumetric water content sensor #2, S6: Azienda-Tuscia; 0.9708; 2600"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_2] 
+  raw_func: "-1.7915173e-17 * tt_gms_delta_ECf_2^3 + 9.5651517e-11 * tt_gms_delta_ECf_2^2 - 0.000128698 * tt_gms_delta_ECf_2 + 50.44138201"  
+  aggregation: average
+  category: other 
+
+tt_gms_vwc_2_s7: 
+  description: "Soil volumetric water content sensor #2, S7: Monte Maggio; 0.871; 2600"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_2] 
+  raw_func: "-2.294265e-9 * tt_gms_delta_ECf_2^3 + 1.7761325e-5 * tt_gms_delta_ECf_2^2 - 0.04928144 * tt_gms_delta_ECf_2 + 71.10535897"  
+  aggregation: average
+  category: other   
+  
+tt_gms_vwc_2_s8: 
+  description: "Soil volumetric water content sensor #2, S8: Compost-DIBAF; 0.3866; 2600"
+  unit: "% (percentage of volumetric water content)"
+  dependency: [tt_gms_delta_ECf_2] 
+  raw_func: "-6.4510246e-9 * tt_gms_delta_ECf_2^3 + 2.819836e-5 * tt_gms_delta_ECf_2^2 - 0.063075682 * tt_gms_delta_ECf_2 + 72.8730459"  
+  aggregation: average
+  category: other
+
+tt_gms_vwc_3_s1: 
   description: "Soil volumetric water content sensor #3, S1: Sand-Lake Bolsena; 1.622; 50"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2488,7 +2615,7 @@ tt_gms_vwc_s1:
   aggregation: average
   category: other  
 
-tt_gms_vwc_s2: 
+tt_gms_vwc_3_s2: 
   description: "Soil volumetric water content sensor #3, S2: Clay-IT; 1.348; 50"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2496,7 +2623,7 @@ tt_gms_vwc_s2:
   aggregation: average
   category: other 
 
-tt_gms_vwc_s3: 
+tt_gms_vwc_3_s3: 
   description: "Soil volumetric water content sensor #3, S3: Loamy-FEM; 1.194; 50"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2504,7 +2631,7 @@ tt_gms_vwc_s3:
   aggregation: average
   category: other 
 
-tt_gms_vwc_s4: 
+tt_gms_vwc_3_s4: 
   description: "Soil volumetric water content sensor #3, S4: Loamy-DIBAF; 0.669; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2512,7 +2639,7 @@ tt_gms_vwc_s4:
   aggregation: average
   category: other 
 
-tt_gms_vwc_s5: 
+tt_gms_vwc_3_s5: 
   description: "Soil volumetric water content sensor #3, S5: Ghana-AF; 1.221; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2520,7 +2647,7 @@ tt_gms_vwc_s5:
   aggregation: average
   category: other 
 
-tt_gms_vwc_s6: 
+tt_gms_vwc_3_s6: 
   description: "Soil volumetric water content sensor #3, S6: Azienda-Tuscia; 0.9708; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2528,7 +2655,7 @@ tt_gms_vwc_s6:
   aggregation: average
   category: other 
 
-tt_gms_vwc_s7: 
+tt_gms_vwc_3_s7: 
   description: "Soil volumetric water content sensor #3, S7: Monte Maggio; 0.871; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2536,7 +2663,7 @@ tt_gms_vwc_s7:
   aggregation: average
   category: other   
   
-tt_gms_vwc_s8: 
+tt_gms_vwc_3_s8: 
   description: "Soil volumetric water content sensor #3, S8: Compost-DIBAF; 0.3866; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 

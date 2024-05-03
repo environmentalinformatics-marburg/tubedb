@@ -349,9 +349,9 @@ public class TreeTalkerTable {
 					"ttraw_g_y_std", 
 					"ttraw_g_x", 
 					"ttraw_g_x_std", 
-					"ttraw_Tref_1", 
-					"ttraw_Theat_1", 
-					"ttraw_StWC", 
+					/*"ttraw_Tref_1",*/ "ttraw_gms_ntc_1", // ntc value of ground moisture sensor #1
+					/*"ttraw_Theat_1",*/ "ttraw_not_used", // not used
+					/*"ttraw_StWC",*/ "ttraw_gms_fq_1", // frequency of ground moisture sensor #1
 					"ttraw_adc_Vbat"
 			};
 
