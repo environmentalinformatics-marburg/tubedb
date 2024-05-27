@@ -256,6 +256,7 @@ Albedo:
 SWDR_300:
   description: Shortwave Downward Radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.5]
   step_range: [0.0, 1.0]
@@ -267,7 +268,8 @@ SWDR_300:
   
 SWUR_300:
   description: Shortwave Upward Radiation at 3 meters height
-  unit: kWh/m^2 (kilo watt hour per square meter) 
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.0]
   step_range: [0.0, 1.0]
@@ -280,6 +282,7 @@ SWUR_300:
 LWDR_300:
   description: Longwave Downward Radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.0]
   step_range: [0.0, 0.22]  
@@ -292,6 +295,7 @@ LWDR_300:
 LWUR_300:
   description: Longwave Upward Radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.0]
   step_range: [0.0, 1.0]   
@@ -386,6 +390,7 @@ SWDR:
   description: Shortwave Downward Radiation
   unit: kWh/m^2 (kilo watt hour per square meter) 
   raw_source: [SWDR_300, SWDR_3700, SWDR_4400, SWDR_200] # use first available sensor in list
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.5]
   step_range: [0.0, 1.0]
@@ -398,6 +403,7 @@ SWUR:
   description: Shortwave Upward Radiation
   unit: kWh/m^2 (kilo watt hour per square meter)
   raw_source: [SWUR_300, SWUR_3700, SWUR_4400] # use first available sensor in list  
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.0]
   step_range: [0.0, 1.0]
@@ -410,6 +416,7 @@ LWDR:
   description: Longwave Downward Radiation
   unit: kWh/m^2 (kilo watt hour per square meter) 
   raw_source: [LWDR_300, LWDR_3700, LWDR_4400] # use first available sensor in list
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.0]
   step_range: [0.0, 0.22]
@@ -422,6 +429,7 @@ LWUR:
   description: Longwave Upward Radiation
   unit: kWh/m^2 (kilo watt hour per square meter) 
   raw_source: [LWUR_300, LWUR_3700, LWUR_4400] # use first available sensor in list
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.0]
   step_range: [0.0, 1.0]
@@ -435,6 +443,7 @@ LWUR:
 SWDR_3700:
   description: Shortwave Downward Radiation at 37 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.5]
   step_range: [0.0, 1.0] 
@@ -444,8 +453,9 @@ SWDR_3700:
   derived: false # raw_func converts unit only 
   
 SWUR_3700:
-  description: Shortwave Upward Radiation at 37 meters height
+  description: Shortwave Upward Radiation at 37 meters height  
   unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.0]
   step_range: [0.0, 1.0]  
@@ -457,6 +467,7 @@ SWUR_3700:
 LWDR_3700:
   description: Longwave Downward Radiation at 37 meters height
   unit: kWh/m^2 (kilo watt hour per square meter)
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.0]
   step_range: [0.0, 1.0]  
@@ -468,6 +479,7 @@ LWDR_3700:
 LWUR_3700:
   description: Longwave Upward Radiation at 37 meters height
   unit: kWh/m^2 (kilo watt hour per square meter)
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.0]
   step_range: [0.0, 1.0]  
@@ -570,7 +582,8 @@ rH_3700:
 
 SWDR_4400:
   description: Shortwave Downward Radiation at 44 meters height
-  unit: kWh/m^2 (kilo watt hour per square meter) 
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  aggregation_hour: average  
   aggregation: sum
   physical_range: [-0.1, 1.5]
   step_range: [0.0, 1.0]
@@ -582,6 +595,7 @@ SWDR_4400:
 SWUR_4400:
   description: Shortwave Upward Radiation at 44 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.0]
   step_range: [0.0, 1.0]  
@@ -593,6 +607,7 @@ SWUR_4400:
 LWDR_4400:
   description: Longwave Downward Radiation at 44 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.0]
   step_range: [0.0, 1.0]  
@@ -604,6 +619,7 @@ LWDR_4400:
 LWUR_4400:
   description: Longwave Upward Radiation at 44 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.0]
   step_range: [0.0, 1.0]  
@@ -705,6 +721,7 @@ par_02:
 swdr_01:
   description: Shortwave downward radiation
   unit: kWh/m^2 (kilo watt hour per square meter)
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.5]
   step_range: [0.0, 1.0]  
@@ -716,6 +733,7 @@ swdr_01:
 swdr_02:
   description: Shortwave downward radiation
   unit: kWh/m^2 (kilo watt hour per square meter)
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.5]
   step_range: [0.0, 1.0]  
@@ -1420,6 +1438,7 @@ evaporation_calculated:
 SWDR_200:
   description: Shortwave Downward Radiation at 2 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.5]
   step_range: [0.0, 1.0]  
@@ -1514,7 +1533,8 @@ Albedo_4400:
 
 Rn:
   description: Net radiation
-  unit: kWh/m^2 (kilo watt hour per square meter) 
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  aggregation_hour: average  
   aggregation: sum
   physical_range: [-0.1, 1.5]
   step_range: [0.0, 1.0]  
@@ -1526,6 +1546,7 @@ Rn:
 Rn_300:
   description: Net radiation at 3 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.5]
   step_range: [0.0, 1.0]
@@ -1536,7 +1557,8 @@ Rn_300:
   
 Rn_3700:
   description: Net radiation at 37 meters height
-  unit: kWh/m^2 (kilo watt hour per square meter) 
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  aggregation_hour: average  
   aggregation: sum
   physical_range: [-0.1, 1.5]
   step_range: [0.0, 1.0]
@@ -1548,6 +1570,7 @@ Rn_3700:
 Rn_4400:
   description: Net radiation at 44 meters height
   unit: kWh/m^2 (kilo watt hour per square meter) 
+  aggregation_hour: average
   aggregation: sum
   physical_range: [-0.1, 1.5]
   step_range: [0.0, 1.0]
