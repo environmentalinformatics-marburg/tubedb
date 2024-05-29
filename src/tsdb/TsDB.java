@@ -33,7 +33,7 @@ import tsdb.util.Util;
  */
 public class TsDB implements AutoCloseable {
 	
-	public static final String tubedb_version = "1.28.2";
+	public static final String tubedb_version = "1.28.3";
 
 	/**
 	 * map regionName -> Region

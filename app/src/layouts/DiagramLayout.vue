@@ -138,6 +138,10 @@
           <q-item-section>{{dataRequestError}}</q-item-section>
         </q-item>
       </div>
+      <timeseries-diagram :data="data" :timeAggregation="timeAggregation" :highQualityDiagram="highQualityDiagram" ref="timeseriesDiagram" />
+      <div style="text-align: right; margin-right: 10px;" v-show="data !== undefined">
+        Click on the colored squares to <b>(de-)activate</b> that time series shown in the diagram.
+      </div>
       <div style="margin-top: 10px; margin-left: 10px;" v-show="data !== undefined">
         <table>
           <tr><td style="padding-right: 10px; text-align:center"><b>Zoom in/out</b></td><td>Place mouse on diagram and rotate the mouse wheel.</td></tr>
@@ -145,9 +149,8 @@
           <tr><td style="padding-right: 10px; text-align:center"><b>Inspect timeseries values</b></td><td>Move mouse over diagram without mouse buttons pressed to show time / measurement values.</td></tr>
         </table>
       </div>
-      <timeseries-diagram :data="data" :timeAggregation="timeAggregation" ref="timeseriesDiagram" />
-      <div style="text-align: right;" v-show="data !== undefined">
-        Click on the colored squares to <b>(de-)activate</b> that time series shown in the diagram.
+      <div style="text-align: right; margin-right: 10px;" v-show="data !== undefined">
+        <q-checkbox v-model="highQualityDiagram" color="teal" size="xs" title="High quality diagram" /> HQ
       </div>
       </div>
     </q-page-container>
@@ -202,6 +205,7 @@ export default {
       timeAggregation: 'hour',
       quality: 'step',
       interpolation: false,
+      highQualityDiagram: false,
 
       selectedPlots: [],
       selectedSensors: [],
@@ -313,7 +317,7 @@ export default {
           let dataView = new DataView(arrayBuffer);
           let entryCount = dataView.getInt32(0, true);
           let schemaCount = dataView.getInt32(4, true);
-          console.log("entryCount: " + entryCount + "   schemaCount: " + schemaCount);
+          //console.log("entryCount: " + entryCount + "   schemaCount: " + schemaCount);
           let data = [];
           let timestamps = new Int32Array(arrayBuffer, 4 + 4, entryCount);
           //console.log(timestamps);
@@ -370,6 +374,9 @@ export default {
     interpolation() {
       this.settingsChanged();
     },
+    /*highQualityDiagram() {
+      this.settingsChanged();
+    },*/
     plotSensorList() {
       this.settingsChanged();
     },

@@ -297,6 +297,7 @@ export default {
   props: [
     'data',
     'timeAggregation',
+    'highQualityDiagram',
   ],
   components: {
   },
@@ -334,7 +335,8 @@ export default {
 
       const width = this.$refs.diagram.clientWidth;
       //const height = this.$refs.diagram.clientHeight;
-      const height = 400;
+      //const height = 400;
+      const height = 600;
 
       //console.log(width + " x "  + height);
 
@@ -342,7 +344,8 @@ export default {
 
       if(this.data) {
         for(let i = 0; i < this.data.length - 1; i++) {
-          series.push({
+
+          let seriesProperties = {
             show: true,
             spanGaps: (this.timeAggregation === 'none'),
             // in-legend display
@@ -351,13 +354,21 @@ export default {
             // series style
             stroke: this.timeseriesStrokes[i],
             width: 1,
-            paths: uPlot.paths.spline(),
-            pxAlign: 0,
-          });
+          };
+
+          if(this.highQualityDiagram) {
+            seriesProperties.paths = uPlot.paths.spline();
+            seriesProperties.pxAlign = 0;
+          } else {
+            //seriesProperties.paths = uPlot.paths.points();
+            seriesProperties.paths = uPlot.paths.linear();
+          }
+
+          series.push(seriesProperties);
         }
-        console.log(uPlot.paths);
-        console.log(uPlot);
-        console.log(uPlot.splineInterp);
+        //console.log(uPlot.paths);
+        //console.log(uPlot);
+        //console.log(uPlot.splineInterp);
       }
 
       let opts = {
@@ -377,9 +388,12 @@ export default {
           dragPlugin({}),
         ],
         series: series,
-        pxSnap: false,
-        pxAlign: 0,
       };
+
+      if(this.highQualityDiagram) {
+        opts.pxSnap = false;
+        opts.pxAlign = 0;
+      }
 
       this.$refs.diagram.innerHTML = '';
       this.uplot = new uPlot(opts, this.data, this.$refs.diagram);
@@ -388,6 +402,9 @@ export default {
   },
   watch: {
     data() {
+      this.createDiagram();
+    },
+    highQualityDiagram() {
       this.createDiagram();
     },
   },

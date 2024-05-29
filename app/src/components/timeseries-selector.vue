@@ -372,7 +372,7 @@ export default {
           if(group.view_timestamp_end && group.view_timestamp_end > end) {
             end = group.view_timestamp_end;
           }
-          console.log(group);
+          //console.log(group);
         }
       }
       if(start === 2000000000) {
