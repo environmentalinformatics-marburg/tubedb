@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import org.tinylog.Logger;
 
 import ch.randelshofer.fastdoubleparser.JavaFloatParser;
+import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
 import tsdb.util.AssumptionCheck;
@@ -78,7 +79,8 @@ public class GP2Loader {
 				stationNameBorderIndex = underscoreIndex;
 			}
 			String stationName = filename.substring(0, stationNameBorderIndex);
-			if(tsdb.getStation(stationName) == null) {
+			Station station = tsdb.getStation(stationName); 
+			if(station == null) {
 				Logger.warn("missing station " + stationName + "  in  " + path);
 				return;
 			}
@@ -165,44 +167,54 @@ public class GP2Loader {
 					}
 				}
 				ArrayList<String> sensorNames = new ArrayList<String>();
+				ArrayList<String> translatedSensorNames = new ArrayList<String>();
 				for (int colIndex = 1; colIndex < colLen; colIndex++) {
 					ArrayList<DataEntry> vs = ts[colIndex];
 					if(!vs.isEmpty()) {
-						String sensorName = table.names[colIndex];						
-						Logger.info(colIndex + "  " + stationName + " / " + sensorName + "   " + vs.size());
-						DataEntry[] dataEntries = vs.toArray(new DataEntry[0]);
-						if(needsSorting) {
-							Logger.warn("sort timestamps " + stationName + " / " + sensorName + "  in  " + path);
-							Arrays.sort(dataEntries);
-							boolean hasDuplicates = false;
-							dupCheck: for (int i = 1; i < dataEntries.length; i++) {
-								if(dataEntries[i-1] == dataEntries[i]) {
-									hasDuplicates = true;
-									break dupCheck;
-								}
-							}
-							if(hasDuplicates) {
-								Logger.warn("remove duplicate timestamps " + stationName + " / " + sensorName + "  in  " + path);
-								int currTimestamp = -1;
-								ArrayList<DataEntry> de = new ArrayList<DataEntry>(dataEntries.length);
-								for(DataEntry dataEntry : dataEntries) {
-									if(dataEntry.timestamp == currTimestamp) {
-										de.set(de.size() - 1, dataEntry);
-									} else {
-										de.add(dataEntry);
-										currTimestamp = dataEntry.timestamp;
+						String sensorName = table.names[colIndex];
+						String translatedSensorName = sensorName;
+						String translation = station.translateInputSensorName(translatedSensorName, true);
+						if(translation != null) {
+							translatedSensorName = translation.equals("NaN") ? null : translation;
+						}
+						if(translatedSensorName != null) {
+							Logger.info(colIndex + "  " + stationName + " / " + sensorName + "   " + vs.size());
+							DataEntry[] dataEntries = vs.toArray(new DataEntry[0]);
+							if(needsSorting) {
+								Logger.warn("sort timestamps " + stationName + " / " + sensorName + "  in  " + path);
+								Arrays.sort(dataEntries);
+								boolean hasDuplicates = false;
+								dupCheck: for (int i = 1; i < dataEntries.length; i++) {
+									if(dataEntries[i-1] == dataEntries[i]) {
+										hasDuplicates = true;
+										break dupCheck;
 									}
 								}
-								dataEntries = de.toArray(new DataEntry[0]);
+								if(hasDuplicates) {
+									Logger.warn("remove duplicate timestamps " + stationName + " / " + sensorName + "  in  " + path);
+									int currTimestamp = -1;
+									ArrayList<DataEntry> de = new ArrayList<DataEntry>(dataEntries.length);
+									for(DataEntry dataEntry : dataEntries) {
+										if(dataEntry.timestamp == currTimestamp) {
+											de.set(de.size() - 1, dataEntry);
+										} else {
+											de.add(dataEntry);
+											currTimestamp = dataEntry.timestamp;
+										}
+									}
+									dataEntries = de.toArray(new DataEntry[0]);
+								}
 							}
+							tsdb.streamStorage.insertDataEntryArray(stationName, translatedSensorName, dataEntries);
 						}
-						tsdb.streamStorage.insertDataEntryArray(stationName, sensorName, dataEntries);
 						sensorNames.add(sensorName);
+						translatedSensorNames.add(translatedSensorName);
 					}
 				}
 				if(!sensorNames.isEmpty()) {
 					String[] sensorNamesArray = sensorNames.toArray(String[]::new);
-					SourceEntry sourceEntry = new SourceEntry(path, stationName, firstTimestamp, lastTimestamp, rowInsertedCount, sensorNamesArray, sensorNamesArray, TsSchema.NO_CONSTANT_TIMESTEP);
+					String[] translatedSensorNamesArray = translatedSensorNames.toArray(String[]::new);
+					SourceEntry sourceEntry = new SourceEntry(path, stationName, firstTimestamp, lastTimestamp, rowInsertedCount, sensorNamesArray, translatedSensorNamesArray, TsSchema.NO_CONSTANT_TIMESTEP);
 					tsdb.sourceCatalog.insert(sourceEntry);
 				}
 			} else {
