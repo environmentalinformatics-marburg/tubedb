@@ -14,7 +14,7 @@ public class ComputationCumsumByYear extends Computation {
 	}
 	@Override
 	public float eval(long timestamp, float[] data) {
-		if(timestamp<timestampMin || timestampMax<timestamp) {
+		if(timestamp < timestampMin || timestampMax < timestamp) {
 			int currentYear = TimeUtil.oleMinutesToLocalDateTime(timestamp).getYear();
 			timestampMin = TimeUtil.ofDateStartMinute(currentYear);
 			timestampMax = TimeUtil.ofDateEndMinute(currentYear);
