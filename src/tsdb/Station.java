@@ -29,7 +29,7 @@ import tsdb.util.Util;
  *
  */
 public class Station {
-	
+
 
 	private final TsDB tsdb; //not null
 
@@ -151,7 +151,7 @@ public class Station {
 		}
 		return null;
 	}
-	
+
 	public @NotNull String[] correctRawSensorNames(@NotNull String[] rawNames, @NotNull Interval fileTimeInterval) {
 		String[] correctedNames = new String[rawNames.length];
 		for (int i = 0; i < rawNames.length; i++) {
@@ -308,10 +308,10 @@ public class Station {
 			}
 		}	
 
-		if(generalStation!=null && generalStation.region.name.equals("BE") && Util.containsString(schema, "P_RT_NRT")) { // add virtual P_RT_NRT of P_container_RT for stations in BE
-			if(!Util.containsString(schema, "P_container_RT")) {
-				return Util.concat(schema,"P_container_RT");
-			}
+		if(Util.containsString(schema, "P_RT_NRT") && 
+				!Util.containsString(schema, "P_container_RT") &&
+				Util.containsString(stationSensorNames, "P_container_RT")) {
+			return Util.concat(schema, "P_container_RT"); // add virtual P_RT_NRT of P_container_RT for stations in BE
 		}
 		return schema;		
 	}

@@ -11,25 +11,17 @@ Ta_200:
 Ta_200_min:
   description: Minimum value of Ta_200
   unit: °C (degree Celcius, -40 to 60)
-  #raw_source: [Ta_200_min_raw, Ta_200] # use Ta_200_min_raw if available else use Ta_200
-  raw_source: Ta_200 # use Ta_200 only
+  dependency: Ta_200  
+  post_hour_func: Ta_200
   aggregation: minimum
-  physical_range: [-40.0, 60.0]
-  step_range: [0.0, 10.0]
-  empirical_diff: 10.0
-  interpolation_mse: 7
   category: temperature
   
 Ta_200_max:
   description: Maximum value of Ta_200
   unit: °C (degree Celcius, -40 to 60)
-  #raw_source: [Ta_200_max_raw, Ta_200] # use Ta_200_max_raw if available else use Ta_200
-  raw_source: Ta_200 # use Ta_200 only
+  dependency: Ta_200
+  post_hour_func: Ta_200
   aggregation: maximum
-  physical_range: [-40.0, 60.0]
-  step_range: [0.0, 10.0]  
-  empirical_diff: 10.0
-  interpolation_mse: 7
   category: temperature
   
 Ta_200_min_raw:
@@ -56,22 +48,16 @@ rH_200:
 rH_200_min:
   description: Minimum value of rH_200
   unit: '% (percentage of relative humidity, 0-100)'
-  raw_source: [rH_200_min_raw, rH_200] # use rH_200_min_raw if available else use rH_200
+  dependency: rH_200
+  post_hour_func: rH_200
   aggregation: minimum
-  physical_range: [15.0, 100.0]
-  step_range: [0.0, 100.0] #high fluctuation possible 
-  empirical_diff: 50  
-  interpolation_mse: 100   
   
 rH_200_max:
   description: Maximum value of rH_200
   unit: '% (percentage of relative humidity, 0-100)'
-  raw_source: [rH_200_max_raw, rH_200] # use rH_200_max_raw if available else use rH_200 
+  dependency: rH_200
+  post_hour_func: rH_200
   aggregation: maximum
-  physical_range: [15.0, 100.0] 
-  step_range: [0.0, 100.0] #high fluctuation possible 
-  empirical_diff: 50  
-  interpolation_mse: 100
 
 rH_200_min_raw:
   aggregation: minimum
@@ -125,6 +111,22 @@ Ts_10:
   interpolation_mse: 7
   category: temperature
   
+Ts_10_min:
+  description: Minimum value of Ts_10 
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_10  
+  post_hour_func: Ts_10
+  aggregation: minimum
+  category: temperature
+  
+Ts_10_max:
+  description: Maximum value of Ts_10 
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_10
+  post_hour_func: Ts_10
+  aggregation: maximum
+  category: temperature
+  
 Ts_20: 
   description: Soil temperature at 20 centimeters below surface 
   unit: °C (degree Celcius, -40 to 60) 
@@ -163,6 +165,20 @@ SM_10:
   step_range: [0.0, 1000.0] 
   empirical_diff: 29.04
   interpolation_mse: 100   
+  
+SM_10_min:
+  description: Minimum value of SM_10 
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_10  
+  post_hour_func: SM_10
+  aggregation: minimum
+  
+SM_10_max:
+  description: Maximum value of SM_10 
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_10  
+  post_hour_func: SM_10
+  aggregation: maximum
   
 SM_15:
   description: Soil moisture at 15 centimeters below surface (BeCycles sensor type at Exploratories) 
@@ -1361,7 +1377,7 @@ Ta_200_vapour_pressure:
   aggregation: average
 
 Ta_200_dew_point_approx:  
-  description: preliminary approximate dew point based on Ta_200 and rH_200
+  description: Approximate dew point based on Ta_200 and rH_200
   unit: °C (degree Celcius)
   dependency: [Ta_200, rH_200]
   # reference https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html

@@ -5,10 +5,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+import javax.validation.constraints.NotNull;
 
 import org.tinylog.Logger;
 
 import tsdb.ConfigLoader;
+import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.component.Region;
@@ -20,7 +22,7 @@ import tsdb.util.AbstractTable.ColumnReaderIntFunc;
 import tsdb.util.AbstractTable.ColumnReaderString;
 
 public class LoadMasks {
-	
+
 
 	public static final String MASK_FILENAME = "mask.csv";
 
@@ -83,23 +85,23 @@ public class LoadMasks {
 			for(String[] row:maskTable.rows) {
 				if(Table.isNoComment(row) && row.length > 1) {
 					try {
-						String stationName = colStation.get(row);					
-						if(tsdb.getStation(stationName)==null) {
-							Logger.warn("mask: station not found "+stationName+"  at "+filename+"   in "+Arrays.toString(row));
-						}					
-						String sensorName = colSensor.get(row);
-						if(!tsdb.sensorExists(sensorName)) {
-							Logger.warn("mask: sensor not found "+sensorName+"  at "+filename+"   in "+Arrays.toString(row));
+						String stationName = colStation.get(row);
+						Station station = tsdb.getStation(stationName);
+						if(station == null) {
+							Logger.warn("mask: station not found " + stationName + "  at " + filename + "   in " + Arrays.toString(row));
+						} else {
+							int start = colStart.get(row);
+							int end = colEnd.get(row);
+							String sensorName = colSensor.get(row);
+							if("*".equals(sensorName)) {
+								String[] sensorNames = station.getSensorNames();
+								for(String sn : sensorNames) {
+									insertMask(tsdb, filename, row, stationName, sn, start, end);	
+								}
+							} else {
+								insertMask(tsdb, filename, row, stationName, sensorName, start, end);
+							}
 						}
-						int start = colStart.get(row);
-						int end = colEnd.get(row);				
-						//Logger.info(TimeUtil.oleMinutesToText(start, end));				
-						TimeSeriesMask mask = tsdb.streamStorage.getTimeSeriesMask(stationName, sensorName);
-						if(mask==null) {
-							mask = new TimeSeriesMask();
-						}
-						mask.addInterval(Interval.of(start, end));				
-						tsdb.streamStorage.setTimeSeriesMask(stationName, sensorName, mask, false);
 					} catch(Exception e) {
 						Logger.error(e+" in "+Arrays.toString(row));
 					}
@@ -112,4 +114,17 @@ public class LoadMasks {
 		}
 	}
 
+	private static void insertMask(TsDB tsdb, String filename, String[] row, String stationName, String sensorName, int start, int end) {
+		if(tsdb.streamStorage.existSensor(stationName, sensorName)) { 
+			//Logger.info(TimeUtil.oleMinutesToText(start, end));				
+			TimeSeriesMask mask = tsdb.streamStorage.getTimeSeriesMask(stationName, sensorName);
+			if(mask==null) {
+				mask = new TimeSeriesMask();
+			}
+			mask.addInterval(Interval.of(start, end));				
+			tsdb.streamStorage.setTimeSeriesMask(stationName, sensorName, mask, false);			
+		} else {
+			Logger.warn("mask: sensor not found " + sensorName + "  at " + filename +"   in " + Arrays.toString(row));
+		}
+	}
 }
