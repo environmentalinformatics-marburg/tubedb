@@ -75,6 +75,8 @@ import tsdb.dsl.computation.ComputationPow4Var;
 import tsdb.dsl.computation.ComputationPow4rt;
 import tsdb.dsl.computation.ComputationPow4rtVar;
 import tsdb.dsl.computation.ComputationPowNum;
+import tsdb.dsl.computation.ComputationRecoveringCumsumByYear;
+import tsdb.dsl.computation.ComputationRecoveringCumsumByYearNeg;
 import tsdb.dsl.computation.ComputationSqr;
 import tsdb.dsl.computation.ComputationSqrNeg;
 import tsdb.dsl.computation.ComputationSqrt;
@@ -570,6 +572,8 @@ public class FormulaCompileVisitor implements FormulaVisitor1<Computation>, Bool
 			return formulaFunc.positive ? new ComputationLn(parameter) : new ComputationLnNeg(parameter);
 		case "cumsum_by_year":
 			return formulaFunc.positive ? new ComputationCumsumByYear(parameter) : new ComputationCumsumByYearNeg(parameter);
+		case "recovering_cumsum_by_year":
+			return formulaFunc.positive ? new ComputationRecoveringCumsumByYear(parameter) : new ComputationRecoveringCumsumByYearNeg(parameter);			
 		case "sqr":
 			return formulaFunc.positive ? new ComputationSqr(parameter) : new ComputationSqrNeg(parameter);
 		case "sqrt":
