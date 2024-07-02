@@ -3,6 +3,8 @@ package tsdb.iterator;
 import tsdb.TsDB;
 import tsdb.component.Sensor;
 import tsdb.util.AggregationType;
+import tsdb.util.Mutator;
+import tsdb.util.TsEntry;
 import tsdb.util.iterator.TsIterator;
 
 /**
@@ -11,9 +13,12 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class WeekAggregationIterator extends AbstractAggregationIterator {
+	
+	private final Mutator weekMutator;
 
-	public WeekAggregationIterator(TsDB tsdb, TsIterator input_iterator) {
+	public WeekAggregationIterator(TsDB tsdb, TsIterator input_iterator, Mutator weekMutator) {
 		super(tsdb, input_iterator, createSchemaConstantStep(input_iterator.getSchema(), 24*60, 7*24*60));
+		this.weekMutator = weekMutator;
 	}
 	
 	@Override
@@ -40,5 +45,14 @@ public class WeekAggregationIterator extends AbstractAggregationIterator {
 			aggregation[i] = sensors[i].getAggregationWeek();
 		}
 		return aggregation;
+	}
+	
+	@Override
+	protected TsEntry getNext() {
+		TsEntry entry = super.getNext();
+		if(weekMutator != null && entry != null) {
+			weekMutator.apply(entry.timestamp, entry.data);
+		}
+		return entry;
 	}
 }

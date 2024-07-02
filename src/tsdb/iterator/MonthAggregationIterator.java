@@ -6,7 +6,9 @@ import java.time.Month;
 import tsdb.TsDB;
 import tsdb.component.Sensor;
 import tsdb.util.AggregationType;
+import tsdb.util.Mutator;
 import tsdb.util.TimeUtil;
+import tsdb.util.TsEntry;
 import tsdb.util.TsSchema.Aggregation;
 import tsdb.util.iterator.TsIterator;
 
@@ -16,9 +18,12 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class MonthAggregationIterator extends AbstractAggregationIterator  {
+	
+	private final Mutator monthMutator;
 
-	public MonthAggregationIterator(TsDB tsdb, TsIterator input_iterator) {
+	public MonthAggregationIterator(TsDB tsdb, TsIterator input_iterator, Mutator monthMutator) {
 		super(tsdb, input_iterator, createSchemaFromConstantToVariableStep(input_iterator.getSchema(), 24*60, Aggregation.MONTH));
+		this.monthMutator = monthMutator;
 	}
 	
 	@Override
@@ -49,5 +54,14 @@ public class MonthAggregationIterator extends AbstractAggregationIterator  {
 			aggregation[i] = sensors[i].getAggregationMonth();
 		}
 		return aggregation;
+	}
+	
+	@Override
+	protected TsEntry getNext() {
+		TsEntry entry = super.getNext();
+		if(monthMutator != null && entry != null) {
+			monthMutator.apply(entry.timestamp, entry.data);
+		}
+		return entry;
 	}
 }

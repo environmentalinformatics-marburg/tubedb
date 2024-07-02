@@ -403,15 +403,15 @@ P_RT_NRT_acc:
   raw_func: "recovering_cumsum_by_year(P_RT_NRT)"
   post_hour_func: "recovering_cumsum_by_year(P_RT_NRT)"
   post_day_func: "recovering_cumsum_by_year(P_RT_NRT)"
-  #post_week_func: "recovering_cumsum_by_year(P_RT_NRT)"
-  #post_month_func: "recovering_cumsum_by_year(P_RT_NRT)"
-  #post_year_func: "P_RT_NRT"  
-  #aggregation: maximum
-  aggregation_hour: maximum
-  aggregation_day: maximum
-  aggregation_week: none
-  aggregation_month: none
-  aggregation_year: none  
+  post_week_func: "recovering_cumsum_by_year(P_RT_NRT)"
+  post_month_func: "recovering_cumsum_by_year(P_RT_NRT)"
+  post_year_func: "P_RT_NRT"  
+  aggregation: maximum
+  #aggregation_hour: maximum
+  #aggregation_day: maximum
+  #aggregation_week: none
+  #aggregation_month: none
+  #aggregation_year: none  
   category: water  
   
 P_container_RT:
@@ -1721,15 +1721,15 @@ precipitation_radolan_acc:
   raw_func: "recovering_cumsum_by_year(precipitation_radolan)"
   post_hour_func: "recovering_cumsum_by_year(precipitation_radolan)"
   post_day_func: "recovering_cumsum_by_year(precipitation_radolan)"
-  #post_week_func: "recovering_cumsum_by_year(precipitation_radolan)"
-  #post_month_func: "recovering_cumsum_by_year(precipitation_radolan)"
-  #post_year_func: "precipitation_radolan"  
-  #aggregation: maximum
-  aggregation_hour: maximum
-  aggregation_day: maximum
-  aggregation_week: none
-  aggregation_month: none
-  aggregation_year: none  
+  post_week_func: "recovering_cumsum_by_year(precipitation_radolan)"
+  post_month_func: "recovering_cumsum_by_year(precipitation_radolan)"
+  post_year_func: "precipitation_radolan"  
+  aggregation: maximum
+  #aggregation_hour: maximum
+  #aggregation_day: maximum
+  #aggregation_week: none
+  #aggregation_month: none
+  #aggregation_year: none  
   category: water  
   
 #added 2018-04-04 generic PAR

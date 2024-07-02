@@ -199,13 +199,13 @@ public final class QueryPlanGenerators {
 	 * @param dataQuality
 	 * @return
 	 */
-	public static ContinuousGen getDayAggregationGen(TsDB tsdb, DataQuality dataQuality) {
+	/*public static ContinuousGen getDayAggregationGen(TsDB tsdb, DataQuality dataQuality) {
 		return (String plotID, String[] schema)->{
 			Continuous continuous = getContinuousGen(tsdb, dataQuality).get(plotID, schema);
 			Mutator dayMutators = getPostDayMutators(tsdb, tsdb.getPlot(plotID), schema);
 			return Aggregated.of(tsdb, continuous, AggregationInterval.DAY, dayMutators);
 		};
-	}
+	}*/
 
 	public static Mutator getMutator(Sensor sensor, String func, Plot plot, String[] schema) {
 		try {
@@ -288,6 +288,54 @@ public final class QueryPlanGenerators {
 		ArrayList<String> funcs = new ArrayList<String>();
 		for(Sensor sensor : tsdb.order_by_dependency(schema)) {
 			String func = sensor.post_day_func;
+			if(sensor != null &&  func != null) {
+				sensors.add(sensor);
+				funcs.add(func);
+			}
+		}
+		if(sensors.isEmpty()) {
+			return null;
+		}
+		return getMutators(sensors, funcs, plot, schema);
+	}
+	
+	public static Mutator getPostWeekMutators(TsDB tsdb, Plot plot, String[] schema) {
+		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
+		ArrayList<String> funcs = new ArrayList<String>();
+		for(Sensor sensor : tsdb.order_by_dependency(schema)) {
+			String func = sensor.post_week_func;
+			if(sensor != null &&  func != null) {
+				sensors.add(sensor);
+				funcs.add(func);
+			}
+		}
+		if(sensors.isEmpty()) {
+			return null;
+		}
+		return getMutators(sensors, funcs, plot, schema);
+	}
+	
+	public static Mutator getPostMonthMutators(TsDB tsdb, Plot plot, String[] schema) {
+		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
+		ArrayList<String> funcs = new ArrayList<String>();
+		for(Sensor sensor : tsdb.order_by_dependency(schema)) {
+			String func = sensor.post_month_func;
+			if(sensor != null &&  func != null) {
+				sensors.add(sensor);
+				funcs.add(func);
+			}
+		}
+		if(sensors.isEmpty()) {
+			return null;
+		}
+		return getMutators(sensors, funcs, plot, schema);
+	}
+	
+	public static Mutator getPostYearMutators(TsDB tsdb, Plot plot, String[] schema) {
+		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
+		ArrayList<String> funcs = new ArrayList<String>();
+		for(Sensor sensor : tsdb.order_by_dependency(schema)) {
+			String func = sensor.post_year_func;
 			if(sensor != null &&  func != null) {
 				sensors.add(sensor);
 				funcs.add(func);

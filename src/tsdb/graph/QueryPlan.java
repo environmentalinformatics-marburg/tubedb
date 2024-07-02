@@ -1,9 +1,7 @@
 package tsdb.graph;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
 
 import org.tinylog.Logger;
 
@@ -55,7 +53,10 @@ public final class QueryPlan {
 			Continuous aggregated = Averaged.of(tsdb, sources, 1, true);
 			if(aggregationInterval != AggregationInterval.HOUR) {
 				Mutator postDayMutator = QueryPlanGenerators.getPostDayMutators(tsdb, null, schema);
-				aggregated = Aggregated.of(tsdb, aggregated, aggregationInterval, postDayMutator);
+				Mutator postWeekMutator = QueryPlanGenerators.getPostWeekMutators(tsdb, null, schema);
+				Mutator postMonthMutator = QueryPlanGenerators.getPostMonthMutators(tsdb, null, schema);
+				Mutator postYearMutator = QueryPlanGenerators.getPostYearMutators(tsdb, null, schema);
+				aggregated = Aggregated.of(tsdb, aggregated, aggregationInterval, postDayMutator, postWeekMutator, postMonthMutator, postYearMutator);
 			}
 			return aggregated;
 		}
@@ -184,7 +185,10 @@ public final class QueryPlan {
 		Mutator postHourMutator = QueryPlanGenerators.getPostHourMutators(tsdb, plot, schema);
 		continuous = new PostHourMutation(continuous, postHourMutator);
 		Mutator postDayMutator = QueryPlanGenerators.getPostDayMutators(tsdb, plot, schema);
-		return Aggregated.of(tsdb, continuous, aggregationInterval, postDayMutator);
+		Mutator postWeekMutator = QueryPlanGenerators.getPostWeekMutators(tsdb, plot, schema);
+		Mutator postMonthMutator = QueryPlanGenerators.getPostMonthMutators(tsdb, plot, schema);
+		Mutator postYearMutator = QueryPlanGenerators.getPostYearMutators(tsdb, plot, schema);
+		return Aggregated.of(tsdb, continuous, aggregationInterval, postDayMutator, postWeekMutator, postMonthMutator, postYearMutator);
 	}
 
 	/**
@@ -205,8 +209,11 @@ public final class QueryPlan {
 		}
 		Continuous continuous = Continuous.of(base);
 		Plot plot = tsdb.getPlot(plotID);
-		Mutator dayMutators = QueryPlanGenerators.getPostDayMutators(tsdb, plot, schema);
-		return Aggregated.of(tsdb, continuous, aggregationInterval, dayMutators);
+		Mutator postDayMutator = QueryPlanGenerators.getPostDayMutators(tsdb, plot, schema);
+		Mutator postWeekMutator = QueryPlanGenerators.getPostWeekMutators(tsdb, plot, schema);
+		Mutator postMonthMutator = QueryPlanGenerators.getPostMonthMutators(tsdb, plot, schema);
+		Mutator postYearMutator = QueryPlanGenerators.getPostYearMutators(tsdb, plot, schema);		
+		return Aggregated.of(tsdb, continuous, aggregationInterval, postDayMutator, postWeekMutator, postMonthMutator, postYearMutator);
 	}
 
 
