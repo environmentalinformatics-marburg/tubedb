@@ -77,6 +77,7 @@ public class Sensor implements Serializable {
 	public String[] raw_source = null;
 	public String[] dependency = null;
 	public String raw_func = null;
+	public String post_raw_func = null;
 	public String post_hour_func = null;
 	public String post_day_func = null;
 	public String post_week_func = null;
@@ -222,6 +223,7 @@ public class Sensor implements Serializable {
 		String[] dependency = yamlMap.optList("dependency").asStringArray();
 
 		String raw_func = yamlMap.optString("raw_func", null);
+		String post_raw_func = yamlMap.optString("post_raw_func", null);
 		String post_hour_func = yamlMap.optString("post_hour_func", null);
 		String post_day_func = yamlMap.optString("post_day_func", null);
 		String post_week_func = yamlMap.optString("post_week_func", null);
@@ -252,6 +254,7 @@ public class Sensor implements Serializable {
 		sensor.raw_source = raw_source.length == 0 ? null : raw_source;
 		sensor.dependency = dependency.length == 0 ? null : dependency;
 		sensor.raw_func = raw_func;
+		sensor.post_raw_func = post_raw_func;
 		sensor.post_hour_func = post_hour_func;
 		sensor.post_day_func = post_day_func;
 		sensor.post_week_func = post_week_func;

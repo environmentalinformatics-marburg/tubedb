@@ -292,6 +292,27 @@ public class Handler_model extends MethodHandler {
 					Logger.warn(e);
 				}
 			}
+			if(sensor.post_raw_func != null) {
+				json.key("post_raw_func");
+				json.value(sensor.post_raw_func);
+
+				try {
+					Formula formula_org = FormulaBuilder.parseFormula(sensor.post_raw_func);
+					Formula formula_unified = formula_org.accept(FormulaUnifyVisitor.DEFAULT);
+					String funcText = formula_unified.accept(FormulaToStringVisitor.DEFAULT);
+					if(funcText != null && !funcText.isEmpty()) {
+						json.key("post_raw_func_parsed");				
+						json.value(funcText);
+						json.key("post_raw_func_tree");				
+						formula_unified.accept(new FormulaToJsonTreeVisitor(json));		
+						json.key("post_raw_func_print");				
+						PrintFormula printFormula = formula_unified.accept(FormulaPrintFormulaVisistor.DEFAULT);	
+						printFormula.accept(new PrintFormulaToJsonVisitor(json));
+					}
+				} catch(Exception e) {
+					Logger.warn(e);
+				}
+			}
 			if(sensor.post_hour_func != null) {
 				json.key("post_hour_func");
 				json.value(sensor.post_hour_func);

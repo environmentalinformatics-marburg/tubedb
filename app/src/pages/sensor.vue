@@ -49,6 +49,20 @@
              </div>
           </template>
         </template>
+        <template v-if="sensor.post_raw_func !== undefined">
+          <div>post_raw_func</div>
+          <div>{{sensor.post_raw_func}}</div>
+          <template v-if="sensor.post_raw_func_parsed !== undefined">
+            <div>--> parsed</div>
+            <div>{{sensor.post_raw_func_parsed}}</div>
+            <!--<div> tree</div>
+            <div><formula-tree :node="sensor.post_raw_func_tree" :level="0"/></div>-->
+            <div>--> print</div>
+             <div class="formula-print">
+            <formula-print :node="sensor.post_raw_func_print" :level="0"/>
+             </div>
+          </template>
+        </template>
       </div>
     </div>
     <div class="column processing-node" v-if="sensor.aggregation_hour !== 'none'">

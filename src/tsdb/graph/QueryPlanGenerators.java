@@ -82,8 +82,8 @@ public final class QueryPlanGenerators {
 	}
 
 	public static Node rawProcessing(TsDB tsdb, Node rawSource, String[] schema, DataQuality dataQuality) {		
-		Mutator rawMutators = QueryPlanGenerators.getRawMutators(tsdb, rawSource.getSourcePlot(), schema);
 		rawSource = elementRawCopy(tsdb, rawSource); // First copy raw source then apply mutators. So, mutators are not applied to copied raw source!
+		Mutator rawMutators = QueryPlanGenerators.getRawMutators(tsdb, rawSource.getSourcePlot(), schema);
 		if(rawMutators != null) {
 			rawSource = MutatorNode.of(tsdb, rawSource, rawMutators);
 		}		
@@ -104,6 +104,10 @@ public final class QueryPlanGenerators {
 		}
 		if(Util.containsString(schema, "P_RT_NRT") && Util.containsString(schema, "P_container_RT")) {
 			rawSource = Virtual_P_RT_NRT.of(tsdb, rawSource);
+		}
+		Mutator postRawMutators = QueryPlanGenerators.getPostRawMutators(tsdb, rawSource.getSourcePlot(), schema);
+		if(postRawMutators != null) {
+			rawSource = MutatorNode.of(tsdb, rawSource, postRawMutators);
 		}
 		return rawSource;
 	}
@@ -256,6 +260,22 @@ public final class QueryPlanGenerators {
 		ArrayList<String> funcs = new ArrayList<String>();
 		for(Sensor sensor : tsdb.order_by_dependency(schema)) {
 			String func = sensor.raw_func;
+			if(sensor != null &&  func != null) {
+				sensors.add(sensor);
+				funcs.add(func);
+			}
+		}
+		if(sensors.isEmpty()) {
+			return null;
+		}
+		return getMutators(sensors, funcs, plot, schema);
+	}
+	
+	public static Mutator getPostRawMutators(TsDB tsdb, Plot plot, String[] schema) {		
+		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
+		ArrayList<String> funcs = new ArrayList<String>();
+		for(Sensor sensor : tsdb.order_by_dependency(schema)) {
+			String func = sensor.post_raw_func;
 			if(sensor != null &&  func != null) {
 				sensors.add(sensor);
 				funcs.add(func);

@@ -400,7 +400,8 @@ P_RT_NRT_acc:
   description: Precipitation accumulated per year
   unit: mm (millimeter)
   dependency: P_RT_NRT
-  raw_func: "recovering_cumsum_by_year(P_RT_NRT)"
+  #raw_func: "recovering_cumsum_by_year(P_RT_NRT)"
+  post_raw_func: "recovering_cumsum_by_year(P_RT_NRT)"  
   post_hour_func: "recovering_cumsum_by_year(P_RT_NRT)"
   post_day_func: "recovering_cumsum_by_year(P_RT_NRT)"
   post_week_func: "recovering_cumsum_by_year(P_RT_NRT)"
@@ -1718,7 +1719,8 @@ precipitation_radolan_acc:
   description: Precipitation based on RADOLAN product accumulated per year
   unit: mm (millimeter)
   dependency: precipitation_radolan
-  raw_func: "recovering_cumsum_by_year(precipitation_radolan)"
+  #raw_func: "recovering_cumsum_by_year(precipitation_radolan)"
+  post_raw_func: "recovering_cumsum_by_year(precipitation_radolan)"
   post_hour_func: "recovering_cumsum_by_year(precipitation_radolan)"
   post_day_func: "recovering_cumsum_by_year(precipitation_radolan)"
   post_week_func: "recovering_cumsum_by_year(precipitation_radolan)"
