@@ -22,8 +22,6 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class VirtualPlotStationRawSource extends RawSource.Abstract {
-	@SuppressWarnings("unused")
-	
 
 	private final VirtualPlot virtualPlot; // not null
 	private final Station station; // not null
@@ -77,7 +75,7 @@ public class VirtualPlotStationRawSource extends RawSource.Abstract {
 				if(filteredInterval!=null) {
 					for(String sensorName:stationSchema) {
 						StreamIterator it = tsdb.streamStorage.getRawSensorIterator(station.stationID, sensorName, filteredInterval.start, filteredInterval.end);
-						if(it!=null&&it.hasNext()) {
+						if(it != null && it.hasNext()) {
 							processing_iteratorList.add(it);
 						}
 					}
@@ -88,7 +86,7 @@ public class VirtualPlotStationRawSource extends RawSource.Abstract {
 		if(processing_iteratorList.isEmpty()) {
 			return null;
 		}
-		if(processing_iteratorList.size()==1  && sensorNames.length==1) {
+		if(processing_iteratorList.size() == 1  && sensorNames.length == 1) {
 			return new StreamTsIterator(processing_iteratorList.get(0));
 		}
 		return new RelationalIterator(processing_iteratorList, sensorNames);

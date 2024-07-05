@@ -66,12 +66,12 @@ dependencies {
   	implementation group: 'com.opencsv', name: 'opencsv', version: '5.9'   	
   	implementation group: 'org.ini4j', name: 'ini4j', version: '0.5.4' 
   	implementation group: 'ar.com.hjg', name: 'pngj', version: '2.1.0'
-  	implementation group: 'com.github.luben', name: 'zstd-jni', version: '1.5.6-2' // caution: newer versions may break storage layout (last tested 1.4.5-6)
-  	implementation group: 'me.lemire.integercompression', name: 'JavaFastPFOR', version: '0.1.12' // caution: newer versions may break strorage layout
+  	implementation group: 'com.github.luben', name: 'zstd-jni', version: '1.5.6-3' // caution: newer versions may break storage layout (last tested 1.4.5-6)
+  	implementation group: 'me.lemire.integercompression', name: 'JavaFastPFOR', version: '0.1.12' // version 0.2.1 compiled to new class file version not compatible with java 11; caution: newer versions may break strorage layout
   	implementation group: 'ch.randelshofer', name: 'fastdoubleparser', version: '1.0.0'
   	
-  	implementation group: 'org.eclipse.jetty', name: 'jetty-server', version: '11.0.20'
-  	implementation group: 'org.eclipse.jetty', name: 'jetty-security', version: '11.0.20'
+  	implementation group: 'org.eclipse.jetty', name: 'jetty-server', version: '11.0.22'
+  	implementation group: 'org.eclipse.jetty', name: 'jetty-security', version: '11.0.22'
   	
   	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
