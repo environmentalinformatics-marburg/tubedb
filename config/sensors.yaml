@@ -398,23 +398,17 @@ P_RT_NRT:
   derived: false # optional dependency
   
 P_RT_NRT_acc:
-  description: Precipitation accumulated per year
+  description: Precipitation P_RT_NRT accumulated per year, skipping gaps in time
   unit: mm (millimeter)
   dependency: P_RT_NRT
-  #raw_func: "recovering_cumsum_by_year(P_RT_NRT)"
-  post_raw_func: "recovering_cumsum_by_year(P_RT_NRT)"  
+  post_raw_func: "recovering_cumsum_by_year(P_RT_NRT)"
   post_hour_func: "recovering_cumsum_by_year(P_RT_NRT)"
   post_day_func: "recovering_cumsum_by_year(P_RT_NRT)"
   post_week_func: "recovering_cumsum_by_year(P_RT_NRT)"
   post_month_func: "recovering_cumsum_by_year(P_RT_NRT)"
-  post_year_func: "P_RT_NRT"  
+  post_year_func: "P_RT_NRT"
   aggregation: maximum
-  #aggregation_hour: maximum
-  #aggregation_day: maximum
-  #aggregation_week: none
-  #aggregation_month: none
-  #aggregation_year: none  
-  category: water  
+  category: water
   
 P_container_RT:
   description: Precipitation, actual unfiltered amount in container
@@ -1717,10 +1711,9 @@ precipitation_radolan:
   category: water
   
 precipitation_radolan_acc:
-  description: Precipitation based on RADOLAN product accumulated per year
+  description: Precipitation based on RADOLAN product accumulated per year, skipping gaps in time
   unit: mm (millimeter)
   dependency: precipitation_radolan
-  #raw_func: "recovering_cumsum_by_year(precipitation_radolan)"
   post_raw_func: "recovering_cumsum_by_year(precipitation_radolan)"
   post_hour_func: "recovering_cumsum_by_year(precipitation_radolan)"
   post_day_func: "recovering_cumsum_by_year(precipitation_radolan)"
@@ -1728,12 +1721,7 @@ precipitation_radolan_acc:
   post_month_func: "recovering_cumsum_by_year(precipitation_radolan)"
   post_year_func: "precipitation_radolan"  
   aggregation: maximum
-  #aggregation_hour: maximum
-  #aggregation_day: maximum
-  #aggregation_week: none
-  #aggregation_month: none
-  #aggregation_year: none  
-  category: water  
+  category: water
   
 #added 2018-04-04 generic PAR
 PAR:
