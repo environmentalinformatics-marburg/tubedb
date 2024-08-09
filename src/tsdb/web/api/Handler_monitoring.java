@@ -14,6 +14,7 @@ import tsdb.remote.RemoteTsDB;
 import tsdb.util.DataEntry;
 import tsdb.util.Measurement;
 import tsdb.util.TimeUtil;
+import tsdb.web.util.Web;
 
 public class Handler_monitoring extends MethodHandler {	
 
@@ -26,8 +27,8 @@ public class Handler_monitoring extends MethodHandler {
 		baseRequest.setHandled(true);
 		response.setContentType("application/json;charset=utf-8");	
 
-		String[] plotIDs = request.getParameterValues("plot");
-		String[] sensorNames = request.getParameterValues("sensor");
+		String[] plotIDs = Web.getStrings(baseRequest, "plot");
+		String[] sensorNames = Web.getStrings(baseRequest, "sensor");
 
 		ArrayList<Measurement> result = tsdb.getMonitoring(plotIDs, sensorNames);
 

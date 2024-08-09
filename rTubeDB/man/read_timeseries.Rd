@@ -10,7 +10,11 @@ read_timeseries(
   colYear = FALSE,
   colMonth = FALSE,
   colDay = FALSE,
-  colHour = FALSE
+  colHour = FALSE,
+  colWeek = FALSE,
+  colDayOfWeek = FALSE,
+  colDayOfYear = FALSE,
+  colMinute = FALSE
 )
 }
 \arguments{
@@ -25,6 +29,14 @@ read_timeseries(
 \item{colDay}{add numeric day column in resulting data.frame (1 to 31)}
 
 \item{colHour}{add numeric hour column in resulting data.frame (0 to 23)}
+
+\item{colWeek}{add numeric day of week column in resulting data.frame (1 to 53) (ISO week based)}
+
+\item{colDayOfWeek}{add numeric day of week column in resulting data.frame (1 to 7) (ISO week based)}
+
+\item{colDayOfYear}{add numeric day of year column in resulting data.frame (1 to 366)}
+
+\item{colMinute}{add numeric minute in resulting data.frame (0 to 59)}
 }
 \value{
 data.frame time series with datetime column + sensor columns

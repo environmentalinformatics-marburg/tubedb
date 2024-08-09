@@ -681,6 +681,7 @@ query_region_stations <- function(tubedb, regionID) {
 #' @param year get data from one full year only (You may use this 'year' parameter OR 'start', 'end' parameters)
 #' @param month get data of one full month of one year only, parameter year neads to be specified (You may use this 'month' parameter OR 'start'/'end' parameters)
 #' @param day get data of one full day of one month only, parameter month neads to be specified (You may use this 'day' parameter OR 'start'/'end' parameters)
+#' @param quality_counter qualityCounter column to count aggregated measured values and interpolated values
 #' @param casted all plot-sensor pairs in one row per timestamp, e.g. columns plot1.sensor1, plot2.sensor1, plot1.sensor2
 #' @param spatial_aggregated combine all values of one sensor over all plots to one value per timestamp by mean
 #' @param datetimeFormat character, requested type of timestamps. one of: "character", "POSIXct", "POSIXlt"
@@ -718,7 +719,7 @@ query_region_stations <- function(tubedb, regionID) {
 #' # show time series
 #' plot(tsDF$datetime, tsDF$Ta_200)
 #' @export
-query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality = "physical", interpolated = FALSE, start = NULL, end = NULL, year = NULL, month = NULL, day = NULL, casted = FALSE, spatial_aggregated = FALSE, datetimeFormat = "character", colYear = FALSE, colPlot = TRUE, colMonth = FALSE, colDay = FALSE, colHour = FALSE, colWeek = FALSE, colDayOfWeek = FALSE, colDayOfYear = FALSE, colMinute = FALSE) {
+query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality = "physical", interpolated = FALSE, start = NULL, end = NULL, year = NULL, month = NULL, day = NULL, quality_counter = FALSE, casted = FALSE, spatial_aggregated = FALSE, datetimeFormat = "character", colYear = FALSE, colPlot = TRUE, colMonth = FALSE, colDay = FALSE, colHour = FALSE, colWeek = FALSE, colDayOfWeek = FALSE, colDayOfYear = FALSE, colMinute = FALSE) {
   stopifnot(isClass(tubedb, TubeDB))
   args <- list(
     aggregation = aggregation,
@@ -729,6 +730,7 @@ query_timeseries <- function(tubedb, plot, sensor, aggregation = "hour", quality
     year = year,
     month = month,
     day = day,
+    quality_counter = quality_counter,
     casted = casted,
     spatial_aggregated = spatial_aggregated,
     col_plot = colPlot

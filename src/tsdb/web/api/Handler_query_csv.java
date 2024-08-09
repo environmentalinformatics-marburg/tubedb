@@ -27,6 +27,7 @@ import tsdb.util.iterator.CSV;
 import tsdb.util.iterator.CSVTimeType;
 import tsdb.util.iterator.TimestampSeries;
 import tsdb.util.iterator.TsIterator;
+import tsdb.web.util.Web;
 
 /**
  * Get timeseries data as CSV-file.
@@ -90,7 +91,7 @@ public class Handler_query_csv extends MethodHandler {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
-		String[] plots = request.getParameterValues("plot");
+		String[] plots = Web.getStrings(baseRequest, "plot");
 
 		String col_plot_text = request.getParameter("col_plot");
 		boolean col_plot = false;
@@ -108,8 +109,7 @@ public class Handler_query_csv extends MethodHandler {
 			}
 		}
 
-		//String sensorName = request.getParameter("sensor");
-		String[] sensorNames = request.getParameterValues("sensor");
+		String[] sensorNames = Web.getStrings(baseRequest, "sensor");
 
 		if(sensorNames==null) {
 			Logger.warn("wrong call no sensor");
@@ -144,6 +144,22 @@ public class Handler_query_csv extends MethodHandler {
 			default:
 				Logger.warn("unknown input");
 				casted = false;				
+			}
+		}
+		
+		String quality_counter_text = request.getParameter("quality_counter");
+		boolean quality_counter = false;
+		if(quality_counter_text != null) {
+			switch(quality_counter_text) {
+			case "true":
+				quality_counter = true;
+				break;
+			case "false":
+				quality_counter = false;
+				break;
+			default:
+				Logger.warn("unknown input");
+				quality_counter = false;				
 			}
 		}
 
@@ -331,14 +347,14 @@ public class Handler_query_csv extends MethodHandler {
 						TimestampSeries ts = tsdb.plots_aggregate(plots, processingSensorNames, agg, dataQuality, isInterpolated, startTime, endTime);
 						if(ts != null) {
 							TsIterator it = ts.tsIterator();
-							CSV.write(it, true, bufferedWriter, ',', nanText, csvTimeType, false, false, agg, null);
+							CSV.write(it, true, bufferedWriter, ',', nanText, csvTimeType, false, quality_counter, agg, null);
 						}
 					} else {
 						if(casted) {
 							TimestampSeries ts = tsdb.plots_casted(plots, processingSensorNames, agg, dataQuality, isInterpolated, startTime, endTime);
 							if(ts != null) {
 								TsIterator it = ts.tsIterator();
-								CSV.write(it, true, bufferedWriter, ',', nanText, csvTimeType, false, false, agg, null);
+								CSV.write(it, true, bufferedWriter, ',', nanText, csvTimeType, false, quality_counter, agg, null);
 							}
 						} else {
 							boolean firstPlot = true;			
@@ -351,7 +367,7 @@ public class Handler_query_csv extends MethodHandler {
 									if(ts != null) {					
 										ProjectionFillIterator it = new ProjectionFillIterator(ts.tsIterator(), processingSensorNames);
 										String plot_text = col_plot ? plot : null;
-										CSV.write(it, firstPlot, bufferedWriter, ',', nanText, csvTimeType, false, false, agg, plot_text);
+										CSV.write(it, firstPlot, bufferedWriter, ',', nanText, csvTimeType, false, quality_counter, agg, plot_text);
 										firstPlot = false;
 									}
 								} catch (Exception e) {

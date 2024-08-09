@@ -181,5 +181,19 @@ public class Web {
 		}
 		return (capacity == nread) ? buf : Arrays.copyOf(buf, nread);
 	}
-
+	
+	/**
+	 * Array of all parameters of same name and each parameter split by semicolon ','.
+	 * @param request
+	 * @param name
+	 * @return
+	 */
+	public static String[] getStrings(Request request, String name) {
+		String[] texts = request.getParameterValues(name);		
+		if(texts == null) {
+			throw new RuntimeException("parameter not found: "+name);
+		}
+		String[] splitTexts = Arrays.stream(texts).flatMap(text -> Arrays.stream(text.split(","))).toArray(String[]::new);
+		return splitTexts;
+	}
 }

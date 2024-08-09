@@ -16,6 +16,7 @@ query_timeseries(
   year = NULL,
   month = NULL,
   day = NULL,
+  quality_counter = FALSE,
   casted = FALSE,
   spatial_aggregated = FALSE,
   datetimeFormat = "character",
@@ -23,7 +24,11 @@ query_timeseries(
   colPlot = TRUE,
   colMonth = FALSE,
   colDay = FALSE,
-  colHour = FALSE
+  colHour = FALSE,
+  colWeek = FALSE,
+  colDayOfWeek = FALSE,
+  colDayOfYear = FALSE,
+  colMinute = FALSE
 )
 }
 \arguments{
@@ -49,6 +54,8 @@ query_timeseries(
 
 \item{day}{get data of one full day of one month only, parameter month neads to be specified (You may use this 'day' parameter OR 'start'/'end' parameters)}
 
+\item{quality_counter}{qualityCounter column to count aggregated measured values and interpolated values}
+
 \item{casted}{all plot-sensor pairs in one row per timestamp, e.g. columns plot1.sensor1, plot2.sensor1, plot1.sensor2}
 
 \item{spatial_aggregated}{combine all values of one sensor over all plots to one value per timestamp by mean}
@@ -64,6 +71,14 @@ query_timeseries(
 \item{colDay}{add numeric day column in resulting data.frame (1 to 31)}
 
 \item{colHour}{add numeric hour column in resulting data.frame (0 to 23)}
+
+\item{colWeek}{add numeric day of week column in resulting data.frame (1 to 53) (ISO week based)}
+
+\item{colDayOfWeek}{add numeric day of week column in resulting data.frame (1 to 7) (ISO week based)}
+
+\item{colDayOfYear}{add numeric day of year column in resulting data.frame (1 to 366)}
+
+\item{colMinute}{add numeric minute in resulting data.frame (0 to 59)}
 }
 \value{
 data.frame time series with datetime column + sensor columns
