@@ -922,6 +922,7 @@ public final class TimeUtil implements Serializable {
 			return parseNormalDateTimeFormat13(s);
 		case 16: // minutes
 		case 19: // Format with seconds: 2009-01-01T00:00:00   (ignore seconds)
+		case 20: // Format with seconds: 2009-01-01T00:00:00Z   (ignore seconds and Z)
 			return parseNormalDateTimeFormat16(s);
 		default:
 			throw new RuntimeException("unknown timestamp "+s);
