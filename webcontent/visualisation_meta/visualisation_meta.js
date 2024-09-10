@@ -102,7 +102,8 @@ data: function () {
 		sensorMap: {},
 		sensorNamePlotMap: {},
 		sensorNameStationMap: {},
-		default_sensor_name: "Ta_200",
+		//default_sensor_name: "Ta_200",
+		default_sensor_names: ["Ta_200", "tt_Ta_200"],
 
 		aggregationHover: false,
 		aggregationHoverStay: false,
@@ -257,8 +258,15 @@ computed: {
 					}
 				});
 				if(sensorIDs.length === 0) {
-					if(sensors.some(function(s){return s.id===self.default_sensor_name;})) {
+					/*if(sensors.some(function(s){return s.id===self.default_sensor_name;})) {
 						sensorIDs = [self.default_sensor_name];
+					} else {
+						sensorIDs = [sensors[0].id];
+					}*/
+					//console.log(sensors);
+					//console.log(self.default_sensor_names);
+					if(sensors.some(function(sensor) { return self.default_sensor_names.includes(sensor.id); } )) {
+						sensorIDs = self.default_sensor_names.filter(function(sensor_name) {return self.default_sensor_names.includes(sensor_name); } );
 					} else {
 						sensorIDs = [sensors[0].id];
 					}

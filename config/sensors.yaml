@@ -1804,9 +1804,9 @@ ttraw_air_temperature:
   aggregation: average
   visibility: internal
 
-tt_air_temperature:
-  description: Air temperature
-  unit: °C (degree Celcius)
+tt_Ta_200:
+  description: Air temperature at 2 meters above ground
+  unit: °C (degree Celcius, -40 to 60)
   dependency: ttraw_air_temperature
   raw_func: "ttraw_air_temperature * 0.1"  
   aggregation: average  
@@ -1818,9 +1818,14 @@ tt_air_temperature:
   interpolation_mse: 7  
 
 tt_air_relative_humidity:
-  description: Relative air humidity
-  unit: '% (percentage of relative humidity)'
+  visibility: internal
+  description: Relative air humidity at 2 meters above ground
+  unit: '% (percentage of relative humidity, 0-100)'
   aggregation: average
+  physical_range: [15.0, 100.09] # compensate with 100.09 for conversion inaccuracies
+  step_range: [0.0, 100.0] #high fluctuation possible
+  empirical_diff: 50
+  interpolation_mse: 100
   
 ttraw_AS7263_610:
   description: Raw spectral band near infrared (orange) 610 nm ± 10 nm
@@ -1896,6 +1901,7 @@ ttraw_AS7262_650:
   
 
 tt_AS7263_610:
+  visibility: internal
   description: Spectral band near infrared (orange) 610 nm ± 10 nm
   unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7263_610
@@ -1904,6 +1910,7 @@ tt_AS7263_610:
   derived: false
   
 tt_AS7263_680:
+  visibility: internal
   description: Spectral band near infrared (red) 680 nm ± 10 nm
   unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7263_680
@@ -1912,6 +1919,7 @@ tt_AS7263_680:
   derived: false
   
 tt_AS7263_730:
+  visibility: internal
   description: Spectral band near infrared (far red) 730 nm ± 10 nm
   unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7263_730
@@ -1920,6 +1928,7 @@ tt_AS7263_730:
   derived: false
 
 tt_AS7263_760:
+  visibility: internal
   description: Spectral band near infrared (invisible) 760 nm ± 10 nm
   unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7263_760
@@ -1928,6 +1937,7 @@ tt_AS7263_760:
   derived: false
 
 tt_AS7263_810:
+  visibility: internal
   description: Spectral band near infrared (invisible) 810 nm ± 10 nm
   unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7263_810
@@ -1936,6 +1946,7 @@ tt_AS7263_810:
   derived: false
 
 tt_AS7263_860:
+  visibility: internal
   description: Spectral band near infrared (invisible) 860 nm ± 10 nm
   unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7263_860
@@ -1944,6 +1955,7 @@ tt_AS7263_860:
   derived: false
 
 tt_AS7262_450:
+  visibility: internal
   description: Spectral band visible light (blue) 450 nm ± 20 nm
   unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7262_450
@@ -1952,6 +1964,7 @@ tt_AS7262_450:
   derived: false  
   
 tt_AS7262_500:
+  visibility: internal
   description: Spectral band visible light (cyan) 500 nm ± 20 nm
   unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7262_500
@@ -1960,6 +1973,7 @@ tt_AS7262_500:
   derived: false
 
 tt_AS7262_550:
+  visibility: internal
   description: Spectral band visible light (green) 550 nm ± 20 nm
   unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7262_550
@@ -1968,6 +1982,7 @@ tt_AS7262_550:
   derived: false
 
 tt_AS7262_570:
+  visibility: internal
   description: Spectral band visible light (yellow) 570 nm ± 20 nm
   unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7262_570
@@ -1976,6 +1991,7 @@ tt_AS7262_570:
   derived: false
 
 tt_AS7262_600:
+  visibility: internal
   description: Spectral band visible light (orange) 600 nm ± 20 nm
   unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7262_600
@@ -1984,6 +2000,7 @@ tt_AS7262_600:
   derived: false
 
 tt_AS7262_650:
+  visibility: internal
   description: Spectral band visible light (red) 650 nm ± 20 nm
   unit: kWh/m^2 (kilo watt hour per square meter) 
   dependency: ttraw_AS7262_650
@@ -2027,7 +2044,8 @@ ttraw_g_z_std:
   aggregation: average
   visibility: internal
   
-tt_g_x: 
+tt_g_x:
+  visibility: internal 
   description: Acceleration on the X axis
   unit: g (relative to earth gravity 9.81 m/s^2)
   dependency: ttraw_g_x
@@ -2035,7 +2053,8 @@ tt_g_x:
   aggregation: average
   derived: false
   
-tt_g_y: 
+tt_g_y:
+  visibility: internal 
   description: Acceleration on the Y axis
   unit: g (relative to earth gravity 9.81 m/s^2)
   dependency: ttraw_g_y
@@ -2043,7 +2062,8 @@ tt_g_y:
   aggregation: average
   derived: false
 
-tt_g_z: 
+tt_g_z:
+  visibility: internal 
   description: Acceleration on the Z axis
   unit: g (relative to earth gravity 9.81 m/s^2)
   dependency: ttraw_g_z
@@ -2078,7 +2098,8 @@ tt_g_z_std:
   derived: false  
   visibility: internal
  
-tt_inclination: 
+tt_inclination:
+  visibility: internal 
   description: Inclination (angle between the gravity vector and the Z axis)
   unit: ° (degree of arc -90 to +90)
   dependency: [ttraw_g_x, ttraw_g_y, ttraw_g_z]
@@ -2094,8 +2115,8 @@ ttraw_StWC:
 ttraw_StWC_Tref: 
   description: Raw stem water Content, temperature corrected (frequency domain measurement)
   unit: raw Hz (hertz)
-  dependency: [ttraw_StWC, tt_air_temperature]
-  raw_func: "ttraw_StWC - 73.4 * (tt_air_temperature - 29)"  
+  dependency: [ttraw_StWC, tt_Ta_200]
+  raw_func: "ttraw_StWC - 73.4 * (tt_Ta_200 - 29)"  
   aggregation: average
   visibility: internal
   
@@ -2138,7 +2159,8 @@ ttraw_Theat_1:
   visibility: internal
 
   
-tt_Tref_0c: 
+tt_Tref_0c:
+  visibility: internal 
   description: Reference probe transmit stem temperature, start
   unit: °C (degree Celcius)
   dependency: ttraw_Tref
@@ -2152,7 +2174,8 @@ tt_Tref_1c:
   raw_func: "127.6 - 0.006045 * ttraw_Tref_1 + 1.26E-07 * ttraw_Tref_1 ^ 2 - 1.15E-12 * ttraw_Tref_1 ^ 3"  
   aggregation: average  
 
-tt_Theat_0c: 
+tt_Theat_0c:
+  visibility: internal 
   description: Heating probe transmit stem temperature, start
   unit: °C (degree Celcius)
   dependency: ttraw_Theat
@@ -2172,21 +2195,24 @@ ttraw_growth:
   aggregation: average
   visibility: internal
   
-tt_growth_0_8: 
+tt_growth_0_8:
+  visibility: internal 
   description: Stem radial growth (for sensor distance 0-0.8 cm)
   unit: cm (centimeter)
   dependency: ttraw_growth
   raw_func: "0.1817 * ttraw_growth / (109108.5561 - ttraw_growth)"  
   aggregation: average
   
-tt_growth_15_90: 
+tt_growth_15_90:
+  visibility: internal 
   description: Stem radial growth (for sensor distance 1.5-9 cm)
   unit: cm (centimeter)
   dependency: ttraw_growth
   raw_func: "-1.5242 + (111.3154 * 2373.2628) / (2373.2628 + ttraw_growth)"  
   aggregation: average
 
-tt_growth_15_50: 
+tt_growth_15_50:
+  visibility: internal 
   description: Stem radial growth (for sensor distance 1.5-5 cm)
   unit: cm (centimeter)
   dependency: ttraw_growth
@@ -2208,6 +2234,7 @@ ttraw_adc_Vbat:
   aggregation: average
 
 tt_battery_voltage:
+  visibility: internal
   description: Battery voltage
   unit: mV (millivolt)
   dependency: [ttraw_adc_bandgap, ttraw_adc_Vbat]
@@ -2225,8 +2252,8 @@ tt_Ts_20_exploratories:
 ttraw_StWC_Tref_exploratories: 
   description: Raw stem water Content, temperature corrected (frequency domain measurement) (exploratories only)
   unit: raw Hz (hertz)
-  dependency: [ttraw_StWC, tt_air_temperature]
-  raw_func: "ttraw_StWC + 16.97 * (tt_air_temperature - 29)"  
+  dependency: [ttraw_StWC, tt_Ta_200]
+  raw_func: "ttraw_StWC + 16.97 * (tt_Ta_200 - 29)"  
   aggregation: average
   visibility: internal
 
@@ -2237,11 +2264,11 @@ tt_StWC_exploratories:
   raw_func: "(ttraw_StWC_Tref_exploratories < 2211.79 ? 1.061 * (94.2281 - 0.0343127 * ttraw_StWC_Tref_exploratories) - 1.8054 : 1.061 * (-9E-13 * ttraw_StWC_Tref_exploratories ^ 3 + 6E-08 * ttraw_StWC_Tref_exploratories ^ 2 - 0.0013 * ttraw_StWC_Tref_exploratories + 22.494) - 1.8054)"  
   aggregation: average
   
-tt_air_temperature_min:
-  description: Minimum value of tt_air_temperature
+tt_Ta_200_min:
+  description: Minimum value of tt_Ta_200
   unit: °C (degree Celcius)
-  dependency: tt_air_temperature
-  raw_func: "tt_air_temperature" 
+  dependency: tt_Ta_200
+  raw_func: "tt_Ta_200" 
   aggregation: minimum  
   category: temperature
   derived: false
@@ -2250,11 +2277,11 @@ tt_air_temperature_min:
   empirical_diff: 10.0
   interpolation_mse: 7  
 
-tt_air_temperature_max:
-  description: Maximum value of tt_air_temperature
+tt_Ta_200_max:
+  description: Maximum value of tt_Ta_200
   unit: °C (degree Celcius)
-  dependency: tt_air_temperature
-  raw_func: "tt_air_temperature" 
+  dependency: tt_Ta_200
+  raw_func: "tt_Ta_200" 
   aggregation: maximum  
   category: temperature
   derived: false
@@ -2263,15 +2290,16 @@ tt_air_temperature_max:
   empirical_diff: 10.0
   interpolation_mse: 7  
 
-tt_air_temperature_DTR:  
-  description: DTR (Diurnal Temperature Range) of tt_air_temperature
+tt_Ta_200_DTR:  
+  description: DTR (Diurnal Temperature Range) of tt_Ta_200
   unit: °K (degree Kelvin)
-  dependency: [tt_air_temperature_min, tt_air_temperature_max]
-  post_day_func: "tt_air_temperature_max - tt_air_temperature_min"
+  dependency: [tt_Ta_200_min, tt_Ta_200_max]
+  post_day_func: "tt_Ta_200_max - tt_Ta_200_min"
   aggregation: average
   category: temperature
   
 tt_air_relative_humidity_min:
+  visibility: internal
   description: Minimum value of tt_air_relative_humidity
   unit: '% (percentage of relative humidity)'
   raw_source: tt_air_relative_humidity
@@ -2279,24 +2307,28 @@ tt_air_relative_humidity_min:
   derived: false
   
 tt_air_relative_humidity_max:
+  visibility: internal
   description: Maximum value of tt_air_relative_humidity
   unit: '% (percentage of relative humidity)'
   raw_source: tt_air_relative_humidity
   aggregation: maximum  
   derived: false  
 
-tt_air_relative_humidity_DMR:  
+tt_air_relative_humidity_DMR:
+  visibility: internal  
   description: DMR (Diurnal Moisture Range) of tt_air_relative_humidity
   unit: pp (percentage point)
   dependency: [tt_air_relative_humidity_min, tt_air_relative_humidity_max]
   post_day_func: "tt_air_relative_humidity_max - tt_air_relative_humidity_min"
   aggregation: average
   
-tt_wet_bulb_temperature:  
-  description: Wet-Bulb Temperature based on tt_air_temperature and tt_air_relative_humidity
+tt_Ta_200_wet_bulb_temperature:
+  visibility: internal  
+  description: Wet-Bulb Temperature based on tt_Ta_200 and tt_air_relative_humidity
   unit: °C (degree Celcius, -40 to 60))
-  dependency: [tt_air_temperature, tt_air_relative_humidity]
-  raw_func: "tt_air_temperature * arctan(0.151977 * (tt_air_relative_humidity + 8.313659)^(1/2)) + arctan(tt_air_temperature + tt_air_relative_humidity) - arctan(tt_air_relative_humidity - 1.676331) + 0.00391838 * tt_air_relative_humidity^(3/2) * arctan(0.023101 * tt_air_relative_humidity) - 4.686035"
+  dependency: [tt_Ta_200, tt_air_relative_humidity]
+  # reference publication "Wet-Bulb Temperature from Relative Humidity and Air Temperature"  https://doi.org/10.1175/JAMC-D-11-0143.1  
+  raw_func: "tt_Ta_200 * arctan(0.151977 * (tt_air_relative_humidity + 8.313659)^(1/2)) + arctan(tt_Ta_200 + tt_air_relative_humidity) - arctan(tt_air_relative_humidity - 1.676331) + 0.00391838 * tt_air_relative_humidity^(3/2) * arctan(0.023101 * tt_air_relative_humidity) - 4.686035"
   aggregation: average
   category: temperature
 
@@ -2431,23 +2463,104 @@ ttraw_gms_ntc_3:
   aggregation: average
   visibility: internal
   
-tt_gms_T_1: 
+tt_gms_T_1:
+  visibility: internal 
   description: "Temperature of ground moisture sensor #1"
   unit: "°C (degree Celcius)"
   dependency: ttraw_gms_ntc_1
   raw_func: "127.6 - 0.006045 * ttraw_gms_ntc_1 + 1.26E-07 * ttraw_gms_ntc_1 ^ 2 - 1.15E-12 * ttraw_gms_ntc_1 ^ 3"  
   aggregation: average
+  category: temperature 
+  
+tt_Ts_10:
+  description: Soil temperature at 10 centimeters below surface 
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: tt_gms_T_1
+  post_raw_func: "tt_gms_T_1"
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 1.7]  
+  empirical_diff: 3.6
+  interpolation_mse: 7
   category: temperature
+  derived: false # raw_func converts unit only
 
-tt_gms_T_2: 
+tt_Ts_10_min:
+  description: Minimum value of tt_Ts_10
+  unit: °C (degree Celcius)
+  dependency: tt_Ts_10
+  post_hour_func: "tt_Ts_10"
+  aggregation: minimum  
+  category: temperature
+  derived: false
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7  
+
+tt_Ts_10_max:
+  description: Maximum value of tt_Ts_10
+  unit: °C (degree Celcius)
+  dependency: tt_Ts_10
+  post_hour_func: "tt_Ts_10"
+  aggregation: maximum  
+  category: temperature
+  derived: false
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7  
+
+tt_gms_T_2:
+  visibility: internal 
   description: "Temperature of ground moisture sensor #2"
   unit: "°C (degree Celcius)"
   dependency: ttraw_gms_ntc_2
   raw_func: "127.6 - 0.006045 * ttraw_gms_ntc_2 + 1.26E-07 * ttraw_gms_ntc_2 ^ 2 - 1.15E-12 * ttraw_gms_ntc_2 ^ 3"  
   aggregation: average
-  category: temperature  
+  category: temperature
 
-tt_gms_T_3: 
+tt_Ts_20:
+  description: Soil temperature at 20 centimeters below surface 
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: tt_gms_T_2
+  post_raw_func: "tt_gms_T_2"
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 1.7]  
+  empirical_diff: 3.6
+  interpolation_mse: 7
+  category: temperature
+  derived: false # raw_func converts unit only   
+
+tt_Ts_20_min:
+  description: Minimum value of tt_Ts_20
+  unit: °C (degree Celcius)
+  dependency: tt_Ts_20
+  post_hour_func: "tt_Ts_20"
+  aggregation: minimum  
+  category: temperature
+  derived: false
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7  
+
+tt_Ts_20_max:
+  description: Maximum value of tt_Ts_20
+  unit: °C (degree Celcius)
+  dependency: tt_Ts_20
+  post_hour_func: "tt_Ts_20"
+  aggregation: maximum  
+  category: temperature
+  derived: false
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7  
+
+tt_gms_T_3:
+  visibility: internal 
   description: "Temperature of ground moisture sensor #3"
   unit: "°C (degree Celcius)"
   dependency: ttraw_gms_ntc_3
@@ -2455,7 +2568,8 @@ tt_gms_T_3:
   aggregation: average
   category: temperature
   
-tt_gms_ECf_T_1: 
+tt_gms_ECf_T_1:
+  visibility: internal 
   description: "Temperature ECf reference sensor #1"
   unit: Hz (hertz)
   dependency: tt_gms_T_1
@@ -2463,7 +2577,8 @@ tt_gms_ECf_T_1:
   aggregation: average
   category: other
   
-tt_gms_ECf_T_2: 
+tt_gms_ECf_T_2:
+  visibility: internal 
   description: "Temperature ECf reference sensor #2"
   unit: Hz (hertz)
   dependency: tt_gms_T_2
@@ -2471,7 +2586,8 @@ tt_gms_ECf_T_2:
   aggregation: average
   category: other
 
-tt_gms_ECf_T_3: 
+tt_gms_ECf_T_3:
+  visibility: internal 
   description: "Temperature ECf reference sensor #3"
   unit: Hz (hertz)
   dependency: tt_gms_T_3
@@ -2479,7 +2595,8 @@ tt_gms_ECf_T_3:
   aggregation: average
   category: other  
   
-tt_gms_delta_ECf_1: 
+tt_gms_delta_ECf_1:
+  visibility: internal 
   description: "Temperature corrected delta ECf sensor #1"
   unit: "Hz (hertz)"
   dependency: [ttraw_gms_fq_1, tt_gms_ECf_T_1] 
@@ -2487,7 +2604,8 @@ tt_gms_delta_ECf_1:
   aggregation: average
   category: other
   
-tt_gms_delta_ECf_2: 
+tt_gms_delta_ECf_2:
+  visibility: internal 
   description: "Temperature corrected delta ECf sensor #2"
   unit: "Hz (hertz)"
   dependency: [ttraw_gms_fq_2, tt_gms_ECf_T_2] 
@@ -2495,7 +2613,8 @@ tt_gms_delta_ECf_2:
   aggregation: average
   category: other
   
-tt_gms_delta_ECf_3: 
+tt_gms_delta_ECf_3:
+  visibility: internal 
   description: "Temperature corrected delta ECf sensor #3"
   unit: "Hz (hertz)"
   dependency: [ttraw_gms_fq_3, tt_gms_ECf_T_3] 
@@ -2503,7 +2622,8 @@ tt_gms_delta_ECf_3:
   aggregation: average
   category: other  
 
-tt_gms_vwc_african_soil_1: 
+tt_gms_vwc_african_soil_1:
+  visibility: internal 
   description: "african soil volumetric water content sensor #1"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_1] 
@@ -2511,7 +2631,8 @@ tt_gms_vwc_african_soil_1:
   aggregation: average
   category: other
   
-tt_gms_vwc_african_soil_2: 
+tt_gms_vwc_african_soil_2:
+  visibility: internal 
   description: "african soil volumetric water content sensor #2"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_2] 
@@ -2519,7 +2640,8 @@ tt_gms_vwc_african_soil_2:
   aggregation: average
   category: other
 
-tt_gms_vwc_african_soil_3: 
+tt_gms_vwc_african_soil_3:
+  visibility: internal 
   description: "african soil volumetric water content sensor #3"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2527,7 +2649,8 @@ tt_gms_vwc_african_soil_3:
   aggregation: average
   category: other  
 
-tt_gms_vwc_loamy_soil_1: 
+tt_gms_vwc_loamy_soil_1:
+  visibility: internal 
   description: "loamy soil volumetric water content sensor #1"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_1] 
@@ -2535,7 +2658,8 @@ tt_gms_vwc_loamy_soil_1:
   aggregation: average
   category: other
 
-tt_gms_vwc_loamy_soil_2: 
+tt_gms_vwc_loamy_soil_2:
+  visibility: internal 
   description: "loamy soil volumetric water content sensor #2"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_2] 
@@ -2543,7 +2667,8 @@ tt_gms_vwc_loamy_soil_2:
   aggregation: average
   category: other
 
-tt_gms_vwc_loamy_soil_3: 
+tt_gms_vwc_loamy_soil_3:
+  visibility: internal 
   description: "loamy soil volumetric water content sensor #3"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2557,7 +2682,8 @@ tt_Battery_level:
   aggregation: average
   physical_range: [0.0, 5000.0]
 
-tt_gms_vwc_1_s1: 
+tt_gms_vwc_1_s1:
+  visibility: internal 
   description: "Soil volumetric water content sensor #1, S1: Sand-Lake Bolsena; 1.622; 50"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_1] 
@@ -2565,7 +2691,8 @@ tt_gms_vwc_1_s1:
   aggregation: average
   category: other  
 
-tt_gms_vwc_1_s2: 
+tt_gms_vwc_1_s2:
+  visibility: internal 
   description: "Soil volumetric water content sensor #1, S2: Clay-IT; 1.348; 50"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_1] 
@@ -2573,7 +2700,8 @@ tt_gms_vwc_1_s2:
   aggregation: average
   category: other 
 
-tt_gms_vwc_1_s3: 
+tt_gms_vwc_1_s3:
+  visibility: internal 
   description: "Soil volumetric water content sensor #1, S3: Loamy-FEM; 1.194; 50"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_1] 
@@ -2581,7 +2709,8 @@ tt_gms_vwc_1_s3:
   aggregation: average
   category: other 
 
-tt_gms_vwc_1_s4: 
+tt_gms_vwc_1_s4:
+  visibility: internal 
   description: "Soil volumetric water content sensor #1, S4: Loamy-DIBAF; 0.669; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_1] 
@@ -2589,7 +2718,8 @@ tt_gms_vwc_1_s4:
   aggregation: average
   category: other 
 
-tt_gms_vwc_1_s5: 
+tt_gms_vwc_1_s5:
+  visibility: internal 
   description: "Soil volumetric water content sensor #1, S5: Ghana-AF; 1.221; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_1] 
@@ -2597,7 +2727,8 @@ tt_gms_vwc_1_s5:
   aggregation: average
   category: other 
 
-tt_gms_vwc_1_s6: 
+tt_gms_vwc_1_s6:
+  visibility: internal 
   description: "Soil volumetric water content sensor #1, S6: Azienda-Tuscia; 0.9708; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_1] 
@@ -2605,7 +2736,8 @@ tt_gms_vwc_1_s6:
   aggregation: average
   category: other 
 
-tt_gms_vwc_1_s7: 
+tt_gms_vwc_1_s7:
+  visibility: internal 
   description: "Soil volumetric water content sensor #1, S7: Monte Maggio; 0.871; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_1] 
@@ -2613,7 +2745,8 @@ tt_gms_vwc_1_s7:
   aggregation: average
   category: other   
   
-tt_gms_vwc_1_s8: 
+tt_gms_vwc_1_s8:
+  visibility: internal 
   description: "Soil volumetric water content sensor #1, S8: Compost-DIBAF; 0.3866; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_1] 
@@ -2621,7 +2754,8 @@ tt_gms_vwc_1_s8:
   aggregation: average
   category: other
   
-tt_gms_vwc_2_s1: 
+tt_gms_vwc_2_s1:
+  visibility: internal 
   description: "Soil volumetric water content sensor #2, S1: Sand-Lake Bolsena; 1.622; 50"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_2] 
@@ -2629,7 +2763,8 @@ tt_gms_vwc_2_s1:
   aggregation: average
   category: other  
 
-tt_gms_vwc_2_s2: 
+tt_gms_vwc_2_s2:
+  visibility: internal 
   description: "Soil volumetric water content sensor #2, S2: Clay-IT; 1.348; 50"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_2] 
@@ -2637,7 +2772,8 @@ tt_gms_vwc_2_s2:
   aggregation: average
   category: other 
 
-tt_gms_vwc_2_s3: 
+tt_gms_vwc_2_s3:
+  visibility: internal 
   description: "Soil volumetric water content sensor #2, S3: Loamy-FEM; 1.194; 50"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_2] 
@@ -2645,7 +2781,8 @@ tt_gms_vwc_2_s3:
   aggregation: average
   category: other 
 
-tt_gms_vwc_2_s4: 
+tt_gms_vwc_2_s4:
+  visibility: internal 
   description: "Soil volumetric water content sensor #2, S4: Loamy-DIBAF; 0.669; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_2] 
@@ -2653,7 +2790,8 @@ tt_gms_vwc_2_s4:
   aggregation: average
   category: other 
 
-tt_gms_vwc_2_s5: 
+tt_gms_vwc_2_s5:
+  visibility: internal 
   description: "Soil volumetric water content sensor #2, S5: Ghana-AF; 1.221; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_2] 
@@ -2661,7 +2799,8 @@ tt_gms_vwc_2_s5:
   aggregation: average
   category: other 
 
-tt_gms_vwc_2_s6: 
+tt_gms_vwc_2_s6:
+  visibility: internal 
   description: "Soil volumetric water content sensor #2, S6: Azienda-Tuscia; 0.9708; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_2] 
@@ -2669,7 +2808,8 @@ tt_gms_vwc_2_s6:
   aggregation: average
   category: other 
 
-tt_gms_vwc_2_s7: 
+tt_gms_vwc_2_s7:
+  visibility: internal 
   description: "Soil volumetric water content sensor #2, S7: Monte Maggio; 0.871; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_2] 
@@ -2677,7 +2817,8 @@ tt_gms_vwc_2_s7:
   aggregation: average
   category: other   
   
-tt_gms_vwc_2_s8: 
+tt_gms_vwc_2_s8:
+  visibility: internal 
   description: "Soil volumetric water content sensor #2, S8: Compost-DIBAF; 0.3866; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_2] 
@@ -2685,7 +2826,8 @@ tt_gms_vwc_2_s8:
   aggregation: average
   category: other
 
-tt_gms_vwc_3_s1: 
+tt_gms_vwc_3_s1:
+  visibility: internal 
   description: "Soil volumetric water content sensor #3, S1: Sand-Lake Bolsena; 1.622; 50"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2693,7 +2835,8 @@ tt_gms_vwc_3_s1:
   aggregation: average
   category: other  
 
-tt_gms_vwc_3_s2: 
+tt_gms_vwc_3_s2:
+  visibility: internal 
   description: "Soil volumetric water content sensor #3, S2: Clay-IT; 1.348; 50"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2701,7 +2844,8 @@ tt_gms_vwc_3_s2:
   aggregation: average
   category: other 
 
-tt_gms_vwc_3_s3: 
+tt_gms_vwc_3_s3:
+  visibility: internal 
   description: "Soil volumetric water content sensor #3, S3: Loamy-FEM; 1.194; 50"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2709,7 +2853,8 @@ tt_gms_vwc_3_s3:
   aggregation: average
   category: other 
 
-tt_gms_vwc_3_s4: 
+tt_gms_vwc_3_s4:
+  visibility: internal 
   description: "Soil volumetric water content sensor #3, S4: Loamy-DIBAF; 0.669; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2717,7 +2862,8 @@ tt_gms_vwc_3_s4:
   aggregation: average
   category: other 
 
-tt_gms_vwc_3_s5: 
+tt_gms_vwc_3_s5:
+  visibility: internal 
   description: "Soil volumetric water content sensor #3, S5: Ghana-AF; 1.221; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2725,7 +2871,8 @@ tt_gms_vwc_3_s5:
   aggregation: average
   category: other 
 
-tt_gms_vwc_3_s6: 
+tt_gms_vwc_3_s6:
+  visibility: internal 
   description: "Soil volumetric water content sensor #3, S6: Azienda-Tuscia; 0.9708; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2733,7 +2880,8 @@ tt_gms_vwc_3_s6:
   aggregation: average
   category: other 
 
-tt_gms_vwc_3_s7: 
+tt_gms_vwc_3_s7:
+  visibility: internal 
   description: "Soil volumetric water content sensor #3, S7: Monte Maggio; 0.871; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
@@ -2741,7 +2889,8 @@ tt_gms_vwc_3_s7:
   aggregation: average
   category: other   
   
-tt_gms_vwc_3_s8: 
+tt_gms_vwc_3_s8:
+  visibility: internal 
   description: "Soil volumetric water content sensor #3, S8: Compost-DIBAF; 0.3866; 2600"
   unit: "% (percentage of volumetric water content)"
   dependency: [tt_gms_delta_ECf_3] 
