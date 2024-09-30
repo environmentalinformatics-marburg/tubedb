@@ -236,7 +236,7 @@ public final class TsDBFactory {
 			//*** region config end			
 
 			//*** calc additional data start
-			tsdb.refresStationAliasMap();
+			tsdb.refreshStationAliasMap();
 			tsdb.updateGeneralStations();
 			configLoader.calcNearestStations();
 			configLoader.calcNearestVirtualPlots();

@@ -27,37 +27,53 @@ public class TimestampInterval<T extends Serializable> implements Serializable {
 		this.end = end;
 	}
 
+	/**
+	 * start end is contained fully in interval
+	 * @param start
+	 * @param end
+	 * @return
+	 */
 	public boolean contains(long start, long end) {
-		throwGreater(start,end);
-		return (this.start==null?true:this.start<=start) && (this.end==null?true:end<=this.end);
+		throwGreater(start, end);
+		return (this.start == null ? true : this.start <= start) && (this.end == null ? true : end <= this.end);
+	}
+	
+	/**
+	 * Some part of start end is contained in interval.
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public boolean overlaps(long start, long end) {
+		throwGreater(start, end);		
+		return (this.start == null || end >= this.start) && (this.end == null || this.end >= start);		
 	}
 	
 	public TimestampInterval<T> filterByInterval(Long includedStart, Long includedEnd) {
 		throwGreater(includedStart,includedEnd);		
 		
 		Long filterStart = start;
-		if(includedStart!=null) {
-			if(filterStart==null) {
+		if(includedStart != null) {
+			if(filterStart == null) {
 				filterStart = includedStart;
 			} else if(filterStart<includedStart){
 				filterStart = includedStart;
 			}
 		}
 		Long filterEnd = end;
-		if(includedEnd!=null) {
-			if(filterEnd==null) {
+		if(includedEnd != null) {
+			if(filterEnd == null) {
 				filterEnd = includedEnd;
 			} else if(includedEnd<filterEnd) {
 				filterEnd = includedEnd;
 			}
 		}
 		
-		if(filterStart!=null&&filterEnd!=null&&filterEnd<filterStart) {
+		if(filterStart != null && filterEnd != null && filterEnd < filterStart) {
 			return null;
 		}
 		
-		return new TimestampInterval<T>(value, filterStart,filterEnd);
-		
+		return new TimestampInterval<T>(value, filterStart, filterEnd);		
 	}
 
 	@Override

@@ -33,7 +33,7 @@ import tsdb.util.Util;
  */
 public class TsDB implements AutoCloseable {
 	
-	public static final String tubedb_version = "1.32.2";
+	public static final String tubedb_version = "1.32.4";
 
 	/**
 	 * map regionName -> Region
@@ -285,7 +285,7 @@ public class TsDB implements AutoCloseable {
 		return stationMap.values();
 	}
 
-	public void refresStationAliasMap() {
+	public void refreshStationAliasMap() {
 		stationAliasMap.clear();
 		stationAliasMap.putAll(stationMap);
 		for(Station station:getStations()) {

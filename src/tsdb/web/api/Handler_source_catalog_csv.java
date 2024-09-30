@@ -5,17 +5,14 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.jetty.server.Request;
+import org.tinylog.Logger;
+
+import com.opencsv.CSVWriter;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-
-import org.tinylog.Logger;
-import org.eclipse.jetty.server.Request;
-
-import com.opencsv.CSVWriter;
-import com.opencsv.CSVWriterBuilder;
-
 import tsdb.StationProperties;
 import tsdb.component.SourceEntry;
 import tsdb.remote.RemoteTsDB;
@@ -35,7 +32,7 @@ import tsdb.web.util.Web;
  *
  */
 public class Handler_source_catalog_csv extends MethodHandler {	
-	
+
 
 	public Handler_source_catalog_csv(RemoteTsDB tsdb) {
 		super(tsdb, "source_catalog.csv");
@@ -73,7 +70,8 @@ public class Handler_source_catalog_csv extends MethodHandler {
 					if(stationSet.contains(entry.stationName)) {
 						for(TimestampInterval<StationProperties> interval:virtualPlotInfo.intervalList) {
 							if(interval.value.get_serial().equals(entry.stationName)) {
-								if(interval.contains(entry.firstTimestamp, entry.lastTimestamp)) {
+								//if(interval.contains(entry.firstTimestamp, entry.lastTimestamp)) {
+								if(interval.overlaps(entry.firstTimestamp, entry.lastTimestamp)) {
 									return true;
 								}
 							}
