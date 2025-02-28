@@ -1322,10 +1322,19 @@ Ta_200_warm10_sum:
   aggregation: sum
 
 Ta_200_heating_degree_sum:  
-  description: sum of mean day Ta_200 (plus 20) with < 12 °C
-  unit: (amount)
+  description: "for day means lower than 18.3°C, sum of (18.3°C minus Ta_200)"
+  unit: index value (°C scale based)
   dependency: Ta_200
-  post_day_func: "(Ta_200 < 12 ? 20 - Ta_200 : 0)"
+  # reference https://www.sciencedirect.com/topics/engineering/heating-degree-day
+  post_day_func: "(Ta_200 < 18.3 ? 18.3 - Ta_200 : 0)"
+  aggregation: sum
+
+Ta_200_heating_degree_days:  
+  description: heating day count (Ta_200 day mean < 18.3°C)
+  unit: d (day)
+  dependency: Ta_200
+  # reference https://www.sciencedirect.com/topics/engineering/heating-degree-day
+  post_day_func: "(Ta_200 < 18.3 ? 1 : 0)"
   aggregation: sum  
   
 Ta_200_growth_sum:  
