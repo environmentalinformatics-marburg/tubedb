@@ -81,6 +81,22 @@ Ta_10:
   empirical_diff: 3.38
   interpolation_mse: 7
   category: temperature
+  
+Ta_10_min:
+  description: Minimum value of Ta_10
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ta_10  
+  post_hour_func: Ta_10
+  aggregation: minimum
+  category: temperature
+  
+Ta_10_max:
+  description: Maximum value of Ta_10
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ta_10
+  post_hour_func: Ta_10
+  aggregation: maximum
+  category: temperature
 
 Ts_02:
   description: Soil temperature at 2 centimeters below surface
@@ -100,6 +116,22 @@ Ts_05:
   step_range: [0.0, 1.85]   
   empirical_diff: 3.31 
   interpolation_mse: 7
+  category: temperature
+
+Ts_05_min:
+  description: Minimum value of Ts_05
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_05  
+  post_hour_func: Ts_05
+  aggregation: minimum
+  category: temperature
+  
+Ts_05_max:
+  description: Maximum value of Ts_05
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_05
+  post_hour_func: Ts_05
+  aggregation: maximum
   category: temperature
   
 Ts_10:
@@ -128,6 +160,32 @@ Ts_10_max:
   aggregation: maximum
   category: temperature
   
+Ts_10_SMT:
+  description: Soil temperature at 10 centimeters below surface 
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 1.7]  
+  empirical_diff: 3.6
+  interpolation_mse: 7
+  category: temperature
+  
+Ts_10_SMT_min:
+  description: Minimum value of Ts_10_SMT 
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_10_SMT  
+  post_hour_func: Ts_10_SMT
+  aggregation: minimum
+  category: temperature
+  
+Ts_10_SMT_max:
+  description: Maximum value of Ts_10_SMT 
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_10_SMT
+  post_hour_func: Ts_10_SMT
+  aggregation: maximum
+  category: temperature  
+  
 Ts_20: 
   description: Soil temperature at 20 centimeters below surface 
   unit: °C (degree Celcius, -40 to 60) 
@@ -136,6 +194,22 @@ Ts_20:
   step_range: [0.0, 0.9]
   empirical_diff: 3.03  
   interpolation_mse: 7
+  category: temperature
+
+Ts_20_min:
+  description: Minimum value of Ts_20
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_20  
+  post_hour_func: Ts_20
+  aggregation: minimum
+  category: temperature
+  
+Ts_20_max:
+  description: Maximum value of Ts_20
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_20
+  post_hour_func: Ts_20
+  aggregation: maximum
   category: temperature
   
 Ts_30: 
@@ -147,6 +221,22 @@ Ts_30:
   empirical_diff: 3.03  
   interpolation_mse: 7
   category: temperature
+
+Ts_30_min:
+  description: Minimum value of Ts_30
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_30  
+  post_hour_func: Ts_30
+  aggregation: minimum
+  category: temperature
+  
+Ts_30_max:
+  description: Maximum value of Ts_30
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_30
+  post_hour_func: Ts_30
+  aggregation: maximum
+  category: temperature
   
 Ts_50:
   description: Soil temperature at 50 centimeters below surface
@@ -156,6 +246,22 @@ Ts_50:
   step_range: [0.0, 0.6]   
   empirical_diff: 3.18
   interpolation_mse: 7
+  category: temperature
+
+Ts_50_min:
+  description: Minimum value of Ts_50
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_50  
+  post_hour_func: Ts_50
+  aggregation: minimum
+  category: temperature
+  
+Ts_50_max:
+  description: Maximum value of Ts_50
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_50
+  post_hour_func: Ts_50
+  aggregation: maximum
   category: temperature
   
 SM_10:
@@ -181,6 +287,29 @@ SM_10_max:
   post_hour_func: SM_10
   aggregation: maximum
   
+SM_10_SMT:
+  description: Soil moisture at 10 centimeters below surface
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 29.04
+  interpolation_mse: 100   
+  
+SM_10_SMT_min:
+  description: Minimum value of SM_10_SMT 
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_10_SMT  
+  post_hour_func: SM_10_SMT
+  aggregation: minimum
+  
+SM_10_SMT_max:
+  description: Maximum value of SM_10_SMT 
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_10_SMT  
+  post_hour_func: SM_10_SMT
+  aggregation: maximum  
+  
 SM_15:
   description: Soil moisture at 15 centimeters below surface (BeCycles sensor type at Exploratories) 
   unit: '% (percentage of volumetric water content)' 
@@ -189,6 +318,20 @@ SM_15:
   step_range: [0.0, 1000.0] 
   empirical_diff: 18.28
   interpolation_mse: 100   
+
+SM_15_min:
+  description: Minimum value of SM_15
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_15  
+  post_hour_func: SM_15
+  aggregation: minimum
+  
+SM_15_max:
+  description: Maximum value of SM_15
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_15
+  post_hour_func: SM_15
+  aggregation: maximum
   
 SM_20:
   description: Soil moisture at 20 centimeters below surface
@@ -198,6 +341,20 @@ SM_20:
   step_range: [0.0, 1000.0] 
   empirical_diff: 23.13
   interpolation_mse: 100   
+
+SM_20_min:
+  description: Minimum value of SM_20
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_20  
+  post_hour_func: SM_20
+  aggregation: minimum
+  
+SM_20_max:
+  description: Maximum value of SM_20
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_20
+  post_hour_func: SM_20
+  aggregation: maximum
   
 SM_30: 
   description: Soil moisture at 30 centimeters below surface (BeCycles sensor type at Exploratories) 
@@ -207,6 +364,20 @@ SM_30:
   step_range: [0.0, 1000.0] 
   empirical_diff: 23.83
   interpolation_mse: 100   
+
+SM_30_min:
+  description: Minimum value of SM_30
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_30  
+  post_hour_func: SM_30
+  aggregation: minimum
+  
+SM_30_max:
+  description: Maximum value of SM_30
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_30
+  post_hour_func: SM_30
+  aggregation: maximum
   
 SM_40:
   description: Soil moisture at 40 centimeters below surface (BeCycles sensor type at Exploratories)
@@ -216,6 +387,20 @@ SM_40:
   step_range: [0.0, 1000.0] 
   empirical_diff: 27.53
   interpolation_mse: 100   
+
+SM_40_min:
+  description: Minimum value of SM_40
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_40  
+  post_hour_func: SM_40
+  aggregation: minimum
+  
+SM_40_max:
+  description: Maximum value of SM_40
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_40
+  post_hour_func: SM_40
+  aggregation: maximum
   
 SM_50:   
   description: Soil moisture at 50 centimeters below surface (BeCycles sensor type at Exploratories) 
@@ -225,6 +410,20 @@ SM_50:
   step_range: [0.0, 1000.0] 
   empirical_diff: 11.71
   interpolation_mse: 100   
+
+SM_50_min:
+  description: Minimum value of SM_50
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_50  
+  post_hour_func: SM_50
+  aggregation: minimum
+  
+SM_50_max:
+  description: Maximum value of SM_50
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_50
+  post_hour_func: SM_50
+  aggregation: maximum
   
 #****** new BeCycles sensors ********
 
@@ -236,6 +435,20 @@ SM_10_2:
   step_range: [0.0, 1000.0]
   empirical_diff: 29.04  
   interpolation_mse: 100   
+
+SM_10_2_min:
+  description: Minimum value of SM_10_2
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_10_2  
+  post_hour_func: SM_10_2
+  aggregation: minimum
+  
+SM_10_2_max:
+  description: Maximum value of SM_10_2
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_10_2
+  post_hour_func: SM_10_2
+  aggregation: maximum
  
 SM_20_2:
   description: Soil moisture at 20 centimeters below surface (BeCycles sensor type at Exploratories)
@@ -245,6 +458,20 @@ SM_20_2:
   step_range: [0.0, 1000.0] 
   empirical_diff: 23.13  
   interpolation_mse: 100   
+
+SM_20_2_min:
+  description: Minimum value of SM_20_2
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_20_2  
+  post_hour_func: SM_20_2
+  aggregation: minimum
+  
+SM_20_2_max:
+  description: Maximum value of SM_20_2
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_20_2
+  post_hour_func: SM_20_2
+  aggregation: maximum
   
 SM_35:
   description: Soil moisture at 35 centimeters below surface (BeCycles sensor type at Exploratories)
@@ -254,6 +481,20 @@ SM_35:
   step_range: [0.0, 1000.0] 
   empirical_diff: 23.83
   interpolation_mse: 100   
+
+SM_35_min:
+  description: Minimum value of SM_35
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_35  
+  post_hour_func: SM_35
+  aggregation: minimum
+  
+SM_35_max:
+  description: Maximum value of SM_35
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_35
+  post_hour_func: SM_35
+  aggregation: maximum
   
 #************************************
 
@@ -554,6 +795,22 @@ Ta_1000:
   interpolation_mse: 7
   category: temperature
   
+Ta_1000_min:
+  description: Minimum value of Ta_1000
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ta_1000  
+  post_hour_func: Ta_1000
+  aggregation: minimum
+  category: temperature
+  
+Ta_1000_max:
+  description: Maximum value of Ta_1000
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ta_1000
+  post_hour_func: Ta_1000
+  aggregation: maximum
+  category: temperature  
+  
 rH_1000:
   description: Relative air humidity at 10 meters above ground
   unit: '% (percentage of relative humidity, 0-100)'
@@ -571,6 +828,22 @@ Ta_2000:
   step_range: [0.0, 10.0]
   empirical_diff: 10.0
   interpolation_mse: 7
+  category: temperature
+
+Ta_2000_min:
+  description: Minimum value of Ta_2000
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ta_2000  
+  post_hour_func: Ta_2000
+  aggregation: minimum
+  category: temperature
+  
+Ta_2000_max:
+  description: Maximum value of Ta_2000
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ta_2000
+  post_hour_func: Ta_2000
+  aggregation: maximum
   category: temperature
  
 rH_2000:
@@ -591,6 +864,22 @@ Ta_3000:
   empirical_diff: 10.0
   interpolation_mse: 7
   category: temperature
+
+Ta_3000_min:
+  description: Minimum value of Ta_3000
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ta_3000  
+  post_hour_func: Ta_3000
+  aggregation: minimum
+  category: temperature
+  
+Ta_3000_max:
+  description: Maximum value of Ta_3000
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ta_3000
+  post_hour_func: Ta_3000
+  aggregation: maximum
+  category: temperature
   
 rH_3000:
   description: Relative air humidity at 30 meters above ground
@@ -609,6 +898,22 @@ Ta_3700:
   step_range: [0.0, 10.0]
   empirical_diff: 10.0
   interpolation_mse: 7
+  category: temperature
+
+Ta_3700_min:
+  description: Minimum value of Ta_3700
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ta_3700  
+  post_hour_func: Ta_3700
+  aggregation: minimum
+  category: temperature
+  
+Ta_3700_max:
+  description: Maximum value of Ta_3700
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ta_3700
+  post_hour_func: Ta_3700
+  aggregation: maximum
   category: temperature
   
 rH_3700:
@@ -678,6 +983,22 @@ Ta_4400:
   step_range: [0.0, 10.0]
   empirical_diff: 10.0
   interpolation_mse: 7
+  category: temperature
+
+Ta_4400_min:
+  description: Minimum value of Ta_4400
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ta_4400  
+  post_hour_func: Ta_4400
+  aggregation: minimum
+  category: temperature
+  
+Ta_4400_max:
+  description: Maximum value of Ta_4400
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ta_4400
+  post_hour_func: Ta_4400
+  aggregation: maximum
   category: temperature
 
 rH_4400:

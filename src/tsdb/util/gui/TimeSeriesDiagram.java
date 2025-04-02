@@ -3,10 +3,8 @@ package tsdb.util.gui;
 import static tsdb.util.AssumptionCheck.throwNull;
 import static tsdb.util.AssumptionCheck.throwNulls;
 
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
-
 
 import org.tinylog.Logger;
 
