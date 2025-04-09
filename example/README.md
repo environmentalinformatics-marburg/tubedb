@@ -15,6 +15,9 @@ general (server) configuration `tsdb_paths.ini`
 time series data import specification by type and by folder location `import.ini`
 
 
+*If you activate password protected login in `tsdb_paths.ini`, be sure to change the accounts and passwords in `realm.properties`.*
+
+
 ## Projects
 
 ---

@@ -720,7 +720,13 @@
 								</div>
 							</div>
 							<hr>						
-						</div>							
+						</div>
+						<div v-show="viewType === 'diagram'">
+							<div>
+								<input type="checkbox" v-model="markGaps"> mark gaps
+							</div>
+							<hr>						
+						</div>						
 						<div v-show="viewType === 'heatmap'">
 							<input type="checkbox" id="byYear" v-model="byYear">
 							<label for="byYear">by year</label>

@@ -102,7 +102,8 @@ data: function () {
 		sensorMap: {},
 		sensorNamePlotMap: {},
 		sensorNameStationMap: {},
-		default_sensor_name: "Ta_200",
+		//default_sensor_name: "Ta_200",
+		default_sensor_names: ["Ta_200", "tt_Ta_200"],
 
 		aggregationHover: false,
 		aggregationHoverStay: false,
@@ -157,6 +158,7 @@ data: function () {
 		yAxisValueRange: false,
 		yAxisValueRangeMin: undefined,
 		yAxisValueRangeMax: undefined,
+		markGaps: false,
 		
 		views: [],
 		viewsDone: 0,
@@ -256,8 +258,15 @@ computed: {
 					}
 				});
 				if(sensorIDs.length === 0) {
-					if(sensors.some(function(s){return s.id===self.default_sensor_name;})) {
+					/*if(sensors.some(function(s){return s.id===self.default_sensor_name;})) {
 						sensorIDs = [self.default_sensor_name];
+					} else {
+						sensorIDs = [sensors[0].id];
+					}*/
+					//console.log(sensors);
+					//console.log(self.default_sensor_names);
+					if(sensors.some(function(sensor) { return self.default_sensor_names.includes(sensor.id); } )) {
+						sensorIDs = self.default_sensor_names.filter(function(sensor_name) {return self.default_sensor_names.includes(sensor_name); } );
 					} else {
 						sensorIDs = [sensors[0].id];
 					}
@@ -630,6 +639,9 @@ methods: {
 						view.value_min = self.yAxisValueRangeMin;
 						view.value_max = self.yAxisValueRangeMax;
 					}
+					if(self.viewType == 'diagram' && self.markGaps) {
+						view.mark_gaps = true;
+					}
 					views.push(view);
 				}
 			});
@@ -681,6 +693,7 @@ methods: {
 		if(a.raw_value !== b.raw_value) return false;		
 		if(a.value_min !== b.value_min) return false;
 		if(a.value_max !== b.value_max) return false;
+		if(a.mark_gaps !== b.mark_gaps) return false;
 		return true;
 	},
 	compareViews: function(va, vb) {
@@ -753,6 +766,9 @@ methods: {
 		}
 		if(view.hasOwnProperty('value_max')) {
 			params.value_max = view.value_max;
+		}
+		if(view.hasOwnProperty('mark_gaps')) {
+			params.mark_gaps = view.mark_gaps;
 		}
 		
 		var url= 'unknown';
@@ -1004,7 +1020,10 @@ watch: {
 	},
 	yAxisValueRangeMax: function() {
 		this.updateViews();
-	},	
+	},
+	markGaps: function() {
+		this.updateViews();
+	},
 	groupViewYearRange: function() {
 		if(this.groupViewYearRange != undefined) {
 			var startYear = this.groupViewYearRange.start;
