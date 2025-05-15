@@ -295,11 +295,11 @@ export default {
       }
     },
     elapsedClass(days) {
-      let timeMark = "timeMarkOneMonth";
+      let timeMark = "timeMarkSixWeeks";
       if(days > 365) {
         timeMark = "timeMarkLost";
-      } else if(days > 7 * 4) {
-        timeMark = "timeMarkOneMonth";
+      } else if(days > 7 * 6) {
+        timeMark = "timeMarkSixWeeks";
       } else if(days > 7 * 2) {
         timeMark = "timeMarkTwoWeeks";
       } else if(days > 7) {
@@ -419,7 +419,7 @@ td.voltageMarkCRITICAL { background-color: #ff444477; }
 }
 
 td.timeMarkLost { background-color: #666666; }
-td.timeMarkOneMonth { background-color: #ff4444; }
+td.timeMarkSixWeeks { background-color: #ff4444; }
 td.timeMarkTwoWeeks { background-color: #ff9944; }
 td.timeMarkOneWeek { background-color: #ffff44; }
 td.timeMarkNow { background-color: #44ff44; }

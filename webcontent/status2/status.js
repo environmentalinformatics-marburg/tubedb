@@ -115,11 +115,11 @@ Vue.component('demo-grid', {
     },
 	
 	elapsedStyle: function(days) {
-		var timeMark = "timeMarkOneMonth";
+		var timeMark = "timeMarkSixWeeks";
 		if(days>365) {
 			timeMark = "timeMarkLost";
-		} else if(days>7*4) {
-			timeMark = "timeMarkOneMonth";
+		} else if(days>7*6) {
+			timeMark = "timeMarkSixWeeks";
 		} else if(days>7*2) {
 			timeMark = "timeMarkTwoWeeks";
 		} else if(days>7) {

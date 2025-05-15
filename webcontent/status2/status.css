@@ -78,7 +78,7 @@ th.active .arrow {
 }
 
 .timeMarkLost { background-color: #666666; }
-.timeMarkOneMonth { background-color: #ff4444; }
+.timeMarkSixWeeks { background-color: #ff4444; }
 .timeMarkTwoWeeks { background-color: #ff9944; }
 .timeMarkOneWeek { background-color: #ffff44; }
 .timeMarkNow { background-color: #44ff44; }

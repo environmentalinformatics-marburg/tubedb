@@ -1384,11 +1384,6 @@ wet_bulb_temp:
 
 #************* raw sensors at exploratories *********
 
-SM_15_U:
-  aggregation: none
-  physical_range: [0.0, 1.5]
-  visibility: internal
-  
 UOtt:
   description: Datalogger Battery Voltage measurement
   unit: V (volt) 
@@ -1397,21 +1392,11 @@ UOtt:
   step_range: [0.0, 1000.0]   
   #visibility: internal
   
-SM_50_U:
-  aggregation: none
-  physical_range: [0.0, 1.5]
-  visibility: internal
-  
 Trad_R:
   description: PT100 sensor radiometer temperature
   unit: Ω (ohm)  
   aggregation: none
   physical_range: [80.0, 125.0]
-  visibility: internal
-  
-T_Ott:
-  aggregation: none
-  step_range: [0.0, 1000.0]
   visibility: internal
   
 SWUR_300_U:
@@ -1450,12 +1435,6 @@ SM_10_U:
   step_range: [0.0, 1000.0]
   visibility: internal
   
-SM_40_U:
-  aggregation: none
-  physical_range: [0.0, 1.5]
-  step_range: [0.0, 1000.0]
-  visibility: internal
-  
 UB:
   description: Datalogger Battery Voltage measurement
   unit: V (volt)  
@@ -1463,12 +1442,6 @@ UB:
   physical_range: [0.0, 24.0]
   step_range: [0.0, 1000.0]
   #visibility: internal
-  
-LWDR_300_U:
-  aggregation: none
-  physical_range: [-40.0, 60.0]
-  step_range: [0.0, 1000.0]
-  visibility: internal
   
 PAR_200_U:
   description: (raw) Photosynthetically active radiation at 2 meters height
@@ -1499,11 +1472,6 @@ SM_40_U:
   visibility: internal
   
 T_Ott:
-  aggregation: none
-  step_range: [0.0, 1000.0]
-  visibility: internal
-  
-Trad_R:
   aggregation: none
   step_range: [0.0, 1000.0]
   visibility: internal
@@ -1853,22 +1821,6 @@ ModemReset:
   visibility: internal  
 
 nmbr_bytes_rtrnd:
-  description: (internal)
-  visibility: internal  
-
-Rain_mm:
-  description: (internal)
-  visibility: internal  
-
-ETsz24:
-  description: (internal)
-  visibility: internal  
-
-ETsz24:
-  description: (internal)
-  visibility: internal  
-
-ETsz24:
   description: (internal)
   visibility: internal
 
@@ -2554,14 +2506,12 @@ ttraw_adc_bandgap:
   unit: raw
   aggregation: average
   visibility: internal 
-  aggregation: average 
   
 ttraw_adc_Vbat:
   description: adc Vbat
   unit: raw
   aggregation: average
   visibility: internal 
-  aggregation: average
 
 tt_battery_voltage:
   visibility: internal
