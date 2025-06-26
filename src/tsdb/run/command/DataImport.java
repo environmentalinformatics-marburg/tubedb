@@ -75,6 +75,11 @@ public class DataImport {
 				Logger.info("import " + region.name);
 				for(String key:section.keySet()) {
 					for(String value:section.getAll(key)) {
+						Logger.info("import ini in |" + regionName + "| entry |" + key + "| with |"+ value.trim() + "|");
+					}
+				}
+				for(String key:section.keySet()) {
+					for(String value:section.getAll(key)) {
 						try {
 							importPath(region, key, value.trim());
 						} catch (Exception e) {

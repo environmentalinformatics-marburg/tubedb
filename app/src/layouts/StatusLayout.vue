@@ -415,7 +415,7 @@ td.voltageMarkCRITICAL { background-color: #ff444477; }
 
 .table-header th {
   background-color:#f4f4f4;
-  border-top: 1px solid #eaeaea;;
+  border-top: 1px solid #eaeaea;
 }
 
 td.timeMarkLost { background-color: #666666; }

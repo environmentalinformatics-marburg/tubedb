@@ -41,6 +41,7 @@ public class CSV_MXminiLoader {
 	}
 
 	public void load(Path rootPath) {
+		Logger.info("load directory with MXminiLoader:        "+rootPath);
 		loadFiles(rootPath);
 		loadSubDirs(rootPath);
 	}
@@ -128,7 +129,7 @@ public class CSV_MXminiLoader {
 				float[] data = new float[sensorNamesLen];
 				for(int i = 0; i < sensorNamesLen; i++) {
 					String v = row[i + 1];
-					if(v.equals("nan")) {
+					if(v.isBlank() || v.equals("nan")) {
 						data[i] = Float.NaN;
 					} else {
 						//data[i] = Float.parseFloat(v.replace(',','.'));
