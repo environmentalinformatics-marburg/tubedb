@@ -449,7 +449,7 @@ SM_10_2_max:
   dependency: SM_10_2
   post_hour_func: SM_10_2
   aggregation: maximum
- 
+  
 SM_20_2:
   description: Soil moisture at 20 centimeters below surface (BeCycles sensor type at Exploratories)
   unit: '% (percentage of volumetric water content)' 
@@ -3284,4 +3284,245 @@ precipitation_dwd_year:
   unit: mm (millimeter)
   aggregation: last # pass-through yearly values from raw to year aggregation
   category: water  
+ 
+# wood sensors
+
+Ts_20_1: 
+  description: Soil temperature at 20 centimeters below surface (Beech/shelter)
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0] 
+  step_range: [0.0, 0.9]
+  empirical_diff: 3.03  
+  interpolation_mse: 7
+  category: temperature
+
+Ts_20_1_min:
+  description: Minimum value of Ts_20_1
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_20_1  
+  post_hour_func: Ts_20_1
+  aggregation: minimum
+  category: temperature
   
+Ts_20_1_max:
+  description: Maximum value of Ts_20_1
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_20_1
+  post_hour_func: Ts_20_1
+  aggregation: maximum
+  category: temperature
+  
+Ts_20_2: 
+  description: Soil temperature at 20 centimeters below surface (Beech/shelter)
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0] 
+  step_range: [0.0, 0.9]
+  empirical_diff: 3.03  
+  interpolation_mse: 7
+  category: temperature
+
+Ts_20_2_min:
+  description: Minimum value of Ts_20_2
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_20_2  
+  post_hour_func: Ts_20_2
+  aggregation: minimum
+  category: temperature
+  
+Ts_20_2_max:
+  description: Maximum value of Ts_20_2
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_20_2
+  post_hour_func: Ts_20_2
+  aggregation: maximum
+  category: temperature
+  
+Ts_20_WET_1: 
+  description: Soil temperature at 20 centimeters below surface (WET150) (Beech/shelter)
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0] 
+  step_range: [0.0, 0.9]
+  empirical_diff: 3.03  
+  interpolation_mse: 7
+  category: temperature
+
+Ts_20_WET_1_min:
+  description: Minimum value of Ts_20_WET_1
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_20_WET_1  
+  post_hour_func: Ts_20_WET_1
+  aggregation: minimum
+  category: temperature
+  
+Ts_20_WET_1_max:
+  description: Maximum value of Ts_20_WET_1
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_20_WET_1
+  post_hour_func: Ts_20_WET_1
+  aggregation: maximum
+  category: temperature
+
+Tw_10_1:
+  description: Wood temperature (WET150) (Beech/shelter)
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+  
+WMg_10_1:
+  description: Wood moisture ground 1 at 10 centimeters (WET150) (Beech/shelter)
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 29.04
+  interpolation_mse: 100   
+
+Twb_01:
+  description: Wood burried 1 temperature (Beech)
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+
+Twb_02:
+  description: Wood burried 2 temperature (Beech/shelter)
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+
+Twb_03:
+  description: Wood burried 3 temperature (Beech/shelter)
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+
+Twg_01:
+  description: Wood ground 1 temperature  (Beech)
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+
+Twg_02:
+  description: Wood ground 2 temperature (Beech/shelter)
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+
+Twg_03:
+  description: Wood ground 3 temperature (Beech/shelter)
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+
+Twu_01:
+  description: Wood stone up 1 temperature  (Beech)
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+
+Twu_02:
+  description: Wood stone up 2 temperature (Beech/shelter)
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+
+Twu_03:
+  description: Wood stone up 3 temperature (Beech/shelter)
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  category: temperature
+
+ECb_10_1:
+  description: Bulk electrical conductivity (WET150) (Beech/shelter)
+  unit: mS/m (milli siemens per meter)  
+  aggregation: average
+  
+ECb_20_1:
+  description: Bulk electrical conductivity (WET150) (Beech/shelter)
+  unit: mS/m (milli siemens per meter)  
+  aggregation: average  
+  
+ECp_10_1:
+  description: Pore water conductivity (WET150) (Beech/shelter)
+  unit: mS/m (milli siemens per meter)  
+  aggregation: average 
+
+ECp_20_1:
+  description: Pore water conductivity (WET150) (Beech/shelter)
+  unit: mS/m (milli siemens per meter)  
+  aggregation: average
+  
+Perm_10_WET_1: 
+  description: Permittivity (WET150) (Beech/shelter)
+  unit: (none) 
+  aggregation: average  
+
+Perm_20_WET_1: 
+  description: Permittivity (WET150) (Beech/shelter)
+  unit: (none) 
+  aggregation: average 
+
+SM_20_1:
+  description: Soil moisture at 20 centimeters below surface (Beech/shelter)
+  unit: '% (percentage of volumetric water content)' 
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 23.13  
+  interpolation_mse: 100   
+
+SM_20_1_min:
+  description: Minimum value of SM_20_1
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_20_1  
+  post_hour_func: SM_20_1
+  aggregation: minimum
+  
+SM_20_1_max:
+  description: Maximum value of SM_20_1
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_20_1
+  post_hour_func: SM_20_1
+  aggregation: maximum  
