@@ -3340,7 +3340,7 @@ Ts_20_2_max:
   category: temperature
   
 Ts_20_WET_1: 
-  description: Soil temperature at 20 centimeters below surface (WET150) (Beech/shelter)
+  description: Soil temperature at 20 centimeters below surface (WET150 soil) (Beech/shelter)
   unit: °C (degree Celcius, -40 to 60) 
   aggregation: average
   physical_range: [-40.0, 60.0] 
@@ -3366,7 +3366,7 @@ Ts_20_WET_1_max:
   category: temperature
 
 Tw_10_1:
-  description: Wood temperature (WET150) (Beech/shelter)
+  description: Wood temperature (WET150 wood) (Beech/shelter)
   unit: °C (degree Celcius, -40 to 60)
   aggregation: average
   physical_range: [-40.0, 60.0]
@@ -3376,7 +3376,7 @@ Tw_10_1:
   category: temperature
   
 WMg_10_1:
-  description: Wood moisture ground 1 at 10 centimeters (WET150) (Beech/shelter)
+  description: Wood moisture ground 1 at 10 centimeters (WET150 wood) (Beech/shelter)
   unit: '% (percentage of volumetric water content)'
   aggregation: average
   physical_range: [0.1, 65.0]
@@ -3475,37 +3475,37 @@ Twu_03:
   category: temperature
 
 ECb_10_1:
-  description: Bulk electrical conductivity (WET150) (Beech/shelter)
+  description: Bulk electrical conductivity (WET150 wood) (Beech/shelter)
   unit: mS/m (milli siemens per meter)  
   aggregation: average
   
 ECb_20_1:
-  description: Bulk electrical conductivity (WET150) (Beech/shelter)
+  description: Bulk electrical conductivity (WET150 soil) (Beech/shelter)
   unit: mS/m (milli siemens per meter)  
   aggregation: average  
   
 ECp_10_1:
-  description: Pore water conductivity (WET150) (Beech/shelter)
+  description: Pore water conductivity (WET150 wood) (Beech/shelter)
   unit: mS/m (milli siemens per meter)  
   aggregation: average 
 
 ECp_20_1:
-  description: Pore water conductivity (WET150) (Beech/shelter)
+  description: Pore water conductivity (WET150 soil) (Beech/shelter)
   unit: mS/m (milli siemens per meter)  
   aggregation: average
   
 Perm_10_WET_1: 
-  description: Permittivity (WET150) (Beech/shelter)
+  description: Permittivity (WET150 wood) (Beech/shelter)
   unit: (none) 
   aggregation: average  
 
 Perm_20_WET_1: 
-  description: Permittivity (WET150) (Beech/shelter)
+  description: Permittivity (WET150 soil) (Beech/shelter)
   unit: (none) 
   aggregation: average 
 
 SM_20_1:
-  description: Soil moisture at 20 centimeters below surface (Beech/shelter)
+  description: Soil moisture at 20 centimeters below surface (WET150 soil) (Beech/shelter)
   unit: '% (percentage of volumetric water content)' 
   aggregation: average
   physical_range: [0.1, 65.0]

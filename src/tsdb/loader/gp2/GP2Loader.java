@@ -87,7 +87,7 @@ public class GP2Loader {
 
 			Table table = Table.readCSV(path, '\t');
 			if(table.names != null && table.names.length > 1 && (table.names[0].isEmpty() || table.names[0].equals("Label"))) {
-				Logger.info(Arrays.toString(table.names));
+				//Logger.info(Arrays.toString(table.names));
 				int colLen = table.names.length;
 				String[][] rows = table.rows;
 				@SuppressWarnings("unchecked")
@@ -129,7 +129,7 @@ public class GP2Loader {
 					boolean rowInserted = false;
 					colLoop: for (int colIndex = 1; colIndex < colLen; colIndex++) {
 						String col = row[colIndex];
-						if(col.isEmpty() || col.charAt(0) == '#' || (col.length() == 8 && col.charAt(2) == ':')) {
+						if(col.isEmpty() || col.charAt(0) == '#' || (col.length() == 8 && col.charAt(2) == ':') || col.equals("open") || col.equals("closed")) {
 							continue colLoop;
 						}
 						//Logger.info(col);
@@ -178,7 +178,7 @@ public class GP2Loader {
 							translatedSensorName = translation.equals("NaN") ? null : translation;
 						}
 						if(translatedSensorName != null) {
-							Logger.info(colIndex + "  " + stationName + " / " + sensorName + "   " + vs.size());
+							//Logger.info(colIndex + "  " + stationName + " / " + sensorName + "   " + vs.size());
 							DataEntry[] dataEntries = vs.toArray(new DataEntry[0]);
 							if(needsSorting) {
 								Logger.warn("sort timestamps " + stationName + " / " + sensorName + "  in  " + path);

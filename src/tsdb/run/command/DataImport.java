@@ -33,6 +33,7 @@ import tsdb.loader.mm.ImportGenericASC;
 import tsdb.loader.sa_own.ImportSaOwn;
 import tsdb.loader.sa_own.RemoveSouthAfricaStationBeginings;
 import tsdb.loader.treetalker.Loader_TreeTalker;
+import tsdb.loader.treetalker.Loader_TreeTalkerCyber;
 import tsdb.loader.tsa.TsaImport;
 import tsdb.util.Interval;
 import tsdb.util.TimeUtil;
@@ -174,6 +175,10 @@ public class DataImport {
 			}
 			case "treetalker": {
 				new Loader_TreeTalker(tsdb, jsonObject).loadDirectoryRecursive(rootDirectory);
+				break;
+			}
+			case "treetalkercyber": {
+				new Loader_TreeTalkerCyber(tsdb, jsonObject).loadDirectoryRecursive(rootDirectory);
 				break;
 			}
 			case "gp2": {

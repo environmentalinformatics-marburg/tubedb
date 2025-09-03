@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeSet;
 import java.util.Map.Entry;
@@ -27,20 +28,26 @@ import tsdb.util.DataRow;
 import tsdb.util.TimeUtil;
 
 public class TreeTalkerTable {
-	
-	private static final char SEPARATOR = ';';
+
+	private static final char DEFAULT_SEPARATOR = ';';
 	private static final LocalDateTime UNIX_EPOCH = LocalDateTime.of(1970,1,1,0,0);
 	private static final int UNIX_EPOCH_OLE_AUTOMATION_TIME_DIFFERENCE_MINUTES = (int) Duration.between(TimeUtil.OLE_AUTOMATION_TIME_START, UNIX_EPOCH).toMinutes();
 
 	private final int offsetMinutes;
+	private final char seperator;
 
 	public TreeTalkerTable(int offsetMinutes) {
+		this(offsetMinutes, DEFAULT_SEPARATOR);
+	}
+	
+	public TreeTalkerTable(int offsetMinutes, char seperator) {
 		this.offsetMinutes = offsetMinutes;
+		this.seperator = seperator;
 	}
 
 	public void importFile(TsDB tsdb, File file) throws Exception {
 		InputStreamReader in = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
-		CSVParser csvParser = new CSVParserBuilder().withSeparator(SEPARATOR).build();
+		CSVParser csvParser = new CSVParserBuilder().withSeparator(seperator).build();
 		try(CSVReader reader = new CSVReaderBuilder(in).withCSVParser(csvParser).build()) {		
 
 			HashMap<String, ArrayList<DataRow>> tt49_dataMap = new HashMap<String, ArrayList<DataRow>>();
@@ -53,12 +60,13 @@ public class TreeTalkerTable {
 			TreeSet<String> missingTypeCollector = new TreeSet<String>();
 
 			for(String[] row = reader.readNextSilently(); row != null; row = reader.readNextSilently()) {
+				//Logger.info(Arrays.toString(row));
 				if(row.length == 0 || row[0].isEmpty()) {
 					//Logger.info("skip empty line");
 					continue;
 				}
 				if(row.length < 5) {
-					//Logger.info("skip header/footer line");
+					//Logger.info("skip header/footer line with " + row.length + " columns");
 					continue;
 				}
 				String timeID = row[0];
@@ -423,11 +431,11 @@ public class TreeTalkerTable {
 			}catch(Exception e) {
 				Logger.warn("at tt53 " + e.getMessage());
 			}
-			try {
+			try {				
 				insert(tsdb, tt54_dataMap, tt54_sensors, missingStationsCollector, file.toPath());
 			}catch(Exception e) {
 				Logger.warn("at tt54 " + e.getMessage());
-			}
+			}			
 
 			if(!missingStationsCollector.isEmpty()) {
 				String s = "missing stations";

@@ -166,11 +166,21 @@ public final class TimeUtil implements Serializable {
 		LocalDateTime dt = LocalDateTime.parse(dateTimeText, DATE_TIME_FORMATER_MONTH_FIRST);
 		return TimeUtil.dateTimeToOleMinutes(dt);
 	}
+	
+	/**
+	 * example: 12.07.2016 22:10
+	 * @param dateTimeText
+	 * @return
+	 */
+	public static int parseTimestampDayFirstFormat(String dateTimeText) {
+		LocalDateTime dt = LocalDateTime.parse(dateTimeText, DATE_TIME_FORMATER_DAY_FIRST);
+		return (int) TimeUtil.dateTimeToOleMinutes(dt);
+	}
 
 	private static final DateTimeFormatter DATE_TIME_FORMATER_MONTH_FIRST_AM_PM = DateTimeFormatter.ofPattern("MM.dd.yy hh:mm:ss a");
 	private static final DateTimeFormatter DATE_TIME_FORMATER_MONTH_FIRST = DateTimeFormatter.ofPattern("MM.dd.yyyy HH:mm");
-
-
+	
+	private static final DateTimeFormatter DATE_TIME_FORMATER_DAY_FIRST = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm:ss");
 
 	private static final DateTimeFormatter DATE_TIME_FORMATER_MONTH_NAME_ONE_HOUR_DIGIT =  DateTimeFormatter.ofPattern("dd-MMM-yyyy   H:mm").withLocale(Locale.ENGLISH);
 	private static final DateTimeFormatter DATE_TIME_FORMATER_MONTH_NAME_TWO_HOUR_DIGITS = DateTimeFormatter.ofPattern("dd-MMM-yyyy  HH:mm").withLocale(Locale.ENGLISH);

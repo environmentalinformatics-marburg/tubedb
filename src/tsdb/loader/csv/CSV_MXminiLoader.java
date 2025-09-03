@@ -26,8 +26,7 @@ import tsdb.util.DataRow;
 import tsdb.util.Interval;
 import tsdb.util.TimeUtil;
 
-public class CSV_MXminiLoader {
-	
+public class CSV_MXminiLoader {	
 
 	private final TsDB tsdb;
 
