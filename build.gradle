@@ -8,8 +8,10 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-sourceCompatibility = '11' // build compatiblity with java 11 and newer
-targetCompatibility = '11' // run compatiblity with java 11 and newer
+java {
+  sourceCompatibility = '11' // build compatiblity with java 11 and newer
+  targetCompatibility = '11' // run compatiblity with java 11 and newer
+}
 
 sourceSets.main.java.srcDir 'src'
 //sourceSets.main.java.srcDir 'explorer_src' // optional explorer needs jfx
@@ -130,70 +132,70 @@ tasks.withType(JavaCompile) {
 }
 
 task clean_package(type: Delete) {
-	description 'delete folder package'
+	description = 'delete folder package'
 	delete 'package'
 }
 
 task copy_lib(type: Copy) {
-	description 'copy folder lib to package'
+	description = 'copy folder lib to package'
 	from files(configurations.runtimeClasspath)
     into 'package/lib'
 }
 
 task copy_add(type: Copy) {
-	description 'copy folder add to package'
+	description = 'copy folder add to package'
 	from fileTree('add')
 	into 'package'
 }
 
 task copy_add_windows(type: Copy) {
-	description 'copy folder add_windows to package'
+	description = 'copy folder add_windows to package'
 	from fileTree('add_windows')
 	into 'package'
 }
 
 task copy_add_linux(type: Copy) {
-	description 'copy folder add_linux to package'
+	description = 'copy folder add_linux to package'
 	from fileTree('add_linux')
 	into 'package'
 }
 
 task copy_webcontent(type: Copy) {
-	description 'copy folder webcontent to package'
+	description = 'copy folder webcontent to package'
 	from fileTree('webcontent')
 	into 'package/webcontent'
 }
 
 task copy_build(type: Copy, dependsOn: [jar]) {
-	description 'copy compiled java jar file to package'
+	description = 'copy compiled java jar file to package'
 	from fileTree('build/libs')
 	into 'package'
 }
 
 task copy_config(type: Copy, dependsOn: [jar]) {
-	description 'copy folder config to package'
+	description = 'copy folder config to package'
 	from fileTree('config')
 	into 'package/config'
 }
 
 task _build_package(dependsOn:[ clean_package, copy_build, copy_lib, copy_webcontent, copy_add, copy_config, copy_add_linux ]) {
 	group = 'project'
-	description 'create TubeDB package for Linux'	
+	description = 'create TubeDB package for Linux'	
 }
 
 task _build_package_windows(dependsOn:[ clean_package, copy_build, copy_lib, copy_webcontent, copy_add, copy_config, copy_add_windows ]) {
 	group = 'project' 
-	description 'create TubeDB package for Windows'		
+	description = 'create TubeDB package for Windows'		
 }
 
 task _build_package_linux_windows(dependsOn:[ clean_package, copy_build, copy_lib, copy_webcontent, copy_add, copy_config, copy_add_linux, copy_add_windows ]) {
 	group = 'project'
-	description 'create TubeDB package for Linux and Windows'	
+	description = 'create TubeDB package for Linux and Windows'	
 }
 
 task _create_javadoc(type: Javadoc) {
 	group = 'project'
-	description 'create javadoc for TubeDB'
+	description = 'create javadoc for TubeDB'
 	source = sourceSets.main.allJava
 	destinationDir = file('docs/javadoc')
 	title = 'TubeDB'
