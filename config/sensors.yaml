@@ -3525,4 +3525,199 @@ SM_20_1_max:
   unit: '% (percentage of volumetric water content)'
   dependency: SM_20_1
   post_hour_func: SM_20_1
-  aggregation: maximum  
+  aggregation: maximum
+
+#added 2025-09-04 TreeTalkerCyber
+
+ttcraw_air_temperature:
+  description: Raw air temperature (temperature * 100)
+  unit: raw
+  aggregation: average
+  visibility: internal  
+
+ttc_Ta_200:
+  description: Air temperature at 2 meters above ground
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: ttcraw_air_temperature
+  raw_func: "ttcraw_air_temperature * 0.01"  
+  aggregation: average  
+  category: temperature
+  derived: false
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  
+ttcraw_air_relative_humidity:
+  description: Raw air humidity (humidity * 100)
+  unit: raw
+  aggregation: average
+  visibility: internal 
+  
+ttc_rH_200:
+  description: Relative air humidity at 2 meters above ground
+  unit: '% (percentage of relative humidity, 0-100)'
+  dependency: ttcraw_air_relative_humidity
+  raw_func: "ttcraw_air_relative_humidity * 0.01"  
+  aggregation: average
+  derived: false  
+  physical_range: [15.0, 100.09] # compensate with 100.09 for conversion inaccuracies
+  step_range: [0.0, 100.0] #high fluctuation possible
+  empirical_diff: 50
+  interpolation_mse: 100
+
+ttcraw_soil_moisture:
+  description: Raw Soil moisture (moisture * 100)
+  unit: raw
+  aggregation: average
+  visibility: internal  
+  
+ttc_SM_20:
+  description: Soil moisture at 20 centimeters below surface
+  unit: '% (percentage of volumetric water content)'
+  dependency: ttcraw_soil_moisture
+  raw_func: "ttcraw_soil_moisture * 0.01"   
+  aggregation: average
+  derived: false  
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 29.04
+  interpolation_mse: 100
+
+ttcraw_soil_temperature:
+  description: Raw soil temperature 
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttc_Ts_20:
+  description: Soil temperature at 20 centimeters below surface
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: ttcraw_soil_temperature
+  raw_func: "ttcraw_soil_temperature * 0.01"  
+  aggregation: average  
+  category: temperature
+  derived: false
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  empirical_diff: 10.0
+  interpolation_mse: 7
+  
+ttcraw_vbat:
+  description: Raw battery voltage 
+  unit: mV (millivolt)
+  aggregation: average
+  visibility: internal
+
+ttc_vbat:
+  description: Battery voltage
+  unit: V (volt)
+  dependency: ttcraw_vbat
+  raw_func: "ttcraw_vbat * 0.001"  
+  aggregation: average  
+  derived: false
+  physical_range: [3, 5]
+
+ttcraw_g_x:
+  description: Raw acceleration along the X axis average
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttcraw_g_x_std:
+  description: Raw acceleration along the X axis standard deviation
+  unit: raw
+  aggregation: average
+  visibility: internal
+ 
+ttcraw_g_y:
+  description: Raw acceleration along the Y axis average
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttcraw_g_y_std:
+  description: Raw acceleration along the Y axis standard deviation
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttcraw_g_z:
+  description: Raw acceleration along the Z axis average
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttcraw_g_z_std:
+  description: Raw acceleration along the Z axis standard deviation
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttcraw_AS7341_gain:
+  description: Raw Spectrometer AS7341 gain
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttcraw_AS7341_F1_415:
+  description: Raw Spectrometer AS7341 radiation at 416 nm
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttcraw_AS7341_F2_445:
+  description: Raw Spectrometer AS7341 radiation at 445 nm
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttcraw_AS7341_F3_480:
+  description: Raw Spectrometer AS7341 radiation at 480 nm
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttcraw_AS7341_F4_515:
+  description: Raw Spectrometer AS7341 radiation at 515 nm
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttcraw_AS7341_F5_555:
+  description: Raw Spectrometer AS7341 radiation at 555 nm
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttcraw_AS7341_F6_590:
+  description: Raw Spectrometer AS7341 radiation at 590 nm
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttcraw_AS7341_F7_630:
+  description: Raw Spectrometer AS7341 radiation at 630 nm
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttcraw_AS7341_F8_680:
+  description: Raw Spectrometer AS7341 radiation at 680 nm
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttcraw_AS7341_clear:
+  description: Raw Spectrometer AS7341 full spectrum radiation
+  unit: raw
+  aggregation: average
+  visibility: internal
+
+ttcraw_AS7341_nir:
+  description: Raw Spectrometer AS7341 radiation at near-infrared
+  unit: raw
+  aggregation: average
+  visibility: internal
+  
+ 
