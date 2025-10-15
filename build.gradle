@@ -1,8 +1,8 @@
-// gradle version 7.0.2, in eclipse gradle version 7.0.1 
+// gradle version 9.1.0, in eclipse gradle version 9.1.0 
 
 plugins {
   //id 'org.kordamp.gradle.markdown' version '2.2.0' // https://github.com/aalmiray/markdown-gradle-plugin    not needed ?
-  id "com.github.ben-manes.versions" version '0.52.0' // update check task: dependencyUpdates  https://github.com/ben-manes/gradle-versions-plugin
+  id "com.github.ben-manes.versions" version '0.53.0' // update check task: dependencyUpdates  https://github.com/ben-manes/gradle-versions-plugin
 }
 
 apply plugin: 'java'
@@ -33,7 +33,7 @@ or
 */
 
 // upgrade gradle wrapper
-//./gradlew wrapper --gradle-version=7.0.2
+//./gradlew wrapper --gradle-version=9.1.0
 
 
 def isNonStable = { String version ->

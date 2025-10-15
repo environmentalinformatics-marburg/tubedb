@@ -27,8 +27,7 @@ public class ParseReceiverLogFile {
 	}
 
 	public void insertDirectory(Path directory) {
-		try {
-			DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory,p->(!p.toFile().isDirectory())&&p.toString().endsWith(".log"));
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory,p->(!p.toFile().isDirectory())&&p.toString().endsWith(".log"))){
 			for(Path file:directoryStream) {
 				Logger.info("read "+file);
 				insertFile(file);

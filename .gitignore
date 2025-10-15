@@ -17,6 +17,7 @@
 /jws.yaml
 /keystore.jks
 /recording.jfr
+/storage
 
 
 /webcontent/.gradle

@@ -2,7 +2,6 @@ package tsdb.web;
 
 import javax.security.auth.Subject;
 
-import org.eclipse.jetty.security.DefaultUserIdentity;
 import org.eclipse.jetty.security.PropertyUserStore;
 import org.eclipse.jetty.security.UserPrincipal;
 import org.eclipse.jetty.server.UserIdentity;

@@ -20,11 +20,13 @@ Generic CSV text transfer format of timeseries data.
 
 This format may be used as intermediate representation of station timeseries data. First the logger specific format (e.g. specific CSV-Format) may be transformed by external tools (e.g. R-script) to this generic CSV and then imported into TubeDB. Files created by TubeDB API method `query_csv` are in generic csv format.
 
+The **station name** is derived form **file name** or from **plotID column**, see the two specifications below.
+
 typical file pattern: `*.csv`
 
 reader class: `tsdb.run.ImportGenericCSV`
 
-### format specification
+### format specification (station name by filename)
 
 #### filename:
 
@@ -37,9 +39,11 @@ station name from file name extraction examples:
 - `MyPlot_2010.csv` -> MyPlot 
 - `123_old.csv` -> 123
 
+Note: If your stationname contains underscores or you have multiple stations in one CSV file, see the next format specification (station name by column).
+
 #### header:
 
-First line of file content is header. Columns start by datetime followed by sensor name columns.
+First line of file content is header. Columns start by `datetime` and followed by sensor name columns.
 
 format: `datetime,SENSOR1,SENSOR2,SENSOR2,...`
 
@@ -63,6 +67,51 @@ datetime,Ta_200,rH_200
 2014-01-01T00:10,-9,86.1
 2014-01-01T00:20,-9.1,86
 2014-01-01T00:30,-9.1,86
+~~~
+
+### format specification (station name by column)
+
+The CSV format is same as above specification. But the station name is read from the `plotID` column inside of CSV-files. The filename is abriratry and not used for metadata.
+
+
+#### header:
+
+First line of file content is header. Columns start by `plotID`, then `datetime` and followed by sensor name columns.
+
+format: `plotID,datetime,SENSOR1,SENSOR2,SENSOR2,...`
+
+examples of header: 
+- `plotID,datetime,Ta_200,rH_200,p_QNH,WV,WD,P_RT_NRT_01,Trad,SWDR_300,SWUR_300,LWDR_300,LWUR_300,Rn_300`
+- `plotID,datetime,Ta_200,rH_200`
+
+#### data-rows:
+
+format: `STATIONNAME,DATETIME,VALUE1,VALUE2,VALUE3` 
+
+Datetime is in format `yyyy-mm-ddThh:MM` *(ISO 8601)*  e.g. `2014-10-12T09:50`
+
+
+#### complete examples:
+
+filename: `some_filename_one_station.csv`
+
+~~~ csv
+plotID,datetime,Ta_200,rH_200
+plot_one,2014-01-01T00:10,-9,86.1
+plot_one,2014-01-01T00:20,-9.1,86
+plot_one,2014-01-01T00:30,-9.1,86
+~~~
+
+filename: `some_filename_multiple_stations.csv`
+
+~~~ csv
+plotID,datetime,Ta_200,rH_200
+plot_one,2014-01-01T00:10,-9,86.1
+plot_one,2014-01-01T00:20,-9.1,86
+plot_one,2014-01-01T00:30,-9.1,86
+plot_two,2014-01-01T00:10,-8,76.2
+plot_two,2014-01-01T00:20,-8.2,75
+plot_two,2014-01-01T00:30,-8.3,74
 ~~~
 
 ---
