@@ -30,7 +30,7 @@ import tsdb.util.Util;
  * import generic CSV data into database.
  * Beginning of filename is station name e.g. mystation_2014_new.csv  ==> station: mystation
  * first column name: datetime   format: ISO_8601  e.g. YYYY-MM-DDThh:mm
- * fllowing columns: database sensor names  
+ * following columns: database sensor names  
  * @author woellauer
  *
  */
