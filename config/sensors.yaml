@@ -212,6 +212,32 @@ Ts_20_max:
   aggregation: maximum
   category: temperature
   
+Ts_20_SMT:
+  description: Soil temperature at 20 centimeters below surface 
+  unit: °C (degree Celcius, -40 to 60) 
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 1.7]  
+  empirical_diff: 3.6
+  interpolation_mse: 7
+  category: temperature
+  
+Ts_20_SMT_min:
+  description: Minimum value of Ts_20_SMT 
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_20_SMT  
+  post_hour_func: Ts_20_SMT
+  aggregation: minimum
+  category: temperature
+  
+Ts_20_SMT_max:
+  description: Maximum value of Ts_20_SMT 
+  unit: °C (degree Celcius, -40 to 60)
+  dependency: Ts_20_SMT
+  post_hour_func: Ts_20_SMT
+  aggregation: maximum
+  category: temperature   
+  
 Ts_30: 
   description: Soil temperature at 30 centimeters below surface 
   unit: °C (degree Celcius, -40 to 60) 
@@ -308,8 +334,8 @@ SM_10_SMT_max:
   unit: '% (percentage of volumetric water content)'
   dependency: SM_10_SMT  
   post_hour_func: SM_10_SMT
-  aggregation: maximum  
-  
+  aggregation: maximum
+
 SM_15:
   description: Soil moisture at 15 centimeters below surface (BeCycles sensor type at Exploratories) 
   unit: '% (percentage of volumetric water content)' 
@@ -355,6 +381,29 @@ SM_20_max:
   dependency: SM_20
   post_hour_func: SM_20
   aggregation: maximum
+  
+SM_20_SMT:
+  description: Soil moisture at 20 centimeters below surface
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0] 
+  empirical_diff: 29.04
+  interpolation_mse: 100   
+  
+SM_20_SMT_min:
+  description: Minimum value of SM_20_SMT 
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_20_SMT  
+  post_hour_func: SM_20_SMT
+  aggregation: minimum
+  
+SM_20_SMT_max:
+  description: Maximum value of SM_20_SMT 
+  unit: '% (percentage of volumetric water content)'
+  dependency: SM_20_SMT  
+  post_hour_func: SM_20_SMT
+  aggregation: maximum    
   
 SM_30: 
   description: Soil moisture at 30 centimeters below surface (BeCycles sensor type at Exploratories) 
