@@ -18,8 +18,10 @@
 /keystore.jks
 /recording.jfr
 /storage
+/tsdb_paths.ini
 
 
 /webcontent/.gradle
+/webFiles/testingyamlfile.yaml
 
 /be_config_old/

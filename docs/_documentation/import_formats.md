@@ -4,13 +4,12 @@ title: "Import Formats"
 
 TubeDB contains readers for several timeseries data source file formats:
 
-
 | type | description | text/binary |
 |-------|--------|---------|
 | **csv** | CSV - generic comma-separated values | text |
 | **asc** | ASC - specific logger format | text |
 | **toa5** | TOA5 - Campbell Scientific data loggers | text |
-| **udbf_be** | UDBF - Gantner Universal-Data-Bin-File | binary  |
+| **udbf_be** | UDBF - Gantner Universal-Data-Bin-File | binary  |
 | **tsa** | TSA - TubeDB timeseries archive | binary |
 
 ---
@@ -39,7 +38,7 @@ station name from file name extraction examples:
 - `MyPlot_2010.csv` -> MyPlot 
 - `123_old.csv` -> 123
 
-Note: If your stationname contains underscores or you have multiple stations in one CSV file, see the next format specification (station name by column).
+Note: If your station name contains underscores or you have multiple stations in one CSV file, see the next format specification (station name by column).
 
 #### header:
 
@@ -55,8 +54,7 @@ examples of header:
 
 format: `DATETIME,VALUE1,VALUE2,VALUE3` 
 
-Datetime is in format `yyyy-mm-ddThh:MM` *(ISO 8601)*  e.g. `2014-10-12T09:50`
-
+Datetime is in format `yyyy-mm-ddThh:MM` *(ISO 8601)*  e.g. `2014-10-12T09:50`
 
 #### complete example:
 
@@ -71,8 +69,7 @@ datetime,Ta_200,rH_200
 
 ### format specification (station name by column)
 
-The CSV format is same as above specification. But the station name is read from the `plotID` column inside of CSV-files. The filename is abriratry and not used for metadata.
-
+The CSV format is same as above specification. But the station name is read from the `plotID` column inside of CSV-files. The filename is arbitrary and not used for metadata.
 
 #### header:
 
@@ -88,8 +85,7 @@ examples of header:
 
 format: `STATIONNAME,DATETIME,VALUE1,VALUE2,VALUE3` 
 
-Datetime is in format `yyyy-mm-ddThh:MM` *(ISO 8601)*  e.g. `2014-10-12T09:50`
-
+Datetime is in format `yyyy-mm-ddThh:MM` *(ISO 8601)*  e.g. `2014-10-12T09:50`
 
 #### complete examples:
 
@@ -128,7 +124,6 @@ typical file pattern: `*.dat`
 
 File-format of [Campbell Scientific data loggers](https://www.campbellsci.com/data-loggers). (see [format specification, Appendix B](https://s.campbellsci.com/documents/us/manuals/loggernet.pdf))
 
-
 ---
 ## UDBF - Universal-Data-Bin-File
 
@@ -159,10 +154,9 @@ data type definitions:
 - *(byte)* one byte
 - *(int)* 32 bit integer (four bytes big-endian)
 - *(packed_int)* packed integer number (one to five bytes): Sequence of bytes. If highest bit of current byte is set then next byte is part of this sequence. Lower 7 bits of byte are used to code value: bn denotes the 7 value bits of byte n: interger `value == b1 | (b2<<7) | (b3<<14)`
-- *(text)*  sequence of characters coded by count of characters followed by characters as bytes: *(packed_int)* *(byte)* *(byte)* *(byte)* ...
+- *(text)*  sequence of characters coded by count of characters followed by characters as bytes: *(packed_int)* *(byte)* *(byte)* *(byte)* ...
 - marker is coded as *(text)*
 - *(float)* IEEE 754 single-precision binary floating-point format 32 bit (four bytes big-endian)
-
 
 marker definitions:
 - `TOC_HEAD` = "`Time_Series_Archiv_v_1_0_0`"
@@ -185,7 +179,7 @@ marker definitions:
 - `TOC_END` = "`DataEntryArray:end`"
 
 content:
- 
+ 
 *(text)*[station name] 
 
 *(text)*[sensor name] 
@@ -209,7 +203,6 @@ content:
 ...
 
 `TOC_END`
-
 
 #### entry `TOC_TYPE_TIMESTAMPSERIES`:
 

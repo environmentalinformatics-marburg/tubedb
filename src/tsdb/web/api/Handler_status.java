@@ -302,9 +302,13 @@ public class Handler_status extends MethodHandler {
 
 	public synchronized HashMap<String, YamlMap> readEntries() throws FileNotFoundException, IOException {
 		HashMap<String, YamlMap> map = new HashMap<String, YamlMap>();
-
 		File file = new File(yamlFile);
 		if(!file.exists()) {
+			Logger.info("create plot status file: " + file.toString());
+			File parentFolder = file.getParentFile();
+			if(!parentFolder.exists()) {
+				parentFolder.mkdirs();
+			}			
 			file.createNewFile();
 		}
 		Yaml yaml = new Yaml(new YamlTimestampSafeConstructor());
