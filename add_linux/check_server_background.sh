@@ -4,7 +4,7 @@ screen -ls
 #screen -ls | grep .tubedb
 #netstat -ntulp | grep :8080 | grep /java
 
-SERVER=127.0.0.1 
+SERVER=localhost
 PORT=8080
 URL_BASE=""
 TEST_PATH="/content"
@@ -18,7 +18,7 @@ do
 if (: < /dev/tcp/$SERVER/$PORT) 2>/dev/null
 then
     #echo --- OK --- some server is listening at port $PORT
-	lineCount=$(wget --no-proxy --server-response 127.0.0.1:8080$URL_BASE 2>&1 | grep ":8080$URL_BASE$TEST_PATH" | wc -l)
+	lineCount=$(wget --no-proxy --server-response localhost:8080$URL_BASE 2>&1 | grep ":8080$URL_BASE$TEST_PATH" | wc -l)
 	#echo $lineCount
 	if [ $lineCount -ne 0 ]
 	then

@@ -3,6 +3,7 @@
 plugins {
   //id 'org.kordamp.gradle.markdown' version '2.2.0' // https://github.com/aalmiray/markdown-gradle-plugin    not needed ?
   id "com.github.ben-manes.versions" version '0.53.0' // update check task: dependencyUpdates  https://github.com/ben-manes/gradle-versions-plugin
+  id "com.gradleup.shadow" version '9.1.0'
 }
 
 apply plugin: 'java'
@@ -92,7 +93,7 @@ dependencies {
     //compileOnly files('/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/jfxrt.jar') //optional explorer needs jfx - dependency openjfx on ubuntu (openjdk does not include openjfx), correct path for at least OpenJDK 10
 }
 
-jar {
+/*jar {
 	from file('src/tinylog.properties')
 	from file('src/command_descriptions.yaml') // terminal command descriptions
 	destinationDirectory = project.layout.projectDirectory.dir('package')
@@ -108,6 +109,22 @@ jar {
 					'Main-Class': 'tsdb.run.Terminal',
 					'Class-Path': classPathFiles
     }
+}*/
+
+shadowJar {
+	from file('src/tinylog.properties')
+	from file('src/command_descriptions.yaml') // terminal command descriptions
+	destinationDirectory = project.layout.projectDirectory.dir('package')
+	
+    manifest {
+        attributes(
+            'Built-Date': new Date(),
+			'Built-JDK': System.getProperty('java.version'),
+			'Main-Class': 'tsdb.run.Terminal'
+        )
+    }
+    
+    archiveClassifier = ''
 }
 
 tasks.withType(JavaCompile) {
@@ -136,11 +153,11 @@ task clean_package(type: Delete) {
 	delete 'package'
 }
 
-task copy_lib(type: Copy) {
+/*task copy_lib(type: Copy) {
 	description = 'copy folder lib to package'
 	from files(configurations.runtimeClasspath)
     into 'package/lib'
-}
+}*/
 
 task copy_add(type: Copy) {
 	description = 'copy folder add to package'
@@ -166,29 +183,29 @@ task copy_webcontent(type: Copy) {
 	into 'package/webcontent'
 }
 
-task copy_build(type: Copy, dependsOn: [jar]) {
+task copy_build(type: Copy, dependsOn: [shadowJar]) {
 	description = 'copy compiled java jar file to package'
 	from fileTree('build/libs')
 	into 'package'
 }
 
-task copy_config(type: Copy, dependsOn: [jar]) {
+task copy_config(type: Copy, dependsOn: [shadowJar]) {
 	description = 'copy folder config to package'
 	from fileTree('config')
 	into 'package/config'
 }
 
-task _build_package(dependsOn:[ clean_package, copy_build, copy_lib, copy_webcontent, copy_add, copy_config, copy_add_linux ]) {
+task _build_package(dependsOn:[ clean_package, copy_build, /*copy_lib,*/ copy_webcontent, copy_add, copy_config, copy_add_linux ]) {
 	group = 'project'
 	description = 'create TubeDB package for Linux'	
 }
 
-task _build_package_windows(dependsOn:[ clean_package, copy_build, copy_lib, copy_webcontent, copy_add, copy_config, copy_add_windows ]) {
+task _build_package_windows(dependsOn:[ clean_package, copy_build, /*copy_lib,*/ copy_webcontent, copy_add, copy_config, copy_add_windows ]) {
 	group = 'project' 
 	description = 'create TubeDB package for Windows'		
 }
 
-task _build_package_linux_windows(dependsOn:[ clean_package, copy_build, copy_lib, copy_webcontent, copy_add, copy_config, copy_add_linux, copy_add_windows ]) {
+task _build_package_linux_windows(dependsOn:[ clean_package, copy_build, /*copy_lib,*/ copy_webcontent, copy_add, copy_config, copy_add_linux, copy_add_windows ]) {
 	group = 'project'
 	description = 'create TubeDB package for Linux and Windows'	
 }
