@@ -188,12 +188,21 @@ export default {
         {
           name: 'status',
           field: 'status',
-          label: 'Status',
+          label: 'Transmission',
+          headerStyle: 'text-align: center; min-width: 150px; max-width: 150px;',
+          align: 'left',
+          sortable: true,
+          style: 'min-width: 150px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; background-color: rgba(255, 255, 0, 0.02);',
+        },
+        {
+          name: 'condition',
+          field: 'condition',
+          label: 'Condition',
           headerStyle: 'text-align: center; min-width: 150px; max-width: 150px;',
           align: 'left',
           sortable: true,
           style: 'min-width: 150px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; background-color: rgba(0, 0, 255, 0.02);',
-        },
+        },        
         {
           name: 'tasks',
           field: 'tasks',

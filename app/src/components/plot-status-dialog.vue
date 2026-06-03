@@ -35,14 +35,19 @@
           <span v-if="row.first_date !== undefined"> to <span>{{row.last_date}}</span> <span>{{row.last_time}}</span></span>
           <span v-if="row.elapsed_days !== undefined"> Elapsed days <span>{{row.elapsed_days}}</span></span>
           <span v-if="row.voltage!== undefined"> Latest voltage <span>{{row.voltage}}</span></span>
-          <span v-if="row.author !== undefined"> Status author <span>{{row.author}}</span> date <span>{{row.datetime}}</span></span>
+          <span v-if="row.author !== undefined"> Latest writer <span>{{row.author}}</span> at <span>{{row.datetime}}</span></span>
         </span>
       </q-item-section>
     </q-item>
 
     <q-item>
       <q-item-section side><q-icon name="cell_tower" /></q-item-section>
-      <q-item-section><q-input outlined v-model="row.status" label="Status" stack-label dense /></q-item-section>
+      <q-item-section><q-input outlined v-model="row.status" label="Transmission" stack-label dense /></q-item-section>
+    </q-item>
+
+    <q-item>
+      <q-item-section side><q-icon name="flag" /></q-item-section>
+      <q-item-section><q-input outlined v-model="row.condition" label="Condition" stack-label dense /></q-item-section>
     </q-item>
 
     <q-item>
@@ -69,7 +74,7 @@
     <template v-for="e in row.history.slice().reverse()" :key="e.datetime">
       <q-item>
         <q-item-section>
-          <q-item-label><b>{{e.status}}</b> {{e.tasks}}</q-item-label>
+          <q-item-label><b>{{e.status}}</b> <i class="q-mx-md">{{e.condition}}</i> {{e.tasks}}</q-item-label>
           <q-item-label caption>{{e.notes}}</q-item-label>
         </q-item-section>
 
