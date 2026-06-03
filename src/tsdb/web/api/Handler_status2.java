@@ -1,4 +1,4 @@
-package tsdb.web.api; 
+package tsdb.web.api;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,7 +10,9 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -41,13 +43,16 @@ import tsdb.web.util.Web;
  * <p>
  * parameters: (optional one of) region or generalstation
  * <p>
- * returns: list of plots as JSON array with keys:
+ * returns: JSON object with keys:
  * <br>
+ * results: list of plots as JSON array with keys:
  * plot, first_timestamp, last_timestamp, first_datetime, last_datetime, voltage, message_date, message
+ * <br>
+ * transmission_options: list of unique status values from YAML file
  * @author woellauer
  *
  */
-public class Handler_status extends MethodHandler {
+public class Handler_status2 extends MethodHandler {
 
 	private final String yamlFile;
 
@@ -62,8 +67,8 @@ public class Handler_status extends MethodHandler {
 		}		
 	}
 
-	public Handler_status(RemoteTsDB tsdb) {
-		super(tsdb, "status");
+	public Handler_status2(RemoteTsDB tsdb) {
+		super(tsdb, "status2");
 		//yamlFile =TsDBFactory.WEBFILES_PATH + "/supplement/" + "testingyamlfile.yaml";
 		yamlFile =TsDBFactory.WEBFILES_PATH + "/testingyamlfile.yaml";
 	}
@@ -85,7 +90,7 @@ public class Handler_status extends MethodHandler {
 
 	public synchronized void handleGET(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		baseRequest.setHandled(true);
-		response.setContentType("text/plain;charset=utf-8");
+		response.setContentType("application/json;charset=utf-8");
 		String plotName = request.getParameter("plot");
 		String generalstationName = request.getParameter("generalstation");
 		String regionName = request.getParameter("region");
@@ -128,9 +133,41 @@ public class Handler_status extends MethodHandler {
 
 			HashMap<String, YamlMap> statusMap = withPlotStatus ? readEntries() : null;
 
+			// Collect unique transmission options from YAML file
+			Set<String> transmissionOptions = new HashSet<>();
+			if(statusMap != null) {
+				for(YamlMap entry : statusMap.values()) {
+					Object statusObj = entry.optObject("status");
+					if(statusObj != null) {
+						String statusStr = statusObj.toString().strip();
+						if(!statusStr.isBlank()) {
+							transmissionOptions.add(statusStr);
+						}
+					}
+				}
+			}
+			
+			ArrayList<String> sortedTransmissionOptions = new ArrayList<String>(transmissionOptions);
+			sortedTransmissionOptions.sort(null);
+
 			PrintWriter writer = response.getWriter();
 			JSONWriter json_output = new JSONWriter(writer);
+			
+			// Start Object wrapper
+			json_output.object();
+			
+			// Write transmission_options array
+			json_output.key("transmission_options");
 			json_output.array();
+			for(String opt : sortedTransmissionOptions) {
+				json_output.value(opt);
+			}
+			json_output.endArray();
+			
+			// Write results array
+			json_output.key("results");
+			json_output.array();
+			
 			long now = TimeUtil.dateTimeToOleMinutes(LocalDateTime.now());
 			for(PlotStatus status:statusList) {
 				json_output.object();
@@ -184,7 +221,10 @@ public class Handler_status extends MethodHandler {
 				}
 				json_output.endObject();
 			}
-			json_output.endArray();
+			json_output.endArray(); // end results
+			
+			json_output.endObject(); // end wrapper object
+			
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {
 			Logger.error(e);
@@ -220,7 +260,6 @@ public class Handler_status extends MethodHandler {
 			"datetime",
 			"author",
 			"status",
-			"condition",
 			"tasks",
 			"notes",
 			"history"
@@ -279,7 +318,6 @@ public class Handler_status extends MethodHandler {
 		LinkedHashMap<String,Object> map = new LinkedHashMap<String,Object>();
 		map.put("plot", plot);
 		optPut("status", jsonReq, map);
-		optPut("condition", jsonReq, map);
 		optPut("tasks", jsonReq, map);
 		optPut("notes", jsonReq, map);
 

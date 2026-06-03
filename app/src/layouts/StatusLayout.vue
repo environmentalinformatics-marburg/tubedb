@@ -123,6 +123,7 @@
     <plot-status-dialog
       ref="plotStatusDialog"
       @changed="refresh"
+      :transmission-options="transmissionOptions"
     />
   </q-layout>
 </template>
@@ -222,7 +223,8 @@ export default {
       project: undefined,
       group: undefined,
       plot: undefined,
-      filter: undefined
+      filter: undefined,
+      transmissionOptions: ['A', 'B', 'C'],
     }
   },
   computed: {
@@ -280,8 +282,25 @@ export default {
         params.append('generalstation', this.group.id);
         //params.append('region', this.project.id);
         params.append('plot_status', '');
-        const response = await this.apiGET(['tsdb', 'status'], {params});
-        let rawRows = response.data;
+        const response = await this.apiGET(['tsdb', 'status2'], {params});
+        
+        // Handle new API response structure (object with results and transmission_options)
+        let rawData = response.data;
+        let rawRows = [];
+        
+        if (Array.isArray(rawData)) {
+          // Backward compatibility: old API returns array directly
+          rawRows = rawData;
+        } else if (rawData && typeof rawData === 'object') {
+          // New API structure: object with results and transmission_options
+          rawRows = rawData.results || [];
+          
+          // Update transmission options if available
+          if (rawData.transmission_options && Array.isArray(rawData.transmission_options)) {
+            this.transmissionOptions = rawData.transmission_options;
+          }
+        }
+        
         rawRows.forEach(row => {
           {
             const a = row.first_datetime.split('T');

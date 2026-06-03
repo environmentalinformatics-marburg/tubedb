@@ -42,7 +42,23 @@
 
     <q-item>
       <q-item-section side><q-icon name="cell_tower" /></q-item-section>
-      <q-item-section><q-input outlined v-model="row.status" label="Transmission" stack-label dense /></q-item-section>
+      <q-item-section>
+        <q-select
+          outlined
+          v-model="row.status"
+          :options="transmissionOptions"
+          use-input
+          :clearable="isFocusedTransmissionSelect"
+          new-value-mode="add-unique"
+          :label="transmissionLabel"
+          stack-label
+          dense
+          :input-value="transmissionInputValue"
+          @input-value="transmissionInputValue = $event"
+          @focus="isFocusedTransmissionSelect = true"
+          @blur="isFocusedTransmissionSelect = false"
+        />
+      </q-item-section>
     </q-item>
 
     <q-item>
@@ -60,8 +76,6 @@
       <q-item-section><q-input outlined v-model="row.notes" label="Notes" stack-label dense type="textarea" /></q-item-section>
     </q-item>
   </q-list>
-
-
 
   <q-expansion-item
     dense
@@ -107,8 +121,7 @@
 import { mapGetters } from 'vuex';
 
 export default {
-  props: [
-  ],
+  props: ['transmissionOptions'],
   components: {
   },
   data() {
@@ -119,6 +132,8 @@ export default {
       error: false,
       submitting: false,
       row: {},
+      isFocusedTransmissionSelect: false,
+      transmissionInputValue: '',
     };
   },
   computed: {
@@ -127,6 +142,12 @@ export default {
       apiGET: 'apiGET',
       apiPOST: 'apiPOST',
     }),
+    transmissionLabel() {
+      if (this.transmissionInputValue && this.transmissionInputValue !== this.row.status) {
+        return 'Transmission (Press Enter to confirm)';
+      }
+      return 'Transmission';
+    }
   },
   methods: {
     show(project, plot) {
@@ -188,6 +209,12 @@ export default {
     },
   },
   watch: {
+    'row.status': {
+      immediate: true,
+      handler(val) {
+        this.transmissionInputValue = val || '';
+      }
+    }
   },
   async mounted() {
   },
