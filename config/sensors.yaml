@@ -299,6 +299,22 @@ SM_10:
   empirical_diff: 29.04
   interpolation_mse: 100   
   
+SM_10_ref:
+  description: reference of SM_10
+  unit: '% (percentage of volumetric water content)'
+  dependency: [ref_SM_10]
+  post_hour_func: "ref_SM_10"
+  aggregation: average
+  visibility: internal   
+  
+SM_10_ref_diff:
+  description: difference to reference of SM_10
+  unit: 'pp (percentage points of volumetric water content)'  
+  dependency: [SM_10, ref_SM_10]
+  post_hour_func: "SM_10 - ref_SM_10"
+  aggregation: average
+  visibility: internal
+  
 SM_10_min:
   description: Minimum value of SM_10 
   unit: '% (percentage of volumetric water content)'

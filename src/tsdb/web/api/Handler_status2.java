@@ -133,8 +133,8 @@ public class Handler_status2 extends MethodHandler {
 
 			HashMap<String, YamlMap> statusMap = withPlotStatus ? readEntries() : null;
 
-			// Collect unique transmission options from YAML file
 			Set<String> transmissionOptions = new HashSet<>();
+			Set<String> conditionOptions = new HashSet<>();
 			if(statusMap != null) {
 				for(YamlMap entry : statusMap.values()) {
 					Object statusObj = entry.optObject("status");
@@ -144,11 +144,21 @@ public class Handler_status2 extends MethodHandler {
 							transmissionOptions.add(statusStr);
 						}
 					}
+					Object conditionObj = entry.optObject("condition");
+					if(conditionObj != null) {
+						String conditionStr = conditionObj.toString().strip();
+						if(!conditionStr.isBlank()) {
+							conditionOptions.add(conditionStr);
+						}
+					}
 				}
 			}
 			
 			ArrayList<String> sortedTransmissionOptions = new ArrayList<String>(transmissionOptions);
 			sortedTransmissionOptions.sort(null);
+			
+			ArrayList<String> sortedConditionOptions = new ArrayList<String>(conditionOptions);
+			sortedConditionOptions.sort(null);
 
 			PrintWriter writer = response.getWriter();
 			JSONWriter json_output = new JSONWriter(writer);
@@ -156,10 +166,16 @@ public class Handler_status2 extends MethodHandler {
 			// Start Object wrapper
 			json_output.object();
 			
-			// Write transmission_options array
 			json_output.key("transmission_options");
 			json_output.array();
 			for(String opt : sortedTransmissionOptions) {
+				json_output.value(opt);
+			}
+			json_output.endArray();
+			
+			json_output.key("condition_options");
+			json_output.array();
+			for(String opt : sortedConditionOptions) {
 				json_output.value(opt);
 			}
 			json_output.endArray();

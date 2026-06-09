@@ -124,6 +124,7 @@
       ref="plotStatusDialog"
       @changed="refresh"
       :transmission-options="transmissionOptions"
+      :condition-options="conditionOptions"
     />
   </q-layout>
 </template>
@@ -225,6 +226,7 @@ export default {
       plot: undefined,
       filter: undefined,
       transmissionOptions: ['A', 'B', 'C'],
+      conditionOptions: ['A', 'B', 'C'],
     }
   },
   computed: {
@@ -284,7 +286,6 @@ export default {
         params.append('plot_status', '');
         const response = await this.apiGET(['tsdb', 'status2'], {params});
         
-        // Handle new API response structure (object with results and transmission_options)
         let rawData = response.data;
         let rawRows = [];
         
@@ -292,12 +293,15 @@ export default {
           // Backward compatibility: old API returns array directly
           rawRows = rawData;
         } else if (rawData && typeof rawData === 'object') {
-          // New API structure: object with results and transmission_options
+          // New API structure: object with results
           rawRows = rawData.results || [];
           
-          // Update transmission options if available
+          // options if available
           if (rawData.transmission_options && Array.isArray(rawData.transmission_options)) {
             this.transmissionOptions = rawData.transmission_options;
+          }
+          if (rawData.condition_options && Array.isArray(rawData.condition_options)) {
+            this.conditionOptions = rawData.condition_options;
           }
         }
         
