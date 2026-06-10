@@ -145,15 +145,6 @@ export default {
     return {
       columns: [
         {
-          name: 'plot',
-          field: 'plot',
-          label: 'Plot',
-          headerStyle: 'text-align: center; border-right: 1px solid #c6c6c6;',
-          align: 'left',
-          sortable: true,
-          classes: 'plot',
-        },
-        {
           name: 'first_datetime',
           field: 'first_datetime',
           label: 'Earliest data',
@@ -186,6 +177,15 @@ export default {
           align: 'right',
           sortable: true,
           classes: this.voltageClass,
+        },
+        {
+          name: 'plot',
+          field: 'plot',
+          label: 'Plot',
+          headerStyle: 'text-align: center; border-left: 1px solid #c6c6c6; border-right: 1px solid #c6c6c6; background-color: #d8d8d8;',
+          align: 'left',
+          sortable: true,
+          classes: 'plot',
         },
         {
           name: 'status',
@@ -457,8 +457,10 @@ td.timeMarkOneWeek { background-color: #ffff44; }
 td.timeMarkNow { background-color: #44ff44; }
 
 td.plot {
-  background-color: #f4f4f4;
+  background-color: #e0e0e0;
+  border-left: 1px solid #c6c6c6;
   border-right: 1px solid #c6c6c6;
+  font-weight: 500;
   /*font-weight: bold;
   font-family: monospace;*/
 }
