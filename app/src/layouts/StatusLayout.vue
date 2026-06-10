@@ -182,7 +182,7 @@ export default {
           name: 'plot',
           field: 'plot',
           label: 'Plot',
-          headerStyle: 'text-align: center; border-left: 1px solid #c6c6c6; border-right: 1px solid #c6c6c6; background-color: #d8d8d8;',
+          headerStyle: 'text-align: center; border-left: 1px solid #c6c6c6; border-right: 1px solid #c6c6c6; background-color: #d8d8d8; font-weight: 800;',
           align: 'left',
           sortable: true,
           classes: 'plot',
@@ -194,7 +194,7 @@ export default {
           headerStyle: 'text-align: center; min-width: 150px; max-width: 150px;',
           align: 'left',
           sortable: true,
-          style: 'min-width: 150px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; background-color: rgba(255, 255, 0, 0.02);',
+          style: 'min-width: 120px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; background-color: rgba(255, 255, 0, 0.02); color: #757575;',
         },
         {
           name: 'condition',
@@ -203,7 +203,7 @@ export default {
           headerStyle: 'text-align: center; min-width: 150px; max-width: 150px;',
           align: 'left',
           sortable: true,
-          style: 'min-width: 150px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; background-color: rgba(0, 0, 255, 0.02);',
+          style: 'min-width: 250px; max-width: 250px; overflow: hidden; text-overflow: ellipsis; background-color: rgba(0, 0, 255, 0.02);',
         },        
         {
           name: 'tasks',
@@ -212,7 +212,7 @@ export default {
           headerStyle: 'text-align: center; min-width: 150px; max-width: 150px;',
           align: 'left',
           sortable: true,
-          style: 'min-width: 300px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; background-color: #fff;',
+          style: 'min-width: 400px; max-width: 400px; overflow: hidden; text-overflow: ellipsis; background-color: #fff; color: #1976d2;',
         },
       ],
       pagination: {
