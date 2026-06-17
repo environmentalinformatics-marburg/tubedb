@@ -315,6 +315,22 @@ SM_10_ref_diff:
   aggregation: average
   visibility: internal
   
+SM_10_ref_diff_avg_28d:
+  description: 28-day rolling mean of SM_10_ref_diff
+  unit: 'pp (percentage points of volumetric water content)' 
+  dependency: SM_10_ref_diff
+  post_hour_func: "rolling_mean(SM_10_ref_diff)"
+  aggregation: average
+  visibility: internal
+  
+SM_10_ref_diff_sd_28d:
+  description: 28-day rolling standard deviation of SM_10_ref_diff
+  unit: 'pp (percentage points of volumetric water content)' 
+  dependency: SM_10_ref_diff
+  post_hour_func: "rolling_sd(SM_10_ref_diff)"
+  aggregation: average
+  visibility: internal  
+  
 SM_10_min:
   description: Minimum value of SM_10 
   unit: '% (percentage of volumetric water content)'
@@ -2097,6 +2113,22 @@ Ta_200_ref_diff:
   post_hour_func: "Ta_200 - ref_Ta_200"
   aggregation: average
   visibility: internal
+  
+Ta_200_ref_diff_avg_28d:
+  description: 28-day rolling mean of Ta_200_ref_diff
+  unit: °K (degree Kelvin)
+  dependency: Ta_200_ref_diff
+  post_hour_func: "rolling_mean(Ta_200_ref_diff)"
+  aggregation: average
+  visibility: internal
+  
+Ta_200_ref_diff_sd_28d:
+  description: 28-day rolling standard deviation of Ta_200_ref_diff
+  unit: °K (degree Kelvin)
+  dependency: Ta_200_ref_diff
+  post_hour_func: "rolling_sd(Ta_200_ref_diff)"
+  aggregation: average
+  visibility: internal  
 
 precipitation_radolan_rain_days:  
   description: (RR0.1) (Rain days) (precipitation_radolan >= 0.1 mm per day)
@@ -3815,3 +3847,5 @@ WV_110:
   physical_range: [0.0, 100.0]
   step_range: [0.0, 1000.0]
   empirical_diff: 2.93
+  
+  

@@ -1,12 +1,10 @@
 package tsdb.graph;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
 
 import org.tinylog.Logger;
 
@@ -29,7 +27,6 @@ import tsdb.graph.node.Continuous;
 import tsdb.graph.node.ContinuousGen;
 import tsdb.graph.node.Node;
 import tsdb.graph.node.NodeGen;
-import tsdb.graph.processing.Aggregated;
 import tsdb.graph.processing.ElementRawCopy;
 import tsdb.graph.processing.EmpiricalFiltered_NEW;
 import tsdb.graph.processing.Evaporation;
@@ -47,7 +44,6 @@ import tsdb.graph.source.StationRawSource;
 import tsdb.iterator.ElementCopyIterator.Action;
 import tsdb.iterator.SunshineIterator;
 import tsdb.iterator.SunshineOlivieriIterator;
-import tsdb.util.AggregationInterval;
 import tsdb.util.Computation;
 import tsdb.util.DataQuality;
 import tsdb.util.Mutator;

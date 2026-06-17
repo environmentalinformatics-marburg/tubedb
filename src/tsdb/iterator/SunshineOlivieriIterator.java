@@ -3,9 +3,6 @@ package tsdb.iterator;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
-
-import org.tinylog.Logger;
-
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataQuality;
 import tsdb.util.TimeUtil;

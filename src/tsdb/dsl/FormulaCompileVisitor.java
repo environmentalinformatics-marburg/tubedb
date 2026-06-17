@@ -55,9 +55,9 @@ import tsdb.dsl.computation.ComputationMulCubeVarNum;
 import tsdb.dsl.computation.ComputationMulNum;
 import tsdb.dsl.computation.ComputationMulPow4Num;
 import tsdb.dsl.computation.ComputationMulPow4VarNum;
-import tsdb.dsl.computation.ComputationMulPowVarNumNum;
 import tsdb.dsl.computation.ComputationMulPowNumNum;
 import tsdb.dsl.computation.ComputationMulPowNum_;
+import tsdb.dsl.computation.ComputationMulPowVarNumNum;
 import tsdb.dsl.computation.ComputationMulSquareNum;
 import tsdb.dsl.computation.ComputationMulSquareVar0Num;
 import tsdb.dsl.computation.ComputationMulSquareVar1Num;
@@ -77,6 +77,10 @@ import tsdb.dsl.computation.ComputationPow4rtVar;
 import tsdb.dsl.computation.ComputationPowNum;
 import tsdb.dsl.computation.ComputationRecoveringCumsumByYear;
 import tsdb.dsl.computation.ComputationRecoveringCumsumByYearNeg;
+import tsdb.dsl.computation.ComputationRollingMean;
+import tsdb.dsl.computation.ComputationRollingMeanNeg;
+import tsdb.dsl.computation.ComputationRollingStdDev;
+import tsdb.dsl.computation.ComputationRollingStdDevNeg;
 import tsdb.dsl.computation.ComputationSqr;
 import tsdb.dsl.computation.ComputationSqrNeg;
 import tsdb.dsl.computation.ComputationSqrt;
@@ -99,7 +103,6 @@ import tsdb.dsl.formula.BooleanFormulaLess;
 import tsdb.dsl.formula.BooleanFormulaLessEqual;
 import tsdb.dsl.formula.BooleanFormulaNotEqual;
 import tsdb.dsl.formula.BooleanFormulaOR;
-import tsdb.dsl.formula.Formula;
 import tsdb.dsl.formula.FormulaAdd;
 import tsdb.dsl.formula.FormulaConditional;
 import tsdb.dsl.formula.FormulaDiv;
@@ -578,6 +581,10 @@ public class FormulaCompileVisitor implements FormulaVisitor1<Computation>, Bool
 			return formulaFunc.positive ? new ComputationSqr(parameter) : new ComputationSqrNeg(parameter);
 		case "sqrt":
 			return formulaFunc.positive ? new ComputationSqrt(parameter) : new ComputationSqrtNeg(parameter);			
+		case "rolling_mean":
+			return formulaFunc.positive ? new ComputationRollingMean(parameter, 28*24) : new ComputationRollingMeanNeg(parameter, 28*24);
+		case "rolling_sd":
+			return formulaFunc.positive ? new ComputationRollingStdDev(parameter, 28*24) : new ComputationRollingStdDevNeg(parameter, 28*24);
 		default:
 			throw new RuntimeException("function not found: "+formulaFunc.name);
 		}		
