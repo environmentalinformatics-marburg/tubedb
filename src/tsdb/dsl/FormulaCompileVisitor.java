@@ -36,6 +36,8 @@ import tsdb.dsl.computation.ComputationCube;
 import tsdb.dsl.computation.ComputationCubeVar;
 import tsdb.dsl.computation.ComputationCumsumByYear;
 import tsdb.dsl.computation.ComputationCumsumByYearNeg;
+import tsdb.dsl.computation.ComputationDelta;
+import tsdb.dsl.computation.ComputationDeltaNeg;
 import tsdb.dsl.computation.ComputationDiv;
 import tsdb.dsl.computation.ComputationDivNum1;
 import tsdb.dsl.computation.ComputationDivNum2;
@@ -585,6 +587,8 @@ public class FormulaCompileVisitor implements FormulaVisitor1<Computation>, Bool
 			return formulaFunc.positive ? new ComputationRollingMean(parameter, 28*24) : new ComputationRollingMeanNeg(parameter, 28*24);
 		case "rolling_sd":
 			return formulaFunc.positive ? new ComputationRollingStdDev(parameter, 28*24) : new ComputationRollingStdDevNeg(parameter, 28*24);
+		case "delta":
+			return formulaFunc.positive ? new ComputationDelta(parameter) : new ComputationDeltaNeg(parameter);
 		default:
 			throw new RuntimeException("function not found: "+formulaFunc.name);
 		}		
