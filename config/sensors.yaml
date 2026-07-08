@@ -2094,6 +2094,7 @@ precipitation_radolan:
   aggregation: sum
   physical_range: [0.0, 500.0]
   step_range: [0.0, 1000.0]
+  empirical_diff: 1000
   interpolation_mse: 4
   category: water
   
@@ -2109,6 +2110,66 @@ precipitation_radolan_acc:
   post_year_func: "precipitation_radolan"  
   aggregation: maximum
   category: water
+  
+precipitation_radolan_delta:
+  description: difference to predecessor measurement in time of precipitation_radolan
+  unit: mm (millimeter)  
+  dependency: [precipitation_radolan]
+  post_hour_func: "delta(precipitation_radolan)"
+  aggregation: average
+  visibility: internal  
+  
+precipitation_radolan_delta_avg_28d:
+  description: 28-day rolling mean of precipitation_radolan_delta
+  unit: mm (millimeter)
+  dependency: precipitation_radolan_delta
+  post_hour_func: "rolling_mean(precipitation_radolan_delta)"
+  aggregation: average
+  visibility: internal
+
+precipitation_radolan_delta_sd_28d:
+  description: 28-day rolling standard deviation of precipitation_radolan_delta
+  unit: mm (millimeter)
+  dependency: precipitation_radolan_delta
+  post_hour_func: "rolling_sd(precipitation_radolan_delta)"
+  aggregation: average
+  visibility: internal
+  
+precipitation_radolan_ref:
+  description: reference of precipitation_radolan
+  unit: mm (millimeter) 
+  dependency: [ref_precipitation_radolan]
+  post_hour_func: "ref_precipitation_radolan"
+  aggregation: sum
+  physical_range: [0.0, 500.0]
+  step_range: [0.0, 1000.0]
+  interpolation_mse: 4
+  category: water   
+  visibility: internal  
+
+precipitation_radolan_ref_diff:
+  description: difference to reference of precipitation_radolan
+  unit: mm (millimeter)  
+  dependency: [precipitation_radolan, ref_precipitation_radolan]
+  post_hour_func: "precipitation_radolan - ref_precipitation_radolan"
+  aggregation: average
+  visibility: internal
+
+precipitation_radolan_ref_diff_avg_28d:
+  description: 28-day rolling mean of precipitation_radolan_ref_diff
+  unit: mm (millimeter)
+  dependency: precipitation_radolan_ref_diff
+  post_hour_func: "rolling_mean(precipitation_radolan_ref_diff)"
+  aggregation: average
+  visibility: internal
+
+precipitation_radolan_ref_diff_sd_28d:
+  description: 28-day rolling standard deviation of precipitation_radolan_ref_diff
+  unit: mm (millimeter)
+  dependency: precipitation_radolan_ref_diff
+  post_hour_func: "rolling_sd(precipitation_radolan_ref_diff)"
+  aggregation: average
+  visibility: internal  
   
 #added 2018-04-04 generic PAR
 PAR:
