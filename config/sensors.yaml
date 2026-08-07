@@ -2197,7 +2197,7 @@ Ta_200_refcount:
   dependency: [refcount_Ta_200]
   post_hour_func: "refcount_Ta_200"
   aggregation: average
-  category: other
+  category: filled
   visibility: internal   
   
 Ta_200_ref_diff:
@@ -2206,6 +2206,7 @@ Ta_200_ref_diff:
   dependency: [Ta_200, ref_Ta_200]
   post_hour_func: "Ta_200 - ref_Ta_200"
   aggregation: average
+  category: filled  
   visibility: internal
   
 Ta_200_ref_diff_avg_28d:
@@ -2214,14 +2215,16 @@ Ta_200_ref_diff_avg_28d:
   dependency: Ta_200_ref_diff
   post_hour_func: "rolling_mean(Ta_200_ref_diff)"
   aggregation: average
+  category: filled
   visibility: internal
   
-Ta_200_ref_diff_avg_28d_max_4a:
-  description: 4-year rolling max of Ta_200_ref_diff_avg_28d
+Ta_200_ref_diff_avg_28d_max_1a:
+  description: 1-year rolling max of Ta_200_ref_diff_avg_28d
   unit: °K (degree Kelvin)
   dependency: Ta_200_ref_diff_avg_28d
   post_hour_func: "rolling_max(abs(Ta_200_ref_diff_avg_28d))"
   aggregation: average
+  category: filled
   visibility: internal
   
 Ta_200_ref_diff_sd_28d:
@@ -2230,6 +2233,7 @@ Ta_200_ref_diff_sd_28d:
   dependency: Ta_200_ref_diff
   post_hour_func: "rolling_sd(Ta_200_ref_diff)"
   aggregation: average
+  category: filled
   visibility: internal
 
 Ta_200_delta:
@@ -2238,6 +2242,7 @@ Ta_200_delta:
   dependency: [Ta_200]
   post_hour_func: "delta(Ta_200)"
   aggregation: average
+  category: filled
   visibility: internal  
   
 Ta_200_delta_avg_28d:
@@ -2246,6 +2251,16 @@ Ta_200_delta_avg_28d:
   dependency: Ta_200_delta
   post_hour_func: "rolling_mean(Ta_200_delta)"
   aggregation: average
+  category: filled
+  visibility: internal
+  
+Ta_200_delta_avg_28d_max_1a:
+  description: 1-year rolling max of Ta_200_delta_avg_28d
+  unit: °K (degree Kelvin)
+  dependency: Ta_200_delta_avg_28d
+  post_hour_func: "rolling_max(abs(Ta_200_delta_avg_28d))"
+  aggregation: average
+  category: filled
   visibility: internal
   
 Ta_200_delta_sd_28d:
@@ -2254,6 +2269,7 @@ Ta_200_delta_sd_28d:
   dependency: Ta_200_delta
   post_hour_func: "rolling_sd(Ta_200_delta)"
   aggregation: average
+  category: filled
   visibility: internal
 
 precipitation_radolan_rain_days:  

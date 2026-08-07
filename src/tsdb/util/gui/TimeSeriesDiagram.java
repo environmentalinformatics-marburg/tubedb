@@ -547,6 +547,7 @@ public class TimeSeriesDiagram {
 		case WATER:
 			tsp.setColor(180,180,220);
 			break;
+		case FILLED:
 		case OTHER:
 			tsp.setColor(220,220,220);
 			break;
@@ -742,8 +743,11 @@ public class TimeSeriesDiagram {
 				drawDiagramTemperature(tsp, valueLineList, connectLineList, isPrimary, curveList, aggregatedConnectionType);
 				break;
 			case WATER:
-				drawDiagramWater(tsp, valueLineList, connectLineList, isPrimary);
+				drawDiagramWater(tsp, valueLineList, connectLineList, isPrimary, curveList, aggregatedConnectionType);
 				break;
+			case FILLED:
+				drawDiagramFilled(tsp, valueLineList, connectLineList, isPrimary, curveList, aggregatedConnectionType);
+				break;				
 			case OTHER:
 				//if(aggregationInterval==AggregationInterval.RAW) {
 
@@ -966,23 +970,43 @@ public class TimeSeriesDiagram {
 		}
 	}
 
-	private void drawDiagramWater(TimeSeriesPainter tsp, List<ValueLine> valueLineList, List<ConnectLine> connectLineList, boolean isPrimary) {
+	private void drawDiagramWater(TimeSeriesPainter tsp, List<ValueLine> valueLineList, List<ConnectLine> connectLineList, boolean isPrimary, List<List<RawPoint>> curveList, AggregatedConnectionType connectionType) {
 		if(isPrimary) {
-			tsp.setColorRectWater();
+			tsp.setColorRectWaterFill();
 		} else {
-			tsp.setColorRectWaterSecondary();	
+			tsp.setColorRectWaterFillSecondary();	
 		}
-		for(ValueLine valueLine:valueLineList) {
-			tsp.fillRect(valueLine.x0, valueLine.y, valueLine.x1, diagramMaxY);
-		}
-	}
 
-	private void drawDiagramUnknown(TimeSeriesPainter tsp, List<ValueLine> valueLineList, List<ConnectLine> connectLineList, boolean isPrimary, List<List<RawPoint>> curveList, AggregatedConnectionType connectionType) {
-		if(isPrimary) {
-			tsp.setColorConnectLineUnknown();
-		} else {
-			tsp.setColorConnectLineUnknownSecondary();	
+		/*for(ValueLine valueLine:valueLineList) {
+			tsp.fillRect(valueLine.x0, valueLine.y, valueLine.x1, diagramMaxY);
+		}*/
+		float zeroY = calcDiagramY(0.0);
+		boolean zeroInBounds = zeroY >= diagramMinY && zeroY <= diagramMaxY;
+
+		for(ValueLine valueLine:valueLineList) {
+			float fillYTop, fillYBottom;
+
+			if (zeroInBounds) {
+				fillYTop = Math.min(zeroY, valueLine.y);
+				fillYBottom = Math.max(zeroY, valueLine.y);
+			} else if (zeroY < diagramMinY) {
+				fillYTop = diagramMinY;
+				fillYBottom = valueLine.y;
+			} else {
+				fillYTop = valueLine.y;
+				fillYBottom = diagramMaxY;
+			}
+
+			tsp.fillRect(valueLine.x0, fillYTop, valueLine.x1, fillYBottom);
 		}
+
+
+		if(isPrimary) {
+			tsp.setColorConnectLineWater();
+		} else {
+			tsp.setColorConnectLineWaterSecondary();	
+		}
+
 		switch(connectionType) {
 		case NONE:
 			// nothing
@@ -1005,6 +1029,159 @@ public class TimeSeriesDiagram {
 		default:
 			throw new RuntimeException("unknown connection type: " + connectionType);
 		}
+
+
+		/*if(isPrimary) {
+			tsp.setColorValueLineUnknown();
+		} else {
+			tsp.setColorValueLineUnknownSecondary();	
+		}*/
+		if(isPrimary) {
+			tsp.setColorConnectLineWater();
+		} else {
+			tsp.setColorConnectLineWaterSecondary();	
+		}
+
+		switch(aggregatedValue) {
+		case NONE:
+			// nothing
+			break;
+		case POINT:
+			for(ValueLine valueLine : valueLineList) {
+				float x = (valueLine.x0 + valueLine.x1) / 2;
+				tsp.drawLine(x, valueLine.y, x, valueLine.y);
+			}
+			break;			
+		case LINE:
+			for(ValueLine valueLine:valueLineList) {
+				tsp.drawLine(valueLine.x0,valueLine.y,valueLine.x1,valueLine.y);
+			}
+			break;
+		default:
+			throw new RuntimeException("unknown aggregated value type: " + aggregatedValue);
+		}
+
+	}
+
+	private void drawDiagramFilled(TimeSeriesPainter tsp, List<ValueLine> valueLineList, List<ConnectLine> connectLineList, boolean isPrimary, List<List<RawPoint>> curveList, AggregatedConnectionType connectionType) {
+
+		if(isPrimary) {
+			tsp.setColorRectFilled();
+		} else {
+			tsp.setColorRectFilledSecondary();	
+		}
+
+		/*for(ValueLine valueLine:valueLineList) {
+			tsp.fillRect(valueLine.x0, valueLine.y, valueLine.x1, diagramMaxY);
+	    }*/
+		float zeroY = calcDiagramY(0.0);
+		boolean zeroInBounds = zeroY >= diagramMinY && zeroY <= diagramMaxY;
+
+		for(ValueLine valueLine:valueLineList) {
+			float fillYTop, fillYBottom;
+
+			if (zeroInBounds) {
+				fillYTop = Math.min(zeroY, valueLine.y);
+				fillYBottom = Math.max(zeroY, valueLine.y);
+			} else if (zeroY < diagramMinY) {
+				fillYTop = diagramMinY;
+				fillYBottom = valueLine.y;
+			} else {
+				fillYTop = valueLine.y;
+				fillYBottom = diagramMaxY;
+			}
+
+			tsp.fillRect(valueLine.x0, fillYTop, valueLine.x1, fillYBottom);
+		}
+
+
+		if(isPrimary) {
+			tsp.setColorConnectLineUnknown();
+		} else {
+			tsp.setColorConnectLineUnknownSecondary();	
+		}
+
+		switch(connectionType) {
+		case NONE:
+			// nothing
+			break;
+		case STEP:
+			for(ConnectLine connectLine:connectLineList) {
+				tsp.drawLine(connectLine.x, connectLine.y0, connectLine.x, connectLine.y1);
+			}
+			break;
+		case LINE:
+			for(List<RawPoint> curve : curveList) {
+				tsp.drawPointsAsLineString(curve);
+			}
+			break;
+		case CURVE:
+			for(List<RawPoint> curve : curveList) {
+				tsp.drawPointsAsCurve(curve);
+			}
+			break;
+		default:
+			throw new RuntimeException("unknown connection type: " + connectionType);
+		}
+
+
+		if(isPrimary) {
+			tsp.setColorValueLineUnknown();
+		} else {
+			tsp.setColorValueLineUnknownSecondary();	
+		}
+
+		switch(aggregatedValue) {
+		case NONE:
+			// nothing
+			break;
+		case POINT:
+			for(ValueLine valueLine : valueLineList) {
+				float x = (valueLine.x0 + valueLine.x1) / 2;
+				tsp.drawLine(x, valueLine.y, x, valueLine.y);
+			}
+			break;			
+		case LINE:
+			for(ValueLine valueLine:valueLineList) {
+				tsp.drawLine(valueLine.x0,valueLine.y,valueLine.x1,valueLine.y);
+			}
+			break;
+		default:
+			throw new RuntimeException("unknown aggregated value type: " + aggregatedValue);
+		}
+	}
+
+	private void drawDiagramUnknown(TimeSeriesPainter tsp, List<ValueLine> valueLineList, List<ConnectLine> connectLineList, boolean isPrimary, List<List<RawPoint>> curveList, AggregatedConnectionType connectionType) {
+
+		if(isPrimary) {
+			tsp.setColorConnectLineUnknown();
+		} else {
+			tsp.setColorConnectLineUnknownSecondary();	
+		}
+
+		switch(connectionType) {
+		case NONE:
+			// nothing
+			break;
+		case STEP:
+			for(ConnectLine connectLine:connectLineList) {
+				tsp.drawLine(connectLine.x, connectLine.y0, connectLine.x, connectLine.y1);
+			}
+			break;
+		case LINE:
+			for(List<RawPoint> curve : curveList) {
+				tsp.drawPointsAsLineString(curve);
+			}
+			break;
+		case CURVE:
+			for(List<RawPoint> curve : curveList) {
+				tsp.drawPointsAsCurve(curve);
+			}
+			break;
+		default:
+			throw new RuntimeException("unknown connection type: " + connectionType);
+		}
+
 
 		if(isPrimary) {
 			tsp.setColorValueLineUnknown();

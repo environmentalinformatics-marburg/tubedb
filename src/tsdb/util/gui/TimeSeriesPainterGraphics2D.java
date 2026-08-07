@@ -190,13 +190,35 @@ public class TimeSeriesPainterGraphics2D implements TimeSeriesPainter {
 	}
 
 	@Override
-	public void setColorRectWater() {
+	public void setColorRectWaterFill() {
+		//gc.setColor(new Color(0, 0, 200));
+		gc.setColor(new Color(102, 153, 255));
+	}
+
+	@Override
+	public void setColorRectWaterFillSecondary() {
+		//gc.setColor(new Color(156,232,17));
+		gc.setColor(new Color(156,232,17));
+	}
+	
+	@Override
+	public void setColorConnectLineWater() {
 		gc.setColor(new Color(0, 0, 200));		
 	}
 
 	@Override
-	public void setColorRectWaterSecondary() {
-		gc.setColor(new Color(156,232,17));		
+	public void setColorConnectLineWaterSecondary() {
+		gc.setColor(new Color(156,232,17));	
+	}
+	
+	@Override
+	public void setColorRectFilled() {
+		gc.setColor(new Color(235,235,235));		
+	}
+
+	@Override
+	public void setColorRectFilledSecondary() {
+		gc.setColor(new Color(156,232,232));		
 	}
 
 	@Override

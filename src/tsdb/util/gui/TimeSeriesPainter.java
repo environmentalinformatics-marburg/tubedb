@@ -42,8 +42,8 @@ public interface TimeSeriesPainter {
 	void setColorConnectLineUnknown();
 	void setColorConnectLineUnknownSecondary();
 	void setColorRectGap();
-	void setColorRectWater();	
-	void setColorRectWaterSecondary();
+	void setColorRectWaterFill();	
+	void setColorRectWaterFillSecondary();
 	void setIndexedColor(float value);
 	void setIndexedColorRange(float min, float max);
 	void setColorScale(String name);
@@ -52,4 +52,8 @@ public interface TimeSeriesPainter {
 	void setFontSmall();
 	void setLineStyleDotted();
 	void setLineStyleSolid();
+	void setColorRectFilled();
+	void setColorRectFilledSecondary();
+	void setColorConnectLineWater();
+	void setColorConnectLineWaterSecondary();
 }

@@ -493,7 +493,7 @@ public class FormulaCompileVisitor implements FormulaVisitor1<Computation>, Bool
 		case "rolling_sd":
 			return formulaFunc.positive ? new ComputationRollingStdDev(parameter, 28*24) : new ComputationRollingStdDevNeg(parameter, 28*24);
 		case "rolling_max":
-			return formulaFunc.positive ? new ComputationRollingMax(parameter, 4*365*24) : new ComputationRollingMaxNeg(parameter, 4*365*24);			
+			return formulaFunc.positive ? new ComputationRollingMax(parameter, 1*365*24) : new ComputationRollingMaxNeg(parameter, 1*365*24);			
 		case "delta":
 			return formulaFunc.positive ? new ComputationDelta(parameter) : new ComputationDeltaNeg(parameter);
 		default:

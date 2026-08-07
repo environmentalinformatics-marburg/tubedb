@@ -75,7 +75,7 @@ public class TimeSeriesHeatMap {
 
 	public void drawHours(TimeSeriesPainter tsp, String sensorName, float xMin) {
 		setRange(tsp,sensorName);
-		tsp.setColorRectWater();
+		tsp.setColorRectWaterFill();
 		long start = ts.entryList.get(0).timestamp-ts.entryList.get(0).timestamp%(60*24);
 		for(TsEntry entry:ts.entryList) {
 			float value = entry.data[0];
@@ -90,7 +90,7 @@ public class TimeSeriesHeatMap {
 	
 	public void drawDays(TimeSeriesPainter tsp, String sensorName, float xMin) {
 		setRange(tsp,sensorName);
-		tsp.setColorRectWater();
+		tsp.setColorRectWaterFill();
 		long start = ts.entryList.get(0).timestamp-ts.entryList.get(0).timestamp%(60*24);
 		for(TsEntry entry:ts.entryList) {
 			float value = entry.data[0];
@@ -104,7 +104,7 @@ public class TimeSeriesHeatMap {
 	
 	public void drawWeeks(TimeSeriesPainter tsp, String sensorName, float xMin) {
 		setRange(tsp,sensorName);
-		tsp.setColorRectWater();
+		tsp.setColorRectWaterFill();
 		long start = ts.entryList.get(0).timestamp-ts.entryList.get(0).timestamp%(60*24);
 		for(TsEntry entry:ts.entryList) {
 			float value = entry.data[0];
@@ -121,7 +121,7 @@ public class TimeSeriesHeatMap {
 	
 	public void drawMonths(TimeSeriesPainter tsp, String sensorName, float xMin) {
 		setRange(tsp,sensorName);
-		tsp.setColorRectWater();
+		tsp.setColorRectWaterFill();
 		long start = ts.entryList.get(0).timestamp-ts.entryList.get(0).timestamp%(60*24);
 		for(TsEntry entry:ts.entryList) {
 			float value = entry.data[0];
@@ -138,7 +138,7 @@ public class TimeSeriesHeatMap {
 	
 	public void drawYears(TimeSeriesPainter tsp, String sensorName, float xMin) {
 		setRange(tsp,sensorName);
-		tsp.setColorRectWater();
+		tsp.setColorRectWaterFill();
 		long start = ts.entryList.get(0).timestamp-ts.entryList.get(0).timestamp%(60*24);
 		for(TsEntry entry:ts.entryList) {
 			float value = entry.data[0];
@@ -155,7 +155,7 @@ public class TimeSeriesHeatMap {
 
 	public void drawHoursByYear(TimeSeriesPainter tsp, String sensorName, float xMin, float yMin) {
 		setRange(tsp,sensorName);
-		tsp.setColorRectWater();		
+		tsp.setColorRectWaterFill();		
 		int yearBaseTimestamp = TimeUtil.roundLowerYear((int)ts.entryList.get(0).timestamp);
 		int yearNextTimestamp = TimeUtil.roundNextYear((int)ts.entryList.get(0).timestamp);
 		int yBase = (int) yMin;
@@ -178,7 +178,7 @@ public class TimeSeriesHeatMap {
 	
 	public void drawDaysByYear(TimeSeriesPainter tsp, String sensorName, float xMin, float yMin) {
 		setRange(tsp,sensorName);
-		tsp.setColorRectWater();		
+		tsp.setColorRectWaterFill();		
 		int yearBaseTimestamp = TimeUtil.roundLowerYear((int)ts.entryList.get(0).timestamp);
 		int yearNextTimestamp = TimeUtil.roundNextYear((int)ts.entryList.get(0).timestamp);
 		int yBase = (int) yMin;
@@ -200,7 +200,7 @@ public class TimeSeriesHeatMap {
 	
 	public void drawWeeksByYear(TimeSeriesPainter tsp, String sensorName, float xMin, float yMin) {
 		setRange(tsp,sensorName);
-		tsp.setColorRectWater();		
+		tsp.setColorRectWaterFill();		
 		int yearBaseTimestamp = TimeUtil.roundLowerYear((int)ts.entryList.get(0).timestamp);
 		int yearNextTimestamp = TimeUtil.roundNextYear((int)ts.entryList.get(0).timestamp);
 		int yBase = (int) yMin;
@@ -225,7 +225,7 @@ public class TimeSeriesHeatMap {
 	
 	public void drawMonthsByYear(TimeSeriesPainter tsp, String sensorName, float xMin, float yMin) {
 		setRange(tsp,sensorName);
-		tsp.setColorRectWater();		
+		tsp.setColorRectWaterFill();		
 		int yearBaseTimestamp = TimeUtil.roundLowerYear((int)ts.entryList.get(0).timestamp);
 		int yearNextTimestamp = TimeUtil.roundNextYear((int)ts.entryList.get(0).timestamp);
 		int yBase = (int) yMin;
@@ -250,7 +250,7 @@ public class TimeSeriesHeatMap {
 	
 	public void drawYearsByYear(TimeSeriesPainter tsp, String sensorName, float xMin, float yMin) {
 		setRange(tsp,sensorName);
-		tsp.setColorRectWater();		
+		tsp.setColorRectWaterFill();		
 		int yearBaseTimestamp = TimeUtil.roundLowerYear((int)ts.entryList.get(0).timestamp);
 		int yearNextTimestamp = TimeUtil.roundNextYear((int)ts.entryList.get(0).timestamp);
 		int yBase = (int) yMin;

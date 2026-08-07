@@ -11,6 +11,7 @@ import org.tinylog.Logger;
 public enum SensorCategory {	
 	TEMPERATURE,
 	WATER,
+	FILLED,
 	OTHER;
 	
 	
@@ -21,6 +22,8 @@ public enum SensorCategory {
 			return TEMPERATURE;
 		case "water":
 			return WATER;
+		case "filled":
+			return FILLED;			
 		case "other":
 			return OTHER;
 		default:
@@ -36,6 +39,8 @@ public enum SensorCategory {
 			return "temperature";
 		case WATER: 
 			return "water";
+		case FILLED: 
+			return "filled";			
 		case OTHER: 
 			return "other";		
 		default:
