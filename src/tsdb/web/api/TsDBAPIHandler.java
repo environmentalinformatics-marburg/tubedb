@@ -65,6 +65,8 @@ public class TsDBAPIHandler extends AbstractHandler {
 		addMethodHandler(new Handler_model(tsdb));
 		addMethodHandler(new Handler_query_js(tsdb));
 		addMethodHandler(new Handler_monitoring(tsdb));
+		addMethodHandler(new Handler_db_content(tsdb));
+		addMethodHandler(new Handler_db_cache_content(tsdb));
 	}
 
 	private void addMethodHandler(MethodHandler methodHandler) {

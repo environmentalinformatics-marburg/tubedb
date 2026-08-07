@@ -4,9 +4,6 @@ import static tsdb.util.AssumptionCheck.throwEmpty;
 
 import java.util.Map;
 
-
-import org.tinylog.Logger;
-
 import tsdb.util.TsEntry;
 import tsdb.util.TsSchema;
 import tsdb.util.TsSchema.Aggregation;
@@ -22,8 +19,6 @@ import tsdb.util.processingchain.ProcessingChain;
  *
  */
 public class AverageIterator extends MoveIterator {
-	@SuppressWarnings("unused")
-	
 
 	private Map<String, Integer> schemaMap;
 	private TsIterator[] input_iterators;

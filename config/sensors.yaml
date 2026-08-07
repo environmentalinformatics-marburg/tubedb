@@ -2191,6 +2191,15 @@ Ta_200_ref:
   category: temperature  
   visibility: internal   
   
+Ta_200_refcount:
+  description: Count of Ta_200 for reference
+  unit: count (number of measurements)  
+  dependency: [refcount_Ta_200]
+  post_hour_func: "refcount_Ta_200"
+  aggregation: average
+  category: other
+  visibility: internal   
+  
 Ta_200_ref_diff:
   description: difference to reference of Ta_200
   unit: °K (degree Kelvin)  
@@ -2204,6 +2213,14 @@ Ta_200_ref_diff_avg_28d:
   unit: °K (degree Kelvin)
   dependency: Ta_200_ref_diff
   post_hour_func: "rolling_mean(Ta_200_ref_diff)"
+  aggregation: average
+  visibility: internal
+  
+Ta_200_ref_diff_avg_28d_max_4a:
+  description: 4-year rolling max of Ta_200_ref_diff_avg_28d
+  unit: °K (degree Kelvin)
+  dependency: Ta_200_ref_diff_avg_28d
+  post_hour_func: "rolling_max(abs(Ta_200_ref_diff_avg_28d))"
   aggregation: average
   visibility: internal
   
@@ -3957,4 +3974,2594 @@ WV_110:
   step_range: [0.0, 1000.0]
   empirical_diff: 2.93
   
-  
+Tw_001:
+  description: Temperature BEClimwood log 001
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_002:
+  description: Temperature BEClimwood log 002
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_003:
+  description: Temperature BEClimwood log 003
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_004:
+  description: Temperature BEClimwood log 004
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_005:
+  description: Temperature BEClimwood log 005
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_006:
+  description: Temperature BEClimwood log 006
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_007:
+  description: Temperature BEClimwood log 007
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_008:
+  description: Temperature BEClimwood log 008
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_009:
+  description: Temperature BEClimwood log 009
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_010:
+  description: Temperature BEClimwood log 010
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_011:
+  description: Temperature BEClimwood log 011
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_012:
+  description: Temperature BEClimwood log 012
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_013:
+  description: Temperature BEClimwood log 013
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_014:
+  description: Temperature BEClimwood log 014
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_015:
+  description: Temperature BEClimwood log 015
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_016:
+  description: Temperature BEClimwood log 016
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_017:
+  description: Temperature BEClimwood log 017
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_018:
+  description: Temperature BEClimwood log 018
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_019:
+  description: Temperature BEClimwood log 019
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_020:
+  description: Temperature BEClimwood log 020
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_021:
+  description: Temperature BEClimwood log 021
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_022:
+  description: Temperature BEClimwood log 022
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_023:
+  description: Temperature BEClimwood log 023
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_024:
+  description: Temperature BEClimwood log 024
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_025:
+  description: Temperature BEClimwood log 025
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_026:
+  description: Temperature BEClimwood log 026
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_027:
+  description: Temperature BEClimwood log 027
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_028:
+  description: Temperature BEClimwood log 028
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_029:
+  description: Temperature BEClimwood log 029
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_030:
+  description: Temperature BEClimwood log 030
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_031:
+  description: Temperature BEClimwood log 031
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_032:
+  description: Temperature BEClimwood log 032
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_033:
+  description: Temperature BEClimwood log 033
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_034:
+  description: Temperature BEClimwood log 034
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_035:
+  description: Temperature BEClimwood log 035
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_036:
+  description: Temperature BEClimwood log 036
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_037:
+  description: Temperature BEClimwood log 037
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_038:
+  description: Temperature BEClimwood log 038
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_039:
+  description: Temperature BEClimwood log 039
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_040:
+  description: Temperature BEClimwood log 040
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_041:
+  description: Temperature BEClimwood log 041
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_042:
+  description: Temperature BEClimwood log 042
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_043:
+  description: Temperature BEClimwood log 043
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_044:
+  description: Temperature BEClimwood log 044
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_045:
+  description: Temperature BEClimwood log 045
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_046:
+  description: Temperature BEClimwood log 046
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_047:
+  description: Temperature BEClimwood log 047
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_048:
+  description: Temperature BEClimwood log 048
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_049:
+  description: Temperature BEClimwood log 049
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_050:
+  description: Temperature BEClimwood log 050
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_051:
+  description: Temperature BEClimwood log 051
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_052:
+  description: Temperature BEClimwood log 052
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_053:
+  description: Temperature BEClimwood log 053
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_054:
+  description: Temperature BEClimwood log 054
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_055:
+  description: Temperature BEClimwood log 055
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_056:
+  description: Temperature BEClimwood log 056
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_057:
+  description: Temperature BEClimwood log 057
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_058:
+  description: Temperature BEClimwood log 058
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_059:
+  description: Temperature BEClimwood log 059
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_060:
+  description: Temperature BEClimwood log 060
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_061:
+  description: Temperature BEClimwood log 061
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_062:
+  description: Temperature BEClimwood log 062
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_063:
+  description: Temperature BEClimwood log 063
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_064:
+  description: Temperature BEClimwood log 064
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_065:
+  description: Temperature BEClimwood log 065
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_066:
+  description: Temperature BEClimwood log 066
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_067:
+  description: Temperature BEClimwood log 067
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_068:
+  description: Temperature BEClimwood log 068
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_069:
+  description: Temperature BEClimwood log 069
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_070:
+  description: Temperature BEClimwood log 070
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_071:
+  description: Temperature BEClimwood log 071
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_072:
+  description: Temperature BEClimwood log 072
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_073:
+  description: Temperature BEClimwood log 073
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_074:
+  description: Temperature BEClimwood log 074
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_075:
+  description: Temperature BEClimwood log 075
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_076:
+  description: Temperature BEClimwood log 076
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_077:
+  description: Temperature BEClimwood log 077
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_078:
+  description: Temperature BEClimwood log 078
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_079:
+  description: Temperature BEClimwood log 079
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_080:
+  description: Temperature BEClimwood log 080
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_081:
+  description: Temperature BEClimwood log 081
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_082:
+  description: Temperature BEClimwood log 082
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_083:
+  description: Temperature BEClimwood log 083
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_084:
+  description: Temperature BEClimwood log 084
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_085:
+  description: Temperature BEClimwood log 085
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_086:
+  description: Temperature BEClimwood log 086
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_087:
+  description: Temperature BEClimwood log 087
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_088:
+  description: Temperature BEClimwood log 088
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_089:
+  description: Temperature BEClimwood log 089
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_090:
+  description: Temperature BEClimwood log 090
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_091:
+  description: Temperature BEClimwood log 091
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_092:
+  description: Temperature BEClimwood log 092
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_093:
+  description: Temperature BEClimwood log 093
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_094:
+  description: Temperature BEClimwood log 094
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_095:
+  description: Temperature BEClimwood log 095
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_096:
+  description: Temperature BEClimwood log 096
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_097:
+  description: Temperature BEClimwood log 097
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_098:
+  description: Temperature BEClimwood log 098
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_099:
+  description: Temperature BEClimwood log 099
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_100:
+  description: Temperature BEClimwood log 100
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_101:
+  description: Temperature BEClimwood log 101
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_102:
+  description: Temperature BEClimwood log 102
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_103:
+  description: Temperature BEClimwood log 103
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_104:
+  description: Temperature BEClimwood log 104
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_105:
+  description: Temperature BEClimwood log 105
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_106:
+  description: Temperature BEClimwood log 106
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_107:
+  description: Temperature BEClimwood log 107
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_108:
+  description: Temperature BEClimwood log 108
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_109:
+  description: Temperature BEClimwood log 109
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_110:
+  description: Temperature BEClimwood log 110
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_111:
+  description: Temperature BEClimwood log 111
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_112:
+  description: Temperature BEClimwood log 112
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_113:
+  description: Temperature BEClimwood log 113
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_114:
+  description: Temperature BEClimwood log 114
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_115:
+  description: Temperature BEClimwood log 115
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_116:
+  description: Temperature BEClimwood log 116
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_117:
+  description: Temperature BEClimwood log 117
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_118:
+  description: Temperature BEClimwood log 118
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_119:
+  description: Temperature BEClimwood log 119
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_120:
+  description: Temperature BEClimwood log 120
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_121:
+  description: Temperature BEClimwood log 121
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_122:
+  description: Temperature BEClimwood log 122
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_123:
+  description: Temperature BEClimwood log 123
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_124:
+  description: Temperature BEClimwood log 124
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_125:
+  description: Temperature BEClimwood log 125
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_126:
+  description: Temperature BEClimwood log 126
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_127:
+  description: Temperature BEClimwood log 127
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_128:
+  description: Temperature BEClimwood log 128
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_129:
+  description: Temperature BEClimwood log 129
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_130:
+  description: Temperature BEClimwood log 130
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_131:
+  description: Temperature BEClimwood log 131
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_132:
+  description: Temperature BEClimwood log 132
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_133:
+  description: Temperature BEClimwood log 133
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_134:
+  description: Temperature BEClimwood log 134
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_135:
+  description: Temperature BEClimwood log 135
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_136:
+  description: Temperature BEClimwood log 136
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_137:
+  description: Temperature BEClimwood log 137
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_138:
+  description: Temperature BEClimwood log 138
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_139:
+  description: Temperature BEClimwood log 139
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_140:
+  description: Temperature BEClimwood log 140
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_141:
+  description: Temperature BEClimwood log 141
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_142:
+  description: Temperature BEClimwood log 142
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_143:
+  description: Temperature BEClimwood log 143
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_144:
+  description: Temperature BEClimwood log 144
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_145:
+  description: Temperature BEClimwood log 145
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_146:
+  description: Temperature BEClimwood log 146
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_147:
+  description: Temperature BEClimwood log 147
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_148:
+  description: Temperature BEClimwood log 148
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_149:
+  description: Temperature BEClimwood log 149
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_150:
+  description: Temperature BEClimwood log 150
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_151:
+  description: Temperature BEClimwood log 151
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_152:
+  description: Temperature BEClimwood log 152
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_153:
+  description: Temperature BEClimwood log 153
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_154:
+  description: Temperature BEClimwood log 154
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_155:
+  description: Temperature BEClimwood log 155
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_156:
+  description: Temperature BEClimwood log 156
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_157:
+  description: Temperature BEClimwood log 157
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_158:
+  description: Temperature BEClimwood log 158
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_159:
+  description: Temperature BEClimwood log 159
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_160:
+  description: Temperature BEClimwood log 160
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_161:
+  description: Temperature BEClimwood log 161
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_162:
+  description: Temperature BEClimwood log 162
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_163:
+  description: Temperature BEClimwood log 163
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_164:
+  description: Temperature BEClimwood log 164
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_165:
+  description: Temperature BEClimwood log 165
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_166:
+  description: Temperature BEClimwood log 166
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_167:
+  description: Temperature BEClimwood log 167
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_168:
+  description: Temperature BEClimwood log 168
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_169:
+  description: Temperature BEClimwood log 169
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_170:
+  description: Temperature BEClimwood log 170
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_171:
+  description: Temperature BEClimwood log 171
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_172:
+  description: Temperature BEClimwood log 172
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_173:
+  description: Temperature BEClimwood log 173
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_174:
+  description: Temperature BEClimwood log 174
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_175:
+  description: Temperature BEClimwood log 175
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_176:
+  description: Temperature BEClimwood log 176
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_177:
+  description: Temperature BEClimwood log 177
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_178:
+  description: Temperature BEClimwood log 178
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_179:
+  description: Temperature BEClimwood log 179
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_180:
+  description: Temperature BEClimwood log 180
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_181:
+  description: Temperature BEClimwood log 181
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_182:
+  description: Temperature BEClimwood log 182
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_183:
+  description: Temperature BEClimwood log 183
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_184:
+  description: Temperature BEClimwood log 184
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_185:
+  description: Temperature BEClimwood log 185
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_186:
+  description: Temperature BEClimwood log 186
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_187:
+  description: Temperature BEClimwood log 187
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_188:
+  description: Temperature BEClimwood log 188
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_189:
+  description: Temperature BEClimwood log 189
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_190:
+  description: Temperature BEClimwood log 190
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_191:
+  description: Temperature BEClimwood log 191
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_192:
+  description: Temperature BEClimwood log 192
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_193:
+  description: Temperature BEClimwood log 193
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_194:
+  description: Temperature BEClimwood log 194
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_195:
+  description: Temperature BEClimwood log 195
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_196:
+  description: Temperature BEClimwood log 196
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_197:
+  description: Temperature BEClimwood log 197
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_198:
+  description: Temperature BEClimwood log 198
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_199:
+  description: Temperature BEClimwood log 199
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_200:
+  description: Temperature BEClimwood log 200
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_201:
+  description: Temperature BEClimwood log 201
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_202:
+  description: Temperature BEClimwood log 202
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_203:
+  description: Temperature BEClimwood log 203
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_204:
+  description: Temperature BEClimwood log 204
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_205:
+  description: Temperature BEClimwood log 205
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_206:
+  description: Temperature BEClimwood log 206
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_207:
+  description: Temperature BEClimwood log 207
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_208:
+  description: Temperature BEClimwood log 208
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_209:
+  description: Temperature BEClimwood log 209
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_210:
+  description: Temperature BEClimwood log 210
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_211:
+  description: Temperature BEClimwood log 211
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_212:
+  description: Temperature BEClimwood log 212
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_213:
+  description: Temperature BEClimwood log 213
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_214:
+  description: Temperature BEClimwood log 214
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_215:
+  description: Temperature BEClimwood log 215
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_216:
+  description: Temperature BEClimwood log 216
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_217:
+  description: Temperature BEClimwood log 217
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_218:
+  description: Temperature BEClimwood log 218
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_219:
+  description: Temperature BEClimwood log 219
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_220:
+  description: Temperature BEClimwood log 220
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_221:
+  description: Temperature BEClimwood log 221
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_222:
+  description: Temperature BEClimwood log 222
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_223:
+  description: Temperature BEClimwood log 223
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_224:
+  description: Temperature BEClimwood log 224
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_225:
+  description: Temperature BEClimwood log 225
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_226:
+  description: Temperature BEClimwood log 226
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_227:
+  description: Temperature BEClimwood log 227
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_228:
+  description: Temperature BEClimwood log 228
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_229:
+  description: Temperature BEClimwood log 229
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_230:
+  description: Temperature BEClimwood log 230
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_231:
+  description: Temperature BEClimwood log 231
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_232:
+  description: Temperature BEClimwood log 232
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_233:
+  description: Temperature BEClimwood log 233
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_234:
+  description: Temperature BEClimwood log 234
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_235:
+  description: Temperature BEClimwood log 235
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_236:
+  description: Temperature BEClimwood log 236
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_237:
+  description: Temperature BEClimwood log 237
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_238:
+  description: Temperature BEClimwood log 238
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_239:
+  description: Temperature BEClimwood log 239
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_240:
+  description: Temperature BEClimwood log 240
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_241:
+  description: Temperature BEClimwood log 241
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_242:
+  description: Temperature BEClimwood log 242
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_243:
+  description: Temperature BEClimwood log 243
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_244:
+  description: Temperature BEClimwood log 244
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_245:
+  description: Temperature BEClimwood log 245
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_246:
+  description: Temperature BEClimwood log 246
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_247:
+  description: Temperature BEClimwood log 247
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_248:
+  description: Temperature BEClimwood log 248
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_249:
+  description: Temperature BEClimwood log 249
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_250:
+  description: Temperature BEClimwood log 250
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_251:
+  description: Temperature BEClimwood log 251
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_252:
+  description: Temperature BEClimwood log 252
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_253:
+  description: Temperature BEClimwood log 253
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_254:
+  description: Temperature BEClimwood log 254
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_255:
+  description: Temperature BEClimwood log 255
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_256:
+  description: Temperature BEClimwood log 256
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_257:
+  description: Temperature BEClimwood log 257
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_258:
+  description: Temperature BEClimwood log 258
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_259:
+  description: Temperature BEClimwood log 259
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_260:
+  description: Temperature BEClimwood log 260
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_261:
+  description: Temperature BEClimwood log 261
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_262:
+  description: Temperature BEClimwood log 262
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_263:
+  description: Temperature BEClimwood log 263
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_264:
+  description: Temperature BEClimwood log 264
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_265:
+  description: Temperature BEClimwood log 265
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_266:
+  description: Temperature BEClimwood log 266
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_267:
+  description: Temperature BEClimwood log 267
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_268:
+  description: Temperature BEClimwood log 268
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_269:
+  description: Temperature BEClimwood log 269
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_270:
+  description: Temperature BEClimwood log 270
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_271:
+  description: Temperature BEClimwood log 271
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_272:
+  description: Temperature BEClimwood log 272
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_273:
+  description: Temperature BEClimwood log 273
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_274:
+  description: Temperature BEClimwood log 274
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_275:
+  description: Temperature BEClimwood log 275
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_276:
+  description: Temperature BEClimwood log 276
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_277:
+  description: Temperature BEClimwood log 277
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_278:
+  description: Temperature BEClimwood log 278
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_279:
+  description: Temperature BEClimwood log 279
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_280:
+  description: Temperature BEClimwood log 280
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_281:
+  description: Temperature BEClimwood log 281
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_282:
+  description: Temperature BEClimwood log 282
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_283:
+  description: Temperature BEClimwood log 283
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_284:
+  description: Temperature BEClimwood log 284
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_285:
+  description: Temperature BEClimwood log 285
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_286:
+  description: Temperature BEClimwood log 286
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_287:
+  description: Temperature BEClimwood log 287
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_288:
+  description: Temperature BEClimwood log 288
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_289:
+  description: Temperature BEClimwood log 289
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_290:
+  description: Temperature BEClimwood log 290
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_291:
+  description: Temperature BEClimwood log 291
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_292:
+  description: Temperature BEClimwood log 292
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_293:
+  description: Temperature BEClimwood log 293
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_294:
+  description: Temperature BEClimwood log 294
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_295:
+  description: Temperature BEClimwood log 295
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_296:
+  description: Temperature BEClimwood log 296
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_297:
+  description: Temperature BEClimwood log 297
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_298:
+  description: Temperature BEClimwood log 298
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_299:
+  description: Temperature BEClimwood log 299
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_300:
+  description: Temperature BEClimwood log 300
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_301:
+  description: Temperature BEClimwood log 301
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_302:
+  description: Temperature BEClimwood log 302
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_303:
+  description: Temperature BEClimwood log 303
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_304:
+  description: Temperature BEClimwood log 304
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_305:
+  description: Temperature BEClimwood log 305
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_306:
+  description: Temperature BEClimwood log 306
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_307:
+  description: Temperature BEClimwood log 307
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_308:
+  description: Temperature BEClimwood log 308
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_309:
+  description: Temperature BEClimwood log 309
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_310:
+  description: Temperature BEClimwood log 310
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_311:
+  description: Temperature BEClimwood log 311
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_312:
+  description: Temperature BEClimwood log 312
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_313:
+  description: Temperature BEClimwood log 313
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_314:
+  description: Temperature BEClimwood log 314
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_315:
+  description: Temperature BEClimwood log 315
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_316:
+  description: Temperature BEClimwood log 316
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_317:
+  description: Temperature BEClimwood log 317
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_318:
+  description: Temperature BEClimwood log 318
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_319:
+  description: Temperature BEClimwood log 319
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_320:
+  description: Temperature BEClimwood log 320
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_321:
+  description: Temperature BEClimwood log 321
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_322:
+  description: Temperature BEClimwood log 322
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_323:
+  description: Temperature BEClimwood log 323
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+Tw_324:
+  description: Temperature BEClimwood log 324
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature

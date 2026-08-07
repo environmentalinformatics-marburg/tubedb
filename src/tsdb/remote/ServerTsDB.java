@@ -40,7 +40,6 @@ import tsdb.util.DataRow;
 import tsdb.util.Measurement;
 import tsdb.util.Pair;
 import tsdb.util.TimeSeriesMask;
-import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.TimestampSeries;
@@ -109,8 +108,8 @@ public class ServerTsDB implements RemoteTsDB {
 	}
 
 	@Override
-	public String[] getCacheSchemaNames(String streamName) {//TODO remove
-		return null;
+	public String[] cacheStorageGetSensorNames(String streamName) {
+		return tsdb.streamCache.getSensorNames(streamName);
 	}
 
 	@Override
@@ -259,8 +258,8 @@ public class ServerTsDB implements RemoteTsDB {
 	}
 
 	@Override
-	public String[] cacheStorageGetStreamNames() { // remove
-		return null;
+	public String[] cacheStorageGetStreamNames() {		
+		return tsdb.streamCache.getStationNames().toArray(String[]::new);
 	}
 
 	@Override
@@ -515,7 +514,7 @@ public class ServerTsDB implements RemoteTsDB {
 	public ArrayList<PlotStatus> getPlotStatus(String plotName, boolean withPlotMessage) {
 		return collectPlotStatuses(Stream.of(plotName), withPlotMessage);
 	}
-	
+
 	@Override
 	public ArrayList<PlotStatus> getPlotStatuses(boolean withPlotMessage) {
 		return collectPlotStatuses(tsdb.getPlotNames(), withPlotMessage);
@@ -756,8 +755,13 @@ public class ServerTsDB implements RemoteTsDB {
 	}
 
 	@Override
-	public String[] getInternalStoredStationNames() throws RemoteException {
+	public String[] getInternalStoredStreamNames() throws RemoteException {
 		return tsdb.streamStorage.getStationNames().toArray(new String[0]);
+	}
+
+	@Override
+	public String[] getInternalStoredSensorNames(String streamName) throws RemoteException {
+		return tsdb.streamStorage.getSensorNames(streamName);
 	}
 
 	public DataEntry[] readRawData(String stationName, String sensorName) throws RemoteException {
@@ -790,5 +794,17 @@ public class ServerTsDB implements RemoteTsDB {
 	public void insertSourceCatalogEntry(SourceEntry sourceEntry) throws RemoteException {
 		tsdb.sourceCatalog.insert(sourceEntry);
 		tsdb.sourceCatalog.commit();
+	}
+
+	@Override
+	public int[] getInternalStoredSensorTimeRange(String streamName) throws RemoteException {
+		int[] interval = tsdb.streamStorage.getStationTimeInterval(streamName, Integer.MIN_VALUE, Integer.MAX_VALUE);
+		return interval;
+	}
+
+	@Override
+	public int[] cacheStorageGetSensorTimeRange(String streamName) {
+		int[] interval = tsdb.streamCache.getStationTimeInterval(streamName, Integer.MIN_VALUE, Integer.MAX_VALUE);
+		return interval;
 	}
 }

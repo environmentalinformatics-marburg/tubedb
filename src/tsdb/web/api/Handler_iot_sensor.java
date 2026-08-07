@@ -142,7 +142,7 @@ public class Handler_iot_sensor extends MethodHandler {
 				response.setContentType("text/plain;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
 				PrintWriter writer = response.getWriter();
-				String[] stationNames = tsdb.getInternalStoredStationNames();
+				String[] stationNames = tsdb.getInternalStoredStreamNames();
 				for(String stationName:stationNames) {
 					DataEntry[] data = tsdb.readRawData(stationName, sensorID);
 					if(data != null) {
@@ -158,7 +158,7 @@ public class Handler_iot_sensor extends MethodHandler {
 				response.setContentType("text/plain;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
 				PrintWriter writer = response.getWriter();
-				String[] stationNames = tsdb.getInternalStoredStationNames();
+				String[] stationNames = tsdb.getInternalStoredStreamNames();
 				String[] sensorNames = new String[] {"location_lon", "location_lat", "location_sat"};
 				for(String stationName:stationNames) {
 					TimestampSeries data = tsdb.readRawData(stationName, sensorNames);

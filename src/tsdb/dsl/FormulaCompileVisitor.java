@@ -1,103 +1,6 @@
 package tsdb.dsl;
 
-import tsdb.dsl.computation.BooleanComputation;
-import tsdb.dsl.computation.BooleanComputationAnd;
-import tsdb.dsl.computation.BooleanComputationEqual;
-import tsdb.dsl.computation.BooleanComputationEqualNum;
-import tsdb.dsl.computation.BooleanComputationFalse;
-import tsdb.dsl.computation.BooleanComputationLess;
-import tsdb.dsl.computation.BooleanComputationLessEqual;
-import tsdb.dsl.computation.BooleanComputationLessEqualNum1;
-import tsdb.dsl.computation.BooleanComputationLessEqualNum2;
-import tsdb.dsl.computation.BooleanComputationLessEqualNumVar;
-import tsdb.dsl.computation.BooleanComputationLessEqualVarNum;
-import tsdb.dsl.computation.BooleanComputationLessNum1;
-import tsdb.dsl.computation.BooleanComputationLessNum2;
-import tsdb.dsl.computation.BooleanComputationLessNumVar;
-import tsdb.dsl.computation.BooleanComputationLessVarNum;
-import tsdb.dsl.computation.BooleanComputationNotEqual;
-import tsdb.dsl.computation.BooleanComputationNotEqualNum;
-import tsdb.dsl.computation.BooleanComputationOr;
-import tsdb.dsl.computation.BooleanComputationTrue;
-import tsdb.dsl.computation.ComputationAdd;
-import tsdb.dsl.computation.ComputationAddNum;
-import tsdb.dsl.computation.ComputationAddVar;
-import tsdb.dsl.computation.ComputationAddVarNum;
-import tsdb.dsl.computation.ComputationAddVarVar;
-import tsdb.dsl.computation.ComputationArctan;
-import tsdb.dsl.computation.ComputationArctanDeg;
-import tsdb.dsl.computation.ComputationArctanDegNeg;
-import tsdb.dsl.computation.ComputationArctanNeg;
-import tsdb.dsl.computation.ComputationCbrt;
-import tsdb.dsl.computation.ComputationCbrtVar;
-import tsdb.dsl.computation.ComputationConditional;
-import tsdb.dsl.computation.ComputationConditionalOneZero;
-import tsdb.dsl.computation.ComputationCube;
-import tsdb.dsl.computation.ComputationCubeVar;
-import tsdb.dsl.computation.ComputationCumsumByYear;
-import tsdb.dsl.computation.ComputationCumsumByYearNeg;
-import tsdb.dsl.computation.ComputationDelta;
-import tsdb.dsl.computation.ComputationDeltaNeg;
-import tsdb.dsl.computation.ComputationDiv;
-import tsdb.dsl.computation.ComputationDivNum1;
-import tsdb.dsl.computation.ComputationDivNum2;
-import tsdb.dsl.computation.ComputationDivNumVar;
-import tsdb.dsl.computation.ComputationDivVar1;
-import tsdb.dsl.computation.ComputationDivVar2;
-import tsdb.dsl.computation.ComputationDivVarNum;
-import tsdb.dsl.computation.ComputationExp;
-import tsdb.dsl.computation.ComputationExpNeg;
-import tsdb.dsl.computation.ComputationLn;
-import tsdb.dsl.computation.ComputationLnNeg;
-import tsdb.dsl.computation.ComputationMul;
-import tsdb.dsl.computation.ComputationMulCubeNum;
-import tsdb.dsl.computation.ComputationMulCubeVar0Num;
-import tsdb.dsl.computation.ComputationMulCubeVar1Num;
-import tsdb.dsl.computation.ComputationMulCubeVarNum;
-import tsdb.dsl.computation.ComputationMulNum;
-import tsdb.dsl.computation.ComputationMulPow4Num;
-import tsdb.dsl.computation.ComputationMulPow4VarNum;
-import tsdb.dsl.computation.ComputationMulPowNumNum;
-import tsdb.dsl.computation.ComputationMulPowNum_;
-import tsdb.dsl.computation.ComputationMulPowVarNumNum;
-import tsdb.dsl.computation.ComputationMulSquareNum;
-import tsdb.dsl.computation.ComputationMulSquareVar0Num;
-import tsdb.dsl.computation.ComputationMulSquareVar1Num;
-import tsdb.dsl.computation.ComputationMulSquareVarNum;
-import tsdb.dsl.computation.ComputationMulVar;
-import tsdb.dsl.computation.ComputationMulVar0Num;
-import tsdb.dsl.computation.ComputationMulVar1Num;
-import tsdb.dsl.computation.ComputationMulVarNum;
-import tsdb.dsl.computation.ComputationNum;
-import tsdb.dsl.computation.ComputationNum0;
-import tsdb.dsl.computation.ComputationOfTime;
-import tsdb.dsl.computation.ComputationPow;
-import tsdb.dsl.computation.ComputationPow4;
-import tsdb.dsl.computation.ComputationPow4Var;
-import tsdb.dsl.computation.ComputationPow4rt;
-import tsdb.dsl.computation.ComputationPow4rtVar;
-import tsdb.dsl.computation.ComputationPowNum;
-import tsdb.dsl.computation.ComputationRecoveringCumsumByYear;
-import tsdb.dsl.computation.ComputationRecoveringCumsumByYearNeg;
-import tsdb.dsl.computation.ComputationRollingMean;
-import tsdb.dsl.computation.ComputationRollingMeanNeg;
-import tsdb.dsl.computation.ComputationRollingStdDev;
-import tsdb.dsl.computation.ComputationRollingStdDevNeg;
-import tsdb.dsl.computation.ComputationSqr;
-import tsdb.dsl.computation.ComputationSqrNeg;
-import tsdb.dsl.computation.ComputationSqrt;
-import tsdb.dsl.computation.ComputationSqrtNeg;
-import tsdb.dsl.computation.ComputationSqrtVar;
-import tsdb.dsl.computation.ComputationSquareVar;
-import tsdb.dsl.computation.ComputationSub;
-import tsdb.dsl.computation.ComputationSubNum;
-import tsdb.dsl.computation.ComputationSubNumVar;
-import tsdb.dsl.computation.ComputationSubVar;
-import tsdb.dsl.computation.ComputationSubVarVar;
-import tsdb.dsl.computation.ComputationVar;
-import tsdb.dsl.computation.ComputationVarNeg;
-import tsdb.dsl.computation.ComputationVars;
-import tsdb.dsl.computation.ComputationVarsNeg;
+import tsdb.dsl.computation.*;
 import tsdb.dsl.formula.BooleanFormula;
 import tsdb.dsl.formula.BooleanFormulaAND;
 import tsdb.dsl.formula.BooleanFormulaEqual;
@@ -567,6 +470,8 @@ public class FormulaCompileVisitor implements FormulaVisitor1<Computation>, Bool
 	public Computation visitFunc(FormulaFunc formulaFunc) {
 		Computation parameter = formulaFunc.parameter.accept(this);		
 		switch(formulaFunc.name) {
+		case "abs":
+			return formulaFunc.positive ? new ComputationAbs(parameter) : new ComputationAbsNeg(parameter);
 		case "arctan":
 			return formulaFunc.positive ? new ComputationArctan(parameter) : new ComputationArctanNeg(parameter);	
 		case "arctan_deg":
@@ -587,6 +492,8 @@ public class FormulaCompileVisitor implements FormulaVisitor1<Computation>, Bool
 			return formulaFunc.positive ? new ComputationRollingMean(parameter, 28*24) : new ComputationRollingMeanNeg(parameter, 28*24);
 		case "rolling_sd":
 			return formulaFunc.positive ? new ComputationRollingStdDev(parameter, 28*24) : new ComputationRollingStdDevNeg(parameter, 28*24);
+		case "rolling_max":
+			return formulaFunc.positive ? new ComputationRollingMax(parameter, 4*365*24) : new ComputationRollingMaxNeg(parameter, 4*365*24);			
 		case "delta":
 			return formulaFunc.positive ? new ComputationDelta(parameter) : new ComputationDeltaNeg(parameter);
 		default:

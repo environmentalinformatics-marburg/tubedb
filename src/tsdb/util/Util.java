@@ -613,10 +613,13 @@ public final class Util {
 			if(sourceMap.containsKey(name)) {
 				return true;
 			}
-			if(!name.startsWith("ref_")) {
-				return false;
+			if(name.startsWith("ref_")) {
+				return sourceMap.containsKey(name.substring(4));
 			}
-			return sourceMap.containsKey(name.substring(4));
+			if(name.startsWith("refcount_")) {
+				return sourceMap.containsKey(name.substring(9));
+			}
+			return false;			
 		}).toArray(String[]::new);
 	}
 
@@ -636,7 +639,7 @@ public final class Util {
 		Map<String, Integer> sourceMap = Util.stringArrayToMap(source);
 		for(String name:names) {
 			if(!sourceMap.containsKey(name)) {
-				if(!name.startsWith("ref_") || !sourceMap.containsKey(name.substring(4))) {
+				if(!name.startsWith("ref_") || !name.startsWith("refcount_") || !sourceMap.containsKey(name.substring(4))) {
 					return false;
 				}
 			}
@@ -647,7 +650,7 @@ public final class Util {
 	public static String[] getSensorNamesWithoutRefs(String[] schema) {
 		int cnt = 0;
 		for(String name:schema) {
-			if(!name.startsWith("ref_")) {
+			if(!(name.startsWith("ref_") || name.startsWith("refcount_"))) {
 				cnt++;
 			}
 		}
@@ -657,7 +660,7 @@ public final class Util {
 		int pos = 0;
 		String[] realSchema = new String[cnt];
 		for(String name:schema) {
-			if(!name.startsWith("ref_")) {
+			if(!(name.startsWith("ref_") || name.startsWith("refcount_"))) {
 				realSchema[pos++] = name;
 			}
 		}
@@ -667,7 +670,7 @@ public final class Util {
 	public static String[] getSensorNamesRefs(String[] schema) {
 		int cnt = 0;
 		for(String name:schema) {
-			if(name.startsWith("ref_")) {
+			if(name.startsWith("ref_") || name.startsWith("refcount_")) {
 				cnt++;
 			}
 		}
@@ -677,7 +680,7 @@ public final class Util {
 		int pos = 0;
 		String[] realSchema = new String[cnt];
 		for(String name:schema) {
-			if(name.startsWith("ref_")) {
+			if(name.startsWith("ref_") || name.startsWith("refcount_")) {
 				realSchema[pos++] = name;
 			}
 		}
@@ -688,17 +691,20 @@ public final class Util {
 		int len = schema.length;
 		String[] realSchema = new String[len];
 		for (int i = 0; i < len; i++) {
-			String name = schema[i];
-			if(!name.startsWith("ref_")) {
+			String name = schema[i];			
+			if(name.startsWith("ref_")) {
+				realSchema[i] = name.substring(4);
+			} else if(name.startsWith("refcount_")) {
+				realSchema[i] = name.substring(9) + "_cnt";
+			} else {
 				throw new RuntimeException("not a ref");
-			}
-			realSchema[i] = name.substring(4);
+			}			
 		}
 		return realSchema;
 	}
 
 	public static boolean containsWithRef(Set<String> set, String name) {
-		return set.contains(name) || (name.startsWith("ref_") && set.contains(name.substring(4)));
+		return set.contains(name) || (name.startsWith("ref_") && set.contains(name.substring(4)) || (name.startsWith("refcount_") && set.contains(name.substring(9))));
 	}
 
 	public static <T> ArrayList<T> streamToList(Stream<T> stream) {

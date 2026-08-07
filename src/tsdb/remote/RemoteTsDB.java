@@ -42,7 +42,7 @@ public interface RemoteTsDB extends Remote {
 	Sensor[] getSensors() throws RemoteException;
 	Sensor getSensor(String sensorName) throws RemoteException;
 	String[] getBaseSchema(String[] rawSchema) throws RemoteException;
-	String[] getCacheSchemaNames(String streamName) throws RemoteException;
+	String[] cacheStorageGetSensorNames(String streamName) throws RemoteException;
 	String[] getValidSchema(String plotID, String[] sensorNames) throws RemoteException;
 	String[] getValidSchemaWithVirtualSensors(String plotID, String[] sensorNames) throws RemoteException;
 	String[] supplementSchema(String[] schema, String[] availableSchema) throws RemoteException;
@@ -113,11 +113,14 @@ public interface RemoteTsDB extends Remote {
 	//IoT API support
 	void clearData() throws RemoteException;
 	void insertOneValue(String stationName, String sensorName, int timestamp, float value) throws RemoteException;
-	String[] getInternalStoredStationNames() throws RemoteException;
+	String[] getInternalStoredStreamNames() throws RemoteException;
+	String[] getInternalStoredSensorNames(String streamName) throws RemoteException;
+	int[] getInternalStoredSensorTimeRange(String streamName) throws RemoteException;
 	DataEntry[] readRawData(String stationName, String sensorName) throws RemoteException;
 	TimestampSeries readRawData(String stationName, String[] sensorNames) throws RemoteException;
 	
 	//insert support
 	void insertDataRows(String stationName, String[] sensorNames, Collection<DataRow> dataRows) throws RemoteException;
 	void insertSourceCatalogEntry(SourceEntry sourceEntry) throws RemoteException;
+	int[] cacheStorageGetSensorTimeRange(String streamName);
 }

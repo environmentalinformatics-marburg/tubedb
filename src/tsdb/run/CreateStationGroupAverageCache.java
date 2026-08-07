@@ -19,6 +19,7 @@ import tsdb.graph.QueryPlanGenerators;
 import tsdb.graph.node.Continuous;
 import tsdb.graph.node.ContinuousGen;
 import tsdb.graph.processing.Averaged;
+import tsdb.graph.processing.AveragedCounted;
 import tsdb.graph.processing.Subtraction;
 import tsdb.util.DataQuality;
 import tsdb.util.iterator.TimestampSeries;
@@ -173,7 +174,7 @@ public class CreateStationGroupAverageCache {
 
 				final int MIN_AVERAGE = 3;
 
-				Averaged averaged = null;
+				/*Averaged averaged = null;
 
 				if(averaged==null && additions.size() >= MIN_AVERAGE) {
 					averaged = Averaged.of(tsdb, additions, MIN_AVERAGE, false);
@@ -181,9 +182,19 @@ public class CreateStationGroupAverageCache {
 
 				if(averaged==null && sources.size() >= MIN_AVERAGE) {
 					averaged = Averaged.of(tsdb, sources, MIN_AVERAGE, false);
+				}*/
+				
+				AveragedCounted averaged = null;
+
+				if(averaged==null && additions.size() >= MIN_AVERAGE) {
+					averaged = AveragedCounted.of(tsdb, additions, MIN_AVERAGE, false);
 				}
 
-				if(averaged!=null) {
+				if(averaged==null && sources.size() >= MIN_AVERAGE) {
+					averaged = AveragedCounted.of(tsdb, sources, MIN_AVERAGE, false);
+				}
+
+				if(averaged != null) {
 					TsIterator it = averaged.get(groupMinTimestamp, groupMaxTimestamp);
 					if(it!=null&&it.hasNext()) {
 						//tsdb.cacheStorage.writeNew(group, averaged.get(groupMinTimestamp, groupMaxTimestamp));
