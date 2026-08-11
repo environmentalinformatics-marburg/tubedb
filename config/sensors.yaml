@@ -2271,6 +2271,24 @@ Ta_200_delta_sd_28d:
   aggregation: average
   category: filled
   visibility: internal
+  
+Ta_200_count:
+  description: count of Ta_200 hour measurements
+  unit:  count (number of measurements)
+  dependency: Ta_200
+  post_hour_func: "(Ta_200 < 1000000000 ? 1 : 0)"
+  aggregation: sum_always
+  category: filled
+  visibility: internal
+  
+Ta_200_percentage:
+  description: percentage of Ta_200 hour measurements
+  unit:  '% (percentage of measurements)'
+  dependency: Ta_200
+  post_hour_func: "(Ta_200 < 1000000000 ? 100 : 0)"
+  aggregation: average_zero
+  category: filled
+  visibility: internal
 
 precipitation_radolan_rain_days:  
   description: (RR0.1) (Rain days) (precipitation_radolan >= 0.1 mm per day)

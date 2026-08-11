@@ -41,7 +41,7 @@ public class MonthAggregationIterator extends AbstractAggregationIterator  {
 		case LAST:
 			return 1<=collectorCount;
 		case SUM_ALWAYS:
-			return 1<=collectorCount;			
+			return 1<=collectorCount;
 		default:
 			return 27<=collectorCount;
 		}		

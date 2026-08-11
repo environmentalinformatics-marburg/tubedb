@@ -205,7 +205,7 @@ public class BaseAggregationIterator extends InputProcessingIterator {
 				break;
 			default:
 				if(aggregation[i]==AggregationType.AVERAGE_ZERO&&Float.isNaN(value)) { // special conversion of NaN values for aggregate AVERAGE_ZERO
-					System.out.println("NaN...");
+					//System.out.println("NaN...");
 					value = 0;
 				}				
 				if(!Float.isNaN(value)){

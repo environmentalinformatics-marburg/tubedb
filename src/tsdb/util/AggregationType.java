@@ -24,7 +24,6 @@ public enum AggregationType {
 	LAST, // most recent value of aggregation interval
 	SUM_ALWAYS; // sum of values, always aggregate as long as one value is present
 	
-	
 
 	public static AggregationType parse(String aggregateTypeText) {
 		switch(aggregateTypeText.toLowerCase()) {
@@ -55,7 +54,7 @@ public enum AggregationType {
 		case "last":			
 			return LAST;
 		case "sum_always":
-			return SUM_ALWAYS;			
+			return SUM_ALWAYS;		
 		default:
 			Logger.warn("unknown aggregation: "+aggregateTypeText);
 			return null;
