@@ -20,6 +20,7 @@ import tsdb.graph.node.Continuous;
 import tsdb.graph.node.ContinuousGen;
 import tsdb.graph.processing.Averaged;
 import tsdb.graph.processing.AveragedCounted;
+import tsdb.graph.processing.MedianCounted;
 import tsdb.graph.processing.Subtraction;
 import tsdb.util.DataQuality;
 import tsdb.util.iterator.TimestampSeries;
@@ -42,7 +43,7 @@ public class CreateStationGroupAverageCache {
 	private CbPrint cbPrint;
 
 	public static void main(String[] args) {
-		Logger.info("create averages...");
+		Logger.info("create reference cache...");
 		TsDB tsdb = TsDBFactory.createDefault();
 		new CreateStationGroupAverageCache(tsdb).run();
 		tsdb.close();
@@ -66,7 +67,7 @@ public class CreateStationGroupAverageCache {
 		ContinuousGen continuousGen = QueryPlanGenerators.getContinuousGen(tsdb, DataQuality.STEP);
 
 		for(String group:tsdb.getGeneralStationGroups()) {
-			Logger.info("create average of group "+group);
+			Logger.info("create reference of group "+group);
 			List<String> plotList = tsdb.getStationAndVirtualPlotNames(group).collect(Collectors.toList());
 
 			TreeSet<String> sensorNameSet = new TreeSet<String>(); 
@@ -172,37 +173,43 @@ public class CreateStationGroupAverageCache {
 					}
 				}
 
-				final int MIN_AVERAGE = 3;
+				final int MIN_NODES = 3;
+				
 
-				/*Averaged averaged = null;
-
-				if(averaged==null && additions.size() >= MIN_AVERAGE) {
-					averaged = Averaged.of(tsdb, additions, MIN_AVERAGE, false);
+				/*Averaged refNode = null;
+				if(refNode==null && additions.size() >= MIN_NODES) {
+					refNode = Averaged.of(tsdb, additions, MIN_NODES, false);
 				}
-
-				if(averaged==null && sources.size() >= MIN_AVERAGE) {
-					averaged = Averaged.of(tsdb, sources, MIN_AVERAGE, false);
+				if(refNode==null && sources.size() >= MIN_NODES) {
+					refNode = Averaged.of(tsdb, sources, MIN_NODES, false);
 				}*/
 				
-				AveragedCounted averaged = null;
-
-				if(averaged==null && additions.size() >= MIN_AVERAGE) {
-					averaged = AveragedCounted.of(tsdb, additions, MIN_AVERAGE, false);
+				/*AveragedCounted refNode = null;
+				if(refNode==null && additions.size() >= MIN_NODES) {
+					refNode = AveragedCounted.of(tsdb, additions, MIN_NODES, false);
 				}
-
-				if(averaged==null && sources.size() >= MIN_AVERAGE) {
-					averaged = AveragedCounted.of(tsdb, sources, MIN_AVERAGE, false);
+				if(refNode==null && sources.size() >= MIN_NODES) {
+					refNode = AveragedCounted.of(tsdb, sources, MIN_NODES, false);
+				}*/
+				
+				MedianCounted refNode = null;
+				if(refNode==null && additions.size() >= MIN_NODES) {
+					refNode = MedianCounted.of(tsdb, additions, MIN_NODES, false);
 				}
+				if(refNode==null && sources.size() >= MIN_NODES) {
+					refNode = MedianCounted.of(tsdb, sources, MIN_NODES, false);
+				}
+				
 
-				if(averaged != null) {
-					TsIterator it = averaged.get(groupMinTimestamp, groupMaxTimestamp);
+				if(refNode != null) {
+					TsIterator it = refNode.get(groupMinTimestamp, groupMaxTimestamp);
 					if(it!=null&&it.hasNext()) {
 						//tsdb.cacheStorage.writeNew(group, averaged.get(groupMinTimestamp, groupMaxTimestamp));
 						TimestampSeries timestampSeries = it.toTimestampSeries(group);
 						tsdb.streamCache.insertTimestampSeries(timestampSeries);
-					    Logger.info(group+"/"+processingSensorName+" <- "+averaged.getSourceText());
+					    Logger.info(group+"/"+processingSensorName+" <- "+refNode.getSourceText());
 					} else {
-						Logger.warn("averages: "+group);
+						Logger.warn("reference group: "+group);
 					}
 				} else {
 					Logger.trace(group+"/"+processingSensorName+" not enough sources for average");
@@ -212,6 +219,6 @@ public class CreateStationGroupAverageCache {
 		}
 
 		long endRunTime = System.currentTimeMillis();
-		cbPrint.println("CreateStationGroupAverageCache run time: "+(endRunTime-startRunTime)/1000+" s");
+		cbPrint.println(String.format("create reference cache run time: %d s %03d ms", (endRunTime - startRunTime) / 1000, (endRunTime - startRunTime) % 1000));
 	}
 }

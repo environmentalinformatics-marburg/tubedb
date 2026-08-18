@@ -489,11 +489,13 @@ public class FormulaCompileVisitor implements FormulaVisitor1<Computation>, Bool
 		case "sqrt":
 			return formulaFunc.positive ? new ComputationSqrt(parameter) : new ComputationSqrtNeg(parameter);			
 		case "rolling_mean":
-			return formulaFunc.positive ? new ComputationRollingMean(parameter, 28*24) : new ComputationRollingMeanNeg(parameter, 28*24);
+			return formulaFunc.positive ? new ComputationRollingMean(parameter, 28) : new ComputationRollingMeanNeg(parameter, 28);
+		case "rolling_median":
+			return formulaFunc.positive ? new ComputationRollingMedian(parameter, 28) : new ComputationRollingMedianNeg(parameter, 28);
 		case "rolling_sd":
-			return formulaFunc.positive ? new ComputationRollingStdDev(parameter, 28*24) : new ComputationRollingStdDevNeg(parameter, 28*24);
+			return formulaFunc.positive ? new ComputationRollingStdDev(parameter, 28) : new ComputationRollingStdDevNeg(parameter, 28);
 		case "rolling_max":
-			return formulaFunc.positive ? new ComputationRollingMax(parameter, 1*365*24) : new ComputationRollingMaxNeg(parameter, 1*365*24);			
+			return formulaFunc.positive ? new ComputationRollingMax(parameter, 365) : new ComputationRollingMaxNeg(parameter, 365);			
 		case "delta":
 			return formulaFunc.positive ? new ComputationDelta(parameter) : new ComputationDeltaNeg(parameter);
 		default:

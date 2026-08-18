@@ -78,10 +78,120 @@ Ta_10:
   aggregation: average
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 100.0]  
-  empirical_diff: 3.38
+  #empirical_diff: 3.38
+  empirical_diff: 10.0  
   interpolation_mse: 7
   category: temperature
   
+Ta_10_ref:
+  description: reference of Ta_10
+  unit: °C (degree Celcius, -40 to 60)  
+  dependency: [ref_Ta_10]
+  post_hour_func: "ref_Ta_10"
+  aggregation: average
+  category: temperature  
+  visibility: internal   
+  
+Ta_10_refcount:
+  description: Count of Ta_10 for reference
+  unit: count (number of measurements)  
+  dependency: [refcount_Ta_10]
+  post_hour_func: "refcount_Ta_10"
+  aggregation: average
+  category: filled
+  visibility: internal   
+  
+Ta_10_ref_diff:
+  description: difference to reference of Ta_10
+  unit: °K (degree Kelvin)  
+  dependency: [Ta_10, ref_Ta_10]
+  post_hour_func: "Ta_10 - ref_Ta_10"
+  aggregation: average
+  category: filled  
+  visibility: internal
+  
+Ta_10_ref_diff_avg_28d:
+  description: 28-day rolling mean of Ta_10_ref_diff
+  unit: °K (degree Kelvin)
+  dependency: Ta_10_ref_diff
+  post_day_func: "rolling_mean(Ta_10_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+  
+Ta_10_ref_diff_avg_28d_max_1a:
+  description: 1-year rolling max of Ta_10_ref_diff_avg_28d
+  unit: °K (degree Kelvin)
+  dependency: Ta_10_ref_diff_avg_28d
+  post_day_func: "rolling_max(abs(Ta_10_ref_diff_avg_28d))"
+  aggregation: average
+  category: filled
+  visibility: internal
+  
+Ta_10_ref_diff_sd_28d:
+  description: 28-day rolling standard deviation of Ta_10_ref_diff
+  unit: °K (degree Kelvin)
+  dependency: Ta_10_ref_diff
+  post_day_func: "rolling_sd(Ta_10_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+  
+Ta_10_delta:
+  description: difference to predecessor measurement in time of Ta_10
+  unit: °K (degree Kelvin)  
+  dependency: [Ta_10]
+  post_hour_func: "delta(Ta_10)"
+  aggregation: average
+  category: filled
+  visibility: internal  
+  
+Ta_10_delta_avg_28d:
+  description: 28-day rolling mean of Ta_10_delta
+  unit: °K (degree Kelvin)
+  dependency: Ta_10_delta
+  post_day_func: "rolling_mean(Ta_10_delta)"
+  aggregation: average
+  category: filled
+  visibility: internal
+  
+Ta_10_delta_avg_28d_max_1a:
+  description: 1-year rolling max of Ta_10_delta_avg_28d
+  unit: °K (degree Kelvin)
+  dependency: Ta_10_delta_avg_28d
+  post_day_func: "rolling_max(abs(Ta_10_delta_avg_28d))"
+  aggregation: average
+  category: filled
+  visibility: internal
+  
+Ta_10_delta_sd_28d:
+  description: 28-day rolling standard deviation of Ta_10_delta
+  unit: °K (degree Kelvin)
+  dependency: Ta_10_delta
+  post_day_func: "rolling_sd(Ta_10_delta)"
+  aggregation: average
+  category: filled
+  visibility: internal
+  
+Ta_10_count:
+  description: count of Ta_10 hour measurements
+  unit:  count (number of measurements)
+  dependency: Ta_10
+  post_hour_func: "(Ta_10 < 1000000000 ? 1 : 0)"
+  aggregation: sum_always
+  category: filled
+  visibility: internal
+  
+Ta_10_percentage:
+  description: percentage of Ta_10 hour measurements
+  unit:  '% (percentage of measurements)'
+  dependency: Ta_10
+  post_hour_func: "(Ta_10 < 1000000000 ? 100 : 0)"
+  aggregation: average_zero
+  category: filled
+  visibility: internal
+
+
 Ta_10_min:
   description: Minimum value of Ta_10
   unit: °C (degree Celcius, -40 to 60)
@@ -319,7 +429,7 @@ SM_10_ref_diff_avg_28d:
   description: 28-day rolling mean of SM_10_ref_diff
   unit: 'pp (percentage points of volumetric water content)' 
   dependency: SM_10_ref_diff
-  post_hour_func: "rolling_mean(SM_10_ref_diff)"
+  post_day_func: "rolling_mean(SM_10_ref_diff)"
   aggregation: average
   visibility: internal
   
@@ -327,7 +437,7 @@ SM_10_ref_diff_sd_28d:
   description: 28-day rolling standard deviation of SM_10_ref_diff
   unit: 'pp (percentage points of volumetric water content)' 
   dependency: SM_10_ref_diff
-  post_hour_func: "rolling_sd(SM_10_ref_diff)"
+  post_day_func: "rolling_sd(SM_10_ref_diff)"
   aggregation: average
   visibility: internal  
   
@@ -343,7 +453,7 @@ SM_10_delta_avg_28d:
   description: 28-day rolling mean of SM_10_delta
   unit: 'pp (percentage points of volumetric water content)'
   dependency: SM_10_delta
-  post_hour_func: "rolling_mean(SM_10_delta)"
+  post_day_func: "rolling_mean(SM_10_delta)"
   aggregation: average
   visibility: internal
   
@@ -351,7 +461,7 @@ SM_10_delta_sd_28d:
   description: 28-day rolling standard deviation of SM_10_delta
   unit: 'pp (percentage points of volumetric water content)'
   dependency: SM_10_delta
-  post_hour_func: "rolling_sd(SM_10_delta)"
+  post_day_func: "rolling_sd(SM_10_delta)"
   aggregation: average
   visibility: internal
   
@@ -2123,7 +2233,7 @@ precipitation_radolan_delta_avg_28d:
   description: 28-day rolling mean of precipitation_radolan_delta
   unit: mm (millimeter)
   dependency: precipitation_radolan_delta
-  post_hour_func: "rolling_mean(precipitation_radolan_delta)"
+  post_day_func: "rolling_mean(precipitation_radolan_delta)"
   aggregation: average
   visibility: internal
 
@@ -2131,7 +2241,7 @@ precipitation_radolan_delta_sd_28d:
   description: 28-day rolling standard deviation of precipitation_radolan_delta
   unit: mm (millimeter)
   dependency: precipitation_radolan_delta
-  post_hour_func: "rolling_sd(precipitation_radolan_delta)"
+  post_day_func: "rolling_sd(precipitation_radolan_delta)"
   aggregation: average
   visibility: internal
   
@@ -2159,7 +2269,7 @@ precipitation_radolan_ref_diff_avg_28d:
   description: 28-day rolling mean of precipitation_radolan_ref_diff
   unit: mm (millimeter)
   dependency: precipitation_radolan_ref_diff
-  post_hour_func: "rolling_mean(precipitation_radolan_ref_diff)"
+  post_day_func: "rolling_mean(precipitation_radolan_ref_diff)"
   aggregation: average
   visibility: internal
 
@@ -2167,7 +2277,7 @@ precipitation_radolan_ref_diff_sd_28d:
   description: 28-day rolling standard deviation of precipitation_radolan_ref_diff
   unit: mm (millimeter)
   dependency: precipitation_radolan_ref_diff
-  post_hour_func: "rolling_sd(precipitation_radolan_ref_diff)"
+  post_day_func: "rolling_sd(precipitation_radolan_ref_diff)"
   aggregation: average
   visibility: internal  
   
@@ -2213,7 +2323,16 @@ Ta_200_ref_diff_avg_28d:
   description: 28-day rolling mean of Ta_200_ref_diff
   unit: °K (degree Kelvin)
   dependency: Ta_200_ref_diff
-  post_hour_func: "rolling_mean(Ta_200_ref_diff)"
+  post_day_func: "rolling_mean(Ta_200_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+  
+Ta_200_ref_diff_med_28d:
+  description: 28-day rolling median of Ta_200_ref_diff
+  unit: °K (degree Kelvin)
+  dependency: Ta_200_ref_diff
+  post_day_func: "rolling_median(Ta_200_ref_diff)"
   aggregation: average
   category: filled
   visibility: internal
@@ -2222,7 +2341,7 @@ Ta_200_ref_diff_avg_28d_max_1a:
   description: 1-year rolling max of Ta_200_ref_diff_avg_28d
   unit: °K (degree Kelvin)
   dependency: Ta_200_ref_diff_avg_28d
-  post_hour_func: "rolling_max(abs(Ta_200_ref_diff_avg_28d))"
+  post_day_func: "rolling_max(abs(Ta_200_ref_diff_avg_28d))"
   aggregation: average
   category: filled
   visibility: internal
@@ -2231,7 +2350,7 @@ Ta_200_ref_diff_sd_28d:
   description: 28-day rolling standard deviation of Ta_200_ref_diff
   unit: °K (degree Kelvin)
   dependency: Ta_200_ref_diff
-  post_hour_func: "rolling_sd(Ta_200_ref_diff)"
+  post_day_func: "rolling_sd(Ta_200_ref_diff)"
   aggregation: average
   category: filled
   visibility: internal
@@ -2249,7 +2368,7 @@ Ta_200_delta_avg_28d:
   description: 28-day rolling mean of Ta_200_delta
   unit: °K (degree Kelvin)
   dependency: Ta_200_delta
-  post_hour_func: "rolling_mean(Ta_200_delta)"
+  post_day_func: "rolling_mean(Ta_200_delta)"
   aggregation: average
   category: filled
   visibility: internal
@@ -2258,7 +2377,7 @@ Ta_200_delta_avg_28d_max_1a:
   description: 1-year rolling max of Ta_200_delta_avg_28d
   unit: °K (degree Kelvin)
   dependency: Ta_200_delta_avg_28d
-  post_hour_func: "rolling_max(abs(Ta_200_delta_avg_28d))"
+  post_day_func: "rolling_max(abs(Ta_200_delta_avg_28d))"
   aggregation: average
   category: filled
   visibility: internal
@@ -2267,7 +2386,7 @@ Ta_200_delta_sd_28d:
   description: 28-day rolling standard deviation of Ta_200_delta
   unit: °K (degree Kelvin)
   dependency: Ta_200_delta
-  post_hour_func: "rolling_sd(Ta_200_delta)"
+  post_day_func: "rolling_sd(Ta_200_delta)"
   aggregation: average
   category: filled
   visibility: internal
