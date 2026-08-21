@@ -107,6 +107,20 @@
             </q-td>
           </template>
 
+          <template v-slot:body-cell-tasks="props">
+            <q-td :props="props">
+              <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 8]">
+                <div v-if="Array.isArray(props.row.tasks)">
+                  <div v-for="(t, i) in props.row.tasks" :key="i">{{ t.task }}</div>
+                </div>
+                <div v-else>{{ props.row.tasks }}</div>
+              </q-tooltip>
+              <span v-if="!props.row.tasks || (Array.isArray(props.row.tasks) && props.row.tasks.length === 0)">-</span>
+              <span v-else-if="typeof props.row.tasks === 'string'">{{ props.row.tasks }}</span>
+              <span v-else>{{ props.row.tasks.map(t => t.task).join('; ') }}</span>
+            </q-td>
+          </template>
+
           </q-table>
         </q-card>
       </q-page>
@@ -212,6 +226,7 @@ export default {
           headerStyle: 'text-align: center; min-width: 150px; max-width: 150px;',
           align: 'left',
           sortable: true,
+          classes: 'tasks-column',
           style: 'min-width: 400px; max-width: 400px; overflow: hidden; text-overflow: ellipsis; background-color: #fff; color: #1976d2;',
         },
       ],
@@ -440,6 +455,16 @@ td.voltageMarkNaN{ background-color:#88888877; }
 td.voltageMarkOK{ background-color: #44ff4477;  }
 td.voltageMarkWARN { background-color: #ffff4477; }
 td.voltageMarkCRITICAL { background-color: #ff444477; }
+
+td.tasks-column span {
+  min-width: 400px; 
+  max-width: 400px; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  background-color: #fff;
+  color: #1976d2;
+  font-weight: 400;
+}
 
 </style>
 

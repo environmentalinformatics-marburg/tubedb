@@ -84,7 +84,73 @@
 
           <q-item>
             <q-item-section side><q-icon name="task" /></q-item-section>
-            <q-item-section><q-input outlined v-model="row.tasks" label="Tasks" stack-label dense /></q-item-section>
+            <q-item-section>
+              <q-list bordered separator class="bg-white" v-if="row.tasks && row.tasks.length > 0">
+                <q-item v-for="(t, index) in row.tasks" :key="t.id" class="task-item-container">
+                  <div class="task-tab-label">
+                    <span class="task-label-text">{{ plot }} task {{ t.id }}</span>
+                    <span class="task-date">{{ t.created }}</span>
+                  </div>
+                  <q-item-section>
+                    <q-input
+                      v-model="t.task"
+                      dense
+                      outlined
+                      :class="{ 'text-grey-5': t.status === 'done' }"
+                      @blur="normalizeTasks"
+                    />
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-select
+                      v-model="t.status"
+                      :options="taskStatusOptions"
+                      dense
+                      outlined
+                      emit-value
+                      map-options
+                      class="q-mx-sm"
+                      style="width: 150px;"
+                    >
+                      <template v-slot:prepend>
+                        <q-icon
+                          :name="taskStatusOptions.find(opt => opt.value === t.status)?.icon || 'event'"
+                          :color="taskStatusOptions.find(opt => opt.value === t.status)?.color || 'grey-5'"
+                        />
+                      </template>
+
+                      <template v-slot:option="scope">
+                        <q-item v-bind="scope.itemProps">
+                          <q-item-section avatar>
+                            <q-icon :name="scope.opt.icon" :color="scope.opt.color" />
+                          </q-item-section>
+                          <q-item-section>{{ scope.opt.label }}</q-item-section>
+                        </q-item>
+                      </template>
+                    </q-select>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-btn flat round dense icon="delete" color="negative" @click="removeTask(index)" />
+                  </q-item-section>
+                </q-item>
+              </q-list>
+              
+              <q-input
+                dense
+                outlined
+                label="Add new task"
+                stack-label
+                v-model="newTask"
+                @keyup.enter="addTask"
+                clearable
+                class="q-mt-sm"
+              >
+                <template v-slot:append>
+                  <q-btn flat round dense icon="add" color="primary" @click="addTask">
+                    <q-tooltip>Click or press Enter to add task</q-tooltip>
+                  </q-btn>
+                </template>
+              </q-input>
+            </q-item-section>
           </q-item>
 
           <q-item>
@@ -104,7 +170,7 @@
             <template v-for="e in row.history.slice().reverse()" :key="e.datetime">
               <q-item>
                 <q-item-section>
-                  <q-item-label><b>{{ e.status }}</b> <i class="q-mx-md">{{ e.condition }}</i> {{ e.tasks }}</q-item-label>
+                  <q-item-label><b>{{ e.status }}</b> <i class="q-mx-md">{{ e.condition }}</i> {{ Array.isArray(e.tasks) ? e.tasks.map(t => `${t.task} [${t.status || 'open'}]`).join(', ') : e.tasks }}</q-item-label>
                   <q-item-label caption>{{ e.notes }}</q-item-label>
                 </q-item-section>
 
@@ -133,13 +199,11 @@
 </template>
 
 <script>
-
 import { mapGetters } from 'vuex';
 
 export default {
   props: ['transmissionOptions', 'conditionOptions'],
-  components: {
-  },
+  components: {},
   data() {
     return {
       shown: false,
@@ -152,6 +216,14 @@ export default {
       transmissionInputValue: '',
       isFocusedConditionSelect: false,
       conditionInputValue: '',
+      newTask: '',
+      taskStatusOptions: [
+        { label: 'Open', value: 'open', icon: 'visibility', color: 'primary' },
+        { label: 'Progress', value: 'progress', icon: 'speed', color: 'orange' },
+        { label: 'Done', value: 'done', icon: 'check_circle', color: 'positive' },
+        { label: 'Blocked', value: 'blocked', icon: 'block', color: 'negative' },
+        { label: 'Cancelled', value: 'cancelled', icon: 'cancel', color: 'grey-7' }
+      ]
     };
   },
   computed: {
@@ -202,6 +274,9 @@ export default {
           }
         });
         this.row = rows.length === 0 ? {} : rows[0];
+        
+        this.normalizeTasks();
+
         if (this.row.plot !== this.plot) {
           this.error = true;
           this.plot = undefined;
@@ -218,10 +293,87 @@ export default {
         this.loading = false;
       }
     },
+    getNextTaskId(tasks) {
+      if (!tasks || tasks.length === 0) return 1;
+      const maxNum = tasks.reduce((max, t) => {
+        const num = parseInt(t.id, 10);
+        return (!isNaN(num) && num > max) ? num : max;
+      }, 0);
+      return maxNum + 1;
+    },
+    normalizeTasks() {
+      if (!this.row.tasks) {
+        this.row.tasks = [];
+      } else if (typeof this.row.tasks === 'string') {
+        this.row.tasks = [{
+          task: this.row.tasks,
+          //created: new Date().toISOString(),  //will not be set for old tasks
+          status: 'open',
+          id: 1
+        }];
+      } else if (Array.isArray(this.row.tasks)) {
+        const existingNums = new Set();
+        this.row.tasks.forEach(t => {
+          const num = parseInt(t.id, 10);
+          if (!isNaN(num)) existingNums.add(num);
+        });
+
+        this.row.tasks = this.row.tasks.map((t, i) => {
+          let id = t.id;
+          if (!id || isNaN(parseInt(id, 10))) {
+            let num = 1;
+            while (existingNums.has(num)) num++;
+            existingNums.add(num);
+            id = num;
+          }
+          return {
+            task: t.task || '',
+            //created: t.created || new Date().toISOString(),  // will not be set for old tasks
+            created: t.created,
+            status: t.status || (t.done ? 'done' : 'open'),
+            id: id
+          };
+        });
+      }
+    },
+    addTask() {
+      if (!this.newTask.trim()) return;
+      this.normalizeTasks();
+      const nextId = this.getNextTaskId(this.row.tasks);
+      this.row.tasks.push({
+        task: this.newTask.trim(),
+        //created: new Date().toISOString(), // will be set in backend
+        status: 'open',
+        id: nextId
+      });
+      this.newTask = '';
+    },
+    removeTask(index) {
+      this.row.tasks.splice(index, 1);
+    },
     async onSubmit() {
+      if (this.newTask && this.newTask.trim() !== '') {
+        this.$q.notify({
+          message: 'Cannot save: The "Add new task" field is not empty.',
+          caption: 'Please add the task to the list first, or clear the field.',
+          type: 'negative',
+          icon: 'warning',
+          actions: [
+            {
+              label: 'Clear field',
+              color: 'white',
+              handler: () => {
+                this.newTask = '';
+              }
+            }
+          ]
+        });
+        return;
+      }
+
       try {
         this.submitting = true;
-        await this.apiPOST(['tsdb', 'status'], this.row);
+        await this.apiPOST(['tsdb', 'status2'], this.row);
         this.$emit("changed");
         this.shown = false;
       } catch (e) {
@@ -233,6 +385,15 @@ export default {
     },
   },
   watch: {
+    shown: {
+      handler(val) {
+        if (!val) {
+          this.newTask = '';
+          this.transmissionInputValue = '';
+          this.conditionInputValue = '';
+        }
+      }
+    },    
     'row.status': {
       immediate: true,
       handler(val) {
@@ -254,6 +415,28 @@ export default {
 <style scoped>
 .info span span {
   font-weight: bold;
+}
+
+.task-item-container {
+  position: relative;
+  padding-top: 16px;
+}
+
+.task-tab-label {
+  position: absolute;
+  left: 10px;
+  right: 240px; 
+  top: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.6rem;
+  color: #9e9e9e;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+  z-index: 1;
+  padding: 0 12px;
 }
 </style>
 

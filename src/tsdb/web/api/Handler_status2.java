@@ -10,7 +10,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -19,6 +18,7 @@ import java.util.function.Consumer;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONString;
 import org.json.JSONTokener;
@@ -153,37 +153,37 @@ public class Handler_status2 extends MethodHandler {
 					}
 				}
 			}
-			
+
 			ArrayList<String> sortedTransmissionOptions = new ArrayList<String>(transmissionOptions);
 			sortedTransmissionOptions.sort(null);
-			
+
 			ArrayList<String> sortedConditionOptions = new ArrayList<String>(conditionOptions);
 			sortedConditionOptions.sort(null);
 
 			PrintWriter writer = response.getWriter();
 			JSONWriter json_output = new JSONWriter(writer);
-			
+
 			// Start Object wrapper
 			json_output.object();
-			
+
 			json_output.key("transmission_options");
 			json_output.array();
 			for(String opt : sortedTransmissionOptions) {
 				json_output.value(opt);
 			}
 			json_output.endArray();
-			
+
 			json_output.key("condition_options");
 			json_output.array();
 			for(String opt : sortedConditionOptions) {
 				json_output.value(opt);
 			}
 			json_output.endArray();
-			
+
 			// Write results array
 			json_output.key("results");
 			json_output.array();
-			
+
 			long now = TimeUtil.dateTimeToOleMinutes(LocalDateTime.now());
 			for(PlotStatus status:statusList) {
 				json_output.object();
@@ -238,9 +238,9 @@ public class Handler_status2 extends MethodHandler {
 				json_output.endObject();
 			}
 			json_output.endArray(); // end results
-			
+
 			json_output.endObject(); // end wrapper object
-			
+
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {
 			Logger.error(e);
@@ -311,6 +311,9 @@ public class Handler_status2 extends MethodHandler {
 
 	public synchronized void handlePOST(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		baseRequest.setHandled(true);
+
+		Logger.info("handlePOST ");
+
 		response.setContentType("application/json;charset=utf-8");
 		JSONObject jsonReq = new JSONObject(new JSONTokener(request.getReader()));
 		String plot = jsonReq.getString("plot");
@@ -335,6 +338,41 @@ public class Handler_status2 extends MethodHandler {
 		map.put("plot", plot);
 		optPut("status", jsonReq, map);
 		optPut("tasks", jsonReq, map);
+
+
+		Object tasksObj = jsonReq.opt("tasks");
+		if(tasksObj != null) {
+			Logger.info("tasks type: " + tasksObj.getClass());
+
+			if(tasksObj instanceof JSONArray) {
+				JSONArray tasksArray = (JSONArray) tasksObj;
+				ArrayList<LinkedHashMap<String, Object>> tasksList = new ArrayList<>();
+				for (int i = 0; i < tasksArray.length(); i++) {
+					Object taskObj = tasksArray.get(i);
+					if (taskObj instanceof JSONObject) {
+						JSONObject task = (JSONObject) taskObj;
+						LinkedHashMap<String, Object> tMap = new LinkedHashMap<>();
+						tMap.put("task", task.optString("task", "unknown"));
+						tMap.put("created", task.optString("created", TimeUtil.oleMinutesToText(TimeUtil.dateTimeToOleMinutes(LocalDateTime.now()))));
+						tMap.put("status", task.optString("status", "open"));
+						tMap.put("id", task.optString("id", "")); 
+						tasksList.add(tMap);
+					}
+				}
+				map.put("tasks", tasksList);				
+			} else {			
+				String value = tasksObj.toString();
+				if(!value.isBlank()) {
+					map.put("tasks", value.strip());
+				}
+			}
+		}
+
+
+
+
+
+
 		optPut("notes", jsonReq, map);
 
 		for(String key : jsonReq.keySet()) {
