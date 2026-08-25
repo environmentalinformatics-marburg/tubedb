@@ -219,10 +219,23 @@ public class StreamStorageStreamDB implements StreamStorage {
 	public TimeSeriesMask getTimeSeriesMask(String stationName, String sensorName) {
 		return streamdb.getSensorTimeSeriesMask(stationName, sensorName, false);
 	}
+	
+	@Override
+	public TimeSeriesMask getTimeSeriesSuspectMask(String stationName, String sensorName) {
+		return streamdb.getSensorTimeSeriesSuspectMask(stationName, sensorName, false);
+	}
 
 	@Override
 	public void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask, boolean commit) {
 		streamdb.setSensorTimeSeriesMask(stationName, sensorName, timeSeriesMask);
+		if(commit) {
+			streamdb.commit();
+		}
+	}
+	
+	@Override
+	public void setTimeSeriesSuspectMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask, boolean commit) {
+		streamdb.setSensorTimeSeriesSuspectMask(stationName, sensorName, timeSeriesMask);
 		if(commit) {
 			streamdb.commit();
 		}
@@ -283,5 +296,8 @@ public class StreamStorageStreamDB implements StreamStorage {
 	public void clearMaskOfStation(String stationName) {
 		streamdb.clearMaskOfStation(stationName);		
 	}
-
+	
+	public void clearSuspectMaskOfStation(String stationName) {
+		streamdb.clearSuspectMaskOfStation(stationName);		
+	}
 }

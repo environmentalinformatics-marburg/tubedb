@@ -13,6 +13,7 @@
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
     <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="tsdb.run.Terminal"/>
     <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="tubedb"/>
-    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="server_rmi"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="clear_load_masks"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="tubedb"/>
+    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx4G"/>
 </launchConfiguration>

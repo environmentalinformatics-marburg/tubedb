@@ -3,9 +3,6 @@ package tsdb.component.iterator;
 import java.util.Arrays;
 import java.util.Iterator;
 
-
-import org.tinylog.Logger;
-
 import tsdb.component.Sensor;
 import tsdb.util.DataQuality;
 import tsdb.util.TsEntry;

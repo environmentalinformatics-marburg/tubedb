@@ -51,13 +51,16 @@ public interface StreamStorage {
 	StreamIterator getRawSensorIterator(String stationName, String sensorName, Long start, Long end);
 
 	TimeSeriesMask getTimeSeriesMask(String stationName, String sensorName);
+	
+	TimeSeriesMask getTimeSeriesSuspectMask(String stationName, String sensorName);
 
 	void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask, boolean commit);
+	
+	void setTimeSeriesSuspectMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask, boolean commit);
 
 	public void insertTimestampSeries(TimestampSeries timestampSeries);
 
 	void removeInterval(String stationName, int start, int end);
 
 	void commit();
-
 }

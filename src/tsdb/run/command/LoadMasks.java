@@ -5,8 +5,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import javax.validation.constraints.NotNull;
-
 import org.tinylog.Logger;
 
 import tsdb.ConfigLoader;
@@ -14,17 +12,17 @@ import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.component.Region;
+import tsdb.util.AbstractTable.ColumnReaderIntFunc;
+import tsdb.util.AbstractTable.ColumnReaderString;
 import tsdb.util.Interval;
 import tsdb.util.Table;
 import tsdb.util.TimeSeriesMask;
 import tsdb.util.TimeUtil;
-import tsdb.util.AbstractTable.ColumnReaderIntFunc;
-import tsdb.util.AbstractTable.ColumnReaderString;
 
 public class LoadMasks {
 
-
 	public static final String MASK_FILENAME = "mask.csv";
+	public static final String SUSPECT_MASK_FILENAME = "suspect_mask.csv";
 
 	private final TsDB tsdb;
 
@@ -53,9 +51,11 @@ public class LoadMasks {
 				//Logger.info("dir  "+path+"  "+path.getFileName());
 				try {
 					Region region = configLoader.readRegion(dir+"/region.ini", TsDBFactory.JUST_ONE_REGION);
-					if(region!=null) {
+					if(region != null) {
 						String fileName = dir+"/"+LoadMasks.MASK_FILENAME;
-						LoadMasks.loadMask(tsdb, fileName);
+						LoadMasks.loadMask(tsdb, fileName, MASK_TYPE.BASIC);
+						String suspectFileName = dir+"/"+LoadMasks.SUSPECT_MASK_FILENAME;
+						LoadMasks.loadMask(tsdb, suspectFileName, MASK_TYPE.SUSPECT);
 					}
 				} catch(Exception e) {
 					Logger.info("could not load meta data of  "+path+"  "+e);
@@ -68,13 +68,21 @@ public class LoadMasks {
 		}
 	}
 
+	public static enum MASK_TYPE {
+		BASIC,
+		SUSPECT
+	}
 
-	public static void loadMask(TsDB tsdb, String filename) {
+
+	public static void loadMask(TsDB tsdb, String filename, MASK_TYPE maskType) {
 		try {
 			if(!Files.exists(Paths.get(filename))) {
-				Logger.trace("mask file not found: "+filename);
+				Logger.info("mask file not found: "+filename);
 				return;
 			}
+
+			Logger.info("load mask " + maskType + " from " + filename);
+
 			Table maskTable = Table.readCSV(filename, ',');
 
 			ColumnReaderString colStation = maskTable.createColumnReader("station");
@@ -96,10 +104,10 @@ public class LoadMasks {
 							if("*".equals(sensorName)) {
 								String[] sensorNames = station.getSensorNames();
 								for(String sn : sensorNames) {
-									insertMask(tsdb, filename, row, stationName, sn, start, end);	
+									insertMask(tsdb, filename, row, stationName, sn, start, end, maskType);	
 								}
 							} else {
-								insertMask(tsdb, filename, row, stationName, sensorName, start, end);
+								insertMask(tsdb, filename, row, stationName, sensorName, start, end, maskType);
 							}
 						}
 					} catch(Exception e) {
@@ -114,17 +122,33 @@ public class LoadMasks {
 		}
 	}
 
-	private static void insertMask(TsDB tsdb, String filename, String[] row, String stationName, String sensorName, int start, int end) {
-		if(tsdb.streamStorage.existSensor(stationName, sensorName)) { 
-			//Logger.info(TimeUtil.oleMinutesToText(start, end));				
+	private static void insertMask(TsDB tsdb, String filename, String[] row, String stationName, String sensorName, int start, int end, MASK_TYPE maskType) {
+		//Logger.info(TimeUtil.oleMinutesToText(start, end));
+		switch(maskType) {
+		case BASIC: {
 			TimeSeriesMask mask = tsdb.streamStorage.getTimeSeriesMask(stationName, sensorName);
 			if(mask==null) {
 				mask = new TimeSeriesMask();
 			}
-			mask.addInterval(Interval.of(start, end));				
-			tsdb.streamStorage.setTimeSeriesMask(stationName, sensorName, mask, false);			
-		} else {
-			Logger.warn("mask: sensor not found " + sensorName + "  at " + filename +"   in " + Arrays.toString(row));
+			mask.addInterval(Interval.of(start, end));
+			tsdb.streamStorage.setTimeSeriesMask(stationName, sensorName, mask, false);	
+			break;
+		}
+		case SUSPECT: {
+			TimeSeriesMask suspectMask = tsdb.streamStorage.getTimeSeriesSuspectMask(stationName, sensorName);
+			if(suspectMask==null) {
+				suspectMask = new TimeSeriesMask();
+			}
+			suspectMask.addInterval(Interval.of(start, end));
+			tsdb.streamStorage.setTimeSeriesSuspectMask(stationName, sensorName, suspectMask, false);		
+			break;
+		}
+		default:
+			throw new RuntimeException("unknown mask type: " + maskType);
+		}
+
+		if(!tsdb.streamStorage.existSensor(stationName, sensorName)) {
+			Logger.warn("mask " + maskType + ": sensor not found, but inserted " + sensorName + "  at " + filename +"   in " + Arrays.toString(row));
 		}
 	}
 }

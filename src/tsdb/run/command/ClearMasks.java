@@ -28,6 +28,7 @@ public class ClearMasks {
 		try {		
 			for(String stationName:tsdb.streamStorage.getStationNames()) {
 				tsdb.streamStorage.clearMaskOfStation(stationName);
+				tsdb.streamStorage.clearSuspectMaskOfStation(stationName);
 			}		
 		} catch(Exception e) {
 			Logger.error(e);

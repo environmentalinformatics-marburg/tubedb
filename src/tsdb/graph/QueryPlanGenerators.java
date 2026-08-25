@@ -38,6 +38,7 @@ import tsdb.graph.processing.RangeStepFiltered;
 import tsdb.graph.processing.ReferenceSourceMerge;
 import tsdb.graph.processing.Sunshine;
 import tsdb.graph.processing.SunshineOlivieri;
+import tsdb.graph.processing.SuspectMask;
 import tsdb.graph.processing.Virtual_P_RT_NRT;
 import tsdb.graph.source.BaseFactory;
 import tsdb.graph.source.StationRawSource;
@@ -86,6 +87,9 @@ public final class QueryPlanGenerators {
 		if(DataQuality.Na != dataQuality) {
 			if(DataQuality.NO != dataQuality) {
 				rawSource = Mask.of(tsdb, rawSource);
+				if(DataQuality.EMPIRICAL==dataQuality) {
+					rawSource = SuspectMask.of(tsdb, rawSource);
+				}
 			}
 			rawSource = RangeStepFiltered.of(tsdb, rawSource, dataQuality);
 		}

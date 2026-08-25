@@ -5,7 +5,6 @@ import static tsdb.util.AssumptionCheck.throwNullArray;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -13,16 +12,15 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.tinylog.Logger;
-
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
+import org.tinylog.Logger;
 
 import tsdb.util.DataEntry;
-import tsdb.util.TimeUtil;
 import tsdb.util.TimeSeriesMask;
+import tsdb.util.TimeUtil;
 import tsdb.util.iterator.TsIterator;
 
 /**
@@ -31,8 +29,6 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class StreamDB {
-
-
 
 	private DB db;
 
@@ -113,7 +109,8 @@ public class StreamDB {
 			//sensorMap.clear();
 			db.delete(stationMeta.db_name_sensor_map);
 
-			db.delete(stationMeta.db_name_sensor_time_series_mask_map);			
+			db.delete(stationMeta.db_name_sensor_time_series_mask_map);		
+			db.delete(stationMeta.db_name_sensor_time_series_suspect_mask_map);
 		}
 		stationMetaMap.clear();		
 		commit();
@@ -151,7 +148,7 @@ public class StreamDB {
 	private StationMeta getStationMeta(String stationName, boolean createIfNotExists) {
 		throwNull(stationName);
 		StationMeta stationMeta = stationMetaMap.get(stationName);		
-		if(stationMeta==null&&createIfNotExists){
+		if(stationMeta == null && createIfNotExists){
 			stationMeta = new StationMeta(stationName);
 
 			db.checkNameNotExists(stationMeta.db_name_sensor_map);
@@ -166,10 +163,26 @@ public class StreamDB {
 			.valueSerializer(TimeSeriesMask.SERIALIZER)
 			.makeOrGet();
 
+			db.checkNameNotExists(stationMeta.db_name_sensor_time_series_suspect_mask_map);
+			db.createTreeMap(stationMeta.db_name_sensor_time_series_suspect_mask_map)
+			.keySerializer(BTreeKeySerializer.STRING)
+			.valueSerializer(TimeSeriesMask.SERIALIZER)
+			.makeOrGet();
+
 			stationMetaMap.put(stationName, stationMeta);			
 		}
+
+		if(stationMeta != null) {
+			if(!db.exists(stationMeta.db_name_sensor_time_series_suspect_mask_map)) {
+				db.checkNameNotExists(stationMeta.db_name_sensor_time_series_suspect_mask_map);
+				db.createTreeMap(stationMeta.db_name_sensor_time_series_suspect_mask_map)
+				.keySerializer(BTreeKeySerializer.STRING)
+				.valueSerializer(TimeSeriesMask.SERIALIZER)
+				.makeOrGet();
+			}
+		}
+
 		if(stationMeta==null) {
-			//new Throwable().printStackTrace();
 			Logger.warn("no station: "+stationName);
 		}
 		return stationMeta;
@@ -223,7 +236,6 @@ public class StreamDB {
 		}
 	}
 
-
 	public TimeSeriesMask getSensorTimeSeriesMask(StationMeta stationMeta, String sensorName, boolean createIfNotExists) {
 		throwNull(stationMeta);
 		throwNull(sensorName);
@@ -237,7 +249,22 @@ public class StreamDB {
 			//Logger.info("no time series mask: "+sensorName+"  in station: "+stationMeta.stationName);
 		}
 		return mask;		
-	}	
+	}
+	
+	public TimeSeriesMask getSensorTimeSeriesSuspectMask(StationMeta stationMeta, String sensorName, boolean createIfNotExists) {
+		throwNull(stationMeta);
+		throwNull(sensorName);
+		BTreeMap<String, TimeSeriesMask> suspectMaskMap = db.getTreeMap(stationMeta.db_name_sensor_time_series_suspect_mask_map);
+		TimeSeriesMask mask = suspectMaskMap.get(sensorName);
+		if(mask==null&&createIfNotExists) {
+			mask = new TimeSeriesMask();
+			suspectMaskMap.put(sensorName, mask);
+		}
+		if(mask==null) {
+			//Logger.info("no suspect mask: "+sensorName+"  in station: "+stationMeta.stationName);
+		}
+		return mask;		
+	}
 
 	public TimeSeriesMask getSensorTimeSeriesMask(String stationName, String sensorName, boolean createIfNotExists) {
 		throwNull(stationName);
@@ -246,10 +273,24 @@ public class StreamDB {
 			return getSensorTimeSeriesMask(getStationMeta(stationName, true), sensorName,true);
 		} else {
 			StationMeta stationMeta = getStationMeta(stationName, false);
-			if(stationMeta==null) {
+			if(stationMeta == null) {
 				return null;
 			}
 			return getSensorTimeSeriesMask(stationMeta, sensorName, false);
+		}		
+	}
+	
+	public TimeSeriesMask getSensorTimeSeriesSuspectMask(String stationName, String sensorName, boolean createIfNotExists) {
+		throwNull(stationName);
+		throwNull(sensorName);
+		if(createIfNotExists) {
+			return getSensorTimeSeriesSuspectMask(getStationMeta(stationName, true), sensorName,true);
+		} else {
+			StationMeta stationMeta = getStationMeta(stationName, false);
+			if(stationMeta == null) {
+				return null;
+			}
+			return getSensorTimeSeriesSuspectMask(stationMeta, sensorName, false);
 		}		
 	}
 
@@ -260,7 +301,16 @@ public class StreamDB {
 		StationMeta stationMeta = getStationMeta(stationName, true);
 		BTreeMap<String, TimeSeriesMask> maskMap = db.getTreeMap(stationMeta.db_name_sensor_time_series_mask_map);
 		maskMap.put(sensorName, timeSeriesMask);
-	}	
+	}
+	
+	public void setSensorTimeSeriesSuspectMask(String stationName, String sensorName, TimeSeriesMask suspectMask) {
+		throwNull(stationName);
+		throwNull(sensorName);
+		throwNull(suspectMask);
+		StationMeta stationMeta = getStationMeta(stationName, true);
+		BTreeMap<String, TimeSeriesMask> suspectMaskMap = db.getTreeMap(stationMeta.db_name_sensor_time_series_suspect_mask_map);
+		suspectMaskMap.put(sensorName, suspectMask);
+	}
 
 	private BTreeMap<Integer, Chunk> getSensorChunkMap(SensorMeta sensorMeta) {
 		throwNull(sensorMeta);
@@ -290,7 +340,7 @@ public class StreamDB {
 		ArrayList<DataEntry> entryList = new ArrayList<DataEntry>(data.length);
 		int prevTimestamp = -1;
 		for(DataEntry entry:data) {
-			if(entry.timestamp<=prevTimestamp) {
+			if(entry.timestamp <= prevTimestamp) {
 				throw new RuntimeException("not ordered timestamps "+TimeUtil.oleMinutesToText(prevTimestamp)+"  "+TimeUtil.oleMinutesToText(entry.timestamp)+"   "+entry.value+"  "+stationName+"/"+sensorName);
 			}
 			if(entry.timestamp<timestamp_next_year) {
@@ -829,5 +879,14 @@ public class StreamDB {
 		}
 		BTreeMap<String, TimeSeriesMask> maskMap = db.getTreeMap(stationMeta.db_name_sensor_time_series_mask_map);
 		maskMap.clear();		
+	}
+	
+	public void clearSuspectMaskOfStation(String stationName) {
+		StationMeta stationMeta = getStationMeta(stationName, false);
+		if(stationMeta==null) {
+			return;
+		}
+		BTreeMap<String, TimeSeriesMask> suspectMaskMap = db.getTreeMap(stationMeta.db_name_sensor_time_series_suspect_mask_map);
+		suspectMaskMap.clear();		
 	}
 }

@@ -3,9 +3,6 @@ package tsdb.iterator;
 import java.util.Collections;
 import java.util.Iterator;
 
-
-import org.tinylog.Logger;
-
 import tsdb.util.DataQuality;
 import tsdb.util.Interval;
 import tsdb.util.TimeSeriesMask;
