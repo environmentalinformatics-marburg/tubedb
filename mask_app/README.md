@@ -14,6 +14,12 @@ npm.cmd install element-plus
 
 npm.cmd install @element-plus/icons-vue
 
+npm.cmd install uplot-vue uplot
+
+
 npm.cmd run dev
 
+
 npm.cmd run build
+
+

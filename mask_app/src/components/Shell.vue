@@ -40,7 +40,7 @@
         <span class="toolbar-label">Plot:</span>
         <el-select
           v-model="selectedPlot"
-          style="width: 200px;"
+          style="width: 200px; margin-right: 8px;"
           @change="onPlotChange"
           placeholder="Plot wählen"
           :disabled="!selectedGroup"
@@ -55,32 +55,61 @@
             :value="plot.value"
           />
         </el-select>
+
+        <!-- Sensor Select -->
+        <span class="toolbar-label">Sensor:</span>
+        <el-select
+          v-model="selectedSensor"
+          style="width: 200px;"
+          @change="onSensorChange"
+          placeholder="Sensor wählen"
+          :disabled="!selectedPlot"
+          filterable
+          allow-create
+          default-first-option
+        >
+          <el-option
+            v-for="sensor in sensorOptions"
+            :key="sensor.value"
+            :label="sensor.label"
+            :value="sensor.value"
+          />
+        </el-select>
       </div>
       <div class="toolbar-right">
-        <!-- Platz für weitere Toolbar-Elemente -->
+
       </div>
     </div>
 
     <!-- Main Content -->
-    <div class="main-content">
-      <Viewer v-if="selectedPlot" :plot="selectedPlot" />
+    <div ref="mainContent" class="main-content">
+      <Viewer 
+        v-if="selectedPlot" 
+        :plot="selectedPlot" 
+        :sensor="selectedSensor"
+        :width="mainContentWidth"
+        :data="data" 
+      />
     </div>
 
     <!-- Bottom Toolbar -->
     <div class="bottom-bar">
       <div class="toolbar-left">
         <span class="toolbar-label">Plot:</span>
-        <span class="toolbar-value">{{selectedPlot}}</span>
+        <span class="toolbar-value">{{ selectedPlot || '-' }}</span>
+        <span class="toolbar-divider">|</span>
+        <span class="toolbar-label">Sensor:</span>
+        <span class="toolbar-value">{{ selectedSensor || '-' }}</span>
       </div>
       <div class="toolbar-right">
-        <!-- Platz für weitere Bottom-Toolbar-Elemente -->
+
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import Viewer from './Viewer.vue'
 
 const props = defineProps({
@@ -93,6 +122,7 @@ const props = defineProps({
 const selectedProject = ref('')
 const selectedGroup = ref('')
 const selectedPlot = ref('')
+const selectedSensor = ref('')
 
 const selectedProjectData = computed(() => {
   if (!selectedProject.value || !props.metaData?.model?.projects) return null
@@ -107,6 +137,13 @@ const selectedGroupData = computed(() => {
 const selectedPlotData = computed(() => {
   if (!selectedPlot.value || !props.metaData?.model?.plots) return null
   return props.metaData.model.plots[selectedPlot.value]
+})
+
+const selectedSensorData = computed(() => {
+  if (!selectedSensor.value || !selectedPlotData.value) return null
+  return selectedPlotData.value.sensors?.includes(selectedSensor.value) 
+    ? selectedSensor.value 
+    : null
 })
 
 const projectOptions = computed(() => {
@@ -144,6 +181,18 @@ const plotOptions = computed(() => {
   }))
 })
 
+const sensorOptions = computed(() => {
+  if (!selectedPlot.value || !props.metaData?.model?.plots) return []
+  
+  const plot = props.metaData.model.plots[selectedPlot.value]
+  if (!plot?.sensors) return []
+  
+  return plot.sensors.map(sensorId => ({
+    value: sensorId,
+    label: sensorId
+  }))
+})
+
 watch(() => props.metaData, (newData) => {
   if (newData?.model?.projects) {
     const firstProject = Object.values(newData.model.projects)[0]
@@ -156,6 +205,11 @@ watch(() => props.metaData, (newData) => {
         const firstGroup = newData.model.groups[firstProject.groups[0]]
         if (firstGroup?.plots && firstGroup.plots.length > 0) {
           selectedPlot.value = firstGroup.plots[0]
+          
+          const firstPlot = newData.model.plots[firstGroup.plots[0]]
+          if (firstPlot?.sensors && firstPlot.sensors.length > 0) {
+            selectedSensor.value = firstPlot.sensors[0]
+          }
         }
       }
     }
@@ -167,9 +221,11 @@ watch(selectedProject, (newProject) => {
     const firstGroup = props.metaData.model.projects[newProject].groups[0]
     selectedGroup.value = firstGroup || ''
     selectedPlot.value = ''
+    selectedSensor.value = ''
   } else {
     selectedGroup.value = ''
     selectedPlot.value = ''
+    selectedSensor.value = ''
   }
 })
 
@@ -177,8 +233,19 @@ watch(selectedGroup, (newGroup) => {
   if (newGroup && props.metaData?.model?.groups?.[newGroup]?.plots) {
     const firstPlot = props.metaData.model.groups[newGroup].plots[0]
     selectedPlot.value = firstPlot || ''
+    selectedSensor.value = ''
   } else {
     selectedPlot.value = ''
+    selectedSensor.value = ''
+  }
+})
+
+watch(selectedPlot, (newPlot) => {
+  if (newPlot && props.metaData?.model?.plots?.[newPlot]?.sensors) {
+    const firstSensor = props.metaData.model.plots[newPlot].sensors[0]
+    selectedSensor.value = firstSensor || ''
+  } else {
+    selectedSensor.value = ''
   }
 })
 
@@ -193,10 +260,118 @@ const onGroupChange = (value) => {
 const onPlotChange = (value) => {
   console.log('selected plot:', value)
 }
+
+const onSensorChange = (value) => {
+  console.log('selected sensor:', value)
+}
+
+
+const mainContent = ref(null); // ref to div mainContent
+const mainContentWidth = ref(300);
+let resizeObserver = null;
+
+onMounted(() => {
+  mainContentWidth.value = mainContent.value.clientWidth;
+  resizeObserver = new ResizeObserver(entries => {
+    mainContentWidth.value = mainContent.value.clientWidth;
+  });  
+  resizeObserver.observe(mainContent.value);
+
+  if (selectedPlot.value && selectedSensor.value) {
+    fetchData();
+  }
+});
+
+onBeforeUnmount(() => {
+  if (resizeObserver) {
+    resizeObserver.disconnect();
+  }
+});
+
+const data = ref(null);
+const dataLoading = ref(false);
+const dataError = ref(null);
+
+function convertFloat32ArrayToArray(a) {
+  let r = [];
+  for(let i = 0; i < a.length; i++) {
+    let v = a[i];
+    r[i] = Number.isFinite(v) ? v : null;
+  }
+  return r;
+}
+
+function convertInt32ArrayToArray(a) {
+  let r = [];
+  for(let i = 0; i < a.length; i++) {
+    let t = a[i];
+    r[i] = (t - 36819360 - 60) * 60;
+  }
+  return r;
+}
+
+const fetchData = async () => {
+  if (!selectedPlot.value || !selectedSensor.value) {
+    data.value = null;
+    return;
+  }
+
+  data.value = null;
+  dataLoading.value = true;
+  dataError.value = null;
+
+  try {
+    const response = await fetch('/tsdb/query_js', {
+      method: 'POST', 
+      body: JSON.stringify({
+      settings: {
+        timeAggregation: 'hour',
+        quality: 'step'
+      },  
+      timeseries: [{  
+        plot: selectedPlot.value,
+        sensor: selectedSensor.value,
+      }]
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`)
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    console.log(arrayBuffer);
+    const dataView = new DataView(arrayBuffer);
+
+    let entryCount = dataView.getInt32(0, true);
+    let schemaCount = dataView.getInt32(4, true);
+    console.log("entryCount: " + entryCount + "   schemaCount: " + schemaCount);
+    let dataArray = [];
+    let timestamps = new Int32Array(arrayBuffer, 4 + 4, entryCount);
+    console.log(timestamps);
+    dataArray[0] = convertInt32ArrayToArray(timestamps);
+    for(let i = 0; i < schemaCount; i++) {
+      let values = new Float32Array(arrayBuffer, 4 + 4 + 4 * entryCount * (i + 1), entryCount);
+      dataArray[i + 1] = convertFloat32ArrayToArray(values);
+    }
+    console.log(dataArray);
+    data.value = dataArray;
+  } catch (err) {
+    console.error(err);
+    dataError.value = err.message;
+  } finally {
+    dataLoading.value = false;
+  }
+}
+
+watch([selectedPlot, selectedSensor], () => {
+  console.log('watch([selectedPlot, selectedSensor]');
+  fetchData();
+}, { immediate: false });
+
 </script>
 
 <style scoped>
-/* Layout Wrapper für korrektes Sticky-Verhalten */
 .layout-wrapper {
   display: flex;
   flex-direction: column;
@@ -204,7 +379,6 @@ const onPlotChange = (value) => {
   overflow: hidden;
 }
 
-/* Gemeinsame Toolbar-Stile */
 .top-bar,
 .bottom-bar {
   display: flex;
@@ -250,7 +424,12 @@ const onPlotChange = (value) => {
   margin-left: 4px;
 }
 
-/* Scrollbarer Hauptbereich */
+.toolbar-divider {
+  color: #dcdfe6;
+  margin: 0 8px;
+  font-size: 13px;
+}
+
 .main-content {
   flex: 1;
   overflow: auto;
