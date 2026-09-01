@@ -1,11 +1,12 @@
 <template>
   <div class="chart-container">
+    {{ selectionStart }} - {{ selectionEnd }}
     <UplotVue :options="options" :data="data" v-if="data" />
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import UplotVue from 'uplot-vue'
 import 'uplot/dist/uPlot.min.css'
 
@@ -97,6 +98,8 @@ function dragPlugin(opts) {
   function ready(u) {
     let plot = u.root.querySelector(".u-over");
 
+    const hasModifier = (e) => e.shiftKey || e.ctrlKey || e.altKey || e.metaKey;
+
     function initMove() {
       let xVal = u.posToVal(u.cursor.left, "x");
       mouseDownXval = xVal;
@@ -109,6 +112,7 @@ function dragPlugin(opts) {
     }
 
     plot.addEventListener("mousedown", function(e) {
+      if (hasModifier(e)) return;
       initMove();
     });
 
@@ -117,6 +121,8 @@ function dragPlugin(opts) {
     });
 
     plot.addEventListener("mousemove", function(e) {
+      if (hasModifier(e)) return;
+
       if(e.buttons === 1) {
         if(mouseDownXval === undefined) {
           initMove();
@@ -140,6 +146,40 @@ function dragPlugin(opts) {
   return {hooks: {ready}};
 }
 
+const selectionStart = ref(null);
+const selectionEnd = ref(null);
+
+function handleSelectionPluginKeyDown(e) {
+  if (e.key === 'Escape' || e.key === 'Esc') {
+    selectionStart.value = null;
+    selectionEnd.value = null;
+  }
+}
+
+function selectionPlugin(opts) {
+
+  function ready(u) {
+    let plot = u.root.querySelector(".u-over");   
+
+    plot.addEventListener("click", function(e) {
+      if (!(e.shiftKey || e.ctrlKey || e.altKey)) return;
+      if (e.button === 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        selectionStart.value = u.posToVal(u.cursor.left, "x");
+      }    
+    });
+
+    plot.addEventListener("contextmenu", function(e) {
+      if (!(e.shiftKey || e.ctrlKey || e.altKey)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      selectionEnd.value = u.posToVal(u.cursor.left, "x");
+    });
+  }
+  return {hooks: {ready}};
+}
+
 const options = computed(() => ({
   width: props.width,
   height: 400,
@@ -153,7 +193,8 @@ const options = computed(() => ({
   },
   plugins: [
     wheelZoomPlugin({factor: 0.75}),
-    dragPlugin({})
+    dragPlugin({}),
+    selectionPlugin({})
   ],
   series: [
     {},
@@ -164,11 +205,19 @@ const options = computed(() => ({
   ]
 }))
 
+
+onMounted(() => {
+  window.addEventListener('keydown', handleSelectionPluginKeyDown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleSelectionPluginKeyDown);
+});
+
 </script>
 
 <style scoped>
 .chart-container {
   width: 100%;
 }
-
 </style>
