@@ -502,6 +502,11 @@ public class ServerTsDB implements RemoteTsDB {
 	public TimeSeriesMask getTimeSeriesMask(String stationName, String sensorName) {
 		return tsdb.streamStorage.getTimeSeriesMask(stationName, sensorName);
 	}
+	
+	@Override
+	public TimeSeriesMask getTimeSeriesSuspectMask(String stationName, String sensorName) {
+		return tsdb.streamStorage.getTimeSeriesSuspectMask(stationName, sensorName);
+	}
 
 	@Override
 	public void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask) {

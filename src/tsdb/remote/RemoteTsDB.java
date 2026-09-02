@@ -96,6 +96,7 @@ public interface RemoteTsDB extends Remote {
 	
 	//time series mask
 	TimeSeriesMask getTimeSeriesMask(String stationName, String sensorName) throws RemoteException;
+	TimeSeriesMask getTimeSeriesSuspectMask(String stationName, String sensorName) throws RemoteException;
 	void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask) throws RemoteException;
 	
 	// status

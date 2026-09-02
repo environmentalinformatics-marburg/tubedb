@@ -88,7 +88,10 @@
         :plot="selectedPlot" 
         :sensor="selectedSensor"
         :width="mainContentWidth"
-        :data="data" 
+        :height="mainContentHeight"
+        :data="data"
+        :mask="mask"
+        @selection-change="maskSelection = $event" 
       />
     </div>
 
@@ -100,6 +103,9 @@
         <span class="toolbar-divider">|</span>
         <span class="toolbar-label">Sensor:</span>
         <span class="toolbar-value">{{ selectedSensor || '-' }}</span>
+        <span class="toolbar-divider">|</span>
+        <span class="toolbar-label">Selection:</span>
+        <span class="toolbar-value">{{ maskSelection.dateMin }} - {{ maskSelection.dateMax }}</span>
       </div>
       <div class="toolbar-right">
 
@@ -117,42 +123,44 @@ const props = defineProps({
     type: Object,
     required: true
   }
-})
+});
 
-const selectedProject = ref('')
-const selectedGroup = ref('')
-const selectedPlot = ref('')
-const selectedSensor = ref('')
+const selectedProject = ref('');
+const selectedGroup = ref('');
+const selectedPlot = ref('');
+const selectedSensor = ref('');
+
+const maskSelection = ref({min: null, max: null, dateMin: '*', dateMax: '*'});
 
 const selectedProjectData = computed(() => {
   if (!selectedProject.value || !props.metaData?.model?.projects) return null
   return props.metaData.model.projects[selectedProject.value]
-})
+});
 
 const selectedGroupData = computed(() => {
   if (!selectedGroup.value || !props.metaData?.model?.groups) return null
   return props.metaData.model.groups[selectedGroup.value]
-})
+});
 
 const selectedPlotData = computed(() => {
   if (!selectedPlot.value || !props.metaData?.model?.plots) return null
   return props.metaData.model.plots[selectedPlot.value]
-})
+});
 
 const selectedSensorData = computed(() => {
   if (!selectedSensor.value || !selectedPlotData.value) return null
   return selectedPlotData.value.sensors?.includes(selectedSensor.value) 
     ? selectedSensor.value 
     : null
-})
+});
 
 const projectOptions = computed(() => {
   if (!props.metaData?.model?.projects) return []
   return Object.values(props.metaData.model.projects).map(p => ({
     value: p.id,
     label: p.title
-  }))
-})
+  }));
+});
 
 const groupOptions = computed(() => {
   if (!selectedProject.value || !props.metaData?.model?.projects) return []
@@ -166,8 +174,8 @@ const groupOptions = computed(() => {
       value: groupId,
       label: groupData?.title || groupId
     }
-  })
-})
+  });
+});
 
 const plotOptions = computed(() => {
   if (!selectedGroup.value || !props.metaData?.model?.groups) return []
@@ -178,8 +186,8 @@ const plotOptions = computed(() => {
   return group.plots.map(plotId => ({
     value: plotId,
     label: plotId
-  }))
-})
+  }));
+});
 
 const sensorOptions = computed(() => {
   if (!selectedPlot.value || !props.metaData?.model?.plots) return []
@@ -190,8 +198,8 @@ const sensorOptions = computed(() => {
   return plot.sensors.map(sensorId => ({
     value: sensorId,
     label: sensorId
-  }))
-})
+  }));
+});
 
 watch(() => props.metaData, (newData) => {
   if (newData?.model?.projects) {
@@ -214,7 +222,7 @@ watch(() => props.metaData, (newData) => {
       }
     }
   }
-}, { immediate: true })
+}, { immediate: true });
 
 watch(selectedProject, (newProject) => {
   if (newProject && props.metaData?.model?.projects?.[newProject]?.groups) {
@@ -227,7 +235,7 @@ watch(selectedProject, (newProject) => {
     selectedPlot.value = ''
     selectedSensor.value = ''
   }
-})
+});
 
 watch(selectedGroup, (newGroup) => {
   if (newGroup && props.metaData?.model?.groups?.[newGroup]?.plots) {
@@ -238,7 +246,7 @@ watch(selectedGroup, (newGroup) => {
     selectedPlot.value = ''
     selectedSensor.value = ''
   }
-})
+});
 
 watch(selectedPlot, (newPlot) => {
   if (newPlot && props.metaData?.model?.plots?.[newPlot]?.sensors) {
@@ -247,7 +255,7 @@ watch(selectedPlot, (newPlot) => {
   } else {
     selectedSensor.value = ''
   }
-})
+});
 
 const onProjectChange = (value) => {
   console.log('selected project:', value)
@@ -268,12 +276,15 @@ const onSensorChange = (value) => {
 
 const mainContent = ref(null); // ref to div mainContent
 const mainContentWidth = ref(300);
+const mainContentHeight = ref(300);
 let resizeObserver = null;
 
 onMounted(() => {
   mainContentWidth.value = mainContent.value.clientWidth;
+  mainContentHeight.value = mainContent.value.clientHeight;
   resizeObserver = new ResizeObserver(entries => {
     mainContentWidth.value = mainContent.value.clientWidth;
+    mainContentHeight.value = mainContent.value.clientHeight;
   });  
   resizeObserver.observe(mainContent.value);
 
@@ -364,9 +375,45 @@ const fetchData = async () => {
   }
 }
 
+const mask = ref(null);
+const maskLoading = ref(false);
+const maskError = ref(null);
+
+const fetchMask = async () => {
+  if (!selectedPlot.value || !selectedSensor.value) {
+    mask.value = null;
+    return;
+  }
+
+  mask.value = null;
+  maskLoading.value = true;
+  maskError.value = null;
+
+  try {
+    const params = new URLSearchParams({
+      'station': selectedPlot.value,
+      'sensor': selectedSensor.value
+    });
+
+    const response = await fetch(`/tsdb/mask?${params.toString()}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`)
+    }
+
+    mask.value = await response.json();    
+  } catch (err) {
+    console.error(err);
+    maskError.value = err.message;
+  } finally {
+    maskLoading.value = false;
+  }
+}
+
 watch([selectedPlot, selectedSensor], () => {
   console.log('watch([selectedPlot, selectedSensor]');
   fetchData();
+  fetchMask();
 }, { immediate: false });
 
 </script>

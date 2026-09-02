@@ -1,12 +1,11 @@
 <template>
   <div class="chart-container">
-    {{ selectionStart }} - {{ selectionEnd }}
-    <UplotVue :options="options" :data="data" v-if="data" />
+    <UplotVue :options="options" :data="data" v-if="data" ref="uplotDiagram" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch, defineEmits } from 'vue'
 import UplotVue from 'uplot-vue'
 import 'uplot/dist/uPlot.min.css'
 
@@ -23,11 +22,23 @@ const props = defineProps({
     type: Number,
     required: true
   },
+  height: {
+    type: Number,
+    required: true
+  },  
   data: {
     type: [Array, null],
     required: true,
+  },
+  mask: {
+    type: [Object, null],
+    required: true,
   }
 });
+
+const emit = defineEmits(['selection-change']);
+
+const uplotDiagram = ref(null); // ref to UplotVue instance
 
 
 function wheelZoomPlugin(opts) {
@@ -149,6 +160,57 @@ function dragPlugin(opts) {
 const selectionStart = ref(null);
 const selectionEnd = ref(null);
 
+const selectionMin = computed(() => {
+  if (selectionStart.value == null) {
+    return null;
+  }
+  if(selectionEnd.value === null) {
+    return selectionStart.value;
+  }
+  return Math.min(selectionStart.value, selectionEnd.value);
+});
+
+const selectionMax = computed(() => {
+  if (selectionEnd.value == null) {
+    return null;
+  }
+  if(selectionStart.value === null) {
+    return selectionEnd.value;
+  }
+  return Math.max(selectionStart.value, selectionEnd.value);
+});
+
+
+function formatTimestamp(timestamp) {
+  if (timestamp === null) {
+    return '*';
+  }  
+
+  const date = new Date(timestamp * 1000);
+  
+  const pad = (n) => n.toString().padStart(2, '0');
+  
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+watch([selectionMin, selectionMax], () => {
+  if (uplotDiagram.value && uplotDiagram.value._chart) {
+    uplotDiagram.value._chart.redraw();
+  }
+  emit('selection-change', { 
+    min: selectionMin.value, 
+    max: selectionMax.value,
+    dateMin: formatTimestamp(selectionMin.value),
+    dateMax: formatTimestamp(selectionMax.value),
+  });
+});
+
 function handleSelectionPluginKeyDown(e) {
   if (e.key === 'Escape' || e.key === 'Esc') {
     selectionStart.value = null;
@@ -180,21 +242,139 @@ function selectionPlugin(opts) {
   return {hooks: {ready}};
 }
 
+function markPlugin(opts) {
+
+  function draw(u) {
+        const start = selectionMin.value;
+        const end = selectionMax.value;
+
+        if (start === null && end === null) {
+          return;
+        }
+
+        const ctx = u.ctx;
+        const bbox = u.bbox;
+        
+        let x1, x2;
+
+        if (start === null) {
+          x1 = bbox.left;
+        } else {
+          x1 = u.valToPos(start, 'x', true);
+        }
+
+        if (end === null) {
+          x2 = bbox.left + bbox.width;
+        } else {
+          x2 = u.valToPos(end, 'x', true);
+        }
+
+        if (x1 === null || x2 === null) return;
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(66, 133, 244, 0.3)';
+        ctx.fillRect(x1, bbox.top, x2 - x1, bbox.height);
+        ctx.restore();
+  }
+
+  return {hooks: {draw}};
+}
+
+function maskPlugin(opts) {
+
+  function draw(u) {
+        if(props.mask === null) {
+          return;
+        }
+
+        const ctx = u.ctx;
+        const bbox = u.bbox;
+        ctx.save();
+
+        for (const interval of props.mask.suspect_mask) {
+          const start = (interval[0] - 36819360 - 60) * 60;
+          const end = (interval[1] - 36819360 - 60) * 60;
+          if (start === null && end === null) {
+            return;
+          }
+
+          let x1, x2;
+
+          if (start === null) {
+            x1 = bbox.left;
+          } else {
+            x1 = u.valToPos(start, 'x', true);
+          }
+
+          if (end === null) {
+            x2 = bbox.left + bbox.width;
+          } else {
+            x2 = u.valToPos(end, 'x', true);
+          }
+
+          if (x1 === null || x2 === null) return;
+
+          ctx.fillStyle = 'rgba(222, 222, 66, 0.3)';
+          ctx.fillRect(x1, bbox.top, x2 - x1, bbox.height);
+        }
+
+        for (const interval of props.mask.mask) {
+          const start = (interval[0] - 36819360 - 60) * 60;
+          const end = (interval[1] - 36819360 - 60) * 60;
+          if (start === null && end === null) {
+            return;
+          }
+
+          let x1, x2;
+
+          if (start === null) {
+            x1 = bbox.left;
+          } else {
+            x1 = u.valToPos(start, 'x', true);
+          }
+
+          if (end === null) {
+            x2 = bbox.left + bbox.width;
+          } else {
+            x2 = u.valToPos(end, 'x', true);
+          }
+
+          if (x1 === null || x2 === null) return;
+
+          ctx.fillStyle = 'rgba(222, 66, 66, 0.3)';
+          ctx.fillRect(x1, bbox.top, x2 - x1, bbox.height);          
+        }
+
+        ctx.restore();
+  }
+
+  return {hooks: {draw}};
+}
+
 const options = computed(() => ({
   width: props.width,
-  height: 400,
+  height: props.height,
+  padding: [0, 0, 0, 0],
+  legend: {
+    show: false
+  },
   cursor: {
-    x: false,
+    x: true,
     y: false,
     drag: {
       x: false,
       y: false,
     },
+    points: {
+      show: false
+    }
   },
   plugins: [
     wheelZoomPlugin({factor: 0.75}),
     dragPlugin({}),
-    selectionPlugin({})
+    selectionPlugin({}),
+    markPlugin({}),
+    maskPlugin({})
   ],
   series: [
     {},

@@ -8,6 +8,7 @@ export default defineConfig({
   build: {
     outDir: '../webcontent/mask_app',
     emptyOutDir: true,
+    chunkSizeWarningLimit: 2000,
   },
   server: {
     proxy: {

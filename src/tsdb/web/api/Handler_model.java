@@ -9,21 +9,18 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-
-import org.tinylog.Logger;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
 import org.json.JSONWriter;
+import org.tinylog.Logger;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import tsdb.TsDBFactory;
 import tsdb.component.Region;
 import tsdb.component.Sensor;
 import tsdb.dsl.FormulaBuilder;
-import tsdb.dsl.FormulaJavaVisitor;
 import tsdb.dsl.FormulaPrintFormulaVisistor;
 import tsdb.dsl.FormulaToJsonTreeVisitor;
 import tsdb.dsl.FormulaToStringVisitor;
