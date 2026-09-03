@@ -77,9 +77,18 @@
         </el-select>
       </div>
       <div class="toolbar-right">
-
+        <el-button
+          type="info"
+          circle
+          @click="showHelpDialog = true"
+          icon="QuestionFilled"
+          title="Hilfe / Bedienung"
+        />
       </div>
     </div>
+
+    <!-- Help Dialog Component -->
+    <HelpDialog v-model="showHelpDialog" />
 
     <!-- Main Content -->
     <div ref="mainContent" class="main-content">
@@ -105,10 +114,27 @@
         <span class="toolbar-value">{{ selectedSensor || '-' }}</span>
         <span class="toolbar-divider">|</span>
         <span class="toolbar-label">Selection:</span>
-        <span class="toolbar-value">{{ maskSelection.dateMin }} - {{ maskSelection.dateMax }}</span>
+        <span class="toolbar-value" style="min-width: 250px;">{{ maskSelection.dateMin }} - {{ maskSelection.dateMax }}</span>
+      </div>
+      <div class="toolbar-center">
+        <el-input
+          v-model="commentText"
+          placeholder="Insert comment..."
+          clearable
+          size="small"
+          prefix-icon="Comment"
+        />
       </div>
       <div class="toolbar-right">
-
+        <el-button
+          type="primary"
+          :disabled="maskSelectionSaving"
+          :loading="maskSelectionSaving"
+          @click="maskSelectionSave"
+          icon="DocumentAdd"
+        >
+          Save
+        </el-button>
       </div>
     </div>
   </div>
@@ -116,7 +142,9 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { ElMessage } from 'element-plus'
 import Viewer from './Viewer.vue'
+import HelpDialog from './HelpDialog.vue'
 
 const props = defineProps({
   metaData: {
@@ -129,6 +157,9 @@ const selectedProject = ref('');
 const selectedGroup = ref('');
 const selectedPlot = ref('');
 const selectedSensor = ref('');
+
+// Help Dialog State
+const showHelpDialog = ref(false);
 
 const maskSelection = ref({min: null, max: null, dateMin: '*', dateMax: '*'});
 
@@ -416,6 +447,47 @@ watch([selectedPlot, selectedSensor], () => {
   fetchMask();
 }, { immediate: false });
 
+
+const commentText = ref('');
+const maskSelectionSaving = ref(false);
+
+const maskSelectionSave = async () => {
+  maskSelectionSaving.value = true;
+
+  try {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    const response = await fetch('/tsdb/mask', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'add',
+        content: {
+          plot: selectedPlot.value,
+          sensor: selectedSensor.value,
+          min: maskSelection.value.min,
+          max: maskSelection.value.max,
+          dateMin: maskSelection.value.dateMin,
+          dateMax: maskSelection.value.dateMax,
+          comment: commentText.value,
+        }
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    ElMessage.success('Mask selection saved successfully!');
+  } catch (err) {
+    console.error(err);
+    ElMessage.error('Failed to save mask selection: ' + err.message);
+  } finally {
+    maskSelectionSaving.value = false;
+  }
+};
+
 </script>
 
 <style scoped>
@@ -437,6 +509,7 @@ watch([selectedPlot, selectedSensor], () => {
   z-index: 1000;
   padding: 8px 16px;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .top-bar {
@@ -456,6 +529,18 @@ watch([selectedPlot, selectedSensor], () => {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.toolbar-center {
+  flex: 1;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .toolbar-label {

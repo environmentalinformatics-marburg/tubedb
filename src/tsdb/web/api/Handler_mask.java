@@ -1,44 +1,20 @@
 package tsdb.web.api;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Set;
-import java.util.function.Consumer;
 
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.UserIdentity;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONString;
 import org.json.JSONTokener;
 import org.json.JSONWriter;
 import org.tinylog.Logger;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import tsdb.TsDBFactory;
-import tsdb.remote.PlotStatus;
 import tsdb.remote.RemoteTsDB;
 import tsdb.util.Interval;
 import tsdb.util.TimeSeriesMask;
-import tsdb.util.TimeUtil;
-import tsdb.util.yaml.YamlMap;
-import tsdb.util.yaml.YamlTimestampSafeConstructor;
-import tsdb.web.util.Web;
 
 public class Handler_mask extends MethodHandler {
 
@@ -53,7 +29,9 @@ public class Handler_mask extends MethodHandler {
 		case "GET":
 			handleGET(target, baseRequest, request, response);
 			break;
-
+		case "POST":
+			handlePOST(target, baseRequest, request, response);
+			break;
 		default:
 			throw new RuntimeException("unknown HTTP method " + httpMethod);
 		}
@@ -81,10 +59,10 @@ public class Handler_mask extends MethodHandler {
 
 
 			json.object(); // Start Object wrapper
-			
+
 			json.key("station");
 			json.value(stationName);
-			
+
 			json.key("sensor");
 			json.value(sensorName);
 
@@ -100,7 +78,7 @@ public class Handler_mask extends MethodHandler {
 				}
 			}
 			json.endArray();
-			
+
 			json.key("suspect_mask");
 
 			json.array();
@@ -121,5 +99,30 @@ public class Handler_mask extends MethodHandler {
 			Logger.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	public synchronized void handlePOST(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		baseRequest.setHandled(true);
+
+		Logger.info("handlePOST ");
+
+		response.setContentType("application/json;charset=utf-8");
+		JSONObject jsonReq = new JSONObject(new JSONTokener(request.getReader()));
+		String action = jsonReq.getString("action");
+		Logger.info(action);
+		switch(action) {
+		case "add": {
+			JSONObject content = jsonReq.getJSONObject("content");
+			handleActionAdd(content, response);
+			break;
+		}
+		default:
+			Logger.error("unknown action");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	public synchronized void handleActionAdd(JSONObject json, HttpServletResponse response) throws IOException, ServletException {
+		throw new RuntimeException("not implemented");
 	}
 }

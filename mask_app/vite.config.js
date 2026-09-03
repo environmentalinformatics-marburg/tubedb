@@ -9,6 +9,7 @@ export default defineConfig({
     outDir: '../webcontent/mask_app',
     emptyOutDir: true,
     chunkSizeWarningLimit: 2000,
+    reportCompressedSize: false,
   },
   server: {
     proxy: {
