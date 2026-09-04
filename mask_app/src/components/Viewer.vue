@@ -211,12 +211,26 @@ watch([selectionMin, selectionMax], () => {
   });
 });
 
+watch(() => props.mask, () => {
+  if (uplotDiagram.value && uplotDiagram.value._chart) {
+    uplotDiagram.value._chart.redraw();
+  }
+});
+
 function handleSelectionPluginKeyDown(e) {
   if (e.key === 'Escape' || e.key === 'Esc') {
-    selectionStart.value = null;
-    selectionEnd.value = null;
+    resetSelection();
   }
 }
+
+const resetSelection = () => {
+  selectionStart.value = null;
+  selectionEnd.value = null;
+}
+
+defineExpose({
+  resetSelection
+});
 
 function selectionPlugin(opts) {
 

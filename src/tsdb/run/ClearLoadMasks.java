@@ -1,6 +1,8 @@
 package tsdb.run;
 
 
+import java.rmi.RemoteException;
+
 import org.tinylog.Logger;
 
 import tsdb.TsDB;
@@ -23,11 +25,17 @@ public class ClearLoadMasks {
 
 		String path = TsDBFactory.CONFIG_PATH;
 
-
-		if(TsDBFactory.JUST_ONE_REGION==null||TsDBFactory.JUST_ONE_REGION.toUpperCase().equals("BE")) { //*** BE
-		    String fileName = path+"/be/"+LoadMasks.MASK_FILENAME;
+		if(true) { // root masks
+			String fileName = path+"/be/"+LoadMasks.MASK_FILENAME;
 		    LoadMasks.loadMask(tsdb, fileName, MASK_TYPE.BASIC);
 		    String suspectFileName = path+"/be/"+LoadMasks.SUSPECT_MASK_FILENAME;
+		    LoadMasks.loadMask(tsdb, suspectFileName, MASK_TYPE.SUSPECT);
+		}
+
+		if(TsDBFactory.JUST_ONE_REGION==null||TsDBFactory.JUST_ONE_REGION.toUpperCase().equals("BE")) { //*** BE
+		    String fileName = path+"/"+LoadMasks.MASK_FILENAME;
+		    LoadMasks.loadMask(tsdb, fileName, MASK_TYPE.BASIC);
+		    String suspectFileName = path+"/"+LoadMasks.SUSPECT_MASK_FILENAME;
 		    LoadMasks.loadMask(tsdb, suspectFileName, MASK_TYPE.SUSPECT);
 		}
 

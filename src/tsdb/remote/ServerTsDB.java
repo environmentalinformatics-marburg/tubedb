@@ -2,6 +2,8 @@ package tsdb.remote;
 
 import static tsdb.util.AssumptionCheck.throwNull;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +16,10 @@ import java.util.stream.Stream;
 
 import org.tinylog.Logger;
 
+import com.opencsv.CSVWriter;
+import com.opencsv.CSVWriterBuilder;
+
+import jakarta.servlet.http.HttpServletResponse;
 import tsdb.GeneralStation;
 import tsdb.Station;
 import tsdb.TsDB;
@@ -32,6 +38,8 @@ import tsdb.iterator.MonthCollectingAggregator;
 import tsdb.iterator.WeekCollectingAggregator;
 import tsdb.iterator.YearCollectingAggregator;
 import tsdb.run.ConsoleRunner;
+import tsdb.run.command.LoadMasks;
+import tsdb.run.command.LoadMasks.MASK_TYPE;
 import tsdb.streamdb.StreamIterator;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataEntry;
@@ -40,6 +48,7 @@ import tsdb.util.DataRow;
 import tsdb.util.Measurement;
 import tsdb.util.Pair;
 import tsdb.util.TimeSeriesMask;
+import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
 import tsdb.util.TsEntry;
 import tsdb.util.iterator.TimestampSeries;
@@ -502,7 +511,7 @@ public class ServerTsDB implements RemoteTsDB {
 	public TimeSeriesMask getTimeSeriesMask(String stationName, String sensorName) {
 		return tsdb.streamStorage.getTimeSeriesMask(stationName, sensorName);
 	}
-	
+
 	@Override
 	public TimeSeriesMask getTimeSeriesSuspectMask(String stationName, String sensorName) {
 		return tsdb.streamStorage.getTimeSeriesSuspectMask(stationName, sensorName);
@@ -511,6 +520,41 @@ public class ServerTsDB implements RemoteTsDB {
 	@Override
 	public void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask) {
 		tsdb.streamStorage.setTimeSeriesMask(stationName, sensorName, timeSeriesMask, true);
+	}
+
+	@Override
+	public void addTimeSeriesMaskInterval(String station, String sensor, String start, String end, String user, String date, String comment, MASK_TYPE maskType) throws RemoteException {
+		String csvPath = tsdb.configDirectory + "/mask.csv";
+		
+		int timestampStart = TimeUtil.parseStartTimestamp(start);
+		int timestampEnd = TimeUtil.parseStartTimestamp(end);		
+		
+		File csvFile = new File(csvPath);
+		boolean fileExists = csvFile.exists();
+
+		try (CSVWriter writer = new CSVWriter(new FileWriter(csvFile, true))) {
+			if (!fileExists) {
+				String[] header = {"station", "sensor", "start", "end", "user", "date", "comment" };
+				writer.writeNext(header);
+			}
+
+			String[] row = {
+					station,
+					sensor,
+					start,
+					end,
+					user,
+					date,
+					comment	            
+			};
+			writer.writeNext(row);
+			
+			LoadMasks.insertMask(tsdb, csvFile.toString(), row, station, sensor, timestampStart, timestampEnd, maskType, true);
+
+			Logger.info("Mask entry added: station={}, sensor={}, start={}, end={}", station, sensor, start, end);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	// ----- monitoring -------

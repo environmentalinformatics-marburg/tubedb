@@ -1,20 +1,27 @@
 package tsdb.web.api;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.UserIdentity;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.json.JSONWriter;
 import org.tinylog.Logger;
 
+import com.opencsv.CSVWriter;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tsdb.remote.RemoteTsDB;
+import tsdb.run.command.LoadMasks.MASK_TYPE;
 import tsdb.util.Interval;
 import tsdb.util.TimeSeriesMask;
+import tsdb.web.util.Web;
 
 public class Handler_mask extends MethodHandler {
 
@@ -113,7 +120,7 @@ public class Handler_mask extends MethodHandler {
 		switch(action) {
 		case "add": {
 			JSONObject content = jsonReq.getJSONObject("content");
-			handleActionAdd(content, response);
+			handleActionAdd(content, baseRequest, response);
 			break;
 		}
 		default:
@@ -122,7 +129,58 @@ public class Handler_mask extends MethodHandler {
 		}
 	}
 
-	public synchronized void handleActionAdd(JSONObject json, HttpServletResponse response) throws IOException, ServletException {
-		throw new RuntimeException("not implemented");
+	public synchronized void handleActionAdd(JSONObject json, Request request, HttpServletResponse response) throws IOException, ServletException {
+
+		String userName = "anonymous";
+		UserIdentity identity = Web.getUserIdentity(request);
+		if(identity != null) {
+			String user = identity.getUserPrincipal().getName();
+			if(user != null && !user.isBlank()) {
+				userName = user;
+			}
+		}
+
+		String station = json.optString("station");
+		if(station == null || station.isBlank()) {
+			throw new RuntimeException("missing station");
+		}
+		station = station.strip();
+		Logger.info(station);
+
+		String sensor = json.optString("sensor");
+		if(sensor == null || sensor.isBlank()) {
+			throw new RuntimeException("missing sensor");
+		}
+		sensor = sensor.strip();
+
+		String start = json.optString("start");
+		if(start == null || start.isBlank()) {
+			throw new RuntimeException("missing start");
+		}
+		start = start.strip();
+
+		String end = json.optString("end");
+		if(end == null || end.isBlank()) {
+			throw new RuntimeException("missing end");
+		}
+		end = end.strip();
+
+		String comment = json.optString("comment");
+		if(comment == null) {
+			comment = "";
+		}
+		comment = comment.strip();
+
+		try {
+			tsdb.addTimeSeriesMaskInterval(station, sensor, start, end, userName, String.valueOf(System.currentTimeMillis()), comment, MASK_TYPE.BASIC);
+
+			response.setStatus(HttpServletResponse.SC_OK);
+			response.getWriter().write("{\"status\":\"success\"}");
+
+		} catch (Exception e) {
+			Logger.error(e, "Failed to write mask entry to CSV");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().write("{\"status\":\"error\",\"message\":\"" + e.getMessage() + "\"}");
+		}
 	}
 }

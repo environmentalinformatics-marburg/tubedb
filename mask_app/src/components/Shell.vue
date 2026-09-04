@@ -92,15 +92,29 @@
 
     <!-- Main Content -->
     <div ref="mainContent" class="main-content">
+      <div v-if="dataLoading" class="loading-overlay">
+        <el-icon class="is-loading"><Loading /></el-icon>
+        <span>Loading data...</span>
+      </div>
+
+      <div v-else-if="dataError" class="error-overlay">
+        <el-icon><Warning /></el-icon>
+        <span>{{ dataError }}</span>
+        <el-button type="primary" size="small" @click="fetchData">
+          Retry
+        </el-button>
+      </div>
+
       <Viewer 
-        v-if="selectedPlot" 
+        v-if="selectedPlot && !dataLoading && data" 
         :plot="selectedPlot" 
         :sensor="selectedSensor"
         :width="mainContentWidth"
         :height="mainContentHeight"
         :data="data"
         :mask="mask"
-        @selection-change="maskSelection = $event" 
+        @selection-change="maskSelection = $event"
+        ref="viewerRef" 
       />
     </div>
 
@@ -126,6 +140,16 @@
         />
       </div>
       <div class="toolbar-right">
+        <span class="toolbar-label">Mask</span>
+        <el-select
+          v-model="maskType"
+          size="small"
+          style="width: 80px;"
+        >
+          <el-option label="Invalid" value="invalid" />
+          <el-option label="Suspect" value="suspect" />
+        </el-select>
+
         <el-button
           type="primary"
           :disabled="maskSelectionSaving"
@@ -143,8 +167,10 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import Viewer from './Viewer.vue'
-import HelpDialog from './HelpDialog.vue'
+
+import Viewer from '@/components/Viewer.vue'
+import HelpDialog from '@/components/HelpDialog.vue'
+import { getFriendlyErrorMessage } from '@/utils/errorMessages'
 
 const props = defineProps({
   metaData: {
@@ -162,6 +188,8 @@ const selectedSensor = ref('');
 const showHelpDialog = ref(false);
 
 const maskSelection = ref({min: null, max: null, dateMin: '*', dateMax: '*'});
+
+const maskType = ref('invalid');
 
 const selectedProjectData = computed(() => {
   if (!selectedProject.value || !props.metaData?.model?.projects) return null
@@ -304,6 +332,7 @@ const onSensorChange = (value) => {
   console.log('selected sensor:', value)
 }
 
+const viewerRef = ref(null); // Ref zu Viewer
 
 const mainContent = ref(null); // ref to div mainContent
 const mainContentWidth = ref(300);
@@ -378,7 +407,7 @@ const fetchData = async () => {
     })
 
     if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`)
+      throw new Error(getFriendlyErrorMessage(response.status))
     }
 
     const arrayBuffer = await response.arrayBuffer();
@@ -429,13 +458,14 @@ const fetchMask = async () => {
     const response = await fetch(`/tsdb/mask?${params.toString()}`);
 
     if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`)
+      throw new Error(getFriendlyErrorMessage(response.status))
     }
 
     mask.value = await response.json();    
   } catch (err) {
     console.error(err);
     maskError.value = err.message;
+    ElMessage.error('Failed to load mask: ' + err.message);
   } finally {
     maskLoading.value = false;
   }
@@ -464,12 +494,10 @@ const maskSelectionSave = async () => {
       body: JSON.stringify({
         action: 'add',
         content: {
-          plot: selectedPlot.value,
+          station: selectedPlot.value,
           sensor: selectedSensor.value,
-          min: maskSelection.value.min,
-          max: maskSelection.value.max,
-          dateMin: maskSelection.value.dateMin,
-          dateMax: maskSelection.value.dateMax,
+          start: maskSelection.value.dateMin,
+          end: maskSelection.value.dateMax,
           comment: commentText.value,
         }
       }),
@@ -478,6 +506,12 @@ const maskSelectionSave = async () => {
     if (!response.ok) {
       throw new Error(`HTTP error: ${response.status}`);
     }
+
+    if (viewerRef.value) {
+      viewerRef.value.resetSelection();
+    }
+
+    fetchMask();
 
     ElMessage.success('Mask selection saved successfully!');
   } catch (err) {

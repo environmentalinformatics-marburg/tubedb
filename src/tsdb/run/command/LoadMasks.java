@@ -12,6 +12,7 @@ import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.component.Region;
+import tsdb.run.command.LoadMasks.MASK_TYPE;
 import tsdb.util.AbstractTable.ColumnReaderIntFunc;
 import tsdb.util.AbstractTable.ColumnReaderString;
 import tsdb.util.Interval;
@@ -44,6 +45,13 @@ public class LoadMasks {
 		try {
 
 			ConfigLoader configLoader = new ConfigLoader(tsdb);
+			
+			if(true) { // root masks
+				String fileName = configDirectory+LoadMasks.MASK_FILENAME;
+			    LoadMasks.loadMask(tsdb, fileName, MASK_TYPE.BASIC);
+			    String suspectFileName = configDirectory+LoadMasks.SUSPECT_MASK_FILENAME;
+			    LoadMasks.loadMask(tsdb, suspectFileName, MASK_TYPE.SUSPECT);
+			}
 
 			//*** region config start
 			for(Path path : Files.newDirectoryStream(Paths.get(configDirectory), path->path.toFile().isDirectory())) {
@@ -101,13 +109,14 @@ public class LoadMasks {
 							int start = colStart.get(row);
 							int end = colEnd.get(row);
 							String sensorName = colSensor.get(row);
+							Logger.info("insert " + Arrays.toString(row));
 							if("*".equals(sensorName)) {
 								String[] sensorNames = station.getSensorNames();
 								for(String sn : sensorNames) {
-									insertMask(tsdb, filename, row, stationName, sn, start, end, maskType);	
+									insertMask(tsdb, filename, row, stationName, sn, start, end, maskType, false);	
 								}
 							} else {
-								insertMask(tsdb, filename, row, stationName, sensorName, start, end, maskType);
+								insertMask(tsdb, filename, row, stationName, sensorName, start, end, maskType, false);
 							}
 						}
 					} catch(Exception e) {
@@ -122,7 +131,7 @@ public class LoadMasks {
 		}
 	}
 
-	private static void insertMask(TsDB tsdb, String filename, String[] row, String stationName, String sensorName, int start, int end, MASK_TYPE maskType) {
+	public static void insertMask(TsDB tsdb, String filename, String[] row, String stationName, String sensorName, int start, int end, MASK_TYPE maskType, boolean commit) {
 		//Logger.info(TimeUtil.oleMinutesToText(start, end));
 		switch(maskType) {
 		case BASIC: {
@@ -131,7 +140,7 @@ public class LoadMasks {
 				mask = new TimeSeriesMask();
 			}
 			mask.addInterval(Interval.of(start, end));
-			tsdb.streamStorage.setTimeSeriesMask(stationName, sensorName, mask, false);	
+			tsdb.streamStorage.setTimeSeriesMask(stationName, sensorName, mask, commit);	
 			break;
 		}
 		case SUSPECT: {
@@ -140,7 +149,7 @@ public class LoadMasks {
 				suspectMask = new TimeSeriesMask();
 			}
 			suspectMask.addInterval(Interval.of(start, end));
-			tsdb.streamStorage.setTimeSeriesSuspectMask(stationName, sensorName, suspectMask, false);		
+			tsdb.streamStorage.setTimeSeriesSuspectMask(stationName, sensorName, suspectMask, commit);		
 			break;
 		}
 		default:

@@ -31,8 +31,9 @@
         <ul>
           <li><b>Set Start:</b> Hold <b>Shift</b>, or <b>Ctrl</b>, or <b>Alt</b> + <b>Left Click</b> to mark the interval start.</li>
           <li><b>Set End:</b> Hold <b>Shift</b>, or <b>Ctrl</b>, or <b>Alt</b> + <b>Right Click</b> to mark the interval end.</li>
+          <li><b>Reset:</b> Press <b>Esc</b> to clear the time interval selection.</li>
           <li><b>Comment:</b> Enter a description in the bottom toolbar.</li>
-          <li><b>Store:</b> Click the <b>Save</b> button on the right side of the toolbar.</li>
+          <li><b>Store:</b> Click the <b>Save</b> button to finish.</li>
         </ul>
       </div>
     </div>
