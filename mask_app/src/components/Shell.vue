@@ -75,6 +75,16 @@
             :value="sensor.value"
           />
         </el-select>
+
+        <!-- Time Aggregation Select -->
+        <el-select
+          v-model="timeAggregation"
+          style="width: 80px; margin-right: 8px;"
+          @change="onAggregationChange"
+        >
+          <el-option label="Hour" value="hour" />
+          <el-option label="Day" value="day" />
+        </el-select>
       </div>
       <div class="toolbar-right">
         <el-button
@@ -165,7 +175,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch, toRaw } from 'vue'
 import { ElMessage } from 'element-plus'
 
 import Viewer from '@/components/Viewer.vue'
@@ -183,6 +193,7 @@ const selectedProject = ref('');
 const selectedGroup = ref('');
 const selectedPlot = ref('');
 const selectedSensor = ref('');
+const timeAggregation = ref('day');
 
 // Help Dialog State
 const showHelpDialog = ref(false);
@@ -192,22 +203,22 @@ const maskSelection = ref({min: null, max: null, dateMin: '*', dateMax: '*'});
 const maskType = ref('invalid');
 
 const selectedProjectData = computed(() => {
-  if (!selectedProject.value || !props.metaData?.model?.projects) return null
+  if (!selectedProject.value || !props.metaData?.model?.projects) return null;
   return props.metaData.model.projects[selectedProject.value]
 });
 
 const selectedGroupData = computed(() => {
-  if (!selectedGroup.value || !props.metaData?.model?.groups) return null
+  if (!selectedGroup.value || !props.metaData?.model?.groups) return null;
   return props.metaData.model.groups[selectedGroup.value]
 });
 
 const selectedPlotData = computed(() => {
-  if (!selectedPlot.value || !props.metaData?.model?.plots) return null
+  if (!selectedPlot.value || !props.metaData?.model?.plots) return null;
   return props.metaData.model.plots[selectedPlot.value]
 });
 
 const selectedSensorData = computed(() => {
-  if (!selectedSensor.value || !selectedPlotData.value) return null
+  if (!selectedSensor.value || !selectedPlotData.value) return null;
   return selectedPlotData.value.sensors?.includes(selectedSensor.value) 
     ? selectedSensor.value 
     : null
@@ -249,15 +260,29 @@ const plotOptions = computed(() => {
 });
 
 const sensorOptions = computed(() => {
-  if (!selectedPlot.value || !props.metaData?.model?.plots) return []
+  if (!selectedPlot.value || !props.metaData?.model?.plots) {
+    return [];
+  }
   
-  const plot = props.metaData.model.plots[selectedPlot.value]
-  if (!plot?.sensors) return []
+  const plot = props.metaData.model.plots[selectedPlot.value];
+  if (!plot?.sensors) return [];
   
-  return plot.sensors.map(sensorId => ({
-    value: sensorId,
-    label: sensorId
-  }));
+  return plot.sensors
+    .filter(sensorId => {
+      const sensorData = props.metaData.model.sensors?.[sensorId];
+      if (!sensorData) return false;
+      
+      if (timeAggregation.value === 'hour') {
+        return sensorData.aggregation_hour !== 'none';
+      } else if (timeAggregation.value === 'day') {
+        return sensorData.aggregation_day !== 'none';
+      }
+      return false;
+    })
+    .map(sensorId => ({
+      value: sensorId,
+      label: sensorId
+    }));
 });
 
 watch(() => props.metaData, (newData) => {
@@ -273,9 +298,8 @@ watch(() => props.metaData, (newData) => {
         if (firstGroup?.plots && firstGroup.plots.length > 0) {
           selectedPlot.value = firstGroup.plots[0]
           
-          const firstPlot = newData.model.plots[firstGroup.plots[0]]
-          if (firstPlot?.sensors && firstPlot.sensors.length > 0) {
-            selectedSensor.value = firstPlot.sensors[0]
+          if (sensorOptions.value && sensorOptions.value.length > 0) {
+            selectedSensor.value = sensorOptions.value[0].value
           }
         }
       }
@@ -309,32 +333,43 @@ watch(selectedGroup, (newGroup) => {
 
 watch(selectedPlot, (newPlot) => {
   if (newPlot && props.metaData?.model?.plots?.[newPlot]?.sensors) {
-    const firstSensor = props.metaData.model.plots[newPlot].sensors[0]
-    selectedSensor.value = firstSensor || ''
+    if (sensorOptions.value && sensorOptions.value.length > 0) {
+      selectedSensor.value = sensorOptions.value[0].value
+    } else {
+      selectedSensor.value = ''
+    }
   } else {
     selectedSensor.value = ''
   }
 });
 
 const onProjectChange = (value) => {
-  console.log('selected project:', value)
+  console.log('selected project:', value);
 }
 
 const onGroupChange = (value) => {
-  console.log('selected group:', value)
+  console.log('selected group:', value);
 }
 
 const onPlotChange = (value) => {
-  console.log('selected plot:', value)
+  console.log('selected plot:', value);
 }
 
 const onSensorChange = (value) => {
-  console.log('selected sensor:', value)
+  console.log('selected sensor:', value);
+  console.log(toRaw(props.metaData.model.sensors));
 }
 
-const viewerRef = ref(null); // Ref zu Viewer
+const onAggregationChange = (value) => {
+  console.log('time aggregation:', value);
+  if (selectedPlot.value && selectedSensor.value) {
+    fetchData();
+  }
+}
 
-const mainContent = ref(null); // ref to div mainContent
+const viewerRef = ref(null);
+
+const mainContent = ref(null);
 const mainContentWidth = ref(300);
 const mainContentHeight = ref(300);
 let resizeObserver = null;
@@ -396,7 +431,7 @@ const fetchData = async () => {
       method: 'POST', 
       body: JSON.stringify({
       settings: {
-        timeAggregation: 'hour',
+        timeAggregation: timeAggregation.value,
         quality: 'step'
       },  
       timeseries: [{  
@@ -404,10 +439,19 @@ const fetchData = async () => {
         sensor: selectedSensor.value,
       }]
       })
-    })
+    });
 
     if (!response.ok) {
-      throw new Error(getFriendlyErrorMessage(response.status))
+      let errorMessage = getFriendlyErrorMessage(response.status);
+      try {
+        const errorBody = await response.text();
+        if (errorBody) {
+          errorMessage = errorBody;
+        }
+      } catch (e) {
+        console.error('Could not read error body:', e)
+      }
+      throw new Error(errorMessage);
     }
 
     const arrayBuffer = await response.arrayBuffer();
@@ -471,8 +515,8 @@ const fetchMask = async () => {
   }
 }
 
-watch([selectedPlot, selectedSensor], () => {
-  console.log('watch([selectedPlot, selectedSensor]');
+watch([selectedPlot, selectedSensor, timeAggregation], () => {
+  console.log('watch([selectedPlot, selectedSensor, timeAggregation]');
   fetchData();
   fetchMask();
 }, { immediate: false });
@@ -494,6 +538,7 @@ const maskSelectionSave = async () => {
       body: JSON.stringify({
         action: 'add',
         content: {
+          type: maskType.value,
           station: selectedPlot.value,
           sensor: selectedSensor.value,
           start: maskSelection.value.dateMin,
@@ -600,5 +645,21 @@ const maskSelectionSave = async () => {
   flex: 1;
   overflow: auto;
   position: relative;
+}
+
+.loading-overlay,
+.error-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+  color: #606266;
+}
+
+.is-loading {
+  font-size: 32px;
+  color: #409eff;
 }
 </style>

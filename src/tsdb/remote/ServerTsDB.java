@@ -39,7 +39,7 @@ import tsdb.iterator.WeekCollectingAggregator;
 import tsdb.iterator.YearCollectingAggregator;
 import tsdb.run.ConsoleRunner;
 import tsdb.run.command.LoadMasks;
-import tsdb.run.command.LoadMasks.MASK_TYPE;
+import tsdb.run.command.LoadMasks.MaskType;
 import tsdb.streamdb.StreamIterator;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataEntry;
@@ -523,7 +523,7 @@ public class ServerTsDB implements RemoteTsDB {
 	}
 
 	@Override
-	public void addTimeSeriesMaskInterval(String station, String sensor, String start, String end, String user, String date, String comment, MASK_TYPE maskType) throws RemoteException {
+	public void addTimeSeriesMaskInterval(String station, String sensor, String start, String end, String user, String date, String comment, MaskType maskType) throws RemoteException {
 		String csvPath = tsdb.configDirectory + "/mask.csv";
 		
 		int timestampStart = TimeUtil.parseStartTimestamp(start);

@@ -12,7 +12,7 @@ import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.component.Region;
-import tsdb.run.command.LoadMasks.MASK_TYPE;
+import tsdb.run.command.LoadMasks.MaskType;
 import tsdb.util.AbstractTable.ColumnReaderIntFunc;
 import tsdb.util.AbstractTable.ColumnReaderString;
 import tsdb.util.Interval;
@@ -48,9 +48,9 @@ public class LoadMasks {
 			
 			if(true) { // root masks
 				String fileName = configDirectory+LoadMasks.MASK_FILENAME;
-			    LoadMasks.loadMask(tsdb, fileName, MASK_TYPE.BASIC);
+			    LoadMasks.loadMask(tsdb, fileName, MaskType.INVALID);
 			    String suspectFileName = configDirectory+LoadMasks.SUSPECT_MASK_FILENAME;
-			    LoadMasks.loadMask(tsdb, suspectFileName, MASK_TYPE.SUSPECT);
+			    LoadMasks.loadMask(tsdb, suspectFileName, MaskType.SUSPECT);
 			}
 
 			//*** region config start
@@ -61,9 +61,9 @@ public class LoadMasks {
 					Region region = configLoader.readRegion(dir+"/region.ini", TsDBFactory.JUST_ONE_REGION);
 					if(region != null) {
 						String fileName = dir+"/"+LoadMasks.MASK_FILENAME;
-						LoadMasks.loadMask(tsdb, fileName, MASK_TYPE.BASIC);
+						LoadMasks.loadMask(tsdb, fileName, MaskType.INVALID);
 						String suspectFileName = dir+"/"+LoadMasks.SUSPECT_MASK_FILENAME;
-						LoadMasks.loadMask(tsdb, suspectFileName, MASK_TYPE.SUSPECT);
+						LoadMasks.loadMask(tsdb, suspectFileName, MaskType.SUSPECT);
 					}
 				} catch(Exception e) {
 					Logger.info("could not load meta data of  "+path+"  "+e);
@@ -76,13 +76,34 @@ public class LoadMasks {
 		}
 	}
 
-	public static enum MASK_TYPE {
-		BASIC,
-		SUSPECT
+	public static enum MaskType {
+	    INVALID("invalid"),
+	    SUSPECT("suspect");
+
+	    private final String typeText;
+
+	    MaskType(String typeString) {
+	        this.typeText = typeString;
+	    }
+
+	    public String getTypeText() {
+	        return typeText;
+	    }
+
+	    public static MaskType fromText(String text) {
+	        if (text != null) {
+	        	 for (MaskType type : MaskType.values()) {
+	 	            if (type.typeText.equalsIgnoreCase(text)) {
+	 	                return type;
+	 	            }
+	 	        }
+	        }
+	      throw new IllegalArgumentException("Unknown mask type: " + text);
+	    }
 	}
 
 
-	public static void loadMask(TsDB tsdb, String filename, MASK_TYPE maskType) {
+	public static void loadMask(TsDB tsdb, String filename, MaskType maskType) {
 		try {
 			if(!Files.exists(Paths.get(filename))) {
 				Logger.info("mask file not found: "+filename);
@@ -131,10 +152,10 @@ public class LoadMasks {
 		}
 	}
 
-	public static void insertMask(TsDB tsdb, String filename, String[] row, String stationName, String sensorName, int start, int end, MASK_TYPE maskType, boolean commit) {
+	public static void insertMask(TsDB tsdb, String filename, String[] row, String stationName, String sensorName, int start, int end, MaskType maskType, boolean commit) {
 		//Logger.info(TimeUtil.oleMinutesToText(start, end));
 		switch(maskType) {
-		case BASIC: {
+		case INVALID: {
 			TimeSeriesMask mask = tsdb.streamStorage.getTimeSeriesMask(stationName, sensorName);
 			if(mask==null) {
 				mask = new TimeSeriesMask();

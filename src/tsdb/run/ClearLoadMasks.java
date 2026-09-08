@@ -8,7 +8,7 @@ import org.tinylog.Logger;
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.run.command.LoadMasks;
-import tsdb.run.command.LoadMasks.MASK_TYPE;
+import tsdb.run.command.LoadMasks.MaskType;
 
 public class ClearLoadMasks {
 	
@@ -27,51 +27,51 @@ public class ClearLoadMasks {
 
 		if(true) { // root masks
 			String fileName = path+"/be/"+LoadMasks.MASK_FILENAME;
-		    LoadMasks.loadMask(tsdb, fileName, MASK_TYPE.BASIC);
+		    LoadMasks.loadMask(tsdb, fileName, MaskType.INVALID);
 		    String suspectFileName = path+"/be/"+LoadMasks.SUSPECT_MASK_FILENAME;
-		    LoadMasks.loadMask(tsdb, suspectFileName, MASK_TYPE.SUSPECT);
+		    LoadMasks.loadMask(tsdb, suspectFileName, MaskType.SUSPECT);
 		}
 
 		if(TsDBFactory.JUST_ONE_REGION==null||TsDBFactory.JUST_ONE_REGION.toUpperCase().equals("BE")) { //*** BE
 		    String fileName = path+"/"+LoadMasks.MASK_FILENAME;
-		    LoadMasks.loadMask(tsdb, fileName, MASK_TYPE.BASIC);
+		    LoadMasks.loadMask(tsdb, fileName, MaskType.INVALID);
 		    String suspectFileName = path+"/"+LoadMasks.SUSPECT_MASK_FILENAME;
-		    LoadMasks.loadMask(tsdb, suspectFileName, MASK_TYPE.SUSPECT);
+		    LoadMasks.loadMask(tsdb, suspectFileName, MaskType.SUSPECT);
 		}
 
 		if(TsDBFactory.JUST_ONE_REGION==null||TsDBFactory.JUST_ONE_REGION.toUpperCase().equals("KI")) { //*** KI
 		    String fileName = path+"/ki/"+LoadMasks.MASK_FILENAME;
-		    LoadMasks.loadMask(tsdb, fileName, MASK_TYPE.BASIC);
+		    LoadMasks.loadMask(tsdb, fileName, MaskType.INVALID);
 		    String suspectFileName = path+"/ki/"+LoadMasks.SUSPECT_MASK_FILENAME;
-		    LoadMasks.loadMask(tsdb, suspectFileName, MASK_TYPE.SUSPECT);
+		    LoadMasks.loadMask(tsdb, suspectFileName, MaskType.SUSPECT);
 		}
 
 		if(TsDBFactory.JUST_ONE_REGION==null||TsDBFactory.JUST_ONE_REGION.toUpperCase().equals("SA")) {  //*** SA
 		    String fileName = path+"/sa/"+LoadMasks.MASK_FILENAME;
-		    LoadMasks.loadMask(tsdb, fileName, MASK_TYPE.BASIC);
+		    LoadMasks.loadMask(tsdb, fileName, MaskType.INVALID);
 		    String suspectFileName = path+"/sa/"+LoadMasks.SUSPECT_MASK_FILENAME;
-		    LoadMasks.loadMask(tsdb, suspectFileName, MASK_TYPE.SUSPECT);
+		    LoadMasks.loadMask(tsdb, suspectFileName, MaskType.SUSPECT);
 		}
 
 		if(TsDBFactory.JUST_ONE_REGION==null||TsDBFactory.JUST_ONE_REGION.toUpperCase().equals("SA_OWN")) {  //*** SA_OWN
 		    String fileName = path+"/sa_own/"+LoadMasks.MASK_FILENAME;
-		    LoadMasks.loadMask(tsdb, fileName, MASK_TYPE.BASIC);
+		    LoadMasks.loadMask(tsdb, fileName, MaskType.INVALID);
 		    String suspectFileName = path+"/sa_own/"+LoadMasks.SUSPECT_MASK_FILENAME;
-		    LoadMasks.loadMask(tsdb, suspectFileName, MASK_TYPE.SUSPECT);
+		    LoadMasks.loadMask(tsdb, suspectFileName, MaskType.SUSPECT);
 		}
 
 		if(TsDBFactory.JUST_ONE_REGION==null||TsDBFactory.JUST_ONE_REGION.toUpperCase().equals("MM")) {  //*** MM
 		    String fileName = path+"/mm/"+LoadMasks.MASK_FILENAME;
-		    LoadMasks.loadMask(tsdb, fileName, MASK_TYPE.BASIC);
+		    LoadMasks.loadMask(tsdb, fileName, MaskType.INVALID);
 		    String suspectFileName = path+"/mm/"+LoadMasks.SUSPECT_MASK_FILENAME;
-		    LoadMasks.loadMask(tsdb, suspectFileName, MASK_TYPE.SUSPECT);
+		    LoadMasks.loadMask(tsdb, suspectFileName, MaskType.SUSPECT);
 		}
 
 		if(TsDBFactory.JUST_ONE_REGION==null||TsDBFactory.JUST_ONE_REGION.toUpperCase().equals("BA")) {  //*** BA
 		    String fileName = path+"/ba/"+LoadMasks.MASK_FILENAME;
-		    LoadMasks.loadMask(tsdb, fileName, MASK_TYPE.BASIC);
+		    LoadMasks.loadMask(tsdb, fileName, MaskType.INVALID);
 		    String suspectFileName = path+"/ba/"+LoadMasks.SUSPECT_MASK_FILENAME;
-		    LoadMasks.loadMask(tsdb, suspectFileName, MASK_TYPE.SUSPECT);
+		    LoadMasks.loadMask(tsdb, suspectFileName, MaskType.SUSPECT);
 		}
 
 

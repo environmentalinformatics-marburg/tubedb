@@ -9,7 +9,7 @@ import tsdb.component.LoggerType;
 import tsdb.component.Region;
 import tsdb.component.Sensor;
 import tsdb.component.SourceEntry;
-import tsdb.run.command.LoadMasks.MASK_TYPE;
+import tsdb.run.command.LoadMasks.MaskType;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataEntry;
 import tsdb.util.DataQuality;
@@ -99,7 +99,7 @@ public interface RemoteTsDB extends Remote {
 	TimeSeriesMask getTimeSeriesMask(String stationName, String sensorName) throws RemoteException;
 	TimeSeriesMask getTimeSeriesSuspectMask(String stationName, String sensorName) throws RemoteException;
 	void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask) throws RemoteException;
-	void addTimeSeriesMaskInterval(String station, String sensor, String start, String end, String user, String date, String comment, MASK_TYPE maskType) throws RemoteException;
+	void addTimeSeriesMaskInterval(String station, String sensor, String start, String end, String user, String date, String comment, MaskType maskType) throws RemoteException;
 	
 	// status
 	ArrayList<PlotStatus> getPlotStatus(String plotName, boolean withPlotMessage) throws RemoteException;

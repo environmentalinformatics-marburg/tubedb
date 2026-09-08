@@ -18,7 +18,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tsdb.remote.RemoteTsDB;
-import tsdb.run.command.LoadMasks.MASK_TYPE;
+import tsdb.run.command.LoadMasks.MaskType;
 import tsdb.util.Interval;
 import tsdb.util.TimeSeriesMask;
 import tsdb.web.util.Web;
@@ -139,6 +139,9 @@ public class Handler_mask extends MethodHandler {
 				userName = user;
 			}
 		}
+		
+		String typeText = json.optString("type");
+		MaskType maskType = MaskType.fromText(typeText);
 
 		String station = json.optString("station");
 		if(station == null || station.isBlank()) {
@@ -172,7 +175,7 @@ public class Handler_mask extends MethodHandler {
 		comment = comment.strip();
 
 		try {
-			tsdb.addTimeSeriesMaskInterval(station, sensor, start, end, userName, String.valueOf(System.currentTimeMillis()), comment, MASK_TYPE.BASIC);
+			tsdb.addTimeSeriesMaskInterval(station, sensor, start, end, userName, String.valueOf(System.currentTimeMillis()), comment, maskType);
 
 			response.setStatus(HttpServletResponse.SC_OK);
 			response.getWriter().write("{\"status\":\"success\"}");
