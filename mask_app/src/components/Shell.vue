@@ -79,11 +79,32 @@
         <!-- Time Aggregation Select -->
         <el-select
           v-model="timeAggregation"
-          style="width: 80px; margin-right: 8px;"
+          style="width: 80px; margin-left: 16px; margin-right: 8px;"
           @change="onAggregationChange"
         >
           <el-option label="Hour" value="hour" />
           <el-option label="Day" value="day" />
+        </el-select>
+
+        <!-- Comparison Sensor Select -->
+        <span class="toolbar-label" style="margin-left: 16px;">Cmp:</span>
+        <el-select
+          v-model="selectedSensorCmp"
+          style="width: 200px;"
+          @change="onSensorCmpChange"
+          placeholder="Vergleichs-Sensor"
+          :disabled="!selectedPlot"
+          filterable
+          allow-create
+          default-first-option
+          clearable
+        >
+          <el-option
+            v-for="sensor in sensorOptions"
+            :key="sensor.value"
+            :label="sensor.label"
+            :value="sensor.value"
+          />
         </el-select>
       </div>
       <div class="toolbar-right">
@@ -102,14 +123,14 @@
 
     <!-- Main Content -->
     <div ref="mainContent" class="main-content">
-      <div v-if="dataLoading" class="loading-overlay">
+      <div v-if="dataLoading || dataCmpLoading" class="loading-overlay">
         <el-icon class="is-loading"><Loading /></el-icon>
         <span>Loading data...</span>
       </div>
 
-      <div v-else-if="dataError" class="error-overlay">
+      <div v-else-if="dataError || dataCmpError" class="error-overlay">
         <el-icon><Warning /></el-icon>
-        <span>{{ dataError }}</span>
+        <span>{{ dataError || dataCmpError }}</span>
         <el-button type="primary" size="small" @click="fetchData">
           Retry
         </el-button>
@@ -122,6 +143,7 @@
         :width="mainContentWidth"
         :height="mainContentHeight"
         :data="data"
+        :data_cmp="dataCmp"
         :mask="mask"
         @selection-change="maskSelection = $event"
         ref="viewerRef" 
@@ -193,6 +215,7 @@ const selectedProject = ref('');
 const selectedGroup = ref('');
 const selectedPlot = ref('');
 const selectedSensor = ref('');
+const selectedSensorCmp = ref('');
 const timeAggregation = ref('day');
 
 // Help Dialog State
@@ -313,10 +336,12 @@ watch(selectedProject, (newProject) => {
     selectedGroup.value = firstGroup || ''
     selectedPlot.value = ''
     selectedSensor.value = ''
+    selectedSensorCmp.value = ''
   } else {
     selectedGroup.value = ''
     selectedPlot.value = ''
     selectedSensor.value = ''
+    selectedSensorCmp.value = ''
   }
 });
 
@@ -325,9 +350,11 @@ watch(selectedGroup, (newGroup) => {
     const firstPlot = props.metaData.model.groups[newGroup].plots[0]
     selectedPlot.value = firstPlot || ''
     selectedSensor.value = ''
+    selectedSensorCmp.value = ''
   } else {
     selectedPlot.value = ''
     selectedSensor.value = ''
+    selectedSensorCmp.value = ''
   }
 });
 
@@ -338,8 +365,10 @@ watch(selectedPlot, (newPlot) => {
     } else {
       selectedSensor.value = ''
     }
+    selectedSensorCmp.value = ''
   } else {
     selectedSensor.value = ''
+    selectedSensorCmp.value = ''
   }
 });
 
@@ -360,10 +389,22 @@ const onSensorChange = (value) => {
   console.log(toRaw(props.metaData.model.sensors));
 }
 
+const onSensorCmpChange = (value) => {
+  console.log('selected sensor (cmp):', value);
+  if (value) {
+    fetchDataCmp();
+  } else {
+    dataCmp.value = null;
+  }
+}
+
 const onAggregationChange = (value) => {
   console.log('time aggregation:', value);
   if (selectedPlot.value && selectedSensor.value) {
     fetchData();
+    if (selectedSensorCmp.value) {
+      fetchDataCmp();
+    }
   }
 }
 
@@ -397,6 +438,10 @@ onBeforeUnmount(() => {
 const data = ref(null);
 const dataLoading = ref(false);
 const dataError = ref(null);
+
+const dataCmp = ref(null);
+const dataCmpLoading = ref(false);
+const dataCmpError = ref(null);
 
 function convertFloat32ArrayToArray(a) {
   let r = [];
@@ -479,6 +524,65 @@ const fetchData = async () => {
   }
 }
 
+const fetchDataCmp = async () => {
+  if (!selectedPlot.value || !selectedSensorCmp.value) {
+    dataCmp.value = null;
+    return;
+  }
+
+  dataCmp.value = null;
+  dataCmpLoading.value = true;
+  dataCmpError.value = null;
+
+  try {
+    const response = await fetch('/tsdb/query_js', {
+      method: 'POST', 
+      body: JSON.stringify({
+      settings: {
+        timeAggregation: timeAggregation.value,
+        quality: 'step'
+      },  
+      timeseries: [{  
+        plot: selectedPlot.value,
+        sensor: selectedSensorCmp.value,
+      }]
+      })
+    });
+
+    if (!response.ok) {
+      let errorMessage = getFriendlyErrorMessage(response.status);
+      try {
+        const errorBody = await response.text();
+        if (errorBody) {
+          errorMessage = errorBody;
+        }
+      } catch (e) {
+        console.error('Could not read error body:', e)
+      }
+      throw new Error(errorMessage);
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    const dataView = new DataView(arrayBuffer);
+
+    let entryCount = dataView.getInt32(0, true);
+    let schemaCount = dataView.getInt32(4, true);
+    let dataArray = [];
+    let timestamps = new Int32Array(arrayBuffer, 4 + 4, entryCount);
+    dataArray[0] = convertInt32ArrayToArray(timestamps);
+    for(let i = 0; i < schemaCount; i++) {
+      let values = new Float32Array(arrayBuffer, 4 + 4 + 4 * entryCount * (i + 1), entryCount);
+      dataArray[i + 1] = convertFloat32ArrayToArray(values);
+    }
+    dataCmp.value = dataArray;
+  } catch (err) {
+    console.error(err);
+    dataCmpError.value = err.message;
+  } finally {
+    dataCmpLoading.value = false;
+  }
+}
+
 const mask = ref(null);
 const maskLoading = ref(false);
 const maskError = ref(null);
@@ -519,6 +623,14 @@ watch([selectedPlot, selectedSensor, timeAggregation], () => {
   console.log('watch([selectedPlot, selectedSensor, timeAggregation]');
   fetchData();
   fetchMask();
+}, { immediate: false });
+
+watch([selectedPlot, selectedSensorCmp, timeAggregation], () => {
+  if (selectedSensorCmp.value) {
+    fetchDataCmp();
+  } else {
+    dataCmp.value = null;
+  }
 }, { immediate: false });
 
 

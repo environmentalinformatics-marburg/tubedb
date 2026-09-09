@@ -1,5 +1,6 @@
 <template>
   <div class="chart-container">
+    <UplotVue :options="options_cmp" :data="data_cmp" v-if="data_cmp" ref="uplotDiagram_cmp" />
     <UplotVue :options="options" :data="data" v-if="data" ref="uplotDiagram" />
   </div>
 </template>
@@ -8,6 +9,7 @@
 import { ref, onMounted, onUnmounted, computed, watch, defineEmits } from 'vue'
 import UplotVue from 'uplot-vue'
 import 'uplot/dist/uPlot.min.css'
+import uPlot from 'uplot';
 
 const props = defineProps({
   plot: {
@@ -30,6 +32,10 @@ const props = defineProps({
     type: [Array, null],
     required: true,
   },
+  data_cmp: {
+    type: [Array, null],
+    required: true,
+  },
   mask: {
     type: [Object, null],
     required: true,
@@ -38,7 +44,32 @@ const props = defineProps({
 
 const emit = defineEmits(['selection-change']);
 
+const uplotDiagram_cmp = ref(null); // ref to UplotVue instance
 const uplotDiagram = ref(null); // ref to UplotVue instance
+
+function setScale(nxMin, nxMax) {
+  if (uplotDiagram_cmp.value && uplotDiagram_cmp.value._chart) {
+    const u = uplotDiagram_cmp.value._chart;
+    u.batch(() => {
+      u.setScale("x", {
+        min: nxMin,
+        max: nxMax,
+      });            
+    });
+  }
+  if(uplotDiagram_cmp.value) {
+    console.log("yes");
+  }
+  if (uplotDiagram.value && uplotDiagram.value._chart) {
+    const u = uplotDiagram.value._chart;
+    u.batch(() => {
+      u.setScale("x", {
+        min: nxMin,
+        max: nxMax,
+      });            
+    });
+  }
+}
 
 
 function wheelZoomPlugin(opts) {
@@ -88,12 +119,13 @@ function wheelZoomPlugin(opts) {
           
           [nxMin, nxMax] = clamp(nxRange, nxMin, nxMax, xRange, xMin, xMax);
 
-          u.batch(() => {
+          /*u.batch(() => {
             u.setScale("x", {
               min: nxMin,
               max: nxMax,
             });
-          });
+          });*/
+          setScale(nxMin, nxMax);
         });
       }
     }
@@ -142,12 +174,13 @@ function dragPlugin(opts) {
           let xDelta = mouseDownXval - xVal;
           let nxMin = mouseDownXmin + xDelta;
           let nxMax = mouseDownXmax + xDelta
-          u.batch(() => {
+          /*u.batch(() => {
             u.setScale("x", {
               min: nxMin,
               max: nxMax,
-            });
-          });
+            });            
+          });*/
+          setScale(nxMin, nxMax);
           mouseDownXmin = nxMin;
           mouseDownXmax = nxMax;
         }
@@ -365,9 +398,9 @@ function maskPlugin(opts) {
   return {hooks: {draw}};
 }
 
-const options = computed(() => ({
+const options_cmp = computed(() => ({
   width: props.width,
-  height: props.height,
+  height: props.height / 2,
   padding: [0, 0, 0, 0],
   legend: {
     show: false
@@ -381,14 +414,68 @@ const options = computed(() => ({
     },
     points: {
       show: false
+    },
+    sync: {
+      key: '_',
+    } ,  
+  },
+  axes: [
+    {
+      size: 0,
+      grid: {
+        stroke: "#f7f7f7",
+      },
+      ticks: {
+        show: false,
+      }
+    },
+    {
+      grid: {
+        stroke: "#f7f7f7",
+      },
+    },
+  ],
+  plugins: [
+    wheelZoomPlugin({factor: 0.75}),
+    dragPlugin({}),
+    selectionPlugin({}),
+  ],
+  series: [
+    {},
+    {
+      stroke: 'grey',
+      width: 1,
     }
+  ]
+}))
+
+const options = computed(() => ({
+  width: props.width,
+  height: uplotDiagram_cmp.value ? props.height - (props.height / 2) : props.height,
+  padding: [0, 0, 0, 0],
+  legend: {
+    show: false
+  },
+  cursor: {
+    x: true,
+    y: false,
+    drag: {
+      x: false,
+      y: false,
+    },
+    points: {
+      show: false
+    },
+    sync: {
+      key: '_',
+    } ,     
   },
   plugins: [
     wheelZoomPlugin({factor: 0.75}),
     dragPlugin({}),
     selectionPlugin({}),
     markPlugin({}),
-    maskPlugin({})
+    maskPlugin({}),
   ],
   series: [
     {},
