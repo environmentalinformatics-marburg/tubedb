@@ -1,12 +1,12 @@
 <template>
   <div class="chart-container">
-    <UplotVue :options="options_cmp" :data="data_cmp" v-if="data_cmp" ref="uplotDiagram_cmp" />
+    <UplotVue :options="options_cmp" :data="data_cmp" v-if="data_cmp" ref="uplotDiagram_cmp" style="background-color: rgba(200,200,255,0.04);" />
     <UplotVue :options="options" :data="data" v-if="data" ref="uplotDiagram" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, watch, defineEmits } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch, defineEmits, toRaw } from 'vue'
 import UplotVue from 'uplot-vue'
 import 'uplot/dist/uPlot.min.css'
 import uPlot from 'uplot';
@@ -57,9 +57,6 @@ function setScale(nxMin, nxMax) {
       });            
     });
   }
-  if(uplotDiagram_cmp.value) {
-    console.log("yes");
-  }
   if (uplotDiagram.value && uplotDiagram.value._chart) {
     const u = uplotDiagram.value._chart;
     u.batch(() => {
@@ -97,8 +94,12 @@ function wheelZoomPlugin(opts) {
   return {
     hooks: {
       ready: u => {
-        xMin = u.scales.x.min;
-        xMax = u.scales.x.max;
+
+        //xMin = u.scales.x.min;
+        //xMax = u.scales.x.max;
+        xMin = props.data[0][0];
+        xMax = props.data[0][props.data[0].length-1];
+        setScale(xMin, xMax);
         xRange = xMax - xMin;
 
         let over = u.over;
@@ -402,6 +403,7 @@ const options_cmp = computed(() => ({
   width: props.width,
   height: props.height / 2,
   padding: [0, 0, 0, 0],
+  bg: '#f0f4f8',
   legend: {
     show: false
   },
@@ -445,6 +447,7 @@ const options_cmp = computed(() => ({
     {
       stroke: 'grey',
       width: 1,
+      fill: "rgba(150,150,150,0.15)",
     }
   ]
 }))
@@ -482,6 +485,7 @@ const options = computed(() => ({
     {
       stroke: 'black',
       width: 1,
+      fill: "rgba(150,150,150,0.15)",
     }
   ]
 }))

@@ -9,7 +9,7 @@
           v-model="selectedProject"
           style="width: 200px; margin-right: 8px;"
           @change="onProjectChange"
-          placeholder="Projekt wählen"
+          placeholder="Select Project"
         >
           <el-option
             v-for="project in projectOptions"
@@ -25,7 +25,7 @@
           v-model="selectedGroup"
           style="width: 200px; margin-right: 8px;"
           @change="onGroupChange"
-          placeholder="Gruppe wählen"
+          placeholder="Select group"
           :disabled="!selectedProject"
         >
           <el-option
@@ -37,15 +37,14 @@
         </el-select>
 
         <!-- Plot Select -->
-        <span class="toolbar-label">Plot:</span>
+        <span class="toolbar-label">Station:</span>
         <el-select
           v-model="selectedPlot"
           style="width: 200px; margin-right: 8px;"
           @change="onPlotChange"
-          placeholder="Plot wählen"
+          placeholder="Select Station"
           :disabled="!selectedGroup"
           filterable
-          allow-create
           default-first-option
         >
           <el-option
@@ -62,10 +61,9 @@
           v-model="selectedSensor"
           style="width: 200px;"
           @change="onSensorChange"
-          placeholder="Sensor wählen"
+          placeholder="Select Sensor"
           :disabled="!selectedPlot"
           filterable
-          allow-create
           default-first-option
         >
           <el-option
@@ -92,10 +90,9 @@
           v-model="selectedSensorCmp"
           style="width: 200px;"
           @change="onSensorCmpChange"
-          placeholder="Vergleichs-Sensor"
+          placeholder="Comparison Sensor"
           :disabled="!selectedPlot"
           filterable
-          allow-create
           default-first-option
           clearable
         >
@@ -274,12 +271,25 @@ const plotOptions = computed(() => {
   if (!selectedGroup.value || !props.metaData?.model?.groups) return []
   
   const group = props.metaData.model.groups[selectedGroup.value]
-  if (!group?.plots) return []
-  
-  return group.plots.map(plotId => ({
-    value: plotId,
-    label: plotId
-  }));
+  if (!group?.plots) return [];
+
+  return group.plots.flatMap(plotId => {
+    const plot = props.metaData.model.plots[plotId];
+    if(plot.stations.length === 0) {
+      return [{ 
+        value: plotId, 
+        label: plotId,
+        plot: plotId,
+        station: plotId,  
+      }];
+    }
+    return plot.stations.map(stationId => (({
+      value: plotId + ':' + stationId,
+      label: plotId + ':' + stationId,
+      plot: plotId,
+      station: stationId,        
+    })));
+  });
 });
 
 const sensorOptions = computed(() => {
@@ -288,6 +298,7 @@ const sensorOptions = computed(() => {
   }
   
   const plot = props.metaData.model.plots[selectedPlot.value];
+
   if (!plot?.sensors) return [];
   
   return plot.sensors
@@ -308,6 +319,22 @@ const sensorOptions = computed(() => {
     }));
 });
 
+const selectSensorWithPreference = () => {
+  if (sensorOptions.value && sensorOptions.value.length > 0) {
+    const ta200Sensor = sensorOptions.value.find(s => s.value === 'Ta_200');
+    selectedSensor.value = ta200Sensor ? ta200Sensor.value : sensorOptions.value[0].value;
+    
+    if (selectedSensor.value === 'Ta_200' && !selectedSensorCmp.value) {
+      const refSensor = sensorOptions.value.find(s => s.value === 'Ta_200_ref_diff_avg_28d');
+      if (refSensor) {
+        selectedSensorCmp.value = 'Ta_200_ref_diff_avg_28d';
+      }
+    }
+  } else {
+    selectedSensor.value = '';
+  }
+};
+
 watch(() => props.metaData, (newData) => {
   if (newData?.model?.projects) {
     const firstProject = Object.values(newData.model.projects)[0]
@@ -321,9 +348,7 @@ watch(() => props.metaData, (newData) => {
         if (firstGroup?.plots && firstGroup.plots.length > 0) {
           selectedPlot.value = firstGroup.plots[0]
           
-          if (sensorOptions.value && sensorOptions.value.length > 0) {
-            selectedSensor.value = sensorOptions.value[0].value
-          }
+          selectSensorWithPreference();
         }
       }
     }
@@ -347,8 +372,11 @@ watch(selectedProject, (newProject) => {
 
 watch(selectedGroup, (newGroup) => {
   if (newGroup && props.metaData?.model?.groups?.[newGroup]?.plots) {
-    const firstPlot = props.metaData.model.groups[newGroup].plots[0]
-    selectedPlot.value = firstPlot || ''
+    if (plotOptions.value && plotOptions.value.length > 0) {
+      selectedPlot.value = plotOptions.value[0].value
+    } else {
+      selectedPlot.value = ''
+    }
     selectedSensor.value = ''
     selectedSensorCmp.value = ''
   } else {
@@ -360,12 +388,7 @@ watch(selectedGroup, (newGroup) => {
 
 watch(selectedPlot, (newPlot) => {
   if (newPlot && props.metaData?.model?.plots?.[newPlot]?.sensors) {
-    if (sensorOptions.value && sensorOptions.value.length > 0) {
-      selectedSensor.value = sensorOptions.value[0].value
-    } else {
-      selectedSensor.value = ''
-    }
-    selectedSensorCmp.value = ''
+    selectSensorWithPreference();
   } else {
     selectedSensor.value = ''
     selectedSensorCmp.value = ''
@@ -385,12 +408,15 @@ const onPlotChange = (value) => {
 }
 
 const onSensorChange = (value) => {
-  console.log('selected sensor:', value);
-  console.log(toRaw(props.metaData.model.sensors));
+  if (value === 'Ta_200' && !selectedSensorCmp.value) {
+    const refSensor = sensorOptions.value.find(s => s.value === 'Ta_200_ref_diff_avg_28d');
+    if (refSensor) {
+      selectedSensorCmp.value = 'Ta_200_ref_diff_avg_28d';
+    }
+  }
 }
 
 const onSensorCmpChange = (value) => {
-  console.log('selected sensor (cmp):', value);
   if (value) {
     fetchDataCmp();
   } else {
@@ -500,21 +526,17 @@ const fetchData = async () => {
     }
 
     const arrayBuffer = await response.arrayBuffer();
-    console.log(arrayBuffer);
     const dataView = new DataView(arrayBuffer);
 
     let entryCount = dataView.getInt32(0, true);
     let schemaCount = dataView.getInt32(4, true);
-    console.log("entryCount: " + entryCount + "   schemaCount: " + schemaCount);
     let dataArray = [];
     let timestamps = new Int32Array(arrayBuffer, 4 + 4, entryCount);
-    console.log(timestamps);
     dataArray[0] = convertInt32ArrayToArray(timestamps);
     for(let i = 0; i < schemaCount; i++) {
       let values = new Float32Array(arrayBuffer, 4 + 4 + 4 * entryCount * (i + 1), entryCount);
       dataArray[i + 1] = convertFloat32ArrayToArray(values);
     }
-    console.log(dataArray);
     data.value = dataArray;
   } catch (err) {
     console.error(err);
@@ -620,7 +642,6 @@ const fetchMask = async () => {
 }
 
 watch([selectedPlot, selectedSensor, timeAggregation], () => {
-  console.log('watch([selectedPlot, selectedSensor, timeAggregation]');
   fetchData();
   fetchMask();
 }, { immediate: false });
@@ -774,4 +795,15 @@ const maskSelectionSave = async () => {
   font-size: 32px;
   color: #409eff;
 }
+
+</style>
+
+
+
+<style>
+
+.el-select-dropdown__wrap {
+  max-height: 80vh;
+}
+
 </style>
