@@ -61,12 +61,14 @@ public enum DataQuality {
 		switch(text) {
 		case "no":
 		case "none":
+		case "raw": // new QC label
 			return NO;
 		case "physical":
 			return PHYSICAL;
 		case "step":
+		case "basic": // new QC label
 			return STEP;
-		case "empirical":
+		case "empirical": // old quality label and new QC label
 			return EMPIRICAL;
 		case "na":
 			return Na;

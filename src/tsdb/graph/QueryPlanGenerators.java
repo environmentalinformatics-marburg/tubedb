@@ -52,7 +52,7 @@ import tsdb.util.Mutators;
 import tsdb.util.Util;
 
 public final class QueryPlanGenerators {
-		
+
 	private QueryPlanGenerators(){} 
 
 	/**
@@ -86,7 +86,9 @@ public final class QueryPlanGenerators {
 		}		
 		if(DataQuality.Na != dataQuality) {
 			if(DataQuality.NO != dataQuality) {
-				rawSource = Mask.of(tsdb, rawSource);
+				if(DataQuality.PHYSICAL != dataQuality) {
+					rawSource = Mask.of(tsdb, rawSource);
+				}
 				if(DataQuality.EMPIRICAL==dataQuality) {
 					rawSource = SuspectMask.of(tsdb, rawSource);
 				}
@@ -254,7 +256,7 @@ public final class QueryPlanGenerators {
 			return null;
 		}
 	}
-	
+
 	public static Mutator getRawMutators(TsDB tsdb, Plot plot, String[] schema) {		
 		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
 		ArrayList<String> funcs = new ArrayList<String>();
@@ -270,7 +272,7 @@ public final class QueryPlanGenerators {
 		}
 		return getMutators(sensors, funcs, plot, schema);
 	}
-	
+
 	public static Mutator getPostRawMutators(TsDB tsdb, Plot plot, String[] schema) {		
 		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
 		ArrayList<String> funcs = new ArrayList<String>();
@@ -318,7 +320,7 @@ public final class QueryPlanGenerators {
 		}
 		return getMutators(sensors, funcs, plot, schema);
 	}
-	
+
 	public static Mutator getPostWeekMutators(TsDB tsdb, Plot plot, String[] schema) {
 		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
 		ArrayList<String> funcs = new ArrayList<String>();
@@ -334,7 +336,7 @@ public final class QueryPlanGenerators {
 		}
 		return getMutators(sensors, funcs, plot, schema);
 	}
-	
+
 	public static Mutator getPostMonthMutators(TsDB tsdb, Plot plot, String[] schema) {
 		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
 		ArrayList<String> funcs = new ArrayList<String>();
@@ -350,7 +352,7 @@ public final class QueryPlanGenerators {
 		}
 		return getMutators(sensors, funcs, plot, schema);
 	}
-	
+
 	public static Mutator getPostYearMutators(TsDB tsdb, Plot plot, String[] schema) {
 		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
 		ArrayList<String> funcs = new ArrayList<String>();
@@ -366,7 +368,7 @@ public final class QueryPlanGenerators {
 		}
 		return getMutators(sensors, funcs, plot, schema);
 	}
-	
+
 	public static Mutator getMutators(ArrayList<Sensor> sensors, ArrayList<String> funcs, Plot plot, String[] schema) {
 		ArrayList<Mutator> mutators = new ArrayList<Mutator>();
 		int len = sensors.size();

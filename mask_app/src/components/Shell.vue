@@ -82,11 +82,25 @@
         <el-select
           v-model="timeAggregation"
           size="small"
-          style="width: 80px; margin-right: 0px;"
+          style="width: 65px; margin-right: 0px;"
           @change="onAggregationChange"
         >
           <el-option label="Hour" value="hour" />
           <el-option label="Day" value="day" />
+        </el-select>
+
+        <!-- QC Select -->
+        <span class="toolbar-label">QC:</span>
+        <el-select
+          v-model="selectedQC"
+          size="small"
+          style="width: 91px; margin-right: 0px;"
+          @change="onQCChange"
+        >
+          <el-option label="Raw" value="raw" />
+          <el-option label="Physical" value="physical" />
+          <el-option label="Basic" value="basic" />
+          <el-option label="Unsuspect" value="empirical" />
         </el-select>
 
         <!-- Comparison Sensor Select -->
@@ -192,14 +206,21 @@
         />
       </div>
       <div class="toolbar-right">
-        <span class="toolbar-label">Mask</span>
+        <span :class="{
+            'mask-label-invalid': maskType === 'invalid',
+            'mask-label-suspect': maskType === 'suspect'
+          }">Mask</span>
         <el-select
           v-model="maskType"
           size="small"
+          :class="{
+            'mask-type-select-invalid': maskType === 'invalid',
+            'mask-type-select-suspect': maskType === 'suspect'
+          }"
           style="width: 80px;"
         >
-          <el-option label="Invalid" value="invalid" />
-          <el-option label="Suspect" value="suspect" />
+          <el-option label="Invalid" value="invalid" class="mask-label-invalid" />
+          <el-option label="Suspect" value="suspect" class="mask-label-suspect" />
         </el-select>
 
         <el-button
@@ -235,8 +256,9 @@ const selectedProject = ref('');
 const selectedGroup = ref('');
 const selectedPlot = ref('');
 const selectedSensor = ref('');
-const selectedSensorCmp = ref('');
+const selectedQC = ref('basic');
 const timeAggregation = ref('day');
+const selectedSensorCmp = ref('');
 
 // Help Dialog State
 const showHelpDialog = ref(false);
@@ -455,14 +477,6 @@ const onSensorChange = (value) => {
   }
 }
 
-const onSensorCmpChange = (value) => {
-  if (value) {
-    fetchDataCmp();
-  } else {
-    dataCmp.value = null;
-  }
-}
-
 const onAggregationChange = (value) => {
   console.log('time aggregation:', value);
   if (selectedPlot.value && selectedSensor.value) {
@@ -472,6 +486,25 @@ const onAggregationChange = (value) => {
     }
   }
 }
+
+const onQCChange = (value) => {
+  console.log('QC:', value);
+  if (selectedPlot.value && selectedSensor.value) {
+    fetchData();
+    if (selectedSensorCmp.value) {
+      fetchDataCmp();
+    }
+  }
+}
+
+const onSensorCmpChange = (value) => {
+  if (value) {
+    fetchDataCmp();
+  } else {
+    dataCmp.value = null;
+  }
+}
+
 
 const viewerRef = ref(null);
 
@@ -542,7 +575,7 @@ const fetchData = async () => {
       body: JSON.stringify({
       settings: {
         timeAggregation: timeAggregation.value,
-        quality: 'step'
+        quality: selectedQC.value,
       },  
       timeseries: [{  
         plot: selectedPlot.value,
@@ -601,7 +634,7 @@ const fetchDataCmp = async () => {
       body: JSON.stringify({
       settings: {
         timeAggregation: timeAggregation.value,
-        quality: 'step'
+        quality: 'step',
       },  
       timeseries: [{  
         plot: selectedPlot.value,
@@ -701,7 +734,6 @@ const maskSelectionSave = async () => {
   maskSelectionSaving.value = true;
 
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000));
     const response = await fetch('/tsdb/mask', {
       method: 'POST',
       headers: {
@@ -728,6 +760,7 @@ const maskSelectionSave = async () => {
       viewerRef.value.resetSelection();
     }
 
+    fetchData();
     fetchMask();
 
     ElMessage.success('Mask selection saved successfully!');
@@ -778,7 +811,7 @@ const maskSelectionSave = async () => {
 .toolbar-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 2px;
   flex-wrap: wrap;
 }
 
@@ -798,6 +831,7 @@ const maskSelectionSave = async () => {
   color: #606266;
   font-size: var(--el-font-size-extra-small);
   white-space: nowrap;
+  margin-left: 10px;
 }
 
 .toolbar-value {
@@ -833,8 +867,23 @@ const maskSelectionSave = async () => {
   color: #409eff;
 }
 
-</style>
+.mask-label-invalid {
+  color: #de4242;
+}
 
+.mask-label-suspect {
+  color: #c5c503;
+}
+
+.mask-type-select-invalid :deep(.el-select__selected-item) {
+  color: #de4242;
+}
+
+.mask-type-select-suspect :deep(.el-select__selected-item) {
+  color: #c5c503;
+}
+
+</style>
 
 
 <style>

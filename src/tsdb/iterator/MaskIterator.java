@@ -16,8 +16,6 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class MaskIterator extends InputIterator {
-		@SuppressWarnings("unused")
-		
 
 		private Iterator<Interval>[] maskIterators;
 		private Interval[] currIntervals;
