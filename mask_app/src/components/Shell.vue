@@ -7,7 +7,8 @@
         <span class="toolbar-label">Project:</span>
         <el-select
           v-model="selectedProject"
-          style="width: 200px; margin-right: 8px;"
+          size="small"
+          style="width: 110px; margin-right: 0px;"
           @change="onProjectChange"
           placeholder="Select Project"
         >
@@ -23,7 +24,8 @@
         <span class="toolbar-label">Group:</span>
         <el-select
           v-model="selectedGroup"
-          style="width: 200px; margin-right: 8px;"
+          size="small"
+          style="width: 180px; margin-right: 0px;"
           @change="onGroupChange"
           placeholder="Select group"
           :disabled="!selectedProject"
@@ -40,7 +42,8 @@
         <span class="toolbar-label">Station:</span>
         <el-select
           v-model="selectedPlot"
-          style="width: 200px; margin-right: 8px;"
+          size="small"
+          style="width: 140px; margin-right: 0px;"
           @change="onPlotChange"
           placeholder="Select Station"
           :disabled="!selectedGroup"
@@ -59,7 +62,8 @@
         <span class="toolbar-label">Sensor:</span>
         <el-select
           v-model="selectedSensor"
-          style="width: 200px;"
+          size="small"
+          style="width: 150px;"
           @change="onSensorChange"
           placeholder="Select Sensor"
           :disabled="!selectedPlot"
@@ -77,7 +81,8 @@
         <!-- Time Aggregation Select -->
         <el-select
           v-model="timeAggregation"
-          style="width: 80px; margin-left: 16px; margin-right: 8px;"
+          size="small"
+          style="width: 80px; margin-right: 0px;"
           @change="onAggregationChange"
         >
           <el-option label="Hour" value="hour" />
@@ -88,6 +93,7 @@
         <span class="toolbar-label" style="margin-left: 16px;">Cmp:</span>
         <el-select
           v-model="selectedSensorCmp"
+          size="small"
           style="width: 200px;"
           @change="onSensorCmpChange"
           placeholder="Comparison Sensor"
@@ -103,7 +109,23 @@
             :value="sensor.value"
           />
         </el-select>
+
+        <el-select
+          v-model="yAxisRange_cmp"
+          placeholder="Y-Range"
+          size="small"
+          style="width: 100px;"
+        >
+          <el-option
+            v-for="option in yAxisRangeOptions_cmp"
+            :key="option.value"
+            :label="option.label"
+            :value="option.value"
+          />
+        </el-select>
+
       </div>
+
       <div class="toolbar-right">
         <el-button
           type="info"
@@ -141,6 +163,7 @@
         :height="mainContentHeight"
         :data="data"
         :data_cmp="dataCmp"
+        :yAxisRangeConfig_cmp="yAxisRangeConfig_cmp"
         :mask="mask"
         @selection-change="maskSelection = $event"
         ref="viewerRef" 
@@ -318,6 +341,22 @@ const sensorOptions = computed(() => {
       label: sensorId
     }));
 });
+
+
+const yAxisRange_cmp = ref('fixed_10');
+
+const yAxisRangeOptions_cmp = [
+  /*{ label: 'Auto', value: '', min: null, max: null },*/
+  { label: '-0.1 - 0.1', value: 'fixed_01', min: -0.1, max: 0.1 },
+  { label: '-1.0 - 1.0', value: 'fixed_1', min: -1, max: 1 },
+  { label: '-10.0 - 10.0', value: 'fixed_10', min: -10, max: 10 },
+];
+
+const yAxisRangeConfig_cmp = computed(() => {
+  return yAxisRangeOptions_cmp.find(opt => opt.value === yAxisRange_cmp.value) || yAxisRangeOptions_cmp[2];
+});
+
+
 
 const selectSensorWithPreference = () => {
   if (sensorOptions.value && sensorOptions.value.length > 0) {
@@ -756,22 +795,20 @@ const maskSelectionSave = async () => {
 }
 
 .toolbar-label {
-  font-weight: 500;
   color: #606266;
-  font-size: 13px;
+  font-size: var(--el-font-size-extra-small);
   white-space: nowrap;
 }
 
 .toolbar-value {
   color: #303133;
-  font-size: 13px;
+  font-size: var(--el-font-size-extra-small);
   margin-left: 4px;
 }
 
 .toolbar-divider {
   color: #dcdfe6;
   margin: 0 8px;
-  font-size: 13px;
 }
 
 .main-content {

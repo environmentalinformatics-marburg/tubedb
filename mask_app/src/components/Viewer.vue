@@ -36,6 +36,10 @@ const props = defineProps({
     type: [Array, null],
     required: true,
   },
+  yAxisRangeConfig_cmp: {
+    type: Object,
+    default: () => ({ min: -10, max: 10 })
+  },  
   mask: {
     type: [Object, null],
     required: true,
@@ -230,7 +234,9 @@ function formatTimestamp(timestamp) {
   const hours = pad(date.getHours());
   const minutes = pad(date.getMinutes());
   
-  return `${year}-${month}-${day}T${hours}:${minutes}`;
+  //return `${year}-${month}-${day}T${hours}:${minutes}`;
+  //return `${year}-${month}-${day}T${hours}`;
+  return `${year}-${month}-${day}`;
 }
 
 watch([selectionMin, selectionMax], () => {
@@ -250,6 +256,18 @@ watch(() => props.mask, () => {
     uplotDiagram.value._chart.redraw();
   }
 });
+
+watch(() => props.yAxisRangeConfig_cmp, (newConfig) => {
+  if (uplotDiagram_cmp.value && uplotDiagram_cmp.value._chart) {
+    const u = uplotDiagram_cmp.value._chart;
+    u.batch(() => {
+      u.setScale("y", {
+        min: newConfig.min,
+        max: newConfig.max,
+      });            
+    });
+  }
+}, { immediate: true, deep: true });
 
 function handleSelectionPluginKeyDown(e) {
   if (e.key === 'Escape' || e.key === 'Esc') {
@@ -421,6 +439,16 @@ const options_cmp = computed(() => ({
       key: '_',
     } ,  
   },
+  scales: {
+    "y": {
+      auto: (self, resetScales) => {
+        return props.yAxisRangeConfig_cmp.min === null && props.yAxisRangeConfig_cmp.max === null;
+      },
+      range: (self, initMin, initMax) => {
+          return [props.yAxisRangeConfig_cmp.min, props.yAxisRangeConfig_cmp.max];
+        },
+    }
+  },   
   axes: [
     {
       size: 0,
