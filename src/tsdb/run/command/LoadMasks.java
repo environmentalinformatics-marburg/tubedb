@@ -77,18 +77,21 @@ public class LoadMasks {
 	}
 
 	public static enum MaskType {
-	    INVALID("invalid"),
-	    SUSPECT("suspect");
+	    INVALID("invalid", "mask.csv"),
+	    SUSPECT("suspect", "suspect_mask.csv");
 
-	    private final String typeText;
+	    public final String typeText;
+	    public final String csvFiename;
 
-	    MaskType(String typeString) {
+	    MaskType(String typeString, String csvFiename) {
 	        this.typeText = typeString;
+	        this.csvFiename = csvFiename;
 	    }
 
 	    public String getTypeText() {
 	        return typeText;
-	    }
+	    }    
+
 
 	    public static MaskType fromText(String text) {
 	        if (text != null) {

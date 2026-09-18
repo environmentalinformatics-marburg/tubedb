@@ -100,7 +100,7 @@
           <el-option label="Raw" value="raw" />
           <el-option label="Physical" value="physical" />
           <el-option label="Basic" value="basic" />
-          <el-option label="Unsuspect" value="empirical" />
+          <el-option label="Unsuspect" value="unsuspect" />
         </el-select>
 
         <!-- Comparison Sensor Select -->
@@ -151,8 +151,9 @@
       </div>
     </div>
 
-    <!-- Help Dialog Component -->
+    <!-- Dialog Component -->
     <HelpDialog v-model="showHelpDialog" />
+    <MaskListDialog v-model="showMaskListDialog" :plot="selectedPlot" :sensor="selectedSensor" :mask="mask" />
 
     <!-- Main Content -->
     <div ref="mainContent" class="main-content">
@@ -232,6 +233,14 @@
         >
           Save
         </el-button>
+
+        <el-button
+          type="info"
+          circle
+          icon="Grid"
+          title="Mask list"
+          @click="showMaskListDialog = true"
+        />
       </div>
     </div>
   </div>
@@ -243,6 +252,7 @@ import { ElMessage } from 'element-plus'
 
 import Viewer from '@/components/Viewer.vue'
 import HelpDialog from '@/components/HelpDialog.vue'
+import MaskListDialog from '@/components/MaskListDialog.vue'
 import { getFriendlyErrorMessage } from '@/utils/errorMessages'
 
 const props = defineProps({
@@ -260,8 +270,9 @@ const selectedQC = ref('basic');
 const timeAggregation = ref('day');
 const selectedSensorCmp = ref('');
 
-// Help Dialog State
+// Dialog State
 const showHelpDialog = ref(false);
+const showMaskListDialog = ref(false);
 
 const maskSelection = ref({min: null, max: null, dateMin: '*', dateMax: '*'});
 

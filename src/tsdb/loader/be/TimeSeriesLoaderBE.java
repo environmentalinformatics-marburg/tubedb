@@ -39,9 +39,7 @@ import tsdb.util.TimeUtil;
  * @author woellauer
  *
  */
-public class TimeSeriesLoaderBE {
-
-	
+public class TimeSeriesLoaderBE {	
 
 	private final TsDB tsdb; //not null
 

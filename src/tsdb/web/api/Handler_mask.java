@@ -1,7 +1,5 @@
 package tsdb.web.api;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -11,8 +9,6 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.json.JSONWriter;
 import org.tinylog.Logger;
-
-import com.opencsv.CSVWriter;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

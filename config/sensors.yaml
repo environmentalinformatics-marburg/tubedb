@@ -3672,6 +3672,7 @@ Ts_20_1:
   empirical_diff: 3.03  
   interpolation_mse: 7
   category: temperature
+  visibility: internal
 
 Ts_20_1_min:
   description: Minimum value of Ts_20_1
@@ -3680,6 +3681,7 @@ Ts_20_1_min:
   post_hour_func: Ts_20_1
   aggregation: minimum
   category: temperature
+  visibility: internal
   
 Ts_20_1_max:
   description: Maximum value of Ts_20_1
@@ -3688,6 +3690,7 @@ Ts_20_1_max:
   post_hour_func: Ts_20_1
   aggregation: maximum
   category: temperature
+  visibility: internal
   
 Ts_20_2: 
   description: Soil temperature at 20 centimeters below surface (Beech/shelter)
@@ -3698,6 +3701,7 @@ Ts_20_2:
   empirical_diff: 3.03  
   interpolation_mse: 7
   category: temperature
+  visibility: internal
 
 Ts_20_2_min:
   description: Minimum value of Ts_20_2
@@ -3706,6 +3710,7 @@ Ts_20_2_min:
   post_hour_func: Ts_20_2
   aggregation: minimum
   category: temperature
+  visibility: internal
   
 Ts_20_2_max:
   description: Maximum value of Ts_20_2
@@ -3714,6 +3719,7 @@ Ts_20_2_max:
   post_hour_func: Ts_20_2
   aggregation: maximum
   category: temperature
+  visibility: internal
   
 Ts_20_WET_1: 
   description: Soil temperature at 20 centimeters below surface (WET150 soil) (Beech/shelter)
@@ -3724,6 +3730,7 @@ Ts_20_WET_1:
   empirical_diff: 3.03  
   interpolation_mse: 7
   category: temperature
+  visibility: internal
 
 Ts_20_WET_1_min:
   description: Minimum value of Ts_20_WET_1
@@ -3732,6 +3739,7 @@ Ts_20_WET_1_min:
   post_hour_func: Ts_20_WET_1
   aggregation: minimum
   category: temperature
+  visibility: internal
   
 Ts_20_WET_1_max:
   description: Maximum value of Ts_20_WET_1
@@ -3740,6 +3748,7 @@ Ts_20_WET_1_max:
   post_hour_func: Ts_20_WET_1
   aggregation: maximum
   category: temperature
+  visibility: internal
 
 Tw_10_1:
   description: Wood temperature (WET150 wood) (Beech/shelter)
@@ -3750,6 +3759,7 @@ Tw_10_1:
   empirical_diff: 10.0
   interpolation_mse: 7
   category: temperature
+  visibility: internal
   
 WMg_10_1:
   description: Wood moisture ground 1 at 10 centimeters (WET150 wood) (Beech/shelter)
@@ -3758,7 +3768,8 @@ WMg_10_1:
   physical_range: [0.1, 65.0]
   step_range: [0.0, 1000.0] 
   empirical_diff: 29.04
-  interpolation_mse: 100   
+  interpolation_mse: 100
+  visibility: internal  
 
 Twb_01:
   description: Wood burried 1 temperature (Beech)
@@ -3769,6 +3780,7 @@ Twb_01:
   empirical_diff: 10.0
   interpolation_mse: 7
   category: temperature
+  visibility: internal
 
 Twb_02:
   description: Wood burried 2 temperature (Beech/shelter)
@@ -3779,6 +3791,7 @@ Twb_02:
   empirical_diff: 10.0
   interpolation_mse: 7
   category: temperature
+  visibility: internal
 
 Twb_03:
   description: Wood burried 3 temperature (Beech/shelter)
@@ -3789,6 +3802,7 @@ Twb_03:
   empirical_diff: 10.0
   interpolation_mse: 7
   category: temperature
+  visibility: internal
 
 Twg_01:
   description: Wood ground 1 temperature  (Beech)
@@ -3799,6 +3813,7 @@ Twg_01:
   empirical_diff: 10.0
   interpolation_mse: 7
   category: temperature
+  visibility: internal
 
 Twg_02:
   description: Wood ground 2 temperature (Beech/shelter)
@@ -3809,6 +3824,7 @@ Twg_02:
   empirical_diff: 10.0
   interpolation_mse: 7
   category: temperature
+  visibility: internal
 
 Twg_03:
   description: Wood ground 3 temperature (Beech/shelter)
@@ -3819,6 +3835,7 @@ Twg_03:
   empirical_diff: 10.0
   interpolation_mse: 7
   category: temperature
+  visibility: internal
 
 Twu_01:
   description: Wood stone up 1 temperature  (Beech)
@@ -3829,6 +3846,7 @@ Twu_01:
   empirical_diff: 10.0
   interpolation_mse: 7
   category: temperature
+  visibility: internal
 
 Twu_02:
   description: Wood stone up 2 temperature (Beech/shelter)
@@ -3839,6 +3857,7 @@ Twu_02:
   empirical_diff: 10.0
   interpolation_mse: 7
   category: temperature
+  visibility: internal
 
 Twu_03:
   description: Wood stone up 3 temperature (Beech/shelter)
@@ -3849,36 +3868,43 @@ Twu_03:
   empirical_diff: 10.0
   interpolation_mse: 7
   category: temperature
+  visibility: internal
 
 ECb_10_1:
   description: Bulk electrical conductivity (WET150 wood) (Beech/shelter)
   unit: mS/m (milli siemens per meter)  
   aggregation: average
+  visibility: internal
   
 ECb_20_1:
   description: Bulk electrical conductivity (WET150 soil) (Beech/shelter)
   unit: mS/m (milli siemens per meter)  
-  aggregation: average  
+  aggregation: average
+  visibility: internal  
   
 ECp_10_1:
   description: Pore water conductivity (WET150 wood) (Beech/shelter)
   unit: mS/m (milli siemens per meter)  
-  aggregation: average 
+  aggregation: average
+  visibility: internal  
 
 ECp_20_1:
   description: Pore water conductivity (WET150 soil) (Beech/shelter)
   unit: mS/m (milli siemens per meter)  
   aggregation: average
+  visibility: internal
   
 Perm_10_WET_1: 
   description: Permittivity (WET150 wood) (Beech/shelter)
   unit: (none) 
-  aggregation: average  
+  aggregation: average
+  visibility: internal  
 
 Perm_20_WET_1: 
   description: Permittivity (WET150 soil) (Beech/shelter)
   unit: (none) 
   aggregation: average 
+  visibility: internal  
 
 SM_20_1:
   description: Soil moisture at 20 centimeters below surface (WET150 soil) (Beech/shelter)
@@ -3888,13 +3914,15 @@ SM_20_1:
   step_range: [0.0, 1000.0] 
   empirical_diff: 23.13  
   interpolation_mse: 100   
-
+  visibility: internal
+  
 SM_20_1_min:
   description: Minimum value of SM_20_1
   unit: '% (percentage of volumetric water content)'
   dependency: SM_20_1  
   post_hour_func: SM_20_1
   aggregation: minimum
+  visibility: internal
   
 SM_20_1_max:
   description: Maximum value of SM_20_1
@@ -3902,6 +3930,7 @@ SM_20_1_max:
   dependency: SM_20_1
   post_hour_func: SM_20_1
   aggregation: maximum
+  visibility: internal
 
 #added 2025-09-04 TreeTalkerCyber
 
@@ -4127,6 +4156,109 @@ WV_110:
   step_range: [0.0, 1000.0]
   empirical_diff: 2.93
   
+# added 2026-09-17
+Tw_TB0:
+  description: BEClimwood wood temperature TB0
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+  
+  
+Tw_TB1:
+  description: BEClimwood wood temperature TB1
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+  
+    
+Tw_TB2:
+  description: BEClimwood wood temperature TB2
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+  
+Tw_TK0:
+  description: BEClimwood wood temperature TK0
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+  
+Tw_TK1:
+  description: BEClimwood wood temperature TK1
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+  
+Tw_TK2:
+  description: BEClimwood wood temperature TK2
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+  
+Tw_CB0:
+  description: BEClimwood wood temperature CB0
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+  
+Tw_CB1:
+  description: BEClimwood wood temperature CB1
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+  
+Tw_CB2:
+  description: BEClimwood wood temperature CB2
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+  
+Tw_CK0:
+  description: BEClimwood wood temperature CK0
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+  
+Tw_CK1:
+  description: BEClimwood wood temperature CK1
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+  
+Tw_CK2:
+  description: BEClimwood wood temperature CK2
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+  
+
+
+# generated 2026-09-18 Tw_*
+
 Tw_001:
   description: Temperature BEClimwood log 001
   unit: °C (degree Celcius, -40 to 60)
@@ -4134,6 +4266,7 @@ Tw_001:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_002:
   description: Temperature BEClimwood log 002
@@ -4142,6 +4275,7 @@ Tw_002:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_003:
   description: Temperature BEClimwood log 003
@@ -4150,6 +4284,7 @@ Tw_003:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_004:
   description: Temperature BEClimwood log 004
@@ -4158,6 +4293,7 @@ Tw_004:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_005:
   description: Temperature BEClimwood log 005
@@ -4166,6 +4302,7 @@ Tw_005:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_006:
   description: Temperature BEClimwood log 006
@@ -4174,6 +4311,7 @@ Tw_006:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_007:
   description: Temperature BEClimwood log 007
@@ -4182,6 +4320,7 @@ Tw_007:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_008:
   description: Temperature BEClimwood log 008
@@ -4190,6 +4329,7 @@ Tw_008:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_009:
   description: Temperature BEClimwood log 009
@@ -4198,6 +4338,7 @@ Tw_009:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_010:
   description: Temperature BEClimwood log 010
@@ -4206,6 +4347,7 @@ Tw_010:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_011:
   description: Temperature BEClimwood log 011
@@ -4214,6 +4356,7 @@ Tw_011:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_012:
   description: Temperature BEClimwood log 012
@@ -4222,6 +4365,7 @@ Tw_012:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_013:
   description: Temperature BEClimwood log 013
@@ -4230,6 +4374,7 @@ Tw_013:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_014:
   description: Temperature BEClimwood log 014
@@ -4238,6 +4383,7 @@ Tw_014:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_015:
   description: Temperature BEClimwood log 015
@@ -4246,6 +4392,7 @@ Tw_015:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_016:
   description: Temperature BEClimwood log 016
@@ -4254,6 +4401,7 @@ Tw_016:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_017:
   description: Temperature BEClimwood log 017
@@ -4262,6 +4410,7 @@ Tw_017:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_018:
   description: Temperature BEClimwood log 018
@@ -4270,6 +4419,7 @@ Tw_018:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_019:
   description: Temperature BEClimwood log 019
@@ -4278,6 +4428,7 @@ Tw_019:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_020:
   description: Temperature BEClimwood log 020
@@ -4286,6 +4437,7 @@ Tw_020:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_021:
   description: Temperature BEClimwood log 021
@@ -4294,6 +4446,7 @@ Tw_021:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_022:
   description: Temperature BEClimwood log 022
@@ -4302,6 +4455,7 @@ Tw_022:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_023:
   description: Temperature BEClimwood log 023
@@ -4310,6 +4464,7 @@ Tw_023:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_024:
   description: Temperature BEClimwood log 024
@@ -4318,6 +4473,7 @@ Tw_024:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_025:
   description: Temperature BEClimwood log 025
@@ -4326,6 +4482,7 @@ Tw_025:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_026:
   description: Temperature BEClimwood log 026
@@ -4334,6 +4491,7 @@ Tw_026:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_027:
   description: Temperature BEClimwood log 027
@@ -4342,6 +4500,7 @@ Tw_027:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_028:
   description: Temperature BEClimwood log 028
@@ -4350,6 +4509,7 @@ Tw_028:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_029:
   description: Temperature BEClimwood log 029
@@ -4358,6 +4518,7 @@ Tw_029:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_030:
   description: Temperature BEClimwood log 030
@@ -4366,6 +4527,7 @@ Tw_030:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_031:
   description: Temperature BEClimwood log 031
@@ -4374,6 +4536,7 @@ Tw_031:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_032:
   description: Temperature BEClimwood log 032
@@ -4382,6 +4545,7 @@ Tw_032:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_033:
   description: Temperature BEClimwood log 033
@@ -4390,6 +4554,7 @@ Tw_033:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_034:
   description: Temperature BEClimwood log 034
@@ -4398,6 +4563,7 @@ Tw_034:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_035:
   description: Temperature BEClimwood log 035
@@ -4406,6 +4572,7 @@ Tw_035:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_036:
   description: Temperature BEClimwood log 036
@@ -4414,6 +4581,7 @@ Tw_036:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_037:
   description: Temperature BEClimwood log 037
@@ -4422,6 +4590,7 @@ Tw_037:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_038:
   description: Temperature BEClimwood log 038
@@ -4430,6 +4599,7 @@ Tw_038:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_039:
   description: Temperature BEClimwood log 039
@@ -4438,6 +4608,7 @@ Tw_039:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_040:
   description: Temperature BEClimwood log 040
@@ -4446,6 +4617,7 @@ Tw_040:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_041:
   description: Temperature BEClimwood log 041
@@ -4454,6 +4626,7 @@ Tw_041:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_042:
   description: Temperature BEClimwood log 042
@@ -4462,6 +4635,7 @@ Tw_042:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_043:
   description: Temperature BEClimwood log 043
@@ -4470,6 +4644,7 @@ Tw_043:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_044:
   description: Temperature BEClimwood log 044
@@ -4478,6 +4653,7 @@ Tw_044:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_045:
   description: Temperature BEClimwood log 045
@@ -4486,6 +4662,7 @@ Tw_045:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_046:
   description: Temperature BEClimwood log 046
@@ -4494,6 +4671,7 @@ Tw_046:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_047:
   description: Temperature BEClimwood log 047
@@ -4502,6 +4680,7 @@ Tw_047:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_048:
   description: Temperature BEClimwood log 048
@@ -4510,6 +4689,7 @@ Tw_048:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_049:
   description: Temperature BEClimwood log 049
@@ -4518,6 +4698,7 @@ Tw_049:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_050:
   description: Temperature BEClimwood log 050
@@ -4526,6 +4707,7 @@ Tw_050:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_051:
   description: Temperature BEClimwood log 051
@@ -4534,6 +4716,7 @@ Tw_051:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_052:
   description: Temperature BEClimwood log 052
@@ -4542,6 +4725,7 @@ Tw_052:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_053:
   description: Temperature BEClimwood log 053
@@ -4550,6 +4734,7 @@ Tw_053:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_054:
   description: Temperature BEClimwood log 054
@@ -4558,6 +4743,7 @@ Tw_054:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_055:
   description: Temperature BEClimwood log 055
@@ -4566,6 +4752,7 @@ Tw_055:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_056:
   description: Temperature BEClimwood log 056
@@ -4574,6 +4761,7 @@ Tw_056:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_057:
   description: Temperature BEClimwood log 057
@@ -4582,6 +4770,7 @@ Tw_057:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_058:
   description: Temperature BEClimwood log 058
@@ -4590,6 +4779,7 @@ Tw_058:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_059:
   description: Temperature BEClimwood log 059
@@ -4598,6 +4788,7 @@ Tw_059:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_060:
   description: Temperature BEClimwood log 060
@@ -4606,6 +4797,7 @@ Tw_060:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_061:
   description: Temperature BEClimwood log 061
@@ -4614,6 +4806,7 @@ Tw_061:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_062:
   description: Temperature BEClimwood log 062
@@ -4622,6 +4815,7 @@ Tw_062:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_063:
   description: Temperature BEClimwood log 063
@@ -4630,6 +4824,7 @@ Tw_063:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_064:
   description: Temperature BEClimwood log 064
@@ -4638,6 +4833,7 @@ Tw_064:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_065:
   description: Temperature BEClimwood log 065
@@ -4646,6 +4842,7 @@ Tw_065:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_066:
   description: Temperature BEClimwood log 066
@@ -4654,6 +4851,7 @@ Tw_066:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_067:
   description: Temperature BEClimwood log 067
@@ -4662,6 +4860,7 @@ Tw_067:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_068:
   description: Temperature BEClimwood log 068
@@ -4670,6 +4869,7 @@ Tw_068:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_069:
   description: Temperature BEClimwood log 069
@@ -4678,6 +4878,7 @@ Tw_069:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_070:
   description: Temperature BEClimwood log 070
@@ -4686,6 +4887,7 @@ Tw_070:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_071:
   description: Temperature BEClimwood log 071
@@ -4694,6 +4896,7 @@ Tw_071:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_072:
   description: Temperature BEClimwood log 072
@@ -4702,6 +4905,7 @@ Tw_072:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_073:
   description: Temperature BEClimwood log 073
@@ -4710,6 +4914,7 @@ Tw_073:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_074:
   description: Temperature BEClimwood log 074
@@ -4718,6 +4923,7 @@ Tw_074:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_075:
   description: Temperature BEClimwood log 075
@@ -4726,6 +4932,7 @@ Tw_075:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_076:
   description: Temperature BEClimwood log 076
@@ -4734,6 +4941,7 @@ Tw_076:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_077:
   description: Temperature BEClimwood log 077
@@ -4742,6 +4950,7 @@ Tw_077:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_078:
   description: Temperature BEClimwood log 078
@@ -4750,6 +4959,7 @@ Tw_078:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_079:
   description: Temperature BEClimwood log 079
@@ -4758,6 +4968,7 @@ Tw_079:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_080:
   description: Temperature BEClimwood log 080
@@ -4766,6 +4977,7 @@ Tw_080:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_081:
   description: Temperature BEClimwood log 081
@@ -4774,6 +4986,7 @@ Tw_081:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_082:
   description: Temperature BEClimwood log 082
@@ -4782,6 +4995,7 @@ Tw_082:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_083:
   description: Temperature BEClimwood log 083
@@ -4790,6 +5004,7 @@ Tw_083:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_084:
   description: Temperature BEClimwood log 084
@@ -4798,6 +5013,7 @@ Tw_084:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_085:
   description: Temperature BEClimwood log 085
@@ -4806,6 +5022,7 @@ Tw_085:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_086:
   description: Temperature BEClimwood log 086
@@ -4814,6 +5031,7 @@ Tw_086:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_087:
   description: Temperature BEClimwood log 087
@@ -4822,6 +5040,7 @@ Tw_087:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_088:
   description: Temperature BEClimwood log 088
@@ -4830,6 +5049,7 @@ Tw_088:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_089:
   description: Temperature BEClimwood log 089
@@ -4838,6 +5058,7 @@ Tw_089:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_090:
   description: Temperature BEClimwood log 090
@@ -4846,6 +5067,7 @@ Tw_090:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_091:
   description: Temperature BEClimwood log 091
@@ -4854,6 +5076,7 @@ Tw_091:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_092:
   description: Temperature BEClimwood log 092
@@ -4862,6 +5085,7 @@ Tw_092:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_093:
   description: Temperature BEClimwood log 093
@@ -4870,6 +5094,7 @@ Tw_093:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_094:
   description: Temperature BEClimwood log 094
@@ -4878,6 +5103,7 @@ Tw_094:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_095:
   description: Temperature BEClimwood log 095
@@ -4886,6 +5112,7 @@ Tw_095:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_096:
   description: Temperature BEClimwood log 096
@@ -4894,6 +5121,7 @@ Tw_096:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_097:
   description: Temperature BEClimwood log 097
@@ -4902,6 +5130,7 @@ Tw_097:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_098:
   description: Temperature BEClimwood log 098
@@ -4910,6 +5139,7 @@ Tw_098:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_099:
   description: Temperature BEClimwood log 099
@@ -4918,6 +5148,7 @@ Tw_099:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_100:
   description: Temperature BEClimwood log 100
@@ -4926,6 +5157,7 @@ Tw_100:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_101:
   description: Temperature BEClimwood log 101
@@ -4934,6 +5166,7 @@ Tw_101:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_102:
   description: Temperature BEClimwood log 102
@@ -4942,6 +5175,7 @@ Tw_102:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_103:
   description: Temperature BEClimwood log 103
@@ -4950,6 +5184,7 @@ Tw_103:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_104:
   description: Temperature BEClimwood log 104
@@ -4958,6 +5193,7 @@ Tw_104:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_105:
   description: Temperature BEClimwood log 105
@@ -4966,6 +5202,7 @@ Tw_105:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_106:
   description: Temperature BEClimwood log 106
@@ -4974,6 +5211,7 @@ Tw_106:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_107:
   description: Temperature BEClimwood log 107
@@ -4982,6 +5220,7 @@ Tw_107:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_108:
   description: Temperature BEClimwood log 108
@@ -4990,6 +5229,7 @@ Tw_108:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_109:
   description: Temperature BEClimwood log 109
@@ -4998,6 +5238,7 @@ Tw_109:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_110:
   description: Temperature BEClimwood log 110
@@ -5006,6 +5247,7 @@ Tw_110:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_111:
   description: Temperature BEClimwood log 111
@@ -5014,6 +5256,7 @@ Tw_111:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_112:
   description: Temperature BEClimwood log 112
@@ -5022,6 +5265,7 @@ Tw_112:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_113:
   description: Temperature BEClimwood log 113
@@ -5030,6 +5274,7 @@ Tw_113:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_114:
   description: Temperature BEClimwood log 114
@@ -5038,6 +5283,7 @@ Tw_114:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_115:
   description: Temperature BEClimwood log 115
@@ -5046,6 +5292,7 @@ Tw_115:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_116:
   description: Temperature BEClimwood log 116
@@ -5054,6 +5301,7 @@ Tw_116:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_117:
   description: Temperature BEClimwood log 117
@@ -5062,6 +5310,7 @@ Tw_117:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_118:
   description: Temperature BEClimwood log 118
@@ -5070,6 +5319,7 @@ Tw_118:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_119:
   description: Temperature BEClimwood log 119
@@ -5078,6 +5328,7 @@ Tw_119:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_120:
   description: Temperature BEClimwood log 120
@@ -5086,6 +5337,7 @@ Tw_120:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_121:
   description: Temperature BEClimwood log 121
@@ -5094,6 +5346,7 @@ Tw_121:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_122:
   description: Temperature BEClimwood log 122
@@ -5102,6 +5355,7 @@ Tw_122:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_123:
   description: Temperature BEClimwood log 123
@@ -5110,6 +5364,7 @@ Tw_123:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_124:
   description: Temperature BEClimwood log 124
@@ -5118,6 +5373,7 @@ Tw_124:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_125:
   description: Temperature BEClimwood log 125
@@ -5126,6 +5382,7 @@ Tw_125:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_126:
   description: Temperature BEClimwood log 126
@@ -5134,6 +5391,7 @@ Tw_126:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_127:
   description: Temperature BEClimwood log 127
@@ -5142,6 +5400,7 @@ Tw_127:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_128:
   description: Temperature BEClimwood log 128
@@ -5150,6 +5409,7 @@ Tw_128:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_129:
   description: Temperature BEClimwood log 129
@@ -5158,6 +5418,7 @@ Tw_129:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_130:
   description: Temperature BEClimwood log 130
@@ -5166,6 +5427,7 @@ Tw_130:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_131:
   description: Temperature BEClimwood log 131
@@ -5174,6 +5436,7 @@ Tw_131:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_132:
   description: Temperature BEClimwood log 132
@@ -5182,6 +5445,7 @@ Tw_132:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_133:
   description: Temperature BEClimwood log 133
@@ -5190,6 +5454,7 @@ Tw_133:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_134:
   description: Temperature BEClimwood log 134
@@ -5198,6 +5463,7 @@ Tw_134:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_135:
   description: Temperature BEClimwood log 135
@@ -5206,6 +5472,7 @@ Tw_135:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_136:
   description: Temperature BEClimwood log 136
@@ -5214,6 +5481,7 @@ Tw_136:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_137:
   description: Temperature BEClimwood log 137
@@ -5222,6 +5490,7 @@ Tw_137:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_138:
   description: Temperature BEClimwood log 138
@@ -5230,6 +5499,7 @@ Tw_138:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_139:
   description: Temperature BEClimwood log 139
@@ -5238,6 +5508,7 @@ Tw_139:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_140:
   description: Temperature BEClimwood log 140
@@ -5246,6 +5517,7 @@ Tw_140:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_141:
   description: Temperature BEClimwood log 141
@@ -5254,6 +5526,7 @@ Tw_141:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_142:
   description: Temperature BEClimwood log 142
@@ -5262,6 +5535,7 @@ Tw_142:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_143:
   description: Temperature BEClimwood log 143
@@ -5270,6 +5544,7 @@ Tw_143:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_144:
   description: Temperature BEClimwood log 144
@@ -5278,6 +5553,7 @@ Tw_144:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_145:
   description: Temperature BEClimwood log 145
@@ -5286,6 +5562,7 @@ Tw_145:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_146:
   description: Temperature BEClimwood log 146
@@ -5294,6 +5571,7 @@ Tw_146:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_147:
   description: Temperature BEClimwood log 147
@@ -5302,6 +5580,7 @@ Tw_147:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_148:
   description: Temperature BEClimwood log 148
@@ -5310,6 +5589,7 @@ Tw_148:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_149:
   description: Temperature BEClimwood log 149
@@ -5318,6 +5598,7 @@ Tw_149:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_150:
   description: Temperature BEClimwood log 150
@@ -5326,6 +5607,7 @@ Tw_150:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_151:
   description: Temperature BEClimwood log 151
@@ -5334,6 +5616,7 @@ Tw_151:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_152:
   description: Temperature BEClimwood log 152
@@ -5342,6 +5625,7 @@ Tw_152:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_153:
   description: Temperature BEClimwood log 153
@@ -5350,6 +5634,7 @@ Tw_153:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_154:
   description: Temperature BEClimwood log 154
@@ -5358,6 +5643,7 @@ Tw_154:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_155:
   description: Temperature BEClimwood log 155
@@ -5366,6 +5652,7 @@ Tw_155:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_156:
   description: Temperature BEClimwood log 156
@@ -5374,6 +5661,7 @@ Tw_156:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_157:
   description: Temperature BEClimwood log 157
@@ -5382,6 +5670,7 @@ Tw_157:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_158:
   description: Temperature BEClimwood log 158
@@ -5390,6 +5679,7 @@ Tw_158:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_159:
   description: Temperature BEClimwood log 159
@@ -5398,6 +5688,7 @@ Tw_159:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_160:
   description: Temperature BEClimwood log 160
@@ -5406,6 +5697,7 @@ Tw_160:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_161:
   description: Temperature BEClimwood log 161
@@ -5414,6 +5706,7 @@ Tw_161:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_162:
   description: Temperature BEClimwood log 162
@@ -5422,6 +5715,7 @@ Tw_162:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_163:
   description: Temperature BEClimwood log 163
@@ -5430,6 +5724,7 @@ Tw_163:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_164:
   description: Temperature BEClimwood log 164
@@ -5438,6 +5733,7 @@ Tw_164:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_165:
   description: Temperature BEClimwood log 165
@@ -5446,6 +5742,7 @@ Tw_165:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_166:
   description: Temperature BEClimwood log 166
@@ -5454,6 +5751,7 @@ Tw_166:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_167:
   description: Temperature BEClimwood log 167
@@ -5462,6 +5760,7 @@ Tw_167:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_168:
   description: Temperature BEClimwood log 168
@@ -5470,6 +5769,7 @@ Tw_168:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_169:
   description: Temperature BEClimwood log 169
@@ -5478,6 +5778,7 @@ Tw_169:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_170:
   description: Temperature BEClimwood log 170
@@ -5486,6 +5787,7 @@ Tw_170:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_171:
   description: Temperature BEClimwood log 171
@@ -5494,6 +5796,7 @@ Tw_171:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_172:
   description: Temperature BEClimwood log 172
@@ -5502,6 +5805,7 @@ Tw_172:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_173:
   description: Temperature BEClimwood log 173
@@ -5510,6 +5814,7 @@ Tw_173:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_174:
   description: Temperature BEClimwood log 174
@@ -5518,6 +5823,7 @@ Tw_174:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_175:
   description: Temperature BEClimwood log 175
@@ -5526,6 +5832,7 @@ Tw_175:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_176:
   description: Temperature BEClimwood log 176
@@ -5534,6 +5841,7 @@ Tw_176:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_177:
   description: Temperature BEClimwood log 177
@@ -5542,6 +5850,7 @@ Tw_177:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_178:
   description: Temperature BEClimwood log 178
@@ -5550,6 +5859,7 @@ Tw_178:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_179:
   description: Temperature BEClimwood log 179
@@ -5558,6 +5868,7 @@ Tw_179:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_180:
   description: Temperature BEClimwood log 180
@@ -5566,6 +5877,7 @@ Tw_180:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_181:
   description: Temperature BEClimwood log 181
@@ -5574,6 +5886,7 @@ Tw_181:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_182:
   description: Temperature BEClimwood log 182
@@ -5582,6 +5895,7 @@ Tw_182:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_183:
   description: Temperature BEClimwood log 183
@@ -5590,6 +5904,7 @@ Tw_183:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_184:
   description: Temperature BEClimwood log 184
@@ -5598,6 +5913,7 @@ Tw_184:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_185:
   description: Temperature BEClimwood log 185
@@ -5606,6 +5922,7 @@ Tw_185:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_186:
   description: Temperature BEClimwood log 186
@@ -5614,6 +5931,7 @@ Tw_186:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_187:
   description: Temperature BEClimwood log 187
@@ -5622,6 +5940,7 @@ Tw_187:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_188:
   description: Temperature BEClimwood log 188
@@ -5630,6 +5949,7 @@ Tw_188:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_189:
   description: Temperature BEClimwood log 189
@@ -5638,6 +5958,7 @@ Tw_189:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_190:
   description: Temperature BEClimwood log 190
@@ -5646,6 +5967,7 @@ Tw_190:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_191:
   description: Temperature BEClimwood log 191
@@ -5654,6 +5976,7 @@ Tw_191:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_192:
   description: Temperature BEClimwood log 192
@@ -5662,6 +5985,7 @@ Tw_192:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_193:
   description: Temperature BEClimwood log 193
@@ -5670,6 +5994,7 @@ Tw_193:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_194:
   description: Temperature BEClimwood log 194
@@ -5678,6 +6003,7 @@ Tw_194:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_195:
   description: Temperature BEClimwood log 195
@@ -5686,6 +6012,7 @@ Tw_195:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_196:
   description: Temperature BEClimwood log 196
@@ -5694,6 +6021,7 @@ Tw_196:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_197:
   description: Temperature BEClimwood log 197
@@ -5702,6 +6030,7 @@ Tw_197:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_198:
   description: Temperature BEClimwood log 198
@@ -5710,6 +6039,7 @@ Tw_198:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_199:
   description: Temperature BEClimwood log 199
@@ -5718,6 +6048,7 @@ Tw_199:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_200:
   description: Temperature BEClimwood log 200
@@ -5726,6 +6057,7 @@ Tw_200:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_201:
   description: Temperature BEClimwood log 201
@@ -5734,6 +6066,7 @@ Tw_201:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_202:
   description: Temperature BEClimwood log 202
@@ -5742,6 +6075,7 @@ Tw_202:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_203:
   description: Temperature BEClimwood log 203
@@ -5750,6 +6084,7 @@ Tw_203:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_204:
   description: Temperature BEClimwood log 204
@@ -5758,6 +6093,7 @@ Tw_204:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_205:
   description: Temperature BEClimwood log 205
@@ -5766,6 +6102,7 @@ Tw_205:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_206:
   description: Temperature BEClimwood log 206
@@ -5774,6 +6111,7 @@ Tw_206:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_207:
   description: Temperature BEClimwood log 207
@@ -5782,6 +6120,7 @@ Tw_207:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_208:
   description: Temperature BEClimwood log 208
@@ -5790,6 +6129,7 @@ Tw_208:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_209:
   description: Temperature BEClimwood log 209
@@ -5798,6 +6138,7 @@ Tw_209:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_210:
   description: Temperature BEClimwood log 210
@@ -5806,6 +6147,7 @@ Tw_210:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_211:
   description: Temperature BEClimwood log 211
@@ -5814,6 +6156,7 @@ Tw_211:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_212:
   description: Temperature BEClimwood log 212
@@ -5822,6 +6165,7 @@ Tw_212:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_213:
   description: Temperature BEClimwood log 213
@@ -5830,6 +6174,7 @@ Tw_213:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_214:
   description: Temperature BEClimwood log 214
@@ -5838,6 +6183,7 @@ Tw_214:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_215:
   description: Temperature BEClimwood log 215
@@ -5846,6 +6192,7 @@ Tw_215:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_216:
   description: Temperature BEClimwood log 216
@@ -5854,6 +6201,7 @@ Tw_216:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_217:
   description: Temperature BEClimwood log 217
@@ -5862,6 +6210,7 @@ Tw_217:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_218:
   description: Temperature BEClimwood log 218
@@ -5870,6 +6219,7 @@ Tw_218:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_219:
   description: Temperature BEClimwood log 219
@@ -5878,6 +6228,7 @@ Tw_219:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_220:
   description: Temperature BEClimwood log 220
@@ -5886,6 +6237,7 @@ Tw_220:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_221:
   description: Temperature BEClimwood log 221
@@ -5894,6 +6246,7 @@ Tw_221:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_222:
   description: Temperature BEClimwood log 222
@@ -5902,6 +6255,7 @@ Tw_222:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_223:
   description: Temperature BEClimwood log 223
@@ -5910,6 +6264,7 @@ Tw_223:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_224:
   description: Temperature BEClimwood log 224
@@ -5918,6 +6273,7 @@ Tw_224:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_225:
   description: Temperature BEClimwood log 225
@@ -5926,6 +6282,7 @@ Tw_225:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_226:
   description: Temperature BEClimwood log 226
@@ -5934,6 +6291,7 @@ Tw_226:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_227:
   description: Temperature BEClimwood log 227
@@ -5942,6 +6300,7 @@ Tw_227:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_228:
   description: Temperature BEClimwood log 228
@@ -5950,6 +6309,7 @@ Tw_228:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_229:
   description: Temperature BEClimwood log 229
@@ -5958,6 +6318,7 @@ Tw_229:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_230:
   description: Temperature BEClimwood log 230
@@ -5966,6 +6327,7 @@ Tw_230:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_231:
   description: Temperature BEClimwood log 231
@@ -5974,6 +6336,7 @@ Tw_231:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_232:
   description: Temperature BEClimwood log 232
@@ -5982,6 +6345,7 @@ Tw_232:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_233:
   description: Temperature BEClimwood log 233
@@ -5990,6 +6354,7 @@ Tw_233:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_234:
   description: Temperature BEClimwood log 234
@@ -5998,6 +6363,7 @@ Tw_234:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_235:
   description: Temperature BEClimwood log 235
@@ -6006,6 +6372,7 @@ Tw_235:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_236:
   description: Temperature BEClimwood log 236
@@ -6014,6 +6381,7 @@ Tw_236:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_237:
   description: Temperature BEClimwood log 237
@@ -6022,6 +6390,7 @@ Tw_237:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_238:
   description: Temperature BEClimwood log 238
@@ -6030,6 +6399,7 @@ Tw_238:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_239:
   description: Temperature BEClimwood log 239
@@ -6038,6 +6408,7 @@ Tw_239:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_240:
   description: Temperature BEClimwood log 240
@@ -6046,6 +6417,7 @@ Tw_240:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_241:
   description: Temperature BEClimwood log 241
@@ -6054,6 +6426,7 @@ Tw_241:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_242:
   description: Temperature BEClimwood log 242
@@ -6062,6 +6435,7 @@ Tw_242:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_243:
   description: Temperature BEClimwood log 243
@@ -6070,6 +6444,7 @@ Tw_243:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_244:
   description: Temperature BEClimwood log 244
@@ -6078,6 +6453,7 @@ Tw_244:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_245:
   description: Temperature BEClimwood log 245
@@ -6086,6 +6462,7 @@ Tw_245:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_246:
   description: Temperature BEClimwood log 246
@@ -6094,6 +6471,7 @@ Tw_246:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_247:
   description: Temperature BEClimwood log 247
@@ -6102,6 +6480,7 @@ Tw_247:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_248:
   description: Temperature BEClimwood log 248
@@ -6110,6 +6489,7 @@ Tw_248:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_249:
   description: Temperature BEClimwood log 249
@@ -6118,6 +6498,7 @@ Tw_249:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_250:
   description: Temperature BEClimwood log 250
@@ -6126,6 +6507,7 @@ Tw_250:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_251:
   description: Temperature BEClimwood log 251
@@ -6134,6 +6516,7 @@ Tw_251:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_252:
   description: Temperature BEClimwood log 252
@@ -6142,6 +6525,7 @@ Tw_252:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_253:
   description: Temperature BEClimwood log 253
@@ -6150,6 +6534,7 @@ Tw_253:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_254:
   description: Temperature BEClimwood log 254
@@ -6158,6 +6543,7 @@ Tw_254:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_255:
   description: Temperature BEClimwood log 255
@@ -6166,6 +6552,7 @@ Tw_255:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_256:
   description: Temperature BEClimwood log 256
@@ -6174,6 +6561,7 @@ Tw_256:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_257:
   description: Temperature BEClimwood log 257
@@ -6182,6 +6570,7 @@ Tw_257:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_258:
   description: Temperature BEClimwood log 258
@@ -6190,6 +6579,7 @@ Tw_258:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_259:
   description: Temperature BEClimwood log 259
@@ -6198,6 +6588,7 @@ Tw_259:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_260:
   description: Temperature BEClimwood log 260
@@ -6206,6 +6597,7 @@ Tw_260:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_261:
   description: Temperature BEClimwood log 261
@@ -6214,6 +6606,7 @@ Tw_261:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_262:
   description: Temperature BEClimwood log 262
@@ -6222,6 +6615,7 @@ Tw_262:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_263:
   description: Temperature BEClimwood log 263
@@ -6230,6 +6624,7 @@ Tw_263:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_264:
   description: Temperature BEClimwood log 264
@@ -6238,6 +6633,7 @@ Tw_264:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_265:
   description: Temperature BEClimwood log 265
@@ -6246,6 +6642,7 @@ Tw_265:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_266:
   description: Temperature BEClimwood log 266
@@ -6254,6 +6651,7 @@ Tw_266:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_267:
   description: Temperature BEClimwood log 267
@@ -6262,6 +6660,7 @@ Tw_267:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_268:
   description: Temperature BEClimwood log 268
@@ -6270,6 +6669,7 @@ Tw_268:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_269:
   description: Temperature BEClimwood log 269
@@ -6278,6 +6678,7 @@ Tw_269:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_270:
   description: Temperature BEClimwood log 270
@@ -6286,6 +6687,7 @@ Tw_270:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_271:
   description: Temperature BEClimwood log 271
@@ -6294,6 +6696,7 @@ Tw_271:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_272:
   description: Temperature BEClimwood log 272
@@ -6302,6 +6705,7 @@ Tw_272:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_273:
   description: Temperature BEClimwood log 273
@@ -6310,6 +6714,7 @@ Tw_273:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_274:
   description: Temperature BEClimwood log 274
@@ -6318,6 +6723,7 @@ Tw_274:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_275:
   description: Temperature BEClimwood log 275
@@ -6326,6 +6732,7 @@ Tw_275:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_276:
   description: Temperature BEClimwood log 276
@@ -6334,6 +6741,7 @@ Tw_276:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_277:
   description: Temperature BEClimwood log 277
@@ -6342,6 +6750,7 @@ Tw_277:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_278:
   description: Temperature BEClimwood log 278
@@ -6350,6 +6759,7 @@ Tw_278:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_279:
   description: Temperature BEClimwood log 279
@@ -6358,6 +6768,7 @@ Tw_279:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_280:
   description: Temperature BEClimwood log 280
@@ -6366,6 +6777,7 @@ Tw_280:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_281:
   description: Temperature BEClimwood log 281
@@ -6374,6 +6786,7 @@ Tw_281:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_282:
   description: Temperature BEClimwood log 282
@@ -6382,6 +6795,7 @@ Tw_282:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_283:
   description: Temperature BEClimwood log 283
@@ -6390,6 +6804,7 @@ Tw_283:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_284:
   description: Temperature BEClimwood log 284
@@ -6398,6 +6813,7 @@ Tw_284:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_285:
   description: Temperature BEClimwood log 285
@@ -6406,6 +6822,7 @@ Tw_285:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_286:
   description: Temperature BEClimwood log 286
@@ -6414,6 +6831,7 @@ Tw_286:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_287:
   description: Temperature BEClimwood log 287
@@ -6422,6 +6840,7 @@ Tw_287:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_288:
   description: Temperature BEClimwood log 288
@@ -6430,6 +6849,7 @@ Tw_288:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_289:
   description: Temperature BEClimwood log 289
@@ -6438,6 +6858,7 @@ Tw_289:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_290:
   description: Temperature BEClimwood log 290
@@ -6446,6 +6867,7 @@ Tw_290:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_291:
   description: Temperature BEClimwood log 291
@@ -6454,6 +6876,7 @@ Tw_291:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_292:
   description: Temperature BEClimwood log 292
@@ -6462,6 +6885,7 @@ Tw_292:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_293:
   description: Temperature BEClimwood log 293
@@ -6470,6 +6894,7 @@ Tw_293:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_294:
   description: Temperature BEClimwood log 294
@@ -6478,6 +6903,7 @@ Tw_294:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_295:
   description: Temperature BEClimwood log 295
@@ -6486,6 +6912,7 @@ Tw_295:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_296:
   description: Temperature BEClimwood log 296
@@ -6494,6 +6921,7 @@ Tw_296:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_297:
   description: Temperature BEClimwood log 297
@@ -6502,6 +6930,7 @@ Tw_297:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_298:
   description: Temperature BEClimwood log 298
@@ -6510,6 +6939,7 @@ Tw_298:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_299:
   description: Temperature BEClimwood log 299
@@ -6518,6 +6948,7 @@ Tw_299:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_300:
   description: Temperature BEClimwood log 300
@@ -6526,6 +6957,7 @@ Tw_300:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_301:
   description: Temperature BEClimwood log 301
@@ -6534,6 +6966,7 @@ Tw_301:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_302:
   description: Temperature BEClimwood log 302
@@ -6542,6 +6975,7 @@ Tw_302:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_303:
   description: Temperature BEClimwood log 303
@@ -6550,6 +6984,7 @@ Tw_303:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_304:
   description: Temperature BEClimwood log 304
@@ -6558,6 +6993,7 @@ Tw_304:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_305:
   description: Temperature BEClimwood log 305
@@ -6566,6 +7002,7 @@ Tw_305:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_306:
   description: Temperature BEClimwood log 306
@@ -6574,6 +7011,7 @@ Tw_306:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_307:
   description: Temperature BEClimwood log 307
@@ -6582,6 +7020,7 @@ Tw_307:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_308:
   description: Temperature BEClimwood log 308
@@ -6590,6 +7029,7 @@ Tw_308:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_309:
   description: Temperature BEClimwood log 309
@@ -6598,6 +7038,7 @@ Tw_309:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_310:
   description: Temperature BEClimwood log 310
@@ -6606,6 +7047,7 @@ Tw_310:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_311:
   description: Temperature BEClimwood log 311
@@ -6614,6 +7056,7 @@ Tw_311:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_312:
   description: Temperature BEClimwood log 312
@@ -6622,6 +7065,7 @@ Tw_312:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_313:
   description: Temperature BEClimwood log 313
@@ -6630,6 +7074,7 @@ Tw_313:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_314:
   description: Temperature BEClimwood log 314
@@ -6638,6 +7083,7 @@ Tw_314:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_315:
   description: Temperature BEClimwood log 315
@@ -6646,6 +7092,7 @@ Tw_315:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_316:
   description: Temperature BEClimwood log 316
@@ -6654,6 +7101,7 @@ Tw_316:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_317:
   description: Temperature BEClimwood log 317
@@ -6662,6 +7110,7 @@ Tw_317:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_318:
   description: Temperature BEClimwood log 318
@@ -6670,6 +7119,7 @@ Tw_318:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_319:
   description: Temperature BEClimwood log 319
@@ -6678,6 +7128,7 @@ Tw_319:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_320:
   description: Temperature BEClimwood log 320
@@ -6686,6 +7137,7 @@ Tw_320:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_321:
   description: Temperature BEClimwood log 321
@@ -6694,6 +7146,7 @@ Tw_321:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_322:
   description: Temperature BEClimwood log 322
@@ -6702,6 +7155,7 @@ Tw_322:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_323:
   description: Temperature BEClimwood log 323
@@ -6710,6 +7164,7 @@ Tw_323:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
 
 Tw_324:
   description: Temperature BEClimwood log 324
@@ -6718,3 +7173,6 @@ Tw_324:
   physical_range: [-40.0, 60.0]
   step_range: [0.0, 10.0]
   category: temperature
+  visibility: internal
+
+

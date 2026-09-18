@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,9 +18,7 @@ import java.util.stream.Stream;
 import org.tinylog.Logger;
 
 import com.opencsv.CSVWriter;
-import com.opencsv.CSVWriterBuilder;
 
-import jakarta.servlet.http.HttpServletResponse;
 import tsdb.GeneralStation;
 import tsdb.Station;
 import tsdb.TsDB;
@@ -47,10 +46,13 @@ import tsdb.util.DataQuality;
 import tsdb.util.DataRow;
 import tsdb.util.Measurement;
 import tsdb.util.Pair;
+import tsdb.util.Table;
 import tsdb.util.TimeSeriesMask;
 import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
 import tsdb.util.TsEntry;
+import tsdb.util.AbstractTable.ColumnReaderIntFunc;
+import tsdb.util.AbstractTable.ColumnReaderString;
 import tsdb.util.iterator.TimestampSeries;
 import tsdb.util.iterator.TsIterator;
 
@@ -524,7 +526,7 @@ public class ServerTsDB implements RemoteTsDB {
 
 	@Override
 	public void addTimeSeriesMaskInterval(String station, String sensor, String start, String end, String user, String date, String comment, MaskType maskType) throws RemoteException {
-		String csvPath = tsdb.configDirectory + "/mask.csv";
+		String csvPath = tsdb.configDirectory + "/" + maskType.csvFiename;
 		
 		int timestampStart = TimeUtil.parseStartTimestamp(start);
 		int timestampEnd = TimeUtil.parseStartTimestamp(end);		
@@ -555,6 +557,46 @@ public class ServerTsDB implements RemoteTsDB {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	
+	@Override
+	public List<MaskListEntry> getTimeSeriesMaskList(String station, String sensor, MaskType maskType) throws RemoteException {
+		String csvPath = tsdb.configDirectory + "/" + maskType.csvFiename;
+		
+		List<MaskListEntry> list = new ArrayList<MaskListEntry>();
+		
+		File csvFile = new File(csvPath);
+		if(csvFile.exists()) {
+			
+			Logger.info("load mask " + maskType + " from " + csvFile);
+
+			Table maskTable = Table.readCSV(csvFile, ',');
+
+			ColumnReaderString colStation = maskTable.createColumnReader("station");
+			ColumnReaderString colSensor = maskTable.createColumnReader("sensor");
+			ColumnReaderString colStart = maskTable.createColumnReader("start");
+			ColumnReaderString colEnd = maskTable.createColumnReader("end");
+
+			for(String[] row:maskTable.rows) {
+				if(Table.isNoComment(row) && row.length > 1) {
+					try {
+						String stationName = colStation.get(row);
+						if(station.equals(stationName)) {
+							String sensorName = colSensor.get(row);
+							if(sensor.equals(sensorName) || "*".equals(sensorName)) {
+								String start = colStart.get(row);
+								String end = colEnd.get(row);
+									list.add(new MaskListEntry(stationName, sensorName, start, end));
+							}
+						}
+					} catch(Exception e) {
+						Logger.error(e+" in "+Arrays.toString(row));
+					}
+				}
+			}
+		}
+		return list;
 	}
 
 	// ----- monitoring -------

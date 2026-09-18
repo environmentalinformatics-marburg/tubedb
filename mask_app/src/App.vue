@@ -1,6 +1,13 @@
 <template>
     <Shell v-if="metaData" :metaData="metaData" />
-    <div v-else-if="metaDataLoading">Loading metadata...</div>    
+    <div 
+        v-else-if="metaDataLoading" 
+        v-loading="true"
+        element-loading-text="Loading metadata..."
+        :element-loading-spinner="svg"
+        element-loading-svg-view-box="-10, -10, 50, 50"
+        style="width: 100vw; height: 100vh;"
+    ></div>    
     <div v-else class="error-message">
         <h3>⚠️ Unable to Load Metadata</h3>
         <p>{{ metaDataError }}</p>

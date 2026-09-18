@@ -68,7 +68,8 @@ public enum DataQuality {
 		case "step":
 		case "basic": // new QC label
 			return STEP;
-		case "empirical": // old quality label and new QC label
+		case "empirical":
+		case "unsuspect": // new QC label
 			return EMPIRICAL;
 		case "na":
 			return Na;
