@@ -138,6 +138,26 @@
           />
         </el-select>
 
+        <!-- CMP Plot Select -->
+        <span class="toolbar-label">Cmp_station:</span>
+        <el-select
+          v-model="selectedPlotCmp"
+          size="small"
+          style="width: 140px; margin-right: 0px;"
+          @change="onPlotCmpChange"
+          placeholder="Select Station"
+          :disabled="!selectedGroup"
+          filterable
+          clearable
+        >
+          <el-option
+            v-for="plot in plotOptions"
+            :key="plot.value"
+            :label="plot.label"
+            :value="plot.value"
+          />
+        </el-select>
+
       </div>
 
       <div class="toolbar-right">
@@ -269,6 +289,7 @@ const selectedSensor = ref('');
 const selectedQC = ref('basic');
 const timeAggregation = ref('day');
 const selectedSensorCmp = ref('');
+const selectedPlotCmp = ref('');
 
 // Dialog State
 const showHelpDialog = ref(false);
@@ -380,13 +401,29 @@ const yAxisRange_cmp = ref('fixed_10');
 
 const yAxisRangeOptions_cmp = [
   /*{ label: 'Auto', value: '', min: null, max: null },*/
-  { label: '-0.1 - 0.1', value: 'fixed_01', min: -0.1, max: 0.1 },
-  { label: '-1.0 - 1.0', value: 'fixed_1', min: -1, max: 1 },
-  { label: '-10.0 - 10.0', value: 'fixed_10', min: -10, max: 10 },
+  { label: '-0.1 – 0.1', value: 'fixed_01', min: -0.1, max: 0.1 },
+  { label: '-1 – 1', value: 'fixed_1', min: -1, max: 1 },
+  { label: '-5  – 5', value: 'fixed_5', min: -5, max: 5 },  
+  { label: '-10 – 10', value: 'fixed_10', min: -10, max: 10 },
+  { label: '-20 – 20', value: 'fixed_20', min: -20, max: 20 },
+  { label: '-30 – 30', value: 'fixed_30', min: -30, max: 30 },
+  { label: '-100 – 100', value: 'fixed_100', min: -100, max: 100 },
+  { label: '-1000 – 1000', value: 'fixed_1000', min: -1000, max: 1000 },  
+  { label: '0 – 0.1', value: 'fixed_p01', min: -0.1, max: 0.1 },
+  { label: '0 – 1', value: 'fixed_p1', min: 0, max: 1 },
+  { label: '0 – 5', value: 'fixed_p5', min: 0, max: 5 },  
+  { label: '0 – 10', value: 'fixed_p10', min: 0, max: 10 },
+  { label: '0 – 20', value: 'fixed_p20', min: 0, max: 20 },
+  { label: '0 – 30', value: 'fixed_p30', min: 0, max: 30 },
+  { label: '0 – 100', value: 'fixed_p100', min: 0, max: 100 },
+  { label: '0 – 1000', value: 'fixed_p1000', min: 0, max: 1000 },  
+  { label: '0 – 10000', value: 'fixed_p10000', min: 0, max: 10000 },  
+  { label: '0 – 100000', value: 'fixed_p100000', min: 0, max: 100000 },   
+  { label: '0 – 1000000', value: 'fixed_p1000000', min: 0, max: 1000000 },    
 ];
 
 const yAxisRangeConfig_cmp = computed(() => {
-  return yAxisRangeOptions_cmp.find(opt => opt.value === yAxisRange_cmp.value) || yAxisRangeOptions_cmp[2];
+  return yAxisRangeOptions_cmp.find(opt => opt.value === yAxisRange_cmp.value) || yAxisRangeOptions_cmp[3];
 });
 
 
@@ -434,11 +471,13 @@ watch(selectedProject, (newProject) => {
     selectedPlot.value = ''
     selectedSensor.value = ''
     selectedSensorCmp.value = ''
+    selectedPlotCmp.value = ''
   } else {
     selectedGroup.value = ''
     selectedPlot.value = ''
     selectedSensor.value = ''
     selectedSensorCmp.value = ''
+    selectedPlotCmp.value = ''
   }
 });
 
@@ -477,6 +516,10 @@ const onGroupChange = (value) => {
 
 const onPlotChange = (value) => {
   console.log('selected plot:', value);
+}
+
+const onPlotCmpChange = (value) => {
+  console.log('selected cmp plot:', value);
 }
 
 const onSensorChange = (value) => {
@@ -580,6 +623,18 @@ const fetchData = async () => {
   dataLoading.value = true;
   dataError.value = null;
 
+  let timeseries = [{  
+        plot: selectedPlot.value,
+        sensor: selectedSensor.value,
+  }];
+
+  if(selectedPlotCmp.value) {
+    timeseries.unshift({  
+          plot: selectedPlotCmp.value,
+          sensor: selectedSensor.value,
+    });
+  }
+
   try {
     const response = await fetch('/tsdb/query_js', {
       method: 'POST', 
@@ -588,10 +643,7 @@ const fetchData = async () => {
         timeAggregation: timeAggregation.value,
         quality: selectedQC.value,
       },  
-      timeseries: [{  
-        plot: selectedPlot.value,
-        sensor: selectedSensor.value,
-      }]
+      timeseries: timeseries,
       })
     });
 
@@ -639,6 +691,18 @@ const fetchDataCmp = async () => {
   dataCmpLoading.value = true;
   dataCmpError.value = null;
 
+  let timeseries = [{  
+    plot: selectedPlot.value,
+    sensor: selectedSensorCmp.value,
+  }];
+
+  if(selectedPlotCmp.value) {
+    timeseries.unshift({  
+        plot: selectedPlotCmp.value,
+        sensor: selectedSensorCmp.value,
+    });
+  }
+
   try {
     const response = await fetch('/tsdb/query_js', {
       method: 'POST', 
@@ -647,10 +711,7 @@ const fetchDataCmp = async () => {
         timeAggregation: timeAggregation.value,
         quality: 'step',
       },  
-      timeseries: [{  
-        plot: selectedPlot.value,
-        sensor: selectedSensorCmp.value,
-      }]
+      timeseries: timeseries,
       })
     });
 
@@ -724,12 +785,12 @@ const fetchMask = async () => {
   }
 }
 
-watch([selectedPlot, selectedSensor, timeAggregation], () => {
+watch([selectedPlot, selectedSensor, timeAggregation, selectedPlotCmp], () => {
   fetchData();
   fetchMask();
 }, { immediate: false });
 
-watch([selectedPlot, selectedSensorCmp, timeAggregation], () => {
+watch([selectedPlot, selectedSensorCmp, timeAggregation, selectedPlotCmp], () => {
   if (selectedSensorCmp.value) {
     fetchDataCmp();
   } else {

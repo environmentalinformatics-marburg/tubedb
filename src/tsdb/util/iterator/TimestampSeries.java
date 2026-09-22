@@ -404,6 +404,11 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 
 	}
 
+	/**
+	 * Merge first sensor of each time series only.
+	 * @param tss
+	 * @return
+	 */
 	public static TimestampSeries castMerge(TimestampSeries[] tss) {
 		int tsLen = tss.length;
 		@SuppressWarnings("unchecked")
@@ -414,7 +419,7 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 		for (int i = 0; i < tsLen; i++) {
 			its[i] = tss[i].entryList.iterator();
 			//schemaLens[i] = tss[i].sensorNames.length;
-			schemaLens[i] = 1; //     !!!!!
+			schemaLens[i] = tss[i].sensorNames.length == 0 ? 0 : 1; //     !!!!!
 			resultSchemaLen += schemaLens[i];
 			if(its[i].hasNext()) {
 				currs[i] = its[i].next();
@@ -460,7 +465,8 @@ public class TimestampSeries implements TsIterable, Serializable, Externalizable
 			String[] sensorNames = tss[i].sensorNames;
 			int schemaLen = schemaLens[i];
 			for(int j = 0; j < schemaLen; j++) {
-				resultSchema[pos++] = name + "/" + sensorNames[j];
+				String resultSensorName = name + "/" + sensorNames[j];
+				resultSchema[pos++] = resultSensorName;
 			}
 		}
 		TimestampSeries resultTs = new TimestampSeries("castMerge", resultSchema, result);

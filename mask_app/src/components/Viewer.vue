@@ -453,7 +453,7 @@ const options_cmp = computed(() => ({
     {
       size: 0,
       grid: {
-        stroke: "#f7f7f7",
+        stroke: '#f7f7f7',
       },
       ticks: {
         show: false,
@@ -461,7 +461,7 @@ const options_cmp = computed(() => ({
     },
     {
       grid: {
-        stroke: "#f7f7f7",
+        stroke: '#f7f7f7',
       },
     },
   ],
@@ -470,13 +470,26 @@ const options_cmp = computed(() => ({
     dragPlugin({}),
     selectionPlugin({}),
   ],
-  series: [
+    series: props.data_cmp.length === 2 ? [
     {},
     {
-      stroke: 'grey',
+      stroke: 'rgba(0,0,0,0.4)',
       width: 1,
-      fill: "rgba(150,150,150,0.15)",
-    }
+      fill: 'rgba(0,0,0,0.05)',
+    },    
+  ]
+  :
+  [
+    {},
+    {
+      stroke: 'rgba(100,100,255,1)',
+      width: 1,
+    },
+    {
+      stroke: 'rgba(0,0,0,0.4)',
+      width: 1,
+      fill: 'rgba(0,0,0,0.05)',
+    },    
   ]
 }))
 
@@ -508,13 +521,26 @@ const options = computed(() => ({
     markPlugin({}),
     maskPlugin({}),
   ],
-  series: [
+  series: props.data.length === 2 ? [
     {},
     {
-      stroke: 'black',
+      stroke: 'rgba(0,0,0,0.9)',
       width: 1,
-      fill: "rgba(150,150,150,0.15)",
-    }
+      fill: 'rgba(0,0,0,0.07)',
+    },    
+  ]
+  :
+  [
+    {},
+    {
+      stroke: 'rgba(100,100,255,1)',
+      width: 1,
+    },
+    {
+      stroke: 'rgba(0,0,0,0.9)',
+      width: 1,
+      fill: 'rgba(0,0,0,0.07)',
+    },    
   ]
 }))
 

@@ -29,10 +29,12 @@
         
         <h4>Creating a Time Series Mask</h4>
         <ul>
-          <li><b>Set Start:</b> Hold <b>Shift</b>, or <b>Ctrl</b>, or <b>Alt</b> + <b>Left Click</b> to mark the interval start.</li>
-          <li><b>Set End:</b> Hold <b>Shift</b>, or <b>Ctrl</b>, or <b>Alt</b> + <b>Right Click</b> to mark the interval end.</li>
+          <li><b>Set Start:</b> Hold <b>Shift</b>-key + <b>Left Click</b> to mark the interval start.</li>
+          <li><b>Set End:</b> Hold <b>Shift</b>-key + <b>Right Click</b> to mark the interval end.</li>
+          <li><i>(Instead of <b>Shift</b> works also: <b>Ctrl</b> or <b>Alt</b>)</i></li>
           <li><b>Reset:</b> Press <b>Esc</b> to clear the time interval selection.</li>
           <li><b>Comment:</b> Enter a description in the bottom toolbar.</li>
+          <li><b>Mask type</b>: Ensure the Appropriate mask type ist chosen.</li>
           <li><b>Store:</b> Click the <b>Save</b> button to finish.</li>
         </ul>
       </div>
