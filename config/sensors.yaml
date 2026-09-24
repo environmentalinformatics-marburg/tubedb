@@ -795,7 +795,7 @@ Trad:
   unit: °C (degree Celcius) 
   aggregation: average
   physical_range: [-40.0, 60.0]   
-  step_range: [0.0, 10.0] 
+  step_range: [0.0, 10.0]
   empirical_diff: 3.07
   interpolation_mse: 7
   category: temperature
@@ -7174,5 +7174,575 @@ Tw_324:
   step_range: [0.0, 10.0]
   category: temperature
   visibility: internal
+
+
+
+
+# generated 2026-09-24 BEClimwood SMT
+
+Tw_TB0_SMT:
+  description: BEClimwood wood temperature SMT TB0
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+WM_TB0_SMT:
+  description: BEClimwood wood moisture SMT TB0
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_TB0_SMT:
+  description: BEClimwood Perm SMT TB0
+  aggregation: average
+
+counts_TB0_SMT:
+  description: BEClimwood counts SMT TB0
+  aggregation: average
+
+Ts_TB0_SMT:
+  description: BEClimwood soil temperature SMT TB0
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+SM_TB0_SMT:
+  description: BEClimwood soil moisture SMT TB0
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_TB0_SMT_02:
+  description: BEClimwood Perm SMT_02 TB0
+  aggregation: average
+
+counts_TB0_SMT_02:
+  description: BEClimwood counts SMT_02 TB0
+  aggregation: average
+
+
+Tw_TB1_SMT:
+  description: BEClimwood wood temperature SMT TB1
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+WM_TB1_SMT:
+  description: BEClimwood wood moisture SMT TB1
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_TB1_SMT:
+  description: BEClimwood Perm SMT TB1
+  aggregation: average
+
+counts_TB1_SMT:
+  description: BEClimwood counts SMT TB1
+  aggregation: average
+
+Ts_TB1_SMT:
+  description: BEClimwood soil temperature SMT TB1
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+SM_TB1_SMT:
+  description: BEClimwood soil moisture SMT TB1
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_TB1_SMT_02:
+  description: BEClimwood Perm SMT_02 TB1
+  aggregation: average
+
+counts_TB1_SMT_02:
+  description: BEClimwood counts SMT_02 TB1
+  aggregation: average
+
+
+Tw_TB2_SMT:
+  description: BEClimwood wood temperature SMT TB2
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+WM_TB2_SMT:
+  description: BEClimwood wood moisture SMT TB2
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_TB2_SMT:
+  description: BEClimwood Perm SMT TB2
+  aggregation: average
+
+counts_TB2_SMT:
+  description: BEClimwood counts SMT TB2
+  aggregation: average
+
+Ts_TB2_SMT:
+  description: BEClimwood soil temperature SMT TB2
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+SM_TB2_SMT:
+  description: BEClimwood soil moisture SMT TB2
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_TB2_SMT_02:
+  description: BEClimwood Perm SMT_02 TB2
+  aggregation: average
+
+counts_TB2_SMT_02:
+  description: BEClimwood counts SMT_02 TB2
+  aggregation: average
+
+
+Tw_TK0_SMT:
+  description: BEClimwood wood temperature SMT TK0
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+WM_TK0_SMT:
+  description: BEClimwood wood moisture SMT TK0
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_TK0_SMT:
+  description: BEClimwood Perm SMT TK0
+  aggregation: average
+
+counts_TK0_SMT:
+  description: BEClimwood counts SMT TK0
+  aggregation: average
+
+Ts_TK0_SMT:
+  description: BEClimwood soil temperature SMT TK0
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+SM_TK0_SMT:
+  description: BEClimwood soil moisture SMT TK0
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_TK0_SMT_02:
+  description: BEClimwood Perm SMT_02 TK0
+  aggregation: average
+
+counts_TK0_SMT_02:
+  description: BEClimwood counts SMT_02 TK0
+  aggregation: average
+
+
+Tw_TK1_SMT:
+  description: BEClimwood wood temperature SMT TK1
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+WM_TK1_SMT:
+  description: BEClimwood wood moisture SMT TK1
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_TK1_SMT:
+  description: BEClimwood Perm SMT TK1
+  aggregation: average
+
+counts_TK1_SMT:
+  description: BEClimwood counts SMT TK1
+  aggregation: average
+
+Ts_TK1_SMT:
+  description: BEClimwood soil temperature SMT TK1
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+SM_TK1_SMT:
+  description: BEClimwood soil moisture SMT TK1
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_TK1_SMT_02:
+  description: BEClimwood Perm SMT_02 TK1
+  aggregation: average
+
+counts_TK1_SMT_02:
+  description: BEClimwood counts SMT_02 TK1
+  aggregation: average
+
+
+Tw_TK2_SMT:
+  description: BEClimwood wood temperature SMT TK2
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+WM_TK2_SMT:
+  description: BEClimwood wood moisture SMT TK2
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_TK2_SMT:
+  description: BEClimwood Perm SMT TK2
+  aggregation: average
+
+counts_TK2_SMT:
+  description: BEClimwood counts SMT TK2
+  aggregation: average
+
+Ts_TK2_SMT:
+  description: BEClimwood soil temperature SMT TK2
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+SM_TK2_SMT:
+  description: BEClimwood soil moisture SMT TK2
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_TK2_SMT_02:
+  description: BEClimwood Perm SMT_02 TK2
+  aggregation: average
+
+counts_TK2_SMT_02:
+  description: BEClimwood counts SMT_02 TK2
+  aggregation: average
+
+
+Tw_CB0_SMT:
+  description: BEClimwood wood temperature SMT CB0
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+WM_CB0_SMT:
+  description: BEClimwood wood moisture SMT CB0
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_CB0_SMT:
+  description: BEClimwood Perm SMT CB0
+  aggregation: average
+
+counts_CB0_SMT:
+  description: BEClimwood counts SMT CB0
+  aggregation: average
+
+Ts_CB0_SMT:
+  description: BEClimwood soil temperature SMT CB0
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+SM_CB0_SMT:
+  description: BEClimwood soil moisture SMT CB0
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_CB0_SMT_02:
+  description: BEClimwood Perm SMT_02 CB0
+  aggregation: average
+
+counts_CB0_SMT_02:
+  description: BEClimwood counts SMT_02 CB0
+  aggregation: average
+
+
+Tw_CB1_SMT:
+  description: BEClimwood wood temperature SMT CB1
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+WM_CB1_SMT:
+  description: BEClimwood wood moisture SMT CB1
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_CB1_SMT:
+  description: BEClimwood Perm SMT CB1
+  aggregation: average
+
+counts_CB1_SMT:
+  description: BEClimwood counts SMT CB1
+  aggregation: average
+
+Ts_CB1_SMT:
+  description: BEClimwood soil temperature SMT CB1
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+SM_CB1_SMT:
+  description: BEClimwood soil moisture SMT CB1
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_CB1_SMT_02:
+  description: BEClimwood Perm SMT_02 CB1
+  aggregation: average
+
+counts_CB1_SMT_02:
+  description: BEClimwood counts SMT_02 CB1
+  aggregation: average
+
+
+Tw_CB2_SMT:
+  description: BEClimwood wood temperature SMT CB2
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+WM_CB2_SMT:
+  description: BEClimwood wood moisture SMT CB2
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_CB2_SMT:
+  description: BEClimwood Perm SMT CB2
+  aggregation: average
+
+counts_CB2_SMT:
+  description: BEClimwood counts SMT CB2
+  aggregation: average
+
+Ts_CB2_SMT:
+  description: BEClimwood soil temperature SMT CB2
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+SM_CB2_SMT:
+  description: BEClimwood soil moisture SMT CB2
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_CB2_SMT_02:
+  description: BEClimwood Perm SMT_02 CB2
+  aggregation: average
+
+counts_CB2_SMT_02:
+  description: BEClimwood counts SMT_02 CB2
+  aggregation: average
+
+
+Tw_CK0_SMT:
+  description: BEClimwood wood temperature SMT CK0
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+WM_CK0_SMT:
+  description: BEClimwood wood moisture SMT CK0
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_CK0_SMT:
+  description: BEClimwood Perm SMT CK0
+  aggregation: average
+
+counts_CK0_SMT:
+  description: BEClimwood counts SMT CK0
+  aggregation: average
+
+Ts_CK0_SMT:
+  description: BEClimwood soil temperature SMT CK0
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+SM_CK0_SMT:
+  description: BEClimwood soil moisture SMT CK0
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_CK0_SMT_02:
+  description: BEClimwood Perm SMT_02 CK0
+  aggregation: average
+
+counts_CK0_SMT_02:
+  description: BEClimwood counts SMT_02 CK0
+  aggregation: average
+
+
+Tw_CK1_SMT:
+  description: BEClimwood wood temperature SMT CK1
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+WM_CK1_SMT:
+  description: BEClimwood wood moisture SMT CK1
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_CK1_SMT:
+  description: BEClimwood Perm SMT CK1
+  aggregation: average
+
+counts_CK1_SMT:
+  description: BEClimwood counts SMT CK1
+  aggregation: average
+
+Ts_CK1_SMT:
+  description: BEClimwood soil temperature SMT CK1
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+SM_CK1_SMT:
+  description: BEClimwood soil moisture SMT CK1
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_CK1_SMT_02:
+  description: BEClimwood Perm SMT_02 CK1
+  aggregation: average
+
+counts_CK1_SMT_02:
+  description: BEClimwood counts SMT_02 CK1
+  aggregation: average
+
+
+Tw_CK2_SMT:
+  description: BEClimwood wood temperature SMT CK2
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+WM_CK2_SMT:
+  description: BEClimwood wood moisture SMT CK2
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_CK2_SMT:
+  description: BEClimwood Perm SMT CK2
+  aggregation: average
+
+counts_CK2_SMT:
+  description: BEClimwood counts SMT CK2
+  aggregation: average
+
+Ts_CK2_SMT:
+  description: BEClimwood soil temperature SMT CK2
+  unit: °C (degree Celcius, -40 to 60)
+  aggregation: average
+  physical_range: [-40.0, 60.0]
+  step_range: [0.0, 10.0]
+  category: temperature
+
+SM_CK2_SMT:
+  description: BEClimwood soil moisture SMT CK2
+  unit: '% (percentage of volumetric water content)'
+  aggregation: average
+  physical_range: [0.1, 65.0]
+  step_range: [0.0, 1000.0]
+
+Perm_CK2_SMT_02:
+  description: BEClimwood Perm SMT_02 CK2
+  aggregation: average
+
+counts_CK2_SMT_02:
+  description: BEClimwood counts SMT_02 CK2
+  aggregation: average
+
+
 
 
