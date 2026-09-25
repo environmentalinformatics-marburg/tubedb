@@ -4,7 +4,7 @@
     <div class="top-bar">
       <div class="toolbar-left">
         <!-- Project Select -->
-        <span class="toolbar-label">Project:</span>
+        <span class="toolbar-label"><el-icon :size="17"><Briefcase /></el-icon></span>
         <el-select
           v-model="selectedProject"
           size="small"
@@ -21,7 +21,7 @@
         </el-select>
 
         <!-- Group Select -->
-        <span class="toolbar-label">Group:</span>
+        <span class="toolbar-label"><el-icon :size="17"><FolderOpened /></el-icon></span>
         <el-select
           v-model="selectedGroup"
           size="small"
@@ -39,7 +39,7 @@
         </el-select>
 
         <!-- Plot Select -->
-        <span class="toolbar-label">Station:</span>
+        <span class="toolbar-label"><el-icon :size="17"><Flag /></el-icon></span>
         <el-select
           v-model="selectedPlot"
           size="small"
@@ -85,6 +85,7 @@
           style="width: 65px; margin-right: 0px;"
           @change="onAggregationChange"
         >
+          <!--<el-option label="-" value="raw" />-->  
           <el-option label="Hour" value="hour" />
           <el-option label="Day" value="day" />
         </el-select>
@@ -102,6 +103,8 @@
           <el-option label="Basic" value="basic" />
           <el-option label="Unsuspect" value="unsuspect" />
         </el-select>
+
+        <span class="toolbar-divider">|</span>
 
         <!-- Comparison Sensor Select -->
         <span class="toolbar-label" style="margin-left: 16px;">Cmp:</span>
@@ -128,7 +131,9 @@
           v-model="yAxisRange_cmp"
           placeholder="Y-Range"
           size="small"
+          popper-class="yAxisRange_cmp-popper"
           style="width: 100px;"
+          clearable
         >
           <el-option
             v-for="option in yAxisRangeOptions_cmp"
@@ -136,6 +141,7 @@
             :label="option.label"
             :value="option.value"
           />
+          
         </el-select>
 
         <!-- CMP Plot Select -->
@@ -145,7 +151,7 @@
           size="small"
           style="width: 140px; margin-right: 0px;"
           @change="onPlotCmpChange"
-          placeholder="Select Station"
+          placeholder="Comparison Station"
           :disabled="!selectedGroup"
           filterable
           clearable
@@ -215,7 +221,7 @@
         <span class="toolbar-value">{{ selectedSensor || '-' }}</span>
         <span class="toolbar-divider">|</span>
         <span class="toolbar-label">Selection:</span>
-        <span class="toolbar-value" style="min-width: 250px;">{{ maskSelection.dateMin }} - {{ maskSelection.dateMax }}</span>
+        <span class="toolbar-value" style="min-width: 140px;">{{ maskSelection.dateMin }} - {{ maskSelection.dateMax }}</span>
       </div>
       <div class="toolbar-center">
         <el-input
@@ -224,6 +230,7 @@
           clearable
           size="small"
           prefix-icon="Comment"
+           style="min-width: 200px;"
         />
       </div>
       <div class="toolbar-right">
@@ -274,6 +281,7 @@ import Viewer from '@/components/Viewer.vue'
 import HelpDialog from '@/components/HelpDialog.vue'
 import MaskListDialog from '@/components/MaskListDialog.vue'
 import { getFriendlyErrorMessage } from '@/utils/errorMessages'
+import { FolderOpened } from '@element-plus/icons-vue'
 
 const props = defineProps({
   metaData: {
@@ -400,30 +408,32 @@ const sensorOptions = computed(() => {
 const yAxisRange_cmp = ref('fixed_10');
 
 const yAxisRangeOptions_cmp = [
-  /*{ label: 'Auto', value: '', min: null, max: null },*/
-  { label: '-0.1 – 0.1', value: 'fixed_01', min: -0.1, max: 0.1 },
-  { label: '-1 – 1', value: 'fixed_1', min: -1, max: 1 },
-  { label: '-5  – 5', value: 'fixed_5', min: -5, max: 5 },  
-  { label: '-10 – 10', value: 'fixed_10', min: -10, max: 10 },
-  { label: '-20 – 20', value: 'fixed_20', min: -20, max: 20 },
-  { label: '-30 – 30', value: 'fixed_30', min: -30, max: 30 },
-  { label: '-100 – 100', value: 'fixed_100', min: -100, max: 100 },
-  { label: '-1000 – 1000', value: 'fixed_1000', min: -1000, max: 1000 },  
-  { label: '0 – 0.1', value: 'fixed_p01', min: -0.1, max: 0.1 },
-  { label: '0 – 1', value: 'fixed_p1', min: 0, max: 1 },
-  { label: '0 – 5', value: 'fixed_p5', min: 0, max: 5 },  
-  { label: '0 – 10', value: 'fixed_p10', min: 0, max: 10 },
-  { label: '0 – 20', value: 'fixed_p20', min: 0, max: 20 },
-  { label: '0 – 30', value: 'fixed_p30', min: 0, max: 30 },
-  { label: '0 – 100', value: 'fixed_p100', min: 0, max: 100 },
-  { label: '0 – 1000', value: 'fixed_p1000', min: 0, max: 1000 },  
-  { label: '0 – 10000', value: 'fixed_p10000', min: 0, max: 10000 },  
-  { label: '0 – 100000', value: 'fixed_p100000', min: 0, max: 100000 },   
-  { label: '0 – 1000000', value: 'fixed_p1000000', min: 0, max: 1000000 },    
+  { label: ' -0.1 –    0.1', value: 'fixed_01', min: -0.1, max: 0.1 },
+  { label: '   -1 –      1', value: 'fixed_1', min: -1, max: 1 },
+  { label: '  -5  –      5', value: 'fixed_5', min: -5, max: 5 },  
+  { label: '  -10 –     10', value: 'fixed_10', min: -10, max: 10 },
+  { label: '  -20 –     20', value: 'fixed_20', min: -20, max: 20 },
+  { label: '  -30 –     30', value: 'fixed_30', min: -30, max: 30 },
+  { label: ' -100 –    100', value: 'fixed_100', min: -100, max: 100 },
+  { label: '-1000 –   1000', value: 'fixed_1000', min: -1000, max: 1000 },  
+  { label: '    0 –    0.1', value: 'fixed_p01', min: 0.1, max: 0.1 },
+  { label: '    0 –      1', value: 'fixed_p1', min: 0, max: 1 },
+  { label: '    0 –      5', value: 'fixed_p5', min: 0, max: 5 },  
+  { label: '    0 –     10', value: 'fixed_p10', min: 0, max: 10 },
+  { label: '    0 –     20', value: 'fixed_p20', min: 0, max: 20 },
+  { label: '    0 –     30', value: 'fixed_p30', min: 0, max: 30 },
+  { label: '    0 –    100', value: 'fixed_p100', min: 0, max: 100 },
+  { label: '    0 –    1000', value: 'fixed_p1000', min: 0, max: 1000 },  
+  { label: '    0 –   10000', value: 'fixed_p10000', min: 0, max: 10000 },  
+  { label: '    0 –  100000', value: 'fixed_p100000', min: 0, max: 100000 },   
+  { label: '    0 – 1000000', value: 'fixed_p1000000', min: 0, max: 1000000 },    
 ];
 
+const yAxisRangeOptions_cmp_auto =  { label: 'Auto', value: 'auto', min: null, max: null };
+
 const yAxisRangeConfig_cmp = computed(() => {
-  return yAxisRangeOptions_cmp.find(opt => opt.value === yAxisRange_cmp.value) || yAxisRangeOptions_cmp[3];
+  const v = yAxisRange_cmp.value;
+  return v ? (yAxisRangeOptions_cmp.find(opt => opt.value === v) || yAxisRangeOptions_cmp_auto) : yAxisRangeOptions_cmp_auto;
 });
 
 
@@ -904,6 +914,7 @@ const maskSelectionSave = async () => {
   font-size: var(--el-font-size-extra-small);
   white-space: nowrap;
   margin-left: 10px;
+  display: flex; align-items: center;
 }
 
 .toolbar-value {
@@ -953,6 +964,12 @@ const maskSelectionSave = async () => {
 
 .mask-type-select-suspect :deep(.el-select__selected-item) {
   color: #c5c503;
+}
+
+.yAxisRange_cmp-popper .el-select-dropdown__item {
+  white-space: pre;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+               'Liberation Mono', 'Courier New', monospace;
 }
 
 </style>

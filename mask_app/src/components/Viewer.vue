@@ -1,6 +1,6 @@
 <template>
   <div class="chart-container">
-    <UplotVue :options="options_cmp" :data="data_cmp" v-if="data_cmp" ref="uplotDiagram_cmp" style="background-color: rgba(200,200,255,0.04);" />
+    <UplotVue :options="options_cmp" :data="data_cmp" v-if="data_cmp" ref="uplotDiagram_cmp" style="background-color: rgba(200,200,255,0.04); border-bottom: 1px dashed rgba(0, 0, 0, 0.3);" />
     <UplotVue :options="options" :data="data" v-if="data" ref="uplotDiagram" />
   </div>
 </template>
@@ -419,7 +419,7 @@ function maskPlugin(opts) {
 
 const options_cmp = computed(() => ({
   width: props.width,
-  height: props.height / 2,
+  height: (props.height / 2) - 1,  // 1px separator line
   padding: [0, 0, 0, 0],
   bg: '#f0f4f8',
   legend: {
@@ -442,10 +442,17 @@ const options_cmp = computed(() => ({
   scales: {
     "y": {
       auto: (self, resetScales) => {
-        return props.yAxisRangeConfig_cmp.min === null && props.yAxisRangeConfig_cmp.max === null;
+        console.log(resetScales);
+        //return true;
+        return props.yAxisRangeConfig_cmp.min === null || props.yAxisRangeConfig_cmp.max === null;
       },
       range: (self, initMin, initMax) => {
-          return [props.yAxisRangeConfig_cmp.min, props.yAxisRangeConfig_cmp.max];
+          console.log(initMin + ' ' + initMax);
+          //return [initMin, initMax];
+          return [
+            props.yAxisRangeConfig_cmp.min === null ? initMin : props.yAxisRangeConfig_cmp.min, 
+            props.yAxisRangeConfig_cmp.max === null ? initMax : props.yAxisRangeConfig_cmp.max,
+          ];
         },
     }
   },   
@@ -453,7 +460,9 @@ const options_cmp = computed(() => ({
     {
       size: 0,
       grid: {
-        stroke: '#f7f7f7',
+        stroke: 'rgba(0,0,0,0.1)',
+        width: 1,
+        dash: [2, 2],
       },
       ticks: {
         show: false,
@@ -461,8 +470,13 @@ const options_cmp = computed(() => ({
     },
     {
       grid: {
-        stroke: '#f7f7f7',
+        stroke: 'rgba(0,0,0,0.1)',
+        width: 1,
+        dash: [2, 2],
       },
+      ticks: {
+        show: false,
+      }
     },
   ],
   plugins: [
@@ -491,7 +505,18 @@ const options_cmp = computed(() => ({
       fill: 'rgba(0,0,0,0.05)',
     },    
   ]
-}))
+}));
+
+const _timeAxisStamps = [
+//   tick incr    default          year                           month   day                        hour    min               sec   mode
+	[31536000,    "{YYYY}",        null,                          null,   null,                      null,   null,             null, 1],
+	[2419200,     "{MMM}",         "\n{YYYY}",                    null,   null,                      null,   null,             null, 1],
+	[86400,       "{MMM}-{D}",       "\n{YYYY}",                    null,   null,                      null,   null,             null, 1],
+	[3600,        "{H} h",       "\n{YYYY}-{MM}-{DD}",              null,   "\n{MMM}-{D}",               null,   null,             null, 1],
+	[60,          "{HH}:{mm}",  "\n{YYYY}-{MM}-{DD}",              null,   "\n{MMM}-{D}",               null,   null,             null, 1],
+	[1,           ":{ss}",         "\n{YYYY}-{MM}-{DD} {HH}:{mm}", null,   "\n{MMM}-{D} {HH}:{mm}",  null,   "\n{HH}:{mm}", null, 1],
+	[0.001,       ":{ss}.{fff}",   "\n{YYYY}-{MM}-{DD} {HH}:{mm}", null,   "\n{MMM}-{D} {HH}:{mm}",  null,   "\n{HH}:{mm}", null, 1],
+];
 
 const options = computed(() => ({
   width: props.width,
@@ -514,6 +539,29 @@ const options = computed(() => ({
       key: '_',
     } ,     
   },
+  axes: [
+    {
+      values: _timeAxisStamps,
+      grid: {
+        stroke: 'rgba(0,0,0,0.1)',
+        width: 1,
+        dash: [2, 2],
+      },
+      ticks: {
+        show: false,
+      }
+    },
+    {
+      grid: {
+        stroke: 'rgba(0,0,0,0.1)',
+        width: 1,
+        dash: [2, 2],
+      },
+      ticks: {
+        show: false,
+      }
+    },
+  ],
   plugins: [
     wheelZoomPlugin({factor: 0.75}),
     dragPlugin({}),
@@ -542,7 +590,7 @@ const options = computed(() => ({
       fill: 'rgba(0,0,0,0.07)',
     },    
   ]
-}))
+}));
 
 
 onMounted(() => {
