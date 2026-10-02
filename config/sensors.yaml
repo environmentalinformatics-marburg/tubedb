@@ -279,6 +279,7 @@ Ts_10_SMT:
   empirical_diff: 3.6
   interpolation_mse: 7
   category: temperature
+  visibility: internal
   
 Ts_10_SMT_min:
   description: Minimum value of Ts_10_SMT 
@@ -287,6 +288,7 @@ Ts_10_SMT_min:
   post_hour_func: Ts_10_SMT
   aggregation: minimum
   category: temperature
+  visibility: internal
   
 Ts_10_SMT_max:
   description: Maximum value of Ts_10_SMT 
@@ -294,7 +296,8 @@ Ts_10_SMT_max:
   dependency: Ts_10_SMT
   post_hour_func: Ts_10_SMT
   aggregation: maximum
-  category: temperature  
+  category: temperature
+  visibility: internal
   
 Ts_20: 
   description: Soil temperature at 20 centimeters below surface 
@@ -331,6 +334,7 @@ Ts_20_SMT:
   empirical_diff: 3.6
   interpolation_mse: 7
   category: temperature
+  visibility: internal
   
 Ts_20_SMT_min:
   description: Minimum value of Ts_20_SMT 
@@ -339,6 +343,7 @@ Ts_20_SMT_min:
   post_hour_func: Ts_20_SMT
   aggregation: minimum
   category: temperature
+  visibility: internal
   
 Ts_20_SMT_max:
   description: Maximum value of Ts_20_SMT 
@@ -346,7 +351,8 @@ Ts_20_SMT_max:
   dependency: Ts_20_SMT
   post_hour_func: Ts_20_SMT
   aggregation: maximum
-  category: temperature   
+  category: temperature
+  visibility: internal  
   
 Ts_30: 
   description: Soil temperature at 30 centimeters below surface 
@@ -486,7 +492,8 @@ SM_10_SMT:
   physical_range: [0.1, 65.0]
   step_range: [0.0, 1000.0] 
   empirical_diff: 29.04
-  interpolation_mse: 100   
+  interpolation_mse: 100
+  visibility: internal
   
 SM_10_SMT_min:
   description: Minimum value of SM_10_SMT 
@@ -494,6 +501,7 @@ SM_10_SMT_min:
   dependency: SM_10_SMT  
   post_hour_func: SM_10_SMT
   aggregation: minimum
+  visibility: internal
   
 SM_10_SMT_max:
   description: Maximum value of SM_10_SMT 
@@ -501,6 +509,7 @@ SM_10_SMT_max:
   dependency: SM_10_SMT  
   post_hour_func: SM_10_SMT
   aggregation: maximum
+  visibility: internal
 
 SM_15:
   description: Soil moisture at 15 centimeters below surface (BeCycles sensor type at Exploratories) 
@@ -555,7 +564,8 @@ SM_20_SMT:
   physical_range: [0.1, 65.0]
   step_range: [0.0, 1000.0] 
   empirical_diff: 29.04
-  interpolation_mse: 100   
+  interpolation_mse: 100
+  visibility: internal
   
 SM_20_SMT_min:
   description: Minimum value of SM_20_SMT 
@@ -563,13 +573,15 @@ SM_20_SMT_min:
   dependency: SM_20_SMT  
   post_hour_func: SM_20_SMT
   aggregation: minimum
+  visibility: internal
   
 SM_20_SMT_max:
   description: Maximum value of SM_20_SMT 
   unit: '% (percentage of volumetric water content)'
   dependency: SM_20_SMT  
   post_hour_func: SM_20_SMT
-  aggregation: maximum    
+  aggregation: maximum
+  visibility: internal
   
 SM_30: 
   description: Soil moisture at 30 centimeters below surface (BeCycles sensor type at Exploratories) 

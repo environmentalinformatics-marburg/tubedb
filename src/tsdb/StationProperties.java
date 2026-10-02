@@ -23,8 +23,6 @@ import tsdb.util.TimestampInterval;
  */
 public class StationProperties implements Serializable{
 	private static final long serialVersionUID = -4558930650676952510L;
-	
-
 
 	public final static String PROPERTY_START = "DATE_START";
 	public final static String PROPERTY_END = "DATE_END";
