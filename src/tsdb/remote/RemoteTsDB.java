@@ -4,7 +4,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import tsdb.component.LoggerType;
 import tsdb.component.Region;
@@ -101,7 +100,9 @@ public interface RemoteTsDB extends Remote {
 	TimeSeriesMask getTimeSeriesSuspectMask(String stationName, String sensorName) throws RemoteException;
 	void setTimeSeriesMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask) throws RemoteException;
 	void addTimeSeriesMaskInterval(String station, String sensor, String start, String end, String user, String date, String comment, MaskType maskType) throws RemoteException;
-	List<MaskListEntry> getTimeSeriesMaskList(String station, String sensor, MaskType maskType) throws RemoteException;
+	ArrayList<MaskListEntry> getTimeSeriesMaskList(String stationName, String sensorName, MaskType maskType) throws RemoteException;
+	void addTimeSeriesMaskListEntry(MaskListEntry entry) throws RemoteException;
+	void setTimeSeriesMaskListEntry(MaskListEntry entry) throws RemoteException;
 	
 	// status
 	ArrayList<PlotStatus> getPlotStatus(String plotName, boolean withPlotMessage) throws RemoteException;

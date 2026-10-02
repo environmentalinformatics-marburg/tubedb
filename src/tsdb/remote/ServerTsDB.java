@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,10 +35,14 @@ import tsdb.iterator.EvaluatingAggregationIterator;
 import tsdb.iterator.MonthCollectingAggregator;
 import tsdb.iterator.WeekCollectingAggregator;
 import tsdb.iterator.YearCollectingAggregator;
+import tsdb.run.ClearLoadMasks;
 import tsdb.run.ConsoleRunner;
+import tsdb.run.command.ClearMasks;
 import tsdb.run.command.LoadMasks;
 import tsdb.run.command.LoadMasks.MaskType;
 import tsdb.streamdb.StreamIterator;
+import tsdb.util.AbstractTable.ColumnReaderString;
+import tsdb.util.AbstractTable.ColumnWriterString;
 import tsdb.util.AggregationInterval;
 import tsdb.util.DataEntry;
 import tsdb.util.DataQuality;
@@ -51,8 +54,6 @@ import tsdb.util.TimeSeriesMask;
 import tsdb.util.TimeUtil;
 import tsdb.util.TimestampInterval;
 import tsdb.util.TsEntry;
-import tsdb.util.AbstractTable.ColumnReaderIntFunc;
-import tsdb.util.AbstractTable.ColumnReaderString;
 import tsdb.util.iterator.TimestampSeries;
 import tsdb.util.iterator.TsIterator;
 
@@ -527,10 +528,10 @@ public class ServerTsDB implements RemoteTsDB {
 	@Override
 	public void addTimeSeriesMaskInterval(String station, String sensor, String start, String end, String user, String date, String comment, MaskType maskType) throws RemoteException {
 		String csvPath = tsdb.configDirectory + "/" + maskType.csvFiename;
-		
+
 		int timestampStart = TimeUtil.parseStartTimestamp(start);
 		int timestampEnd = TimeUtil.parseStartTimestamp(end);		
-		
+
 		File csvFile = new File(csvPath);
 		boolean fileExists = csvFile.exists();
 
@@ -550,7 +551,7 @@ public class ServerTsDB implements RemoteTsDB {
 					comment	            
 			};
 			writer.writeNext(row);
-			
+
 			LoadMasks.insertMask(tsdb, csvFile.toString(), row, station, sensor, timestampStart, timestampEnd, maskType, true);
 
 			Logger.info("Mask entry added: station={}, sensor={}, start={}, end={}", station, sensor, start, end);
@@ -558,47 +559,129 @@ public class ServerTsDB implements RemoteTsDB {
 			throw new RuntimeException(e);
 		}
 	}
-	
-	
+
 	@Override
-	public List<MaskListEntry> getTimeSeriesMaskList(String station, String sensor, MaskType maskType) throws RemoteException {
+	public ArrayList<MaskListEntry> getTimeSeriesMaskList(String stationName, String sensorName, MaskType maskType) throws RemoteException {
+		ArrayList<MaskListEntry> result = new ArrayList<MaskListEntry>();
+		
 		String csvPath = tsdb.configDirectory + "/" + maskType.csvFiename;
-		
-		List<MaskListEntry> list = new ArrayList<MaskListEntry>();
-		
 		File csvFile = new File(csvPath);
 		if(csvFile.exists()) {
-			
 			Logger.info("load mask " + maskType + " from " + csvFile);
-
 			Table maskTable = Table.readCSV(csvFile, ',');
 
 			ColumnReaderString colStation = maskTable.createColumnReader("station");
 			ColumnReaderString colSensor = maskTable.createColumnReader("sensor");
 			ColumnReaderString colStart = maskTable.createColumnReader("start");
 			ColumnReaderString colEnd = maskTable.createColumnReader("end");
+			ColumnReaderString colUser = maskTable.createSafeColumnReader("user", "");
+			ColumnReaderString colDate = maskTable.createSafeColumnReader("date", "");
+			ColumnReaderString colComment = maskTable.createSafeColumnReader("comment", "");
+			ColumnReaderString colRemoved = maskTable.createSafeColumnReader("removed", "");
 
-			for(String[] row:maskTable.rows) {
+			for(int rowIndex0 = 0; rowIndex0 < maskTable.rows.length; rowIndex0++) {
+				String[] row = maskTable.rows[rowIndex0];
 				if(Table.isNoComment(row) && row.length > 1) {
 					try {
-						String stationName = colStation.get(row);
-						if(station.equals(stationName)) {
-							String sensorName = colSensor.get(row);
-							if(sensor.equals(sensorName) || "*".equals(sensorName)) {
+						String station = colStation.get(row);
+						if(stationName.equals(station)) {
+							String sensor = colSensor.get(row);
+							if("*".equals(sensor) || sensorName.equals(sensor)) {
 								String start = colStart.get(row);
 								String end = colEnd.get(row);
-									list.add(new MaskListEntry(stationName, sensorName, start, end));
+								String user = colUser.get(row);
+								String date = colDate.get(row);
+								String comment = colComment.get(row);
+								String removed = colRemoved.get(row);
+
+								result.add(new MaskListEntry(maskType, (rowIndex0 + 2), stationName, sensorName, start, end, user, date, comment, removed));
 							}
 						}
 					} catch(Exception e) {
-						Logger.error(e+" in "+Arrays.toString(row));
+						Logger.error(e + "   line " + (rowIndex0 + 2) + " in " + Arrays.toString(row));
 					}
 				}
 			}
 		}
-		return list;
+
+		return result;
+	}
+	
+	@Override
+	public void addTimeSeriesMaskListEntry(MaskListEntry entry) throws RemoteException {
+		String csvPath = tsdb.configDirectory + "/" + entry.type.csvFiename;
+		File csvFile = new File(csvPath);
+		Logger.info("load mask " + entry.type + " from " + csvFile);
+		Table maskTable =  csvFile.exists() ? Table.readCSV(csvFile, ',') : Table.createEmpty();
+
+		ColumnWriterString colStation = maskTable.createColumnWriter("station", true);
+		ColumnWriterString colSensor = maskTable.createColumnWriter("sensor", true);
+		ColumnWriterString colStart = maskTable.createColumnWriter("start", true);
+		ColumnWriterString colEnd = maskTable.createColumnWriter("end", true);
+		ColumnWriterString colUser = maskTable.createExpandingColumnWriter("user", true);
+		ColumnWriterString colDate = maskTable.createExpandingColumnWriter("date", true);
+		ColumnWriterString colComment = maskTable.createExpandingColumnWriter("comment", true);
+		ColumnWriterString colRemoved = maskTable.createExpandingColumnWriter("removed", true);
+		
+		String[] row = maskTable.newEmptyRow();
+	    colStation.equalsValue(row, entry.station);
+	    colSensor.set(row, entry.sensor);
+	    colStart.set(row, entry.start);
+	    colEnd.set(row, entry.end);
+	    colUser.set(row, entry.user);
+	    colDate.set(row, entry.date);
+	    colComment.set(row, entry.comment);
+	    colRemoved.set(row, entry.removed);
+
+	    maskTable.addRow(row);
+	    maskTable.writeCSV(csvFile, ',');
 	}
 
+	
+	@Override
+	public void setTimeSeriesMaskListEntry(MaskListEntry entry) throws RemoteException {
+		String csvPath = tsdb.configDirectory + "/" + entry.type.csvFiename;
+		File csvFile = new File(csvPath);
+		
+	    if(!csvFile.exists()) {
+	        Logger.error("Mask file does not exist: " + csvFile);
+	        throw new RuntimeException("Mask file does not exist: " + csvPath);
+	    }
+	    
+	    Logger.info("update mask " + entry.type + " from " + csvFile + "   " + entry);
+	    Table maskTable = Table.readCSV(csvFile, ',');
+	    
+	    if(entry.line < 2 || entry.line > maskTable.rows.length + 1) {
+	        Logger.error("Invalid line number: " + entry.line + " (valid range: 2-" + (maskTable.rows.length + 1) + ")");
+	        throw new RuntimeException("Invalid line number: " + entry.line);
+	    }
+
+		ColumnWriterString colStation = maskTable.createColumnWriter("station", true);
+		ColumnWriterString colSensor = maskTable.createColumnWriter("sensor", true);
+		ColumnWriterString colStart = maskTable.createColumnWriter("start", true);
+		ColumnWriterString colEnd = maskTable.createColumnWriter("end", true);
+		ColumnWriterString colUser = maskTable.createExpandingColumnWriter("user", true);
+		ColumnWriterString colDate = maskTable.createExpandingColumnWriter("date", true);
+		ColumnWriterString colComment = maskTable.createExpandingColumnWriter("comment", true);
+		ColumnWriterString colRemoved = maskTable.createExpandingColumnWriter("removed", true);
+		
+	    int rowIndex = entry.line - 2;
+		String[] row = maskTable.rows[rowIndex];	    
+		row = colStation.set(row, entry.station);
+		row = colSensor.set(row, entry.sensor);
+		row = colStart.set(row, entry.start);
+		row = colEnd.set(row, entry.end);
+		row = colUser.set(row, entry.user);
+		row = colDate.set(row, entry.date);
+		row = colComment.set(row, entry.comment);
+		row = colRemoved.set(row, entry.removed);
+		maskTable.rows[rowIndex] = row;
+
+	    maskTable.writeCSV(csvFile, ',');
+	    
+	    new ClearMasks(tsdb).run();
+	    new LoadMasks(tsdb).run();
+	}
 	// ----- monitoring -------
 
 	@Override

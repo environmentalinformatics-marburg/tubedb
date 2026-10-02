@@ -3,7 +3,8 @@
     v-model="dialogVisible"
     title="How to Use the Mask App"
     width="600px"
-    :close-on-click-modal="true"
+    close-on-click-modal
+    draggable
     @close="onClose"
   >
     <div class="help-content">

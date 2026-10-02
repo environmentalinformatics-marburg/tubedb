@@ -58,6 +58,14 @@ public final class TimeUtil implements Serializable {
 		}
 		return oleMinutesToLocalDateTime(oleTimeMinutes).toString();
 	}
+	
+	public static String oleMinutesToHumanText(Long oleTimeMinutes) {
+		if(oleTimeMinutes == null || oleTimeMinutes < 0 || oleTimeMinutes > Integer.MAX_VALUE) {
+			return "---";
+		}
+		LocalDateTime datetime = oleMinutesToLocalDateTime(oleTimeMinutes);
+		return datetime.toLocalDate().toString() + " " + datetime.toLocalTime().toString();
+	}
 
 	public static String oleMinutesToText(Integer oleTimeMinutes) {
 		return oleMinutesToText((Long.valueOf(oleTimeMinutes)));

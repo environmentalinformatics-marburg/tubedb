@@ -2,8 +2,13 @@ package tsdb.web.api;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.rmi.RemoteException;
+import java.time.LocalDateTime;
 
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.UserIdentity;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.json.JSONWriter;
 import org.tinylog.Logger;
 
@@ -13,6 +18,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import tsdb.remote.MaskListEntry;
 import tsdb.remote.RemoteTsDB;
 import tsdb.run.command.LoadMasks.MaskType;
+import tsdb.util.TimeUtil;
+import tsdb.web.util.Web;
 
 public class Handler_masklist extends MethodHandler {
 
@@ -27,6 +34,9 @@ public class Handler_masklist extends MethodHandler {
 		case "GET":
 			handleGET(target, baseRequest, request, response);
 			break;
+		case "POST":
+			handlePOST(target, baseRequest, request, response);
+			break;			
 		default:
 			throw new RuntimeException("unknown HTTP method " + httpMethod);
 		}
@@ -62,7 +72,7 @@ public class Handler_masklist extends MethodHandler {
 			json.key("mask");
 
 			json.array();
-			
+
 			for(MaskListEntry e : tsdb.getTimeSeriesMaskList(stationName, sensorName, MaskType.INVALID)) {
 				e.writeJSON(json);
 			}
@@ -72,7 +82,7 @@ public class Handler_masklist extends MethodHandler {
 			json.key("suspect_mask");
 
 			json.array();
-			
+
 			for(MaskListEntry e : tsdb.getTimeSeriesMaskList(stationName, sensorName, MaskType.SUSPECT)) {
 				e.writeJSON(json);
 			}
@@ -86,5 +96,50 @@ public class Handler_masklist extends MethodHandler {
 			Logger.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	public synchronized void handlePOST(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		baseRequest.setHandled(true);
+		
+		Logger.info("handlePOST ");
+
+		response.setContentType("application/json;charset=utf-8");
+		JSONObject jsonReq = new JSONObject(new JSONTokener(request.getReader()));
+		String action = jsonReq.getString("action");
+		Logger.info(action);
+		switch(action) {
+		case "add": {
+			JSONObject jsonMask = jsonReq.getJSONObject("mask");
+			handleActionAdd(jsonMask, baseRequest, response);
+			break;
+		}
+		case "remove": {
+			JSONObject jsonMask = jsonReq.getJSONObject("mask");
+			handleActionRemove(jsonMask, baseRequest, response);
+			break;
+		}
+		default:
+			Logger.error("unknown action");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	private void handleActionAdd(JSONObject jsonMask, Request baseRequest, HttpServletResponse response) throws RemoteException {
+		MaskListEntry maskListEntry = MaskListEntry.fromJSON(jsonMask);
+		tsdb.addTimeSeriesMaskListEntry(maskListEntry);			
+	}
+	
+	private void handleActionRemove(JSONObject jsonMask, Request baseRequest, HttpServletResponse response) throws RemoteException {
+		MaskListEntry maskListEntry = MaskListEntry.fromJSON(jsonMask);
+		String date = TimeUtil.oleMinutesToHumanText(TimeUtil.dateTimeToOleMinutes(LocalDateTime.now()));
+		String userName = "anonymous";
+		UserIdentity identity = Web.getUserIdentity(baseRequest);
+		if(identity != null) {
+			String user = identity.getUserPrincipal().getName();
+			if(user != null && !user.isBlank()) {
+				userName = user;
+			}
+		}
+		tsdb.setTimeSeriesMaskListEntry(maskListEntry.asRemoved("removed at " + date + " by " + userName));		
 	}
 }

@@ -2,6 +2,7 @@ package tsdb.web.api;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.UserIdentity;
@@ -17,6 +18,7 @@ import tsdb.remote.RemoteTsDB;
 import tsdb.run.command.LoadMasks.MaskType;
 import tsdb.util.Interval;
 import tsdb.util.TimeSeriesMask;
+import tsdb.util.TimeUtil;
 import tsdb.web.util.Web;
 
 public class Handler_mask extends MethodHandler {
@@ -115,7 +117,7 @@ public class Handler_mask extends MethodHandler {
 		Logger.info(action);
 		switch(action) {
 		case "add": {
-			JSONObject content = jsonReq.getJSONObject("content");
+			JSONObject content = jsonReq.getJSONObject("mask");
 			handleActionAdd(content, baseRequest, response);
 			break;
 		}
@@ -169,9 +171,11 @@ public class Handler_mask extends MethodHandler {
 			comment = "";
 		}
 		comment = comment.strip();
-
+		
+		String date = TimeUtil.oleMinutesToText(TimeUtil.dateTimeToOleMinutes(LocalDateTime.now()));
+		
 		try {
-			tsdb.addTimeSeriesMaskInterval(station, sensor, start, end, userName, String.valueOf(System.currentTimeMillis()), comment, maskType);
+			tsdb.addTimeSeriesMaskInterval(station, sensor, start, end, userName, date, comment, maskType);
 
 			response.setStatus(HttpServletResponse.SC_OK);
 			response.getWriter().write("{\"status\":\"success\"}");

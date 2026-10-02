@@ -17,12 +17,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, shallowRef, onMounted } from 'vue'
 
 import Shell from '@/components/Shell.vue'
 import { getFriendlyErrorMessage } from '@/utils/errorMessages'
 
-const metaData = ref(null)
+const metaData = shallowRef(null)
 const metaDataLoading = ref(false)
 const metaDataError = ref(null)
 

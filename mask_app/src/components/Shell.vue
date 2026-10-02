@@ -167,8 +167,23 @@
       </div>
 
       <div class="toolbar-right">
+
+        <el-popover
+          title="Settings"
+          :width="200"
+          trigger="hover"
+        >
+          <template #reference>
+            <el-button
+              circle          
+              icon="Setting"
+            />
+          </template>
+
+          <el-checkbox v-model="showMasks" label="Show stored masks" />
+        </el-popover>       
+
         <el-button
-          type="info"
           circle
           @click="showHelpDialog = true"
           icon="QuestionFilled"
@@ -179,7 +194,7 @@
 
     <!-- Dialog Component -->
     <HelpDialog v-model="showHelpDialog" />
-    <MaskListDialog v-model="showMaskListDialog" :plot="selectedPlot" :sensor="selectedSensor" :mask="mask" />
+    <MaskListDialog v-model="showMaskListDialog" :plot="selectedPlot" :sensor="selectedSensor" :mask="mask" @changed="fetchMask()"/>
 
     <!-- Main Content -->
     <div ref="mainContent" class="main-content">
@@ -206,6 +221,7 @@
         :data_cmp="dataCmp"
         :yAxisRangeConfig_cmp="yAxisRangeConfig_cmp"
         :mask="mask"
+        :showMasks="showMasks"
         @selection-change="maskSelection = $event"
         ref="viewerRef" 
       />
@@ -262,7 +278,6 @@
         </el-button>
 
         <el-button
-          type="info"
           circle
           icon="Grid"
           title="Mask list"
@@ -274,7 +289,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed, watch, toRaw } from 'vue'
+import { ref, shallowRef, onMounted, onBeforeUnmount, computed, watch, toRaw } from 'vue'
 import { ElMessage } from 'element-plus'
 
 import Viewer from '@/components/Viewer.vue'
@@ -298,6 +313,8 @@ const selectedQC = ref('basic');
 const timeAggregation = ref('day');
 const selectedSensorCmp = ref('');
 const selectedPlotCmp = ref('');
+
+const showMasks = ref(true);
 
 // Dialog State
 const showHelpDialog = ref(false);
@@ -416,7 +433,7 @@ const yAxisRangeOptions_cmp = [
   { label: '  -30 –     30', value: 'fixed_30', min: -30, max: 30 },
   { label: ' -100 –    100', value: 'fixed_100', min: -100, max: 100 },
   { label: '-1000 –   1000', value: 'fixed_1000', min: -1000, max: 1000 },  
-  { label: '    0 –    0.1', value: 'fixed_p01', min: 0.1, max: 0.1 },
+  { label: '    0 –    0.1', value: 'fixed_p01', min: 0, max: 0.1 },
   { label: '    0 –      1', value: 'fixed_p1', min: 0, max: 1 },
   { label: '    0 –      5', value: 'fixed_p5', min: 0, max: 5 },  
   { label: '    0 –     10', value: 'fixed_p10', min: 0, max: 10 },
@@ -597,16 +614,16 @@ onBeforeUnmount(() => {
   }
 });
 
-const data = ref(null);
+const data = shallowRef(null);
 const dataLoading = ref(false);
 const dataError = ref(null);
 
-const dataCmp = ref(null);
+const dataCmp = shallowRef(null);
 const dataCmpLoading = ref(false);
 const dataCmpError = ref(null);
 
 function convertFloat32ArrayToArray(a) {
-  let r = [];
+  let r = new Array(a.length);
   for(let i = 0; i < a.length; i++) {
     let v = a[i];
     r[i] = Number.isFinite(v) ? v : null;
@@ -615,7 +632,7 @@ function convertFloat32ArrayToArray(a) {
 }
 
 function convertInt32ArrayToArray(a) {
-  let r = [];
+  const r = new Uint32Array(a.length);
   for(let i = 0; i < a.length; i++) {
     let t = a[i];
     r[i] = (t - 36819360 - 60) * 60;
@@ -719,7 +736,7 @@ const fetchDataCmp = async () => {
       body: JSON.stringify({
       settings: {
         timeAggregation: timeAggregation.value,
-        quality: 'step',
+        quality: selectedQC.value,
       },  
       timeseries: timeseries,
       })
@@ -823,7 +840,7 @@ const maskSelectionSave = async () => {
       },
       body: JSON.stringify({
         action: 'add',
-        content: {
+        mask: {
           type: maskType.value,
           station: selectedPlot.value,
           sensor: selectedSensor.value,

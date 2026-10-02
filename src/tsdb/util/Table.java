@@ -3,17 +3,23 @@ package tsdb.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.tinylog.Logger;
 
 import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
+import com.opencsv.ICSVWriter;
 
 /**
  * Helper class to read csv files and get data as a table
@@ -27,7 +33,13 @@ public class Table extends AbstractTable {
 	 */
 	public String[][] rows;
 
-	protected Table() {}
+	protected Table() {
+		rows = new String[0][];
+	}
+
+	public static Table createEmpty() {
+		return new Table();
+	}
 
 	public static Table readCSV(Path filename, char separator) {
 		return readCSV(filename.toFile(),separator);
@@ -36,7 +48,7 @@ public class Table extends AbstractTable {
 	public static Table readCSV(String filename, char separator) {
 		return readCSV(new File(filename), separator);
 	}
-	
+
 	/**
 	 * create a Table Object from CSV-File
 	 * @param filename
@@ -50,7 +62,7 @@ public class Table extends AbstractTable {
 			return null;
 		}
 	}
-	
+
 	public static Table readCSV(InputStream in, char separator) {
 		try(InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
 			return readCSV(reader, separator);			
@@ -59,7 +71,7 @@ public class Table extends AbstractTable {
 			return null;
 		}
 	}
-	
+
 	public static Table readCSV(Reader reader, char separator) {
 		try {
 			Table table = new Table();
@@ -86,7 +98,7 @@ public class Table extends AbstractTable {
 		}
 		return table;	 	
 	}
-	
+
 	public static Table readCSVFirstDataRow(String filename, char separator) {
 		try {
 			return readCSVFirstDataRow(new FileReader(filename), separator);
@@ -95,7 +107,7 @@ public class Table extends AbstractTable {
 			return null;
 		}
 	}
-	
+
 	public static Table readCSVFirstDataRow(Reader reader, char separator) {
 		try {
 			Table table = new Table();
@@ -123,7 +135,7 @@ public class Table extends AbstractTable {
 		String[][] tabeRows = dataRowList.toArray(new String[0][]);
 		this.rows = tabeRows;
 	}
-	
+
 	public static ArrayList<String[]> readRowList(CSVReader reader) throws IOException {
 		ArrayList<String[]> dataRowList = new ArrayList<String[]>();
 		String[] curRow = reader.readNextSilently();
@@ -132,6 +144,39 @@ public class Table extends AbstractTable {
 			curRow = reader.readNextSilently();
 		}				
 		return dataRowList;
+	}
+
+	public void writeCSV(File file, char separator) {
+		File tempFile = null;
+		try {
+			File parentDir = file.getParentFile();
+			if(parentDir != null && !parentDir.exists()) {
+				parentDir.mkdirs();
+			}
+			tempFile = File.createTempFile(file.getName(), ".tmp", parentDir);
+			 tempFile.deleteOnExit();
+
+			try (
+					FileWriter writer = new FileWriter(tempFile, StandardCharsets.UTF_8); 
+					CSVWriter csvWriter = new CSVWriter(writer, separator, ICSVWriter.DEFAULT_QUOTE_CHARACTER, ICSVWriter.DEFAULT_ESCAPE_CHARACTER, ICSVWriter.DEFAULT_LINE_END)
+					) {
+				csvWriter.writeNext(names, false);
+				for (String[] row : rows) {
+					csvWriter.writeNext(row, false);
+				}
+			}
+
+			Files.move(tempFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			tempFile = null;
+
+		} catch (IOException e) {
+			Logger.error("Error writing CSV file: " + file.getAbsolutePath(), e);
+			throw new RuntimeException(e);
+		} finally {
+			if(tempFile != null && tempFile.exists()) {
+				tempFile.delete();
+			}
+		}
 	}
 
 	/**
@@ -170,5 +215,14 @@ public class Table extends AbstractTable {
 			s.append('\n');
 		}
 		return s.toString();
+	}
+
+	public void addRow(String[] row) {
+		rows = Arrays.copyOf(rows, rows.length + 1);
+		rows[rows.length - 1] = row;
+	}
+
+	public String[] newEmptyRow() {
+		return new String[names.length];
 	}
 }

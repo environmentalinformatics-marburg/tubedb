@@ -43,7 +43,11 @@ const props = defineProps({
   mask: {
     type: [Object, null],
     required: true,
-  }
+  },
+  showMasks: {
+    type: Boolean,
+    default: true
+  },  
 });
 
 const emit = defineEmits(['selection-change']);
@@ -257,6 +261,12 @@ watch(() => props.mask, () => {
   }
 });
 
+watch(() => props.showMasks, () => {
+  if (uplotDiagram.value && uplotDiagram.value._chart) {
+    uplotDiagram.value._chart.redraw();
+  }
+});
+
 watch(() => props.yAxisRangeConfig_cmp, (newConfig) => {
   if (uplotDiagram_cmp.value && uplotDiagram_cmp.value._chart) {
     const u = uplotDiagram_cmp.value._chart;
@@ -349,6 +359,10 @@ function markPlugin(opts) {
 function maskPlugin(opts) {
 
   function draw(u) {
+        if(!props.showMasks) {
+          return;
+        }
+
         if(props.mask === null) {
           return;
         }
@@ -360,9 +374,6 @@ function maskPlugin(opts) {
         for (const interval of props.mask.suspect_mask) {
           const start = (interval[0] - 36819360 - 60) * 60;
           const end = (interval[1] - 36819360 - 60) * 60;
-          if (start === null && end === null) {
-            return;
-          }
 
           let x1, x2;
 
@@ -378,18 +389,15 @@ function maskPlugin(opts) {
             x2 = u.valToPos(end, 'x', true);
           }
 
-          if (x1 === null || x2 === null) return;
-
-          ctx.fillStyle = 'rgba(222, 222, 66, 0.3)';
-          ctx.fillRect(x1, bbox.top, x2 - x1, bbox.height);
+          if (x1 !== null && x2 !== null) {
+            ctx.fillStyle = 'rgba(222, 222, 66, 0.3)';
+            ctx.fillRect(x1, bbox.top, x2 - x1, bbox.height);
+          }          
         }
 
         for (const interval of props.mask.mask) {
           const start = (interval[0] - 36819360 - 60) * 60;
           const end = (interval[1] - 36819360 - 60) * 60;
-          if (start === null && end === null) {
-            return;
-          }
 
           let x1, x2;
 
@@ -405,10 +413,10 @@ function maskPlugin(opts) {
             x2 = u.valToPos(end, 'x', true);
           }
 
-          if (x1 === null || x2 === null) return;
-
-          ctx.fillStyle = 'rgba(222, 66, 66, 0.3)';
-          ctx.fillRect(x1, bbox.top, x2 - x1, bbox.height);          
+          if (x1 !== null && x2 !== null) {
+            ctx.fillStyle = 'rgba(222, 66, 66, 0.3)';
+            ctx.fillRect(x1, bbox.top, x2 - x1, bbox.height);        
+          }            
         }
 
         ctx.restore();

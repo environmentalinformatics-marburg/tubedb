@@ -12,7 +12,6 @@ import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.TsDBFactory;
 import tsdb.component.Region;
-import tsdb.run.command.LoadMasks.MaskType;
 import tsdb.util.AbstractTable.ColumnReaderIntFunc;
 import tsdb.util.AbstractTable.ColumnReaderString;
 import tsdb.util.Interval;
@@ -30,7 +29,7 @@ public class LoadMasks {
 	public static void main(String[] args) {
 		try(TsDB tsdb = TsDBFactory.createDefault()) {
 			LoadMasks updateMasks = new LoadMasks(tsdb);
-			updateMasks.run(tsdb.configDirectory);
+			updateMasks.run();
 		} catch (Exception e) {
 			Logger.error(e);
 		}		
@@ -38,7 +37,10 @@ public class LoadMasks {
 
 	public LoadMasks(TsDB tsdb) {
 		this.tsdb = tsdb;
-	}	
+	}
+	public void run() {
+		run(tsdb.configDirectory);
+	}
 
 	public void run(String configDirectory) {
 
@@ -121,14 +123,16 @@ public class LoadMasks {
 			ColumnReaderString colSensor = maskTable.createColumnReader("sensor");
 			ColumnReaderIntFunc colStart = maskTable.createColumnReaderInt("start",TimeUtil::parseStartTimestamp);
 			ColumnReaderIntFunc colEnd = maskTable.createColumnReaderInt("end",TimeUtil::parseEndTimestamp);
+			ColumnReaderString colRemoved = maskTable.createSafeColumnReader("removed", "");
 
-			for(String[] row:maskTable.rows) {
-				if(Table.isNoComment(row) && row.length > 1) {
+			for(int rowIndex0 = 0; rowIndex0 < maskTable.rows.length; rowIndex0++) {
+				String[] row = maskTable.rows[rowIndex0];
+				if(row.length > 1 && Table.isNoComment(row) && colRemoved.get(row).isBlank()) {
 					try {
 						String stationName = colStation.get(row);
 						Station station = tsdb.getStation(stationName);
 						if(station == null) {
-							Logger.warn("mask: station not found " + stationName + "  at " + filename + "   in " + Arrays.toString(row));
+							Logger.warn("mask: station not found " + stationName + "  at " + filename + "   line " + (rowIndex0 + 2) + "   in " + Arrays.toString(row));
 						} else {
 							int start = colStart.get(row);
 							int end = colEnd.get(row);
@@ -144,7 +148,7 @@ public class LoadMasks {
 							}
 						}
 					} catch(Exception e) {
-						Logger.error(e+" in "+Arrays.toString(row));
+						Logger.error(e + "   line " + (rowIndex0 + 2) + " in " + Arrays.toString(row));
 					}
 				}
 			}

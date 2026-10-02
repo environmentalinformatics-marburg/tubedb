@@ -14,7 +14,7 @@ public class ClearMasks {
 	public static void main(String[] args) {
 		try(TsDB tsdb = TsDBFactory.createDefault()) {
 			ClearMasks clearMasks = new ClearMasks(tsdb);
-			clearMasks.run(tsdb.configDirectory);
+			clearMasks.run();
 		} catch (Exception e) {
 			Logger.error(e);
 		}		
@@ -22,7 +22,11 @@ public class ClearMasks {
 
 	public ClearMasks(TsDB tsdb) {
 		this.tsdb = tsdb;
-	}	
+	}
+	
+	public void run() {
+		run(tsdb.configDirectory);
+	}
 
 	public void run(String configDirectory) {		
 		try {		

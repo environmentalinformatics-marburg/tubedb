@@ -2,8 +2,9 @@
   <el-dialog
     v-model="dialogVisible"
     title="Mask List"
-    width="700px"
-    :close-on-click-modal="true"
+    width="1200px"
+    close-on-click-modal
+    draggable
     @open="fetchMaskList"
     @close="onClose"
   >
@@ -43,72 +44,74 @@
       <!-- Invalid Masks -->
       <div class="mask-section">
         <div class="mask-section-header">
-          <span class="mask-title mask-title-invalid">Invalid</span>
-          <el-tag size="small" type="danger" effect="plain" round>
-            {{ invalidMasks.length }}
+          <span>Masks</span>
+          <el-tag size="small" effect="plain" round>
+            {{ masks.length }}
           </el-tag>
         </div>
 
         <el-table
-          :data="invalidMasks"
+          :data="masks"
           size="small"
           border
           stripe
-          max-height="250"
-          empty-text="No invalid masks"
+          empty-text="No masks"
         >
-          <el-table-column type="index" label="#" width="50" align="center" />
-          <el-table-column label="Start" min-width="150" sortable
-            :sort-method="(a, b) => sortTime(a, b, 'start')">
-            <template #default="{ row }">
-              <span :class="{ wildcard: isWildcard(row.start) }">{{ formatTime(row.start) }}</span>
+        <el-table-column label="Time Interval" header-align="center">
+          <el-table-column label="Type" width="70" prop="type" sortable show-overflow-tooltip header-align="center">
+            </el-table-column>
+            <el-table-column label="Start" width="90" prop="start" sortable
+              :sort-method="(a, b) => sortTimeStart(a, b, 'start')" header-align="center">
+              <template #default="{ row }">
+                <span>{{ formatTime(row.start) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="End" width="90" prop="end" sortable
+              :sort-method="(a, b) => sortTimeEnd(a, b, 'end')" header-align="center">
+              <template #default="{ row }">
+                <span>{{ formatTime(row.end) }}</span>
+              </template>
+            </el-table-column>
+          </el-table-column>
+          <el-table-column label="Origin" header-align="center">  
+            <el-table-column label="User" width="100" prop="user" sortable show-overflow-tooltip header-align="center">
+            </el-table-column>
+            <el-table-column label="Date" width="120" prop="date" sortable show-overflow-tooltip header-align="center">
+               <template #default="{ row }">
+                <span>{{ formatTime(row.date) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="Comment" prop="comment" sortable show-overflow-tooltip header-align="center">
+            </el-table-column>
+          </el-table-column>
+          <el-table-column header-align="right">
+            <template #header>
+              <div class="admin-header">
+                <span><el-switch
+                  v-model="showRemoved"
+                  size="small"
+                  title="Show old removed mask entries"
+                  @click.stop
+                />Show Removed</span>
+              </div>
             </template>
-          </el-table-column>
-          <el-table-column label="End" min-width="150" sortable
-            :sort-method="(a, b) => sortTime(a, b, 'end')">
-            <template #default="{ row }">
-              <span :class="{ wildcard: isWildcard(row.end) }">{{ formatTime(row.end) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Comment" min-width="180" show-overflow-tooltip>
-            <template #default="{ row }">{{ row.comment || '–' }}</template>
-          </el-table-column>
-        </el-table>
-      </div>
-
-      <!-- Suspect Masks -->
-      <div class="mask-section">
-        <div class="mask-section-header">
-          <span class="mask-title mask-title-suspect">Suspect</span>
-          <el-tag size="small" type="warning" effect="plain" round>
-            {{ suspectMasks.length }}
-          </el-tag>
-        </div>
-
-        <el-table
-          :data="suspectMasks"
-          size="small"
-          border
-          stripe
-          max-height="250"
-          empty-text="No suspect masks"
-        >
-          <el-table-column type="index" label="#" width="50" align="center" />
-          <el-table-column label="Start" min-width="150" sortable
-            :sort-method="(a, b) => sortTime(a, b, 'start')">
-            <template #default="{ row }">
-              <span :class="{ wildcard: isWildcard(row.start) }">{{ formatTime(row.start) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="End" min-width="150" sortable
-            :sort-method="(a, b) => sortTime(a, b, 'end')">
-            <template #default="{ row }">
-              <span :class="{ wildcard: isWildcard(row.end) }">{{ formatTime(row.end) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Comment" min-width="180" show-overflow-tooltip>
-            <template #default="{ row }">{{ row.comment || '–' }}</template>
-          </el-table-column>
+           
+            <el-table-column label="Operations" :width="showRemoved ? 80 : 150" header-align="center">
+              <template #default="scope">
+                <el-button
+                  v-if="!scope.row.removed"
+                  size="small"
+                  icon="Delete"
+                  circle
+                  :loading="removingRow === scope.row"
+                  @click.prevent="removeRow(scope.row)"
+                  title="Remove mask entry"
+                />
+              </template>            
+            </el-table-column>
+            <el-table-column label="Removed" v-if="showRemoved" width="120" prop="removed" sortable show-overflow-tooltip header-align="center">
+            </el-table-column>
+          </el-table-column>           
         </el-table>
       </div>
     </div>
@@ -123,7 +126,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { Loading, Warning } from '@element-plus/icons-vue'
 import { getFriendlyErrorMessage } from '@/utils/errorMessages'
 
@@ -142,13 +145,14 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:modelValue', 'close'])
+const emit = defineEmits(['update:modelValue', 'close', 'changed'])
 
 const dialogVisible = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value)
 })
 
+const showRemoved = ref(false);
 const maskData = ref(null);
 const loading = ref(false);
 const error = ref(null);
@@ -190,8 +194,20 @@ watch([() => props.plot, () => props.sensor], () => {
   }
 });
 
-const invalidMasks = computed(() => maskData.value?.mask ?? [])
-const suspectMasks = computed(() => maskData.value?.suspect_mask ?? [])
+const invalidMasks = computed(() => maskData.value?.mask ?? []);
+const suspectMasks = computed(() => maskData.value?.suspect_mask ?? []);
+const masks = computed(() => {
+  const allMasks = [
+    ...(maskData.value?.mask ?? []),
+    ...(maskData.value?.suspect_mask ?? [])
+  ];
+  
+  if (!showRemoved.value) {
+    return allMasks.filter(row => !row.removed);
+  }
+  
+  return allMasks;
+});
 
 const isWildcard = (value) =>
   value === undefined || value === null || value === '' || value === '*'
@@ -201,7 +217,13 @@ const formatTime = (value) => {
   return String(value).replace('T', ' ')
 }
 
-const sortTime = (a, b, key) => {
+const sortTimeStart = (a, b, key) => {
+  const av = isWildcard(a[key]) ? '1000-01-01' : a[key]
+  const bv = isWildcard(b[key]) ? '1000-01-01' : b[key]
+  return String(av).localeCompare(String(bv))
+}
+
+const sortTimeEnd = (a, b, key) => {
   const av = isWildcard(a[key]) ? '9999-12-31' : a[key]
   const bv = isWildcard(b[key]) ? '9999-12-31' : b[key]
   return String(av).localeCompare(String(bv))
@@ -214,6 +236,71 @@ const closeDialog = () => {
 const onClose = () => {
   emit('close')
 }
+
+const removingRow = ref(null);
+
+const removeRow = async (row) => {
+  if (!row || removingRow.value) return;
+
+  // Bestätigungsdialog vor dem Entfernen
+  try {
+    await ElMessageBox.confirm(
+      'Do you really want to remove this mask entry?',
+      'Remove mask',
+      {
+        confirmButtonText: 'Remove',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }
+    );
+  } catch {
+    return; // vom Benutzer abgebrochen
+  }
+
+  removingRow.value = row;
+
+  try {
+    const payload = {
+      station: props.plot,
+      sensor: props.sensor,
+      ...row // type, start, end, user, date, comment etc.
+    };
+
+    const response = await fetch('/tsdb/masklist', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'remove',
+        mask: {
+          ...row,
+        }
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(getFriendlyErrorMessage(response.status));
+    }
+
+    ElMessage.success('Mask entry removed');
+
+    await fetchMaskList();
+
+    emit('changed', {
+      action: 'remove',
+      station: props.plot,
+      sensor: props.sensor,
+      mask: row,
+    });
+
+  } catch (err) {
+    console.error(err);
+    ElMessage.error('Failed to remove mask: ' + err.message);
+  } finally {
+    removingRow.value = null;
+  }
+};
 </script>
 
 <style scoped>
@@ -278,8 +365,6 @@ const onClose = () => {
   color: #c5c503;
 }
 
-.wildcard {
-  color: #909399;
-  font-style: italic;
-}
+
+
 </style>

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.UnaryOperator;
@@ -42,6 +43,25 @@ public abstract class AbstractTable {
 			};
 		}
 	}
+	public static class SafeColumnReaderString extends ColumnReaderString {
+		private final String missing;
+		public SafeColumnReaderString(int rowIndex, String missing) {
+			super(rowIndex);
+			this.missing = missing;
+		}
+		public String get(String[] row) {
+			return row.length > rowIndex ? row[rowIndex] : missing;
+		}
+		public SafeColumnReaderString then(UnaryOperator<String> func) {
+			SafeColumnReaderString outher = this;
+			return new SafeColumnReaderString(rowIndex, missing) {				
+				@Override
+				public String get(String[] row) {
+					return func.apply(outher.get(row));
+				}				
+			};
+		}
+	}	
 	public static class ColumnReaderStringMissing extends ColumnReaderString {
 		private String missing;
 		public ColumnReaderStringMissing(String missing) {
@@ -217,10 +237,10 @@ public abstract class AbstractTable {
 		public long get(String[] row);
 	}
 	public static class ColumnReaderTimestampTwoCols implements ColumnReaderTimestamp {
-	
+
 		private final int rowIndexDate;
 		private final int rowIndexTime;
-	
+
 		public ColumnReaderTimestampTwoCols(int rowIndexDate, int rowIndexTime) {
 			this.rowIndexDate = rowIndexDate;
 			this.rowIndexTime = rowIndexTime;
@@ -348,6 +368,47 @@ public abstract class AbstractTable {
 			}
 		}
 	}
+
+	public static class ColumnWriter {
+		public final int rowIndex;
+		public ColumnWriter(int rowIndex) {
+			throwFalse(rowIndex >= 0);
+			this.rowIndex = rowIndex;
+		}
+	}
+
+	public static class ColumnWriterString extends ColumnWriter {
+		public ColumnWriterString(int rowIndex) {
+			super(rowIndex);
+		}
+		public String[] set(String[] row, String value) {
+			row[rowIndex] = value;
+			return row;
+		}
+		public boolean equalsValue(String[] row, String value) {
+			return value.equals(row[rowIndex]);			
+		}
+	}
+
+	public static class ExpandingColumnWriterString extends ColumnWriterString {
+		public ExpandingColumnWriterString(int rowIndex) {
+			super(rowIndex);
+		}
+		public String[] set(String[] row, String value) {
+			if(row.length <= rowIndex) {
+				row = Arrays.copyOf(row, rowIndex + 1);
+			} 
+			row[rowIndex] = value;
+			return row;
+		}
+		public boolean equalsValue(String[] row, String value) {
+			return row.length <= rowIndex ? false : value.equals(row[rowIndex]);			
+		}
+	}
+
+
+
+
 	public static interface ReaderConstructor<T> {
 		T create(int a);
 	}
@@ -359,9 +420,14 @@ public abstract class AbstractTable {
 	 * header name -> column position
 	 */
 	public Map<String, Integer> nameMap;
+	
+	protected AbstractTable() {
+		updateNames(new String[0]);
+	}	
+	
 	public void updateNames(String[] columnNames) {
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
-	
+
 		StringBuilder dublicatesReplaced = null;
 		for(int i=0;i<columnNames.length;i++) {
 			if(map.containsKey(columnNames[i])) {
@@ -389,10 +455,19 @@ public abstract class AbstractTable {
 		if(dublicatesReplaced != null) {
 			Logger.warn("dublicatesReplaced:" + dublicatesReplaced.toString());
 		}
-	
+
 		this.names = columnNames;
 		this.nameMap = map;
 	}
+
+	public int addColumn(String name) {
+		String[] newNames = Arrays.copyOf(names, names.length + 1);
+		int newIndex = newNames.length - 1;
+		newNames[newIndex] = name;
+		updateNames(newNames);
+		return newIndex;
+	}
+
 	/**
 	 * get column position of one header name
 	 * @param name
@@ -435,6 +510,13 @@ public abstract class AbstractTable {
 			return new ColumnReaderStringMissing(missing);
 		}
 		return new ColumnReaderString(columnIndex);
+	}
+	public ColumnReaderString createSafeColumnReader(String name, String missing) {
+		int columnIndex = getColumnIndex(name, false);
+		if(columnIndex<0) {
+			return new ColumnReaderStringMissing(missing);
+		}
+		return new SafeColumnReaderString(columnIndex, missing);
 	}
 	public ColumnReaderFloat createColumnReaderFloat(String name) {
 		int columnIndex = getColumnIndex(name);
@@ -500,7 +582,7 @@ public abstract class AbstractTable {
 		if(columnIndexTime<0) {
 			return null;
 		}
-	
+
 		return new ColumnReaderTimestampTwoCols(columnIndexDate, columnIndexTime);	
 	}
 	public ColumnReaderSlashTimestamp createColumnReaderSlashTimestamp(String name) {
@@ -549,5 +631,27 @@ public abstract class AbstractTable {
 			return null;
 		}
 		return readerConstructor.create(columnIndex);
+	}
+
+	public ColumnWriterString createColumnWriter(String name, boolean addColumnifMissing) {
+		int columnIndex = getColumnIndex(name);
+		if(columnIndex<0) {
+			if(!addColumnifMissing) {
+				return null;
+			}
+			columnIndex = addColumn(name);
+		}
+		return new ColumnWriterString(columnIndex);
+	}
+
+	public ExpandingColumnWriterString createExpandingColumnWriter(String name, boolean addColumnifMissing) {
+		int columnIndex = getColumnIndex(name);
+		if(columnIndex<0) {
+			if(!addColumnifMissing) {
+				return null;
+			}
+			columnIndex = addColumn(name);
+		}
+		return new ExpandingColumnWriterString(columnIndex);
 	}
 }
