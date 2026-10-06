@@ -347,6 +347,11 @@ function markPlugin(opts) {
 
         if (x1 === null || x2 === null) return;
 
+        x1 = Math.max(bbox.left, x1);
+        x2 = Math.max(bbox.left, x2);
+        x1 = Math.min(bbox.left + bbox.width, x1); 
+        x2 = Math.min(bbox.left + bbox.width, x2); 
+
         ctx.save();
         ctx.fillStyle = 'rgba(66, 133, 244, 0.3)';
         ctx.fillRect(x1, bbox.top, x2 - x1, bbox.height);
@@ -390,6 +395,10 @@ function maskPlugin(opts) {
           }
 
           if (x1 !== null && x2 !== null) {
+            x1 = Math.max(bbox.left, x1);
+            x2 = Math.max(bbox.left, x2);
+            x1 = Math.min(bbox.left + bbox.width, x1); 
+            x2 = Math.min(bbox.left + bbox.width, x2); 
             ctx.fillStyle = 'rgba(222, 222, 66, 0.3)';
             ctx.fillRect(x1, bbox.top, x2 - x1, bbox.height);
           }          
@@ -414,6 +423,10 @@ function maskPlugin(opts) {
           }
 
           if (x1 !== null && x2 !== null) {
+            x1 = Math.max(bbox.left, x1);
+            x2 = Math.max(bbox.left, x2);
+            x1 = Math.min(bbox.left + bbox.width, x1); 
+            x2 = Math.min(bbox.left + bbox.width, x2);            
             ctx.fillStyle = 'rgba(222, 66, 66, 0.3)';
             ctx.fillRect(x1, bbox.top, x2 - x1, bbox.height);        
           }            
@@ -450,12 +463,10 @@ const options_cmp = computed(() => ({
   scales: {
     "y": {
       auto: (self, resetScales) => {
-        console.log(resetScales);
         //return true;
         return props.yAxisRangeConfig_cmp.min === null || props.yAxisRangeConfig_cmp.max === null;
       },
       range: (self, initMin, initMax) => {
-          console.log(initMin + ' ' + initMax);
           //return [initMin, initMax];
           return [
             props.yAxisRangeConfig_cmp.min === null ? initMin : props.yAxisRangeConfig_cmp.min, 
@@ -526,79 +537,75 @@ const _timeAxisStamps = [
 	[0.001,       ":{ss}.{fff}",   "\n{YYYY}-{MM}-{DD} {HH}:{mm}", null,   "\n{MMM}-{D} {HH}:{mm}",  null,   "\n{HH}:{mm}", null, 1],
 ];
 
-const options = computed(() => ({
-  width: props.width,
-  height: uplotDiagram_cmp.value ? props.height - (props.height / 2) : props.height,
-  padding: [0, 0, 0, 0],
-  legend: {
-    show: false
-  },
-  cursor: {
-    x: true,
-    y: false,
-    drag: {
-      x: false,
+const options = computed(() => {
+  const hasTwoDatasets = props.data.length === 2;
+
+  const diagramHeight = uplotDiagram_cmp.value ? props.height - props.height / 2 : props.height;
+
+  const createGrid = () => ({
+    stroke: 'rgba(0,0,0,0.1)',
+    width: 1,
+    dash: [2, 2],
+  });
+  const createTicks = () => ({ show: false });
+
+  const createSeries = () => {
+    let series = [];
+    if (props.data.length > 1) {
+      series.unshift({
+        stroke: 'rgba(0,0,0,0.9)',
+        width: 1,
+        fill: 'rgba(0,0,0,0.07)',
+      });
+    }
+    if (props.data.length === 3) {
+      series.unshift({ stroke: 'rgba(100,100,255,1)', width: 1 }); // cmp_plot sensor  or   plot cmp_sensor 
+    }
+    if (props.data.length === 5) {
+      series.unshift({ stroke: 'rgba(100,100,255,1)', width: 1 }); // cmp_plot sensor
+      series.unshift({ stroke: 'rgba(0,255,0,1)', width: 1 });  // plot cmp_sensor      
+      series.unshift({ stroke: 'rgba(0,255,255,0.4)', width: 1 });  // cmp_plot cmp_sensor
+    }
+    series.unshift({});
+    return series;
+  };
+
+
+  return {
+    width: props.width,
+    height: diagramHeight,
+    padding: [0, 0, 0, 0],
+    legend: {
+      show: false,
+    },
+    cursor: {
+      x: true,
       y: false,
+      drag: { x: false, y: false },
+      points: { show: false },
+      sync: { key: '_' },
     },
-    points: {
-      show: false
-    },
-    sync: {
-      key: '_',
-    } ,     
-  },
-  axes: [
-    {
-      values: _timeAxisStamps,
-      grid: {
-        stroke: 'rgba(0,0,0,0.1)',
-        width: 1,
-        dash: [2, 2],
+    axes: [
+      {
+        values: _timeAxisStamps,
+        grid: createGrid(),
+        ticks: createTicks(),
       },
-      ticks: {
-        show: false,
-      }
-    },
-    {
-      grid: {
-        stroke: 'rgba(0,0,0,0.1)',
-        width: 1,
-        dash: [2, 2],
+      {
+        grid: createGrid(),
+        ticks: createTicks(),
       },
-      ticks: {
-        show: false,
-      }
-    },
-  ],
-  plugins: [
-    wheelZoomPlugin({factor: 0.75}),
-    dragPlugin({}),
-    selectionPlugin({}),
-    markPlugin({}),
-    maskPlugin({}),
-  ],
-  series: props.data.length === 2 ? [
-    {},
-    {
-      stroke: 'rgba(0,0,0,0.9)',
-      width: 1,
-      fill: 'rgba(0,0,0,0.07)',
-    },    
-  ]
-  :
-  [
-    {},
-    {
-      stroke: 'rgba(100,100,255,1)',
-      width: 1,
-    },
-    {
-      stroke: 'rgba(0,0,0,0.9)',
-      width: 1,
-      fill: 'rgba(0,0,0,0.07)',
-    },    
-  ]
-}));
+    ],
+    plugins: [
+      wheelZoomPlugin({ factor: 0.75 }),
+      dragPlugin({}),
+      selectionPlugin({}),
+      markPlugin({}),
+      maskPlugin({}),
+    ],
+    series: createSeries(),
+  };
+});
 
 
 onMounted(() => {

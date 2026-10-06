@@ -242,30 +242,27 @@ const removingRow = ref(null);
 const removeRow = async (row) => {
   if (!row || removingRow.value) return;
 
-  // Bestätigungsdialog vor dem Entfernen
+  let removeComment = '';
   try {
-    await ElMessageBox.confirm(
+    const { value } = await ElMessageBox.prompt(
       'Do you really want to remove this mask entry?',
       'Remove mask',
       {
         confirmButtonText: 'Remove',
         cancelButtonText: 'Cancel',
-        type: 'warning'
+        type: 'warning',
+        inputPlaceholder: 'Optional comment',
+        draggable: true,
       }
     );
+    removeComment = (value || '').trim();
   } catch {
-    return; // vom Benutzer abgebrochen
+    return;
   }
 
   removingRow.value = row;
 
   try {
-    const payload = {
-      station: props.plot,
-      sensor: props.sensor,
-      ...row // type, start, end, user, date, comment etc.
-    };
-
     const response = await fetch('/tsdb/masklist', {
       method: 'POST',
       headers: {
@@ -275,7 +272,8 @@ const removeRow = async (row) => {
         action: 'remove',
         mask: {
           ...row,
-        }
+        },
+        comment: removeComment,
       }),
     });
 

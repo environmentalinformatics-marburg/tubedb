@@ -108,14 +108,12 @@ public class Handler_masklist extends MethodHandler {
 		String action = jsonReq.getString("action");
 		Logger.info(action);
 		switch(action) {
-		case "add": {
-			JSONObject jsonMask = jsonReq.getJSONObject("mask");
-			handleActionAdd(jsonMask, baseRequest, response);
+		case "add": {			
+			handleActionAdd(jsonReq, baseRequest, response);
 			break;
 		}
 		case "remove": {
-			JSONObject jsonMask = jsonReq.getJSONObject("mask");
-			handleActionRemove(jsonMask, baseRequest, response);
+			handleActionRemove(jsonReq, baseRequest, response);
 			break;
 		}
 		default:
@@ -124,12 +122,15 @@ public class Handler_masklist extends MethodHandler {
 		}
 	}
 
-	private void handleActionAdd(JSONObject jsonMask, Request baseRequest, HttpServletResponse response) throws RemoteException {
+	private void handleActionAdd(JSONObject jsonReq, Request baseRequest, HttpServletResponse response) throws RemoteException {
+		JSONObject jsonMask = jsonReq.getJSONObject("mask");
 		MaskListEntry maskListEntry = MaskListEntry.fromJSON(jsonMask);
 		tsdb.addTimeSeriesMaskListEntry(maskListEntry);			
 	}
 	
-	private void handleActionRemove(JSONObject jsonMask, Request baseRequest, HttpServletResponse response) throws RemoteException {
+	private void handleActionRemove(JSONObject jsonReq, Request baseRequest, HttpServletResponse response) throws RemoteException {
+		JSONObject jsonMask = jsonReq.getJSONObject("mask");
+		String comment = jsonReq.optString("comment", "");
 		MaskListEntry maskListEntry = MaskListEntry.fromJSON(jsonMask);
 		String date = TimeUtil.oleMinutesToHumanText(TimeUtil.dateTimeToOleMinutes(LocalDateTime.now()));
 		String userName = "anonymous";
@@ -140,6 +141,10 @@ public class Handler_masklist extends MethodHandler {
 				userName = user;
 			}
 		}
-		tsdb.setTimeSeriesMaskListEntry(maskListEntry.asRemoved("removed at " + date + " by " + userName));		
+		String removeComment = "removed at " + date + " by " + userName;
+		if(!comment.isBlank()) {
+			removeComment += ":  " + comment;
+		}
+		tsdb.setTimeSeriesMaskListEntry(maskListEntry.asRemoved(removeComment));		
 	}
 }

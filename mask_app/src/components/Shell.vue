@@ -180,6 +180,7 @@
             />
           </template>
 
+          <el-checkbox v-model="separateDiagrams" label="Separate sensor diagrams" />
           <el-checkbox v-model="showMasks" label="Show stored masks" />
         </el-popover>       
 
@@ -194,7 +195,7 @@
 
     <!-- Dialog Component -->
     <HelpDialog v-model="showHelpDialog" />
-    <MaskListDialog v-model="showMaskListDialog" :plot="selectedPlot" :sensor="selectedSensor" :mask="mask" @changed="fetchMask()"/>
+    <MaskListDialog v-model="showMaskListDialog" :plot="selectedPlot" :sensor="selectedSensor" :mask="mask" @changed="fetchData(); fetchMask();"/>
 
     <!-- Main Content -->
     <div ref="mainContent" class="main-content">
@@ -314,6 +315,7 @@ const timeAggregation = ref('day');
 const selectedSensorCmp = ref('');
 const selectedPlotCmp = ref('');
 
+const separateDiagrams = ref(true); 
 const showMasks = ref(true);
 
 // Dialog State
@@ -534,19 +536,15 @@ watch(selectedPlot, (newPlot) => {
 });
 
 const onProjectChange = (value) => {
-  console.log('selected project:', value);
 }
 
 const onGroupChange = (value) => {
-  console.log('selected group:', value);
 }
 
 const onPlotChange = (value) => {
-  console.log('selected plot:', value);
 }
 
 const onPlotCmpChange = (value) => {
-  console.log('selected cmp plot:', value);
 }
 
 const onSensorChange = (value) => {
@@ -559,31 +557,12 @@ const onSensorChange = (value) => {
 }
 
 const onAggregationChange = (value) => {
-  console.log('time aggregation:', value);
-  if (selectedPlot.value && selectedSensor.value) {
-    fetchData();
-    if (selectedSensorCmp.value) {
-      fetchDataCmp();
-    }
-  }
 }
 
 const onQCChange = (value) => {
-  console.log('QC:', value);
-  if (selectedPlot.value && selectedSensor.value) {
-    fetchData();
-    if (selectedSensorCmp.value) {
-      fetchDataCmp();
-    }
-  }
 }
 
 const onSensorCmpChange = (value) => {
-  if (value) {
-    fetchDataCmp();
-  } else {
-    dataCmp.value = null;
-  }
 }
 
 
@@ -650,16 +629,32 @@ const fetchData = async () => {
   dataLoading.value = true;
   dataError.value = null;
 
-  let timeseries = [{  
+  let timeseries = [];
+
+  timeseries.unshift({  
         plot: selectedPlot.value,
         sensor: selectedSensor.value,
-  }];
+  });
 
   if(selectedPlotCmp.value) {
     timeseries.unshift({  
           plot: selectedPlotCmp.value,
           sensor: selectedSensor.value,
     });
+  }
+
+  if (selectedSensorCmp.value && !separateDiagrams.value) {
+    timeseries.unshift({ 
+      plot: selectedPlot.value,
+      sensor: selectedSensorCmp.value,
+    });
+
+    if(selectedPlotCmp.value) {
+      timeseries.unshift({  
+          plot: selectedPlotCmp.value,
+          sensor: selectedSensorCmp.value,
+      });
+    }    
   }
 
   try {
@@ -709,7 +704,7 @@ const fetchData = async () => {
 }
 
 const fetchDataCmp = async () => {
-  if (!selectedPlot.value || !selectedSensorCmp.value) {
+  if (!separateDiagrams.value || !selectedPlot.value || !selectedSensorCmp.value) {
     dataCmp.value = null;
     return;
   }
@@ -718,10 +713,12 @@ const fetchDataCmp = async () => {
   dataCmpLoading.value = true;
   dataCmpError.value = null;
 
-  let timeseries = [{  
+  let timeseries = [];
+
+  timeseries.unshift({ 
     plot: selectedPlot.value,
     sensor: selectedSensorCmp.value,
-  }];
+  });
 
   if(selectedPlotCmp.value) {
     timeseries.unshift({  
@@ -812,12 +809,12 @@ const fetchMask = async () => {
   }
 }
 
-watch([selectedPlot, selectedSensor, timeAggregation, selectedPlotCmp], () => {
+watch([selectedPlot, selectedSensor, timeAggregation, selectedPlotCmp, separateDiagrams, selectedSensorCmp, selectedQC], () => {
   fetchData();
   fetchMask();
 }, { immediate: false });
 
-watch([selectedPlot, selectedSensorCmp, timeAggregation, selectedPlotCmp], () => {
+watch([selectedPlot, selectedSensorCmp, timeAggregation, selectedPlotCmp, separateDiagrams, selectedQC], () => {
   if (selectedSensorCmp.value) {
     fetchDataCmp();
   } else {

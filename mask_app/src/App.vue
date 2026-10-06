@@ -4,7 +4,6 @@
         v-else-if="metaDataLoading" 
         v-loading="true"
         element-loading-text="Loading metadata..."
-        :element-loading-spinner="svg"
         element-loading-svg-view-box="-10, -10, 50, 50"
         style="width: 100vw; height: 100vh;"
     ></div>    
