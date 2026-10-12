@@ -23,3 +23,12 @@ npm.cmd run dev
 npm.cmd run build
 
 
+########## update
+
+npm.cmd install -g npm-check-updates
+
+npm-check-updates.cmd
+
+npm-check-updates.cmd -u
+
+npm.cmd install

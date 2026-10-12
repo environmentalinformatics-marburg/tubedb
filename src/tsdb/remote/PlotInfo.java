@@ -25,6 +25,7 @@ public class PlotInfo implements Serializable {
 	public final double geoPosLongitude;
 	public final double elevation;
 	public final String loggerTypeName;
+	public final String[] nearest_plots;
 	
 	public PlotInfo(VirtualPlot virtualPlot) {
 		this.name = virtualPlot.plotID;
@@ -36,6 +37,7 @@ public class PlotInfo implements Serializable {
 		this.geoPosLongitude = virtualPlot.geoPosLongitude;
 		this.elevation = virtualPlot.elevation;
 		this.loggerTypeName = "virtual";
+		this.nearest_plots = virtualPlot.nearestVirtualPlots.stream().map(p -> p.plotID).toArray(String[]::new);
 	}
 	
 	public PlotInfo(Station station) {
@@ -52,6 +54,7 @@ public class PlotInfo implements Serializable {
 		} else {
 			this.loggerTypeName = "unknown";
 		}
+		this.nearest_plots = station.nearestStations.stream().map(s -> s.stationID).toArray(String[]::new);
 	}
 	
 	public PlotInfo(String name, String generalName, String regionName) {
@@ -64,6 +67,7 @@ public class PlotInfo implements Serializable {
 		this.geoPosLongitude = Double.NaN;
 		this.elevation = Float.NaN;
 		this.loggerTypeName = "unknown";
+		this.nearest_plots = new String[] {};
 	}
 
 	@Override

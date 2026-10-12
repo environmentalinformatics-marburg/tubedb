@@ -153,6 +153,15 @@ public class Handler_model extends MethodHandler {
 					allSensors.add(sensorName);
 				}
 				json.endArray(); // end sensors
+				
+				json.key("nearest_plots");
+				json.array();
+				String[] plots = plotInfo.nearest_plots;
+				for(String plot : plots) {
+					json.value(plot);
+				}
+				json.endArray(); // end sensors
+				
 				json.endObject(); // end plot
 			}
 		}

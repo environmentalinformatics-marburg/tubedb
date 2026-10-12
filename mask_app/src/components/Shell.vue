@@ -107,7 +107,7 @@
         <span class="toolbar-divider">|</span>
 
         <!-- Comparison Sensor Select -->
-        <span class="toolbar-label" style="margin-left: 16px;">Cmp:</span>
+        <span class="toolbar-label" style="margin-left: 16px;  color: rgba(0,0,0,0.4);">Cmp:</span>
         <el-select
           v-model="selectedSensorCmp"
           size="small"
@@ -145,19 +145,19 @@
         </el-select>
 
         <!-- CMP Plot Select -->
-        <span class="toolbar-label">Cmp_station:</span>
+        <span class="toolbar-label" style="color: rgba(20,20,255,1);">Cmp_station:</span>
         <el-select
           v-model="selectedPlotCmp"
           size="small"
           style="width: 140px; margin-right: 0px;"
           @change="onPlotCmpChange"
           placeholder="Comparison Station"
-          :disabled="!selectedGroup"
+          :disabled="!selectedPlot"
           filterable
           clearable
         >
           <el-option
-            v-for="plot in plotOptions"
+            v-for="plot in plotOptionsCmp"
             :key="plot.value"
             :label="plot.label"
             :value="plot.value"
@@ -188,7 +188,7 @@
           circle
           @click="showHelpDialog = true"
           icon="QuestionFilled"
-          title="Hilfe / Bedienung"
+          title="Help / Usage"
         />
       </div>
     </div>
@@ -394,6 +394,42 @@ const plotOptions = computed(() => {
       station: stationId,        
     })));
   });
+});
+
+const selectedPlotId = computed(() =>
+  selectedPlot.value ? selectedPlot.value.split(':')[0] : ''
+);
+
+const plotOptionsCmp = computed(() => {
+  const allPlots = props.metaData?.model?.plots;
+
+  const nearest = selectedPlotId.value
+    ? allPlots?.[selectedPlotId.value]?.nearest_plots
+    : null;
+
+  if (!Array.isArray(nearest) || nearest.length === 0) {
+    return plotOptions.value;
+  }
+
+  return nearest
+    .filter(plotId => allPlots?.[plotId])
+    .flatMap(plotId => {
+      const plot = allPlots[plotId];
+      if (plot.stations.length === 0) {
+        return [{
+          value: plotId,
+          label: plotId,
+          plot: plotId,
+          station: plotId,
+        }];
+      }
+      return plot.stations.map(stationId => ({
+        value: plotId + ':' + stationId,
+        label: plotId + ':' + stationId,
+        plot: plotId,
+        station: stationId,
+      }));
+    });
 });
 
 const sensorOptions = computed(() => {
@@ -849,7 +885,16 @@ const maskSelectionSave = async () => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`);
+      let errorMessage = getFriendlyErrorMessage(response.status);
+      try {
+        const errorBody = await response.text();
+        if (errorBody) {
+          errorMessage = errorBody;
+        }
+      } catch (e) {
+        console.error('Could not read error body:', e)
+      }
+      throw new Error(errorMessage);
     }
 
     if (viewerRef.value) {
