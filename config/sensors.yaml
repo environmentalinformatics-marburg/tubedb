@@ -7,6 +7,7 @@ Ta_200:
   empirical_diff: 10.0
   interpolation_mse: 7
   category: temperature
+  diagnostic_sensors: [Ta_200_ref_diff, Ta_200_ref_diff_avg_28d]
 
 Ta_200_min:
   description: Minimum value of Ta_200

@@ -85,7 +85,7 @@
           style="width: 65px; margin-right: 0px;"
           @change="onAggregationChange"
         >
-          <!--<el-option label="-" value="raw" />-->  
+          <!--<el-option label="Raw" value="raw" />-->
           <el-option label="Hour" value="hour" />
           <el-option label="Day" value="day" />
         </el-select>
@@ -119,8 +119,21 @@
           default-first-option
           clearable
         >
+          <template #header>
+            <div class="cmp-dropdown-header">
+              <el-icon class="cmp-dropdown-header-icon"><Filter /></el-icon>
+              <span class="cmp-dropdown-header-label">
+                Diagnostics only
+              </span>
+              <el-switch
+                v-model="cmpDiagnosticsOnly"
+                size="small"
+              />
+            </div>
+          </template>
+
           <el-option
-            v-for="sensor in sensorOptions"
+            v-for="sensor in sensorCmpOptions"
             :key="sensor.value"
             :label="sensor.label"
             :value="sensor.value"
@@ -156,6 +169,18 @@
           filterable
           clearable
         >
+          <template #header>
+            <div class="cmp-dropdown-header">
+              <el-icon class="cmp-dropdown-header-icon"><Filter /></el-icon>
+              <span class="cmp-dropdown-header-label">
+                Nearest stations
+              </span>
+              <el-switch
+                v-model="cmpNearestStations"
+                size="small"
+              />
+            </div>
+          </template>        
           <el-option
             v-for="plot in plotOptionsCmp"
             :key="plot.value"
@@ -326,6 +351,8 @@ const maskSelection = ref({min: null, max: null, dateMin: '*', dateMax: '*'});
 
 const maskType = ref('invalid');
 
+const cmpDiagnosticsOnly = ref(true);
+
 const selectedProjectData = computed(() => {
   if (!selectedProject.value || !props.metaData?.model?.projects) return null;
   return props.metaData.model.projects[selectedProject.value]
@@ -400,52 +427,59 @@ const selectedPlotId = computed(() =>
   selectedPlot.value ? selectedPlot.value.split(':')[0] : ''
 );
 
+const cmpNearestStations = ref(true);
+
 const plotOptionsCmp = computed(() => {
   const allPlots = props.metaData?.model?.plots;
 
-  const nearest = selectedPlotId.value
-    ? allPlots?.[selectedPlotId.value]?.nearest_plots
-    : null;
+  if(cmpNearestStations.value) {
 
-  if (!Array.isArray(nearest) || nearest.length === 0) {
+    const nearest = selectedPlotId.value ? allPlots?.[selectedPlotId.value]?.nearest_plots : null;
+
+    if (!Array.isArray(nearest) || nearest.length === 0) {
+      return plotOptions.value;
+    }
+
+    return nearest
+      .filter(plotId => allPlots?.[plotId])
+      .flatMap(plotId => {
+        const plot = allPlots[plotId];
+        if (plot.stations.length === 0) {
+          return [{
+            value: plotId,
+            label: plotId,
+            plot: plotId,
+            station: plotId,
+          }];
+        }
+        return plot.stations.map(stationId => ({
+          value: plotId + ':' + stationId,
+          label: plotId + ':' + stationId,
+          plot: plotId,
+          station: stationId,
+        }));
+      });
+  } else {
     return plotOptions.value;
   }
-
-  return nearest
-    .filter(plotId => allPlots?.[plotId])
-    .flatMap(plotId => {
-      const plot = allPlots[plotId];
-      if (plot.stations.length === 0) {
-        return [{
-          value: plotId,
-          label: plotId,
-          plot: plotId,
-          station: plotId,
-        }];
-      }
-      return plot.stations.map(stationId => ({
-        value: plotId + ':' + stationId,
-        label: plotId + ':' + stationId,
-        plot: plotId,
-        station: stationId,
-      }));
-    });
 });
 
 const sensorOptions = computed(() => {
   if (!selectedPlot.value || !props.metaData?.model?.plots) {
     return [];
   }
-  
-  const plot = props.metaData.model.plots[selectedPlot.value];
 
+  const plot = props.metaData.model.plots[selectedPlot.value];
   if (!plot?.sensors) return [];
-  
+
   return plot.sensors
-    .filter(sensorId => {
-      const sensorData = props.metaData.model.sensors?.[sensorId];
+    .map(sensorId => ({
+      sensorId,
+      sensorData: props.metaData.model.sensors?.[sensorId]
+    }))
+    .filter(({ sensorData }) => {
       if (!sensorData) return false;
-      
+
       if (timeAggregation.value === 'hour') {
         return sensorData.aggregation_hour !== 'none';
       } else if (timeAggregation.value === 'day') {
@@ -453,10 +487,27 @@ const sensorOptions = computed(() => {
       }
       return false;
     })
-    .map(sensorId => ({
+    .map(({ sensorId, sensorData }) => ({
       value: sensorId,
-      label: sensorId
+      label: sensorId,
+      sensorData
     }));
+});
+
+const diagnosticSensorOptions = computed(() => {
+  if (!selectedSensor.value) return [];
+  const selectedOption = sensorOptions.value.find(
+    sensor => sensor.value === selectedSensor.value
+  );  
+  const diagnostics = selectedOption?.sensorData?.diagnostic_sensors;
+  if (!Array.isArray(diagnostics) || diagnostics.length === 0) return [];
+  return sensorOptions.value.filter(sensor => diagnostics.includes(sensor.value));
+});
+
+const sensorCmpOptions = computed(() => {
+  return cmpDiagnosticsOnly.value
+    ? diagnosticSensorOptions.value
+    : sensorOptions.value;
 });
 
 
@@ -1029,6 +1080,26 @@ const maskSelectionSave = async () => {
   white-space: pre;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
                'Liberation Mono', 'Courier New', monospace;
+}
+
+.cmp-dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-bottom: 1px solid #ebeef5;
+  margin-bottom: 4px;
+}
+
+.cmp-dropdown-header-icon {
+  color: #909399;
+  font-size: 14px;
+}
+
+.cmp-dropdown-header-label {
+  font-size: 12px;
+  color: #606266;
+  flex: 1;          /* schiebt den Switch nach rechts */
 }
 
 </style>

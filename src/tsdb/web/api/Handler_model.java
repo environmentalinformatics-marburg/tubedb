@@ -425,6 +425,14 @@ public class Handler_model extends MethodHandler {
 					Logger.warn(e);
 				}				
 			}
+			if(sensor.diagnostic_sensors != null && sensor.diagnostic_sensors.length > 0) {
+				json.key("diagnostic_sensors");
+				json.array();
+				for(String name:sensor.diagnostic_sensors) {
+					json.value(name);
+				}
+				json.endArray();
+			}
 			json.endObject(); // end sensor
 		}
 		json.endObject();  // end sensors		

@@ -85,6 +85,8 @@ public class Sensor implements Serializable {
 	public String post_year_func = null;
 
 	private Boolean derived = null; //nullable
+	
+	public String[] diagnostic_sensors = null;
 
 	public Sensor(String name) {
 		this.name = name;
@@ -231,6 +233,8 @@ public class Sensor implements Serializable {
 		String post_year_func = yamlMap.optString("post_year_func", null);
 		
 		Boolean derived = yamlMap.optBoolean("derived", null);
+		
+		String[] diagnostic_sensors = yamlMap.optList("diagnostic_sensors").asStringArray();
 
 		Sensor sensor = new Sensor(sensorName);
 		sensor.description = description;
@@ -261,6 +265,7 @@ public class Sensor implements Serializable {
 		sensor.post_month_func = post_month_func;
 		sensor.post_year_func = post_year_func;
 		sensor.derived = derived;
+		sensor.diagnostic_sensors = diagnostic_sensors;
 
 		return sensor;
 	}
