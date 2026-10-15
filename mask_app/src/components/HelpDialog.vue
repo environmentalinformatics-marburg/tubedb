@@ -99,35 +99,63 @@
           </ul>
         </el-collapse-item>
 
-        <!-- Shortcuts Section -->
-        <el-collapse-item title="Keyboard & Mouse Shortcuts" name="shortcuts">
-          <table class="shortcut-table">
-            <tr>
-              <td><b>Shift / Ctrl / Alt + Left Click</b></td>
-              <td>Set mask interval start</td>
-            </tr>
-            <tr>
-              <td><b>Shift / Ctrl / Alt + Right Click</b></td>
-              <td>Set mask interval end</td>
-            </tr>
-            <tr>
-              <td><b>Esc</b></td>
-              <td>Reset interval selection</td>
-            </tr>
-            <tr>
-              <td><b>Left Click &amp; Drag</b></td>
-              <td>Pan through time</td>
-            </tr>
-            <tr>
-              <td><b>Mouse Wheel</b></td>
-              <td>Zoom in / out</td>
-            </tr>
-            <tr>
-              <td><b>Double-click</b></td>
-              <td>Reset zoom to full range</td>
-            </tr>            
-          </table>
-        </el-collapse-item>
+<!-- Shortcuts Section -->
+<el-collapse-item title="Keyboard, Mouse & Touchpad Shortcuts" name="shortcuts">
+  <table class="shortcut-table">
+    <tbody>
+    <tr>
+      <td><b>Shift / Ctrl / Alt + Left Click</b></td>
+      <td>Set mask interval start</td>
+    </tr>
+    <tr>
+      <td>Shift / <b>Ctrl / Alt + Right Click</b></td>
+      <td>Set mask interval end</td>
+    </tr>
+    <tr>
+      <td><b>Esc</b></td>
+      <td>Reset interval selection</td>
+    </tr>
+    <tr>
+      <td><b>Left Click &amp; Drag</b></td>
+      <td>Pan through time</td>
+    </tr>
+    <tr>
+      <td><b>Mouse Wheel</b></td>
+      <td>Zoom in / out</td>
+    </tr>
+    <tr>
+      <td><b>Double-click</b></td>
+      <td>Reset zoom to full range</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <p><br><i>Touchpad gestures (analogous to the mouse) depend on your device and system settings.<br>Typically, these are:</i></p>
+  <table class="shortcut-table">
+    <tbody>
+    <tr>
+      <td><b>Shift / Ctrl / Alt + Left-click / Double-tap</b></td>
+      <td>Set mask interval start (hold for a second to prevent a double-click event)</td>
+    </tr>
+    <tr>
+      <td>Shift / <b>Ctrl / Alt + Right-click / Two-finger tap</b></td>
+      <td>Set mask interval end</td>
+    </tr>
+    <tr>
+      <td><b>Double-tap &amp; Drag</b></td>
+      <td>Pan through time</td>
+    </tr>
+    <tr>
+      <td><b>Vertical two-finger spread-pinch / Two finger move up-down</b></td>
+      <td>Zoom in / out</td>
+    </tr>
+    <tr>
+      <td><b>Double-tap</b></td>
+      <td>Reset zoom to full range</td>
+    </tr>
+    </tbody>
+  </table>
+</el-collapse-item>
 
       </el-collapse>
     </div>
@@ -255,7 +283,6 @@ const onClose = () => {
 }
 
 .shortcut-table td:first-child {
-  white-space: nowrap;
   width: 230px;
   color: #303133;
 }

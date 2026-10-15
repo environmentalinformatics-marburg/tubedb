@@ -4,6 +4,9 @@ import static tsdb.util.AssumptionCheck.throwNull;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +21,7 @@ import org.tinylog.Logger;
 
 import com.opencsv.CSVWriter;
 
+import tsdb.ConfigLoader;
 import tsdb.GeneralStation;
 import tsdb.Station;
 import tsdb.TsDB;
@@ -530,7 +534,7 @@ public class ServerTsDB implements RemoteTsDB {
 		String csvPath = tsdb.configDirectory + "/" + maskType.csvFiename;
 
 		int timestampStart = TimeUtil.parseStartTimestamp(start);
-		int timestampEnd = TimeUtil.parseStartTimestamp(end);		
+		int timestampEnd = TimeUtil.parseEndTimestamp(end);		
 
 		File csvFile = new File(csvPath);
 		boolean fileExists = csvFile.exists();
@@ -564,7 +568,35 @@ public class ServerTsDB implements RemoteTsDB {
 	public ArrayList<MaskListEntry> getTimeSeriesMaskList(String stationName, String sensorName, MaskType maskType) throws RemoteException {
 		ArrayList<MaskListEntry> result = new ArrayList<MaskListEntry>();
 		
+		collectRegionTimeSeriesMaskLists(stationName, sensorName, maskType, result);
+		
 		String csvPath = tsdb.configDirectory + "/" + maskType.csvFiename;
+		collectTimeSeriesMaskList(stationName, sensorName, maskType, true, csvPath, result);
+		
+		return result;
+	}
+	
+	private void collectRegionTimeSeriesMaskLists(String stationName, String sensorName, MaskType maskType, ArrayList<MaskListEntry> result) throws RemoteException {
+		try {
+			ConfigLoader configLoader = new ConfigLoader(tsdb);
+			for(Path path : Files.newDirectoryStream(Paths.get(tsdb.configDirectory), path->path.toFile().isDirectory())) {
+				String dir = path.toString();
+				try {
+					if(configLoader.isRegion(dir + "/region.ini", TsDBFactory.JUST_ONE_REGION)) {						
+						String csvPath = dir + "/" + maskType.csvFiename;						
+						collectTimeSeriesMaskList(stationName, sensorName, maskType, false, csvPath, result);
+					}
+				} catch(Exception e) {
+					Logger.info("could not load meta data of  "+path+"  "+e);
+				}
+			}
+		} catch(Exception e) {
+			Logger.error(e);
+		}
+	}
+	
+	
+	private void collectTimeSeriesMaskList(String stationName, String sensorName, MaskType maskType, boolean withLineNumber, String csvPath, ArrayList<MaskListEntry> result) throws RemoteException {
 		File csvFile = new File(csvPath);
 		if(csvFile.exists()) {
 			Logger.info("load mask " + maskType + " from " + csvFile);
@@ -593,8 +625,9 @@ public class ServerTsDB implements RemoteTsDB {
 								String date = colDate.get(row);
 								String comment = colComment.get(row);
 								String removed = colRemoved.get(row);
+								int lineNumber = withLineNumber ? (rowIndex0 + 2) : -1;
 
-								result.add(new MaskListEntry(maskType, (rowIndex0 + 2), stationName, sensorName, start, end, user, date, comment, removed));
+								result.add(new MaskListEntry(maskType, lineNumber, stationName, sensorName, start, end, user, date, comment, removed));
 							}
 						}
 					} catch(Exception e) {
@@ -603,9 +636,8 @@ public class ServerTsDB implements RemoteTsDB {
 				}
 			}
 		}
-
-		return result;
 	}
+	
 	
 	@Override
 	public void addTimeSeriesMaskListEntry(MaskListEntry entry) throws RemoteException {

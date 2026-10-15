@@ -586,6 +586,37 @@ public class ConfigLoader {
 		}
 	}
 
+
+	public boolean isRegion(String configFile, String justRegion) {
+		try {
+			File file = new File(configFile);
+			if(!file.exists()) {
+				return false;
+			}
+
+			Wini ini = new Wini(file);
+
+			Section section = ini.get("region");
+
+			if(section == null) {
+				return false;
+			}
+
+			Map<String, String> regionNameMap = Util.readIniSectionMap(section);
+			for(Entry<String, String> entry:regionNameMap.entrySet()) {
+				String regionName = entry.getKey();
+				if(justRegion == null || justRegion.toLowerCase().equals(regionName.toLowerCase())) {
+					return true;
+				}
+			}
+
+			return false;
+		} catch (IOException e) {
+			Logger.warn("error at read region " + configFile + "   " + e);
+			return false;
+		}
+	}
+
 	public void readPlotInventory(String configFile) {
 		if(!new File(configFile).exists()) {
 			Logger.warn("missing config file: " + configFile);

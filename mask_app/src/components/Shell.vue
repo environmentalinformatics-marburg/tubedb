@@ -71,10 +71,11 @@
           default-first-option
         >
           <el-option
-            v-for="sensor in sensorOptions"
+            v-for="sensor in filteredSensorOptions"
             :key="sensor.value"
             :label="sensor.label"
             :value="sensor.value"
+            :title="sensor.sensorData.description"            
           />
         </el-select>
 
@@ -119,7 +120,7 @@
           default-first-option
           clearable
         >
-          <template #header>
+          <template v-if="diagnosticSensorOptions.length > 0" #header>
             <div class="cmp-dropdown-header">
               <el-icon class="cmp-dropdown-header-icon"><Filter /></el-icon>
               <span class="cmp-dropdown-header-label">
@@ -137,6 +138,7 @@
             :key="sensor.value"
             :label="sensor.label"
             :value="sensor.value"
+            :title="sensor.sensorData.description"
           />
         </el-select>
 
@@ -272,7 +274,7 @@
           clearable
           size="small"
           prefix-icon="Comment"
-           style="min-width: 200px;"
+          style="min-width: 200px;"
         />
       </div>
       <div class="toolbar-right">
@@ -295,7 +297,7 @@
 
         <el-button
           type="primary"
-          :disabled="maskSelectionSaving"
+          :disabled="maskSelectionSaving || (maskSelection.dateMin === '*' && maskSelection.dateMax === '*')"
           :loading="maskSelectionSaving"
           @click="maskSelectionSave"
           icon="DocumentAdd"
@@ -478,7 +480,9 @@ const sensorOptions = computed(() => {
       sensorData: props.metaData.model.sensors?.[sensorId]
     }))
     .filter(({ sensorData }) => {
-      if (!sensorData) return false;
+      if (!sensorData) {
+        return false;
+      }
 
       if (timeAggregation.value === 'hour') {
         return sensorData.aggregation_hour !== 'none';
@@ -494,6 +498,21 @@ const sensorOptions = computed(() => {
     }));
 });
 
+const filteredSensorOptions = computed(() => {
+  return sensorOptions.value ? sensorOptions.value
+    .filter(({ sensorData }) => {
+      if (!sensorData) {
+        return false;
+      }
+
+      if(sensorData.derived) {
+        return false;
+      }
+
+      return true;
+    }) : [];
+});
+
 const diagnosticSensorOptions = computed(() => {
   if (!selectedSensor.value) return [];
   const selectedOption = sensorOptions.value.find(
@@ -501,11 +520,15 @@ const diagnosticSensorOptions = computed(() => {
   );  
   const diagnostics = selectedOption?.sensorData?.diagnostic_sensors;
   if (!Array.isArray(diagnostics) || diagnostics.length === 0) return [];
-  return sensorOptions.value.filter(sensor => diagnostics.includes(sensor.value));
+
+  const optionsById = new Map(sensorOptions.value.map(s => [s.value, s]));
+  return diagnostics
+    .map(sensorId => optionsById.get(sensorId))
+    .filter(Boolean);
 });
 
 const sensorCmpOptions = computed(() => {
-  return cmpDiagnosticsOnly.value
+  return (cmpDiagnosticsOnly.value && diagnosticSensorOptions.value.length > 0)
     ? diagnosticSensorOptions.value
     : sensorOptions.value;
 });
@@ -549,10 +572,10 @@ const selectSensorWithPreference = () => {
     const ta200Sensor = sensorOptions.value.find(s => s.value === 'Ta_200');
     selectedSensor.value = ta200Sensor ? ta200Sensor.value : sensorOptions.value[0].value;
     
-    if (selectedSensor.value === 'Ta_200' && !selectedSensorCmp.value) {
-      const refSensor = sensorOptions.value.find(s => s.value === 'Ta_200_ref_diff_avg_28d');
-      if (refSensor) {
-        selectedSensorCmp.value = 'Ta_200_ref_diff_avg_28d';
+    if (!selectedSensorCmp.value) {
+      const firstDiagnostic = diagnosticSensorOptions.value[0]?.value;
+      if (firstDiagnostic) {
+        selectedSensorCmp.value = firstDiagnostic;
       }
     }
   } else {
@@ -635,10 +658,10 @@ const onPlotCmpChange = (value) => {
 }
 
 const onSensorChange = (value) => {
-  if (value === 'Ta_200' && !selectedSensorCmp.value) {
-    const refSensor = sensorOptions.value.find(s => s.value === 'Ta_200_ref_diff_avg_28d');
-    if (refSensor) {
-      selectedSensorCmp.value = 'Ta_200_ref_diff_avg_28d';
+  if (!selectedSensorCmp.value) {
+    const firstDiagnostic = diagnosticSensorOptions.value[0]?.value;
+    if (firstDiagnostic) {
+      selectedSensorCmp.value = firstDiagnostic;
     }
   }
 }

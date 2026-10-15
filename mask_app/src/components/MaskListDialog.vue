@@ -78,7 +78,7 @@
             </el-table-column>
             <el-table-column label="Date" width="120" prop="date" sortable show-overflow-tooltip header-align="center">
                <template #default="{ row }">
-                <span>{{ formatTime(row.date) }}</span>
+                <span>{{ formatTimeEmpty(row.date) }}</span>
               </template>
             </el-table-column>
             <el-table-column label="Comment" prop="comment" sortable show-overflow-tooltip header-align="center">
@@ -99,7 +99,7 @@
             <el-table-column label="Operations" :width="showRemoved ? 80 : 150" header-align="center">
               <template #default="scope">
                 <el-button
-                  v-if="!scope.row.removed"
+                  v-if="!scope.row.removed && scope.row.line > 0"
                   size="small"
                   icon="Delete"
                   circle
@@ -214,6 +214,10 @@ const isWildcard = (value) =>
 
 const formatTime = (value) => {
   if (isWildcard(value)) return '*'
+  return String(value).replace('T', ' ')
+}
+
+const formatTimeEmpty = (value) => {
   return String(value).replace('T', ' ')
 }
 
