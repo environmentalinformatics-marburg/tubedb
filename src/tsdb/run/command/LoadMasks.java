@@ -137,7 +137,7 @@ public class LoadMasks {
 							int start = colStart.get(row);
 							int end = colEnd.get(row);
 							String sensorName = colSensor.get(row);
-							Logger.info("insert " + Arrays.toString(row));
+							//Logger.info("insert " + Arrays.toString(row));
 							if("*".equals(sensorName)) {
 								String[] sensorNames = station.getSensorNames();
 								for(String sn : sensorNames) {
@@ -185,7 +185,7 @@ public class LoadMasks {
 		}
 
 		if(!tsdb.streamStorage.existSensor(stationName, sensorName)) {
-			Logger.warn("mask " + maskType + ": sensor not found, but inserted " + sensorName + "  at " + filename +"   in " + Arrays.toString(row));
+			Logger.trace("mask " + maskType + ": sensor not found, but inserted " + sensorName + "  at " + filename +"   in " + Arrays.toString(row));
 		}
 	}
 }

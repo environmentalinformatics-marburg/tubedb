@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import org.tinylog.Logger;
@@ -213,25 +214,10 @@ public class ImportGenericCSV {
 
 		if(!dataRows.isEmpty()) {
 			String[] sensorNames = Arrays.copyOfRange(table.names, 1, sensors + 1);
-			long firstTimestamp = dataRows.get(0).timestamp;
-			long lastTimestamp = dataRows.get(dataRows.size()-1).timestamp;
-
-			List<LabeledProperty> computationList = station.labeledProperties.query("computation", (int)firstTimestamp, (int)lastTimestamp);
-			if(computationList.size()>0) {
-				Logger.trace("LabeledProperty computations");
-				for(LabeledProperty prop:computationList) {					
-					try {
-						PropertyComputation computation = ((PropertyComputation)prop.content);
-						if(Util.containsString(sensorNames, computation.target)) {
-							Logger.trace("LabeledProperty computation "+computation.target);
-							computation.calculate(dataRows, sensorNames, firstTimestamp, lastTimestamp);
-						}
-					} catch(Exception e) {
-						e.printStackTrace();
-						Logger.warn(e);
-					}
-				}
-			}
+			int firstTimestamp = (int) dataRows.get(0).timestamp;
+			int lastTimestamp = (int) dataRows.get(dataRows.size()-1).timestamp;
+			
+			station.labeledProperties.applyProperties(firstTimestamp, lastTimestamp, dataRows, sensorNames, station.stationID);			
 
 			tsdb.streamStorage.insertDataRows(stationName, sensorNames, dataRows);
 			tsdb.sourceCatalog.insert(SourceEntry.of(stationName, sensorNames, dataRows, filePath));
@@ -311,27 +297,11 @@ public class ImportGenericCSV {
 			dataRows = sortAndRemoveDuplicates(dataRows);
 
 			if(!dataRows.isEmpty()) {
-
 				String[] sensorNames = Arrays.copyOfRange(table.names, 2, sensors + 2);
-				long firstTimestamp = dataRows.get(0).timestamp;
-				long lastTimestamp = dataRows.get(dataRows.size() - 1).timestamp;
-
-				List<LabeledProperty> computationList = station.labeledProperties.query("computation", (int)firstTimestamp, (int)lastTimestamp);
-				if(computationList.size() > 0) {
-					Logger.trace("LabeledProperty computations");
-					for(LabeledProperty prop:computationList) {					
-						try {
-							PropertyComputation computation = ((PropertyComputation)prop.content);
-							if(Util.containsString(sensorNames, computation.target)) {
-								Logger.trace("LabeledProperty computation "+computation.target);
-								computation.calculate(dataRows, sensorNames, firstTimestamp, lastTimestamp);
-							}
-						} catch(Exception e) {
-							e.printStackTrace();
-							Logger.warn(e);
-						}
-					}
-				}
+				int firstTimestamp = (int) dataRows.get(0).timestamp;
+				int lastTimestamp = (int) dataRows.get(dataRows.size() - 1).timestamp;
+				
+				station.labeledProperties.applyProperties(firstTimestamp, lastTimestamp, dataRows, sensorNames, station.stationID);
 
 				Logger.info("insert " + stationName + "  with rows: " + dataRows.size() + "  " + TimeUtil.oleMinutesToText(firstTimestamp) + "  " + TimeUtil.oleMinutesToText(lastTimestamp) + "   " + dataRows.get(0));
 				tsdb.streamStorage.insertDataRows(stationName, sensorNames, dataRows);

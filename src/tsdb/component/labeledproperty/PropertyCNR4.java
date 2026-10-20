@@ -2,6 +2,7 @@ package tsdb.component.labeledproperty;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 
 import tsdb.util.DataRow;
 import tsdb.util.Util;
@@ -81,7 +82,7 @@ public class PropertyCNR4 {
 				v[i_swur] = (float) (v[i_swur_u]*1000d/swur);
 			}
 
-			if(is_lwdr|is_lwur) {
+			if(is_lwdr || is_lwur) {
 				double additional = sigma*Math.pow(v[t_temp]+zero_degree, 4d);
 				if(is_lwdr) {
 					v[i_lwdr] = (float) (v[i_lwdr_u]*1000d/lwdr + additional);
@@ -90,6 +91,64 @@ public class PropertyCNR4 {
 					v[i_lwur] = (float) (v[i_lwur_u]*1000d/lwur + additional);
 				}
 			}
+		}
+	}
+	
+	public void calculate(Collection<DataRow> rows, String[] sensorNames, int firstTimestamp, int lastTimestamp) {
+		int[] index = Util.stringArrayToPositionIndexArray(names, sensorNames, false, true);
+		
+		int i_swdr = index[0];
+		int i_swdr_u = index[1];
+		int i_swur = index[2];
+		int i_swur_u = index[3];
+		
+		int i_lwdr = index[4];
+		int i_lwdr_u = index[5];
+		int i_lwur = index[6];
+		int i_lwur_u = index[7];
+		
+		int t_temp = index[8];
+
+		boolean is_swdr = Double.isFinite(swdr);
+		boolean is_swur = Double.isFinite(swur);
+		boolean is_lwdr = Double.isFinite(lwdr);
+		boolean is_lwur = Double.isFinite(lwur);
+
+		Iterator<DataRow> it = rows.iterator();
+		if(!it.hasNext()) {
+			return;
+		}
+		DataRow cur = it.next();
+		while(cur.timestamp < firstTimestamp) {
+			if(!it.hasNext()) {
+				return;
+			}
+			cur = it.next();
+		}
+		
+		while(cur.timestamp <= lastTimestamp) {
+			float[] v = cur.data;
+			if(is_swdr) {
+				v[i_swdr] = (float) (v[i_swdr_u]*1000d/swdr);
+			}
+			if(is_swur) {
+				v[i_swur] = (float) (v[i_swur_u]*1000d/swur);
+			}
+
+			if(is_lwdr || is_lwur) {
+				double additional = sigma*Math.pow(v[t_temp]+zero_degree, 4d);
+				if(is_lwdr) {
+					v[i_lwdr] = (float) (v[i_lwdr_u]*1000d/lwdr + additional);
+				}
+				if(is_lwur) {
+					v[i_lwur] = (float) (v[i_lwur_u]*1000d/lwur + additional);
+				}
+			}
+			
+			if(!it.hasNext()) {
+				return;
+			}
+			cur = it.next();
 		}
 	}
 }

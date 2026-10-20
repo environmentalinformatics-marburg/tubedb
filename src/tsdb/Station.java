@@ -11,7 +11,6 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
-
 import org.tinylog.Logger;
 
 import tsdb.component.LoggerType;
@@ -342,7 +341,6 @@ public class Station {
 			return Collections.unmodifiableList(Arrays.asList(aliases));
 		}
 	}
-
 }
 
 

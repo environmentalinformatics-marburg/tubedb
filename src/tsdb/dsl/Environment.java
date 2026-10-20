@@ -2,6 +2,8 @@ package tsdb.dsl;
 
 import java.util.Map;
 
+import org.tinylog.Logger;
+
 import tsdb.dsl.formula.Formula;
 import tsdb.util.Util;
 
@@ -21,7 +23,12 @@ public class Environment {
 	}
 
 	public int getSensorIndex(String name) {
-		return sensorMap.get(name).intValue();		
+		try {
+			return sensorMap.get(name).intValue();
+		} catch (RuntimeException e) {
+			Logger.warn("sensor " + name + "  in  " + sensorMap.keySet());
+			throw e;
+		}
 	}
 
 	public boolean containsResolver(String name) {

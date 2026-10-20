@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.tinylog.Logger;
 
@@ -21,10 +22,13 @@ import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import tsdb.Station;
 import tsdb.TsDB;
 import tsdb.component.SourceEntry;
+import tsdb.component.labeledproperty.LabeledProperty;
+import tsdb.component.labeledproperty.PropertyComputation;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataRow;
 import tsdb.util.Interval;
 import tsdb.util.TimeUtil;
+import tsdb.util.Util;
 
 public class CSV_MXminiLoader {	
 
@@ -124,26 +128,26 @@ public class CSV_MXminiLoader {
 			String[] row = csvReader.readNext();
 			while(row != null) {
 				if(row.length - 1 == sensorNamesLen) {
-				long timestamp = TimeUtil.parseTimestampSpaceFormat(row[0]);
-				float[] data = new float[sensorNamesLen];
-				for(int i = 0; i < sensorNamesLen; i++) {
-					String v = row[i + 1];
-					if(v.isBlank() || v.equals("nan")) {
-						data[i] = Float.NaN;
-					} else {
-						//data[i] = Float.parseFloat(v.replace(',','.'));
-						data[i] = JavaFloatParser.parseFloat(v.replace(',','.'));
+					long timestamp = TimeUtil.parseTimestampSpaceFormat(row[0]);
+					float[] data = new float[sensorNamesLen];
+					for(int i = 0; i < sensorNamesLen; i++) {
+						String v = row[i + 1];
+						if(v.isBlank() || v.equals("nan")) {
+							data[i] = Float.NaN;
+						} else {
+							//data[i] = Float.parseFloat(v.replace(',','.'));
+							data[i] = JavaFloatParser.parseFloat(v.replace(',','.'));
+						}
 					}
-				}
-				DataRow dataRow = new DataRow(data, timestamp);
-				//Logger.info(dataRow);
-				dataRows.add(dataRow);
-				if(timestamp < timestampMin) {
-					timestampMin = timestamp;
-				}
-				if(timestamp > timestampMax) {
-					timestampMax = timestamp;
-				}
+					DataRow dataRow = new DataRow(data, timestamp);
+					//Logger.info(dataRow);
+					dataRows.add(dataRow);
+					if(timestamp < timestampMin) {
+						timestampMin = timestamp;
+					}
+					if(timestamp > timestampMax) {
+						timestampMax = timestamp;
+					}
 				} else {
 					Logger.warn("skip invalid line sensor columns: " + (row.length - 1) + " should be: " + sensorNamesLen + "   in " + filePath + "  line: " + Arrays.toString(row));
 				}
@@ -153,9 +157,10 @@ public class CSV_MXminiLoader {
 				String[] correctedSensorNames = sensorNames;
 				Station station = tsdb.getStation(stationID);
 				if(station != null) {
-					Logger.info(Arrays.toString(sensorNames));
+					//Logger.info(Arrays.toString(sensorNames));
 					Interval interval = Interval.of((int) timestampMin, (int) timestampMax);
 					correctedSensorNames = station.correctRawSensorNames(sensorNames, interval);
+					station.labeledProperties.applyProperties((int) timestampMin, (int) timestampMax, dataRows, correctedSensorNames, station.stationID);
 				}				
 				tsdb.streamStorage.insertDataRows(stationID, correctedSensorNames, dataRows);
 				tsdb.sourceCatalog.insert(SourceEntry.of(stationID, sensorNames, correctedSensorNames, dataRows, filePath));

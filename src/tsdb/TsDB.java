@@ -33,7 +33,7 @@ import tsdb.util.Util;
  */
 public class TsDB implements AutoCloseable {
 	
-	public static final String tubedb_version = "1.47.1";
+	public static final String tubedb_version = "1.47.2";
 
 	/**
 	 * map regionName -> Region
@@ -912,7 +912,7 @@ public class TsDB implements AutoCloseable {
 	public void insertLabeledProperty(LabeledProperty property) {
 		Station station = getStation(property.station);
 		if(station==null) {
-			Logger.warn("station not found property not inserted: "+property);
+			Logger.trace("station not found property not inserted: "+property);
 		} else {
 			station.labeledProperties.insert(property);
 		}

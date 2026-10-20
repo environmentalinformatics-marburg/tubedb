@@ -183,7 +183,7 @@ public class StreamDB {
 		}
 
 		if(stationMeta==null) {
-			Logger.warn("no station: "+stationName);
+			Logger.trace("no station: "+stationName);
 		}
 		return stationMeta;
 	}

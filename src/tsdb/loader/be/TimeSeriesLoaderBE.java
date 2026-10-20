@@ -26,6 +26,7 @@ import tsdb.component.labeledproperty.LabeledProperty;
 import tsdb.component.labeledproperty.PropertyCNR4;
 import tsdb.component.labeledproperty.PropertyClear;
 import tsdb.component.labeledproperty.PropertyComputation;
+import tsdb.component.labeledproperty.PropertyOverwrite;
 import tsdb.component.labeledproperty.PropertyReassign;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataRow;
@@ -234,101 +235,7 @@ public class TimeSeriesLoaderBE {
 		}	
 
 		if(eventMap.size()>0) {
-
-			Iterator<LabeledProperty> it = station.labeledProperties.query_iterator(eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
-
-			while(it.hasNext()) {
-				LabeledProperty prop = it.next();
-				switch (prop.label) {
-				case "computation": {
-					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
-					try {
-						PropertyComputation cprop = (PropertyComputation) prop.content;
-						Logger.info(TimeUtil.oleMinutesToText(eventMap.firstKey().intValue(), eventMap.lastKey().intValue()) + "    computation "+prop.station + "  " +  TimeUtil.oleMinutesToText(prop.start, prop.end) + "   " + cprop.target +"    "+ cprop.formula_org);
-						cprop.calculate(rows, station.loggerType.sensorNames);
-					} catch(Exception e) {
-						Logger.warn(e);
-					}
-					break;
-				}
-				case "CNR4": {
-					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
-					try {
-						((PropertyCNR4)prop.content).calculate(rows, station.loggerType.sensorNames);
-					} catch(Exception e) {
-						Logger.warn(station.stationID+"   "+ e);
-					}
-					break;
-				}
-				case "reassign": {
-					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
-					try {
-						((PropertyReassign)prop.content).calculate(rows, station.loggerType.sensorNames);
-					} catch(Exception e) {
-						Logger.warn(station.stationID+"   "+ e);
-					}
-					break;
-				}
-				case "clear": {
-					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
-					try {
-						((PropertyClear)prop.content).calculate(rows, station.loggerType.sensorNames);
-					} catch(Exception e) {
-						Logger.warn(station.stationID+"   "+ e);
-					}
-					break;
-				}
-				default:
-					Logger.warn("unknown property label: "+prop.label);
-					break;
-				}
-			}
-
-
-/*
-			{
-				List<LabeledProperty> cnr4List = station.labeledProperties.query("CNR4", eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
-				if(cnr4List.size()>0) {
-					Logger.info("LabeledProperty CNR4");				
-					for(LabeledProperty prop:cnr4List) {					
-						Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
-						try {
-							((PropertyCNR4)prop.content).calculate(rows, station.loggerType.sensorNames);
-						} catch(Exception e) {
-							Logger.warn(e);
-						}
-					}
-				}
-			}
-
-			{
-				List<LabeledProperty> cnr4_calcList = station.labeledProperties.query("CNR4_calc", eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
-				if(cnr4_calcList.size()>0) {
-					Logger.info("LabeledProperty CNR4_calc");				
-					for(LabeledProperty prop:cnr4_calcList) {					
-						Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
-						try {
-							((PropertyCNR4_calc)prop.content).calculate(rows, station.loggerType.sensorNames);
-						} catch(Exception e) {
-							Logger.warn(e);
-						}
-					}
-				}
-			}
-
-			List<LabeledProperty> computationList = station.labeledProperties.query("computation", eventMap.firstKey().intValue(), eventMap.lastKey().intValue());
-			if(computationList.size()>0) {
-				Logger.info("LabeledProperty computation");				
-				for(LabeledProperty prop:computationList) {					
-					Collection<DataRow> rows = eventMap.subMap((long)prop.start, true, (long)prop.end, true).values();
-					try {
-						((PropertyComputation)prop.content).calculate(rows, station.loggerType.sensorNames);
-					} catch(Exception e) {
-						Logger.warn(e);
-					}
-				}
-			}*/
-
+			station.labeledProperties.applyProperties(eventMap.firstKey().intValue(), eventMap.lastKey().intValue(), eventMap, station.loggerType.sensorNames, station.stationID);
 			tsdb.streamStorage.insertData(station.stationID, eventMap, station.loggerType.sensorNames);			
 		} else {
 			Logger.warn("no data to insert: "+station);

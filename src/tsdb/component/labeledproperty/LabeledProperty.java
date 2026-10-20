@@ -38,7 +38,9 @@ public class LabeledProperty {
 			case "reassign":
 				return PropertyReassign.parse(map);
 			case "clear":
-				return PropertyClear.parse(map);				
+				return PropertyClear.parse(map);
+			case "overwrite":
+				return PropertyOverwrite.parse(map);
 			default:
 				return map;
 			}

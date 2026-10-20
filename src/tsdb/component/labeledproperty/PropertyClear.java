@@ -1,6 +1,7 @@
 package tsdb.component.labeledproperty;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import tsdb.util.DataRow;
 import tsdb.util.Util;
@@ -31,6 +32,34 @@ public class PropertyClear {
 			for (int i = 0; i < indexLen; i++) {
 				data[targetIndex[i]] = Float.NaN;
 			}
+		}
+	}
+	
+	public void calculate(Collection<DataRow> rows, String[] sensorNames, int firstTimestamp, int lastTimestamp) {
+		int[] targetIndex = Util.stringArrayToPositionIndexArray(target, sensorNames, false, true);
+		int indexLen = targetIndex.length;
+		
+		Iterator<DataRow> it = rows.iterator();
+		if(!it.hasNext()) {
+			return;
+		}
+		DataRow cur = it.next();
+		while(cur.timestamp < firstTimestamp) {
+			if(!it.hasNext()) {
+				return;
+			}
+			cur = it.next();
+		}
+		
+		while(cur.timestamp <= lastTimestamp) {
+			float[] data = cur.data;
+			for (int i = 0; i < indexLen; i++) {
+				data[targetIndex[i]] = Float.NaN;
+			}
+			if(!it.hasNext()) {
+				return;
+			}
+			cur = it.next();
 		}
 	}
 }

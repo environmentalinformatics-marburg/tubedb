@@ -2,6 +2,7 @@ package tsdb.component.labeledproperty;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 
 import tsdb.util.DataRow;
 import tsdb.util.Util;
@@ -58,10 +59,62 @@ public class PropertyReassign {
 			int indexLen = sourceIndex.length;
 			for(DataRow row:rows) {
 				float[] data = row.data;
-				float[] temp = Arrays.copyOf(data, sensorNamesLen).clone();
+				float[] temp = Arrays.copyOf(data, sensorNamesLen);
 				for (int i = 0; i < indexLen; i++) {
 					data[targetIndex[i]] = temp[sourceIndex[i]];
 				}
+			}
+		}
+	}
+	
+	public void calculate(Collection<DataRow> rows, String[] sensorNames, int firstTimestamp, int lastTimestamp) {
+		Iterator<DataRow> it = rows.iterator();
+		if(!it.hasNext()) {
+			return;
+		}
+		DataRow cur = it.next();
+		while(cur.timestamp < firstTimestamp) {
+			if(!it.hasNext()) {
+				return;
+			}
+			cur = it.next();
+		}
+		
+		if(Util.containsString(source, "NA")) { // one NA source
+			int sensorNamesLen_plus_one = sensorNames.length + 1;
+			int naPos = sensorNamesLen_plus_one - 1;
+			String[] sensorNamesWithNA = Arrays.copyOf(sensorNames, sensorNamesLen_plus_one);
+			sensorNamesWithNA[naPos] = "NA";
+			int[] sourceIndex = Util.stringArrayToPositionIndexArray(source, sensorNamesWithNA, false, true);
+			int[] targetIndex = Util.stringArrayToPositionIndexArray(target, sensorNames, false, true);
+			int indexLen = sourceIndex.length;
+			while(cur.timestamp <= lastTimestamp) {
+				float[] data = cur.data;
+				float[] temp = Arrays.copyOf(data, sensorNamesLen_plus_one);
+				temp[naPos] = Float.NaN;
+				for (int i = 0; i < indexLen; i++) {
+					data[targetIndex[i]] = temp[sourceIndex[i]];
+				}
+				if(!it.hasNext()) {
+					return;
+				}
+				cur = it.next();
+			}
+		} else { //no NA source			
+			int[] sourceIndex = Util.stringArrayToPositionIndexArray(source, sensorNames, false, true);
+			int[] targetIndex = Util.stringArrayToPositionIndexArray(target, sensorNames, false, true);
+			int sensorNamesLen = sensorNames.length;
+			int indexLen = sourceIndex.length;
+			while(cur.timestamp <= lastTimestamp) {
+				float[] data = cur.data;
+				float[] temp = Arrays.copyOf(data, sensorNamesLen);
+				for (int i = 0; i < indexLen; i++) {
+					data[targetIndex[i]] = temp[sourceIndex[i]];
+				}
+				if(!it.hasNext()) {
+					return;
+				}
+				cur = it.next();
 			}
 		}
 	}
