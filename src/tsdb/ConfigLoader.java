@@ -31,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
+import net.sf.geographiclib.Geodesic;
 import tsdb.GeneralStation.GeneralStationBuilder;
 import tsdb.component.LoggerType;
 import tsdb.component.Region;
@@ -334,15 +335,16 @@ public class ConfigLoader {
 				continue;
 			}
 
-			double[] geoPos = transformCoordinates(station.geoPosLongitude,station.geoPosLatitude);
+			//double[] geoPos = transformCoordinates(station.geoPosLongitude,station.geoPosLatitude);
 			List<Object[]> distanceList = new ArrayList<Object[]>();
 
 			List<Station> stationList = station.generalStation.stationList;
 			//System.out.println(station.plotID+" --> "+stationList);
 			for(Station targetStation:stationList) {
-				if(station!=targetStation) { // reference compare
-					double[] targetGeoPos = transformCoordinates(targetStation.geoPosLongitude,targetStation.geoPosLatitude);
-					double distance = getDistance(geoPos, targetGeoPos);
+				if(station != targetStation) { // reference compare
+					//double[] targetGeoPos = transformCoordinates(targetStation.geoPosLongitude,targetStation.geoPosLatitude);
+					//double distance = getDistance(geoPos, targetGeoPos);
+					double distance = getDistanceWGS84(station, targetStation);
 					distanceList.add(new Object[]{distance,targetStation});
 				}
 			}
@@ -375,7 +377,7 @@ public class ConfigLoader {
 			tsdb.getGeneralStationsOfGroup(group).forEach(gs->virtualPlots.addAll(gs.virtualPlots));
 
 			for(VirtualPlot targetVirtualPlot:virtualPlots) {
-				if(virtualPlot!=targetVirtualPlot) {
+				if(virtualPlot != targetVirtualPlot) {
 					double distance = getDistance(virtualPlot, targetVirtualPlot);
 					distanceList.add(new Object[]{distance,targetVirtualPlot});
 				}
@@ -399,7 +401,11 @@ public class ConfigLoader {
 	}
 
 	public static double getDistance(double[] geoPos, double[] targetGeoPos) {
-		return Math.hypot(geoPos[0]-targetGeoPos[0], geoPos[1]-targetGeoPos[1]);
+		return Math.hypot(geoPos[0]-targetGeoPos[0], geoPos[1]-targetGeoPos[1]);		
+	}
+	
+	public static double getDistanceWGS84(Station source, Station target) {
+		return Geodesic.WGS84.Inverse(source.geoPosLatitude, source.geoPosLongitude, target.geoPosLatitude, target.geoPosLongitude).s12;
 	}
 
 	public static double getDistance(VirtualPlot source, VirtualPlot target) {

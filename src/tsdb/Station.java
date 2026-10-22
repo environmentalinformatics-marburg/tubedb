@@ -29,7 +29,6 @@ import tsdb.util.Util;
  */
 public class Station {
 
-
 	private final TsDB tsdb; //not null
 
 	/**

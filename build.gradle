@@ -63,6 +63,7 @@ dependencies {
   	implementation 'org.xerial.snappy:snappy-java:1.1.10.7' // caution: newer versions may break storage layout (last tested 1.1.7.7)
   	
   	implementation 'org.apache.commons:commons-math3:3.6.1'
+	implementation 'net.sf.geographiclib:GeographicLib-Java:2.1'
   	
   	implementation 'org.json:json:20250517'
   	implementation 'org.yaml:snakeyaml:2.4'  //implementation group: 'org.yaml', name: 'snakeyaml', version: '1.33' // caution: newer versions may break compatibility
