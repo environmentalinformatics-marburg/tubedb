@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, watch, defineEmits, toRaw } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch, toRaw } from 'vue'
 import UplotVue from 'uplot-vue'
 import 'uplot/dist/uPlot.min.css'
 import uPlot from 'uplot';

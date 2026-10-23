@@ -50,6 +50,28 @@
           filterable
           default-first-option
         >
+          <template #prefix>
+            <el-button
+              class="plot-nav-btn"
+              link
+              size="small"
+              icon="ArrowLeft"
+              title="Previous plot"
+              :disabled="plotOptions.length === 0"
+              @mousedown.stop.prevent
+              @click.stop="selectAdjacentPlot(-1)"
+            />
+            <el-button
+              class="plot-nav-btn"
+              link
+              size="small"
+              icon="ArrowRight"
+              title="Next plot"
+              :disabled="plotOptions.length === 0"
+              @mousedown.stop.prevent
+              @click.stop="selectAdjacentPlot(1)"
+            />
+          </template>
           <el-option
             v-for="plot in plotOptions"
             :key="plot.value"
@@ -57,6 +79,8 @@
             :value="plot.value"
           />
         </el-select>
+        
+
 
         <!-- Sensor Select -->
         <span class="toolbar-label">Sensor:</span>
@@ -188,7 +212,10 @@
             :key="plot.value"
             :label="plot.label"
             :value="plot.value"
-          />
+          >
+            {{ plot.label }}
+            <span v-if="plot.distance" style="padding-left: 10px; color: rgba(0,0,0,0.3); font-size: 0.75em;">{{ Math.round(plot.distance) + ' m' }}</span>
+          </el-option>
         </el-select>
 
       </div>
@@ -231,9 +258,9 @@
         <span>Loading data...</span>
       </div>
 
-      <div v-else-if="dataError || dataCmpError" class="error-overlay">
+      <div v-else-if="dataError" class="error-overlay">
         <el-icon><Warning /></el-icon>
-        <span>{{ dataError || dataCmpError }}</span>
+        <span>{{ dataError }}</span>
         <el-button type="primary" size="small" @click="fetchData">
           Retry
         </el-button>
@@ -326,6 +353,8 @@ import MaskListDialog from '@/components/MaskListDialog.vue'
 import { getFriendlyErrorMessage } from '@/utils/errorMessages'
 import { FolderOpened } from '@element-plus/icons-vue'
 
+import LatLon from 'geodesy/latlon-ellipsoidal-vincenty.js';
+
 const props = defineProps({
   metaData: {
     type: Object,
@@ -413,14 +442,14 @@ const plotOptions = computed(() => {
         value: plotId, 
         label: plotId,
         plot: plotId,
-        station: plotId,  
+        station: plotId,
       }];
     }
     return plot.stations.map(stationId => (({
       value: plotId + ':' + stationId,
       label: plotId + ':' + stationId,
       plot: plotId,
-      station: stationId,        
+      station: stationId,
     })));
   });
 });
@@ -429,12 +458,64 @@ const selectedPlotId = computed(() =>
   selectedPlot.value ? selectedPlot.value.split(':')[0] : ''
 );
 
+const selectAdjacentPlot = (direction) => {
+  const options = plotOptions.value;
+  if (!options || options.length === 0) return;
+
+  const currentIndex = options.findIndex(opt => opt.value === selectedPlot.value);
+
+  let nextIndex;
+  if (currentIndex === -1) {
+    nextIndex = direction > 0 ? 0 : options.length - 1;
+  } else {
+    nextIndex = (currentIndex + direction + options.length) % options.length;
+  }
+
+  selectedPlot.value = options[nextIndex].value;
+};
+
 const cmpNearestStations = ref(true);
 
 const plotOptionsCmp = computed(() => {
   const allPlots = props.metaData?.model?.plots;
-
+  if(!allPlots) {
+    return [];
+  }
+  if(!selectedPlotId.value) {
+    return [];
+  }
+  const plot = allPlots[selectedPlotId.value];
+  if(!plot) {
+    return [];
+  }
+  if(!plot.lat || !plot.lon) {
+    return cmpNearestStations.value ? [] : plotOptions;
+  }
+  const refPoint = new LatLon(plot.lat, plot.lon);
+  let opts = plotOptions.value
+  .filter(opt => opt.plot !== selectedPlotId.value)
+  .map(opt => {
+    const cmpPlot = allPlots[opt.plot];
+    if(!cmpPlot) {
+      return opt;
+    }
+    if(!cmpPlot.lat || !cmpPlot.lon) {
+      return opt;
+    }
+    const distance = refPoint.distanceTo(new LatLon(cmpPlot.lat, cmpPlot.lon));
+    return {
+      ...opt,
+      distance,
+    };  
+  });
   if(cmpNearestStations.value) {
+    opts = opts
+    .filter(opt => opt.distance)
+    .sort((a, b) => a.distance - b.distance);
+  }
+  return opts;
+
+  /*if(cmpNearestStations.value) {
 
     const nearest = selectedPlotId.value ? allPlots?.[selectedPlotId.value]?.nearest_plots : null;
 
@@ -463,7 +544,7 @@ const plotOptionsCmp = computed(() => {
       });
   } else {
     return plotOptions.value;
-  }
+  }*/
 });
 
 const sensorOptions = computed(() => {
@@ -643,6 +724,7 @@ watch(selectedPlot, (newPlot) => {
     selectedSensor.value = ''
     selectedSensorCmp.value = ''
   }
+  selectedPlotCmp.value = '';
 });
 
 const onProjectChange = (value) => {
@@ -658,12 +740,12 @@ const onPlotCmpChange = (value) => {
 }
 
 const onSensorChange = (value) => {
-  if (!selectedSensorCmp.value) {
+  //if (!selectedSensorCmp.value) {
     const firstDiagnostic = diagnosticSensorOptions.value[0]?.value;
     if (firstDiagnostic) {
       selectedSensorCmp.value = firstDiagnostic;
     }
-  }
+  //}
 }
 
 const onAggregationChange = (value) => {
@@ -1123,6 +1205,20 @@ const maskSelectionSave = async () => {
   font-size: 12px;
   color: #606266;
   flex: 1;          /* schiebt den Switch nach rechts */
+}
+
+.el-button.plot-nav-btn {
+  padding: 0px;
+  margin: -5px;
+  height: auto;
+  min-height: 0;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.el-button.plot-nav-btn:hover,
+.el-button.plot-nav-btn:focus {
+  color: rgba(0, 0, 0, 0.9);
+  background-color: transparent;
 }
 
 </style>

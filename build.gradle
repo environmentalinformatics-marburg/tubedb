@@ -3,7 +3,7 @@
 plugins {
   //id 'org.kordamp.gradle.markdown' version '2.2.0' // https://github.com/aalmiray/markdown-gradle-plugin    not needed ?
   id "com.github.ben-manes.versions" version '0.53.0' // update check task: dependencyUpdates  https://github.com/ben-manes/gradle-versions-plugin
-  id "com.gradleup.shadow" version '9.1.0'
+  id "com.gradleup.shadow" version '9.6.1'
 }
 
 apply plugin: 'java'
@@ -52,25 +52,25 @@ repositories {
 }
 
 dependencies {
-  	implementation 'org.tinylog:tinylog-impl:2.8.0-M1'
-	runtimeOnly 'org.tinylog:slf4j-tinylog:2.8.0-M1' // needed for jetty logger
+  	implementation 'org.tinylog:tinylog-impl:2.8.1'
+	runtimeOnly 'org.tinylog:slf4j-tinylog:2.8.1' // needed for jetty logger
 	
   	implementation 'org.antlr:antlr4-runtime:4.9.3' // warning: newer version 4.10 may be incompatible to generated DSL source files
-  	implementation 'org.javassist:javassist:3.30.2-GA'
+  	implementation 'org.javassist:javassist:3.33.0-GA'
   	
   	implementation 'org.mapdb:mapdb:1.0.9' // warning: newer versions v2 do break storage layout
   	
-  	implementation 'org.xerial.snappy:snappy-java:1.1.10.7' // caution: newer versions may break storage layout (last tested 1.1.7.7)
+  	implementation 'org.xerial.snappy:snappy-java:1.1.10.12' // caution: newer versions may break storage layout (last tested 1.1.7.7)
   	
   	implementation 'org.apache.commons:commons-math3:3.6.1'
 	implementation 'net.sf.geographiclib:GeographicLib-Java:2.1'
   	
-  	implementation 'org.json:json:20250517'
+  	implementation 'org.json:json:20260814'
   	implementation 'org.yaml:snakeyaml:2.4'  //implementation group: 'org.yaml', name: 'snakeyaml', version: '1.33' // caution: newer versions may break compatibility
-  	implementation 'com.opencsv:opencsv:5.11.2'   	
+  	implementation 'com.opencsv:opencsv:5.12.0'   	
   	implementation 'org.ini4j:ini4j:0.5.4' 
   	implementation 'ar.com.hjg:pngj:2.1.0'
-  	implementation 'com.github.luben:zstd-jni:1.5.7-3' // caution: newer versions may break storage layout (last tested 1.4.5-6)
+  	implementation 'com.github.luben:zstd-jni:1.5.7-24' // caution: newer versions may break storage layout (last tested 1.4.5-6)
   	implementation 'me.lemire.integercompression:JavaFastPFOR:0.1.12' // version 0.2.1 compiled to new class file version not compatible with java 11; caution: newer versions may break strorage layout
   	implementation 'ch.randelshofer:fastdoubleparser:2.0.1'
   	
@@ -86,7 +86,7 @@ dependencies {
 	implementation 'org.gdal:gdal:2.2.0' // caution: newer versions may break compatibility
   	
   	implementation 'org.influxdb:influxdb-java:2.25'
-  	implementation 'com.h2database:h2:2.3.232'
+  	implementation 'com.h2database:h2:2.5.252'
 }
 
 dependencies {

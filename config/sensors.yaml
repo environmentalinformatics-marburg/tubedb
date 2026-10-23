@@ -83,6 +83,7 @@ Ta_10:
   empirical_diff: 10.0  
   interpolation_mse: 7
   category: temperature
+  diagnostic_sensors: [Ta_10_ref_diff_diagnostic, Ta_10_ref_diff, Ta_10_ref_diff_avg_28d]
   
 Ta_10_ref:
   description: reference of Ta_10
@@ -228,6 +229,7 @@ Ts_05:
   empirical_diff: 3.31 
   interpolation_mse: 7
   category: temperature
+  diagnostic_sensors: [Ts_05_ref_diff_diagnostic, Ts_05_ref_diff, Ts_05_ref_diff_avg_28d]
 
 Ts_05_min:
   description: Minimum value of Ts_05
@@ -254,6 +256,7 @@ Ts_10:
   empirical_diff: 3.6
   interpolation_mse: 7
   category: temperature
+  diagnostic_sensors: [Ts_10_ref_diff_diagnostic, Ts_10_ref_diff, Ts_10_ref_diff_avg_28d]
   
 Ts_10_min:
   description: Minimum value of Ts_10 
@@ -309,6 +312,7 @@ Ts_20:
   empirical_diff: 3.03  
   interpolation_mse: 7
   category: temperature
+  diagnostic_sensors: [Ts_20_ref_diff_diagnostic, Ts_20_ref_diff, Ts_20_ref_diff_avg_28d]  
 
 Ts_20_min:
   description: Minimum value of Ts_20
@@ -390,6 +394,7 @@ Ts_50:
   empirical_diff: 3.18
   interpolation_mse: 7
   category: temperature
+  diagnostic_sensors: [Ts_50_ref_diff_diagnostic, Ts_50_ref_diff, Ts_50_ref_diff_avg_28d]
 
 Ts_50_min:
   description: Minimum value of Ts_50
@@ -414,7 +419,8 @@ SM_10:
   physical_range: [0.1, 65.0]
   step_range: [0.0, 1000.0] 
   empirical_diff: 29.04
-  interpolation_mse: 100   
+  interpolation_mse: 100 
+  diagnostic_sensors: [SM_10_ref_diff_diagnostic, SM_10_ref_diff, SM_10_ref_diff_avg_28d]  
   
 SM_10_ref:
   description: reference of SM_10
@@ -542,7 +548,8 @@ SM_20:
   physical_range: [0.1, 65.0]
   step_range: [0.0, 1000.0] 
   empirical_diff: 23.13
-  interpolation_mse: 100   
+  interpolation_mse: 100 
+  diagnostic_sensors: [SM_20_ref_diff_diagnostic, SM_20_ref_diff, SM_20_ref_diff_avg_28d]  
 
 SM_20_min:
   description: Minimum value of SM_20
@@ -592,6 +599,7 @@ SM_30:
   step_range: [0.0, 1000.0] 
   empirical_diff: 23.83
   interpolation_mse: 100   
+  diagnostic_sensors: [SM_30_ref_diff_diagnostic, SM_30_ref_diff, SM_30_ref_diff_avg_28d]
 
 SM_30_min:
   description: Minimum value of SM_30
@@ -732,6 +740,7 @@ PAR_200:
   aggregation: average
   physical_range: [0.0, 3000.0]
   step_range: [0.0, 1000.0]
+  diagnostic_sensors: [PAR_200_ref_diff_diagnostic, PAR_200_ref_diff, PAR_200_ref_diff_avg_28d]
   
 PAR_300:
   description: Photosynthetically active radiation at 3 meters height
@@ -740,8 +749,9 @@ PAR_300:
   physical_range: [0.0, 3000.0]
   step_range: [0.0, 1000.0]
   empirical_diff: 610.46
-  interpolation_mse: 10000   
-   
+  interpolation_mse: 10000 
+  diagnostic_sensors: [PAR_300_ref_diff_diagnostic, PAR_300_ref_diff, PAR_300_ref_diff_avg_28d]
+     
 Albedo:
   description: Albedo (SWUR/SWDR)
   unit: ratio (0 to 1)
@@ -762,7 +772,8 @@ SWDR_300:
   interpolation_mse: 10000
   dependency: SWDR_300
   raw_func: "SWDR_300 / 1000"
-  derived: false # raw_func converts unit only  
+  derived: false # raw_func converts unit only
+  diagnostic_sensors: [SWDR_300_ref_diff_diagnostic, SWDR_300_ref_diff, SWDR_300_ref_diff_avg_28d]  
   
 SWUR_300:
   description: Shortwave Upward Radiation at 3 meters height
@@ -776,6 +787,7 @@ SWUR_300:
   dependency: SWUR_300
   raw_func: "SWUR_300 / 1000"    
   derived: false # raw_func converts unit only 
+  diagnostic_sensors: [SWUR_300_ref_diff_diagnostic, SWUR_300_ref_diff, SWUR_300_ref_diff_avg_28d]
   
 LWDR_300:
   description: Longwave Downward Radiation at 3 meters height
@@ -789,6 +801,7 @@ LWDR_300:
   dependency: LWDR_300
   raw_func: "LWDR_300 / 1000"   
   derived: false # raw_func converts unit only 
+  diagnostic_sensors: [LWDR_300_ref_diff_diagnostic, LWDR_300_ref_diff, LWDR_300_ref_diff_avg_28d]
   
 LWUR_300:
   description: Longwave Upward Radiation at 3 meters height
@@ -802,6 +815,7 @@ LWUR_300:
   dependency: LWUR_300
   raw_func: "LWUR_300 / 1000"    
   derived: false # raw_func converts unit only 
+  diagnostic_sensors: [LWUR_300_ref_diff_diagnostic, LWUR_300_ref_diff, LWUR_300_ref_diff_avg_28d]
   
 Trad:
   description: Radiation temperature
@@ -812,6 +826,7 @@ Trad:
   empirical_diff: 3.07
   interpolation_mse: 7
   category: temperature
+  diagnostic_sensors: [Trad_ref_diff_diagnostic, Trad_ref_diff, Trad_ref_diff_avg_28d]
   
 WD:
   description: Wind direction
@@ -821,6 +836,7 @@ WD:
   physical_range: [0.0, 360.0]   
   step_range: [0.0, 1000.0]
   derived: false # dependency set for aggregation only
+  diagnostic_sensors: [WD_ref_diff_diagnostic, WD_ref_diff, WD_ref_diff_avg_28d]  
   
 WV:
   description: Wind velocity
@@ -829,6 +845,7 @@ WV:
   physical_range: [0.0, 100.0]
   step_range: [0.0, 1000.0]
   empirical_diff: 2.93
+  diagnostic_sensors: [WV_ref_diff_diagnostic, WV_ref_diff, WV_ref_diff_avg_28d] 
   
 WV_gust:
   description: Max. wind velocity (gust of wind)
@@ -845,6 +862,7 @@ p_QNH:
   step_range: [0.0, 1000.0]
   empirical_diff: 1.83
   interpolation_mse: 2500
+  diagnostic_sensors: [p_QNH_ref_diff_diagnostic, p_QNH_ref_diff, p_QNH_ref_diff_avg_28d]
   
 p_local:
   description: Barometric pressure, local
@@ -865,6 +883,7 @@ P_RT_NRT:
   interpolation_mse: 4
   category: water
   derived: false # optional dependency
+  diagnostic_sensors: [P_RT_NRT_ref_diff_diagnostic, P_RT_NRT_ref_diff, P_RT_NRT_ref_diff_avg_28d]
   
 P_RT_NRT_acc:
   description: Precipitation P_RT_NRT accumulated per year, skipping gaps in time
@@ -1619,6 +1638,7 @@ UOtt:
   physical_range: [0.0, 24.0]
   step_range: [0.0, 1000.0]   
   #visibility: internal
+  diagnostic_sensors: [UOtt_ref_diff_diagnostic, UOtt_ref_diff, UOtt_ref_diff_avg_28d]  
   
 Trad_R:
   description: PT100 sensor radiometer temperature
@@ -1670,6 +1690,7 @@ UB:
   physical_range: [0.0, 24.0]
   step_range: [0.0, 1000.0]
   #visibility: internal
+  diagnostic_sensors: [UB_ref_diff_diagnostic, UB_ref_diff, UB_ref_diff_avg_28d]
   
 PAR_200_U:
   description: (raw) Photosynthetically active radiation at 2 meters height
@@ -2220,6 +2241,7 @@ precipitation_radolan:
   empirical_diff: 1000
   interpolation_mse: 4
   category: water
+  diagnostic_sensors: [precipitation_radolan_ref_diff_diagnostic, precipitation_radolan_ref_diff, precipitation_radolan_ref_diff_avg_28d]  
   
 precipitation_radolan_acc:
   description: Precipitation based on RADOLAN product accumulated per year, skipping gaps in time
@@ -3587,6 +3609,7 @@ rh_200:
   step_range: [0.0, 100.0] #high fluctuation possible
   empirical_diff: 50
   interpolation_mse: 100 
+  diagnostic_sensors: [rH_200_ref_diff_diagnostic, rH_200_ref_diff, rH_200_ref_diff_avg_28d]  
 
 rH_200_a+i:
   description: Relative air humidity at 2 meters above ground (special rH_200_a+i)
@@ -7766,6 +7789,761 @@ counts_CK2_SMT_02:
   description: BEClimwood counts SMT_02 CK2
   aggregation: average
 
+# 2026-1021  added diagnostic sensors
 
+Ta_10_ref_diff_diagnostic:
+  description: diagnostic Ta_10_ref_diff for hours, for 28-day rolling mean for days
+  unit: °K (degree Kelvin)
+  dependency: Ta_10_ref_diff
+  post_hour_func: "Ta_10_ref_diff"
+  post_day_func: "rolling_mean(Ta_10_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
 
+SM_10_ref_diff_diagnostic:
+  description: diagnostic SM_10_ref_diff for hours, for 28-day rolling mean for days
+  unit: 'pp (percentage points of volumetric water content)'
+  dependency: SM_10_ref_diff
+  post_hour_func: "SM_10_ref_diff"
+  post_day_func: "rolling_mean(SM_10_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
 
+precipitation_radolan_ref_diff_diagnostic:
+  description: diagnostic precipitation_radolan_ref_diff for hours, for 28-day rolling mean for days
+  unit: mm (millimeter)
+  dependency: precipitation_radolan_ref_diff
+  post_hour_func: "precipitation_radolan_ref_diff"
+  post_day_func: "rolling_mean(precipitation_radolan_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+  
+LWDR_300_ref:
+  description: reference of LWDR_300
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: [ref_LWDR_300]
+  post_hour_func: "ref_LWDR_300"
+  aggregation: sum
+  visibility: internal
+
+LWDR_300_ref_diff:
+  description: difference to reference of LWDR_300
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: [LWDR_300, ref_LWDR_300]
+  post_hour_func: "LWDR_300 - ref_LWDR_300"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+LWDR_300_ref_diff_avg_28d:
+  description: 28-day rolling mean of LWDR_300_ref_diff
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: LWDR_300_ref_diff
+  post_day_func: "rolling_mean(LWDR_300_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+LWDR_300_ref_diff_diagnostic:
+  description: diagnostic LWDR_300_ref_diff for hours, for 28-day rolling mean for days
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: LWDR_300_ref_diff
+  post_hour_func: "LWDR_300_ref_diff"
+  post_day_func: "rolling_mean(LWDR_300_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+LWUR_300_ref:
+  description: reference of LWUR_300
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: [ref_LWUR_300]
+  post_hour_func: "ref_LWUR_300"
+  aggregation: sum
+  visibility: internal
+
+LWUR_300_ref_diff:
+  description: difference to reference of LWUR_300
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: [LWUR_300, ref_LWUR_300]
+  post_hour_func: "LWUR_300 - ref_LWUR_300"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+LWUR_300_ref_diff_avg_28d:
+  description: 28-day rolling mean of LWUR_300_ref_diff
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: LWUR_300_ref_diff
+  post_day_func: "rolling_mean(LWUR_300_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+LWUR_300_ref_diff_diagnostic:
+  description: diagnostic LWUR_300_ref_diff for hours, for 28-day rolling mean for days
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: LWUR_300_ref_diff
+  post_hour_func: "LWUR_300_ref_diff"
+  post_day_func: "rolling_mean(LWUR_300_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+SWDR_300_ref:
+  description: reference of SWDR_300
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: [ref_SWDR_300]
+  post_hour_func: "ref_SWDR_300"
+  aggregation: sum
+  visibility: internal
+
+SWDR_300_ref_diff:
+  description: difference to reference of SWDR_300
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: [SWDR_300, ref_SWDR_300]
+  post_hour_func: "SWDR_300 - ref_SWDR_300"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+SWDR_300_ref_diff_avg_28d:
+  description: 28-day rolling mean of SWDR_300_ref_diff
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: SWDR_300_ref_diff
+  post_day_func: "rolling_mean(SWDR_300_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+SWDR_300_ref_diff_diagnostic:
+  description: diagnostic SWDR_300_ref_diff for hours, for 28-day rolling mean for days
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: SWDR_300_ref_diff
+  post_hour_func: "SWDR_300_ref_diff"
+  post_day_func: "rolling_mean(SWDR_300_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+SWUR_300_ref:
+  description: reference of SWUR_300
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: [ref_SWUR_300]
+  post_hour_func: "ref_SWUR_300"
+  aggregation: sum
+  visibility: internal
+
+SWUR_300_ref_diff:
+  description: difference to reference of SWUR_300
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: [SWUR_300, ref_SWUR_300]
+  post_hour_func: "SWUR_300 - ref_SWUR_300"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+SWUR_300_ref_diff_avg_28d:
+  description: 28-day rolling mean of SWUR_300_ref_diff
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: SWUR_300_ref_diff
+  post_day_func: "rolling_mean(SWUR_300_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+SWUR_300_ref_diff_diagnostic:
+  description: diagnostic SWUR_300_ref_diff for hours, for 28-day rolling mean for days
+  unit: kWh/m^2 (kilo watt hour per square meter)
+  dependency: SWUR_300_ref_diff
+  post_hour_func: "SWUR_300_ref_diff"
+  post_day_func: "rolling_mean(SWUR_300_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+  
+PAR_200_ref:
+  description: reference of PAR_200
+  unit: µmol/(m^2*s) (micromol photons per square meter per second)
+  dependency: [ref_PAR_200]
+  post_hour_func: "ref_PAR_200"
+  aggregation: average
+  visibility: internal
+
+PAR_200_ref_diff:
+  description: difference to reference of PAR_200
+  unit: µmol/(m^2*s) (micromol photons per square meter per second)
+  dependency: [PAR_200, ref_PAR_200]
+  post_hour_func: "PAR_200 - ref_PAR_200"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+PAR_200_ref_diff_avg_28d:
+  description: 28-day rolling mean of PAR_200_ref_diff
+  unit: µmol/(m^2*s) (micromol photons per square meter per second)
+  dependency: PAR_200_ref_diff
+  post_day_func: "rolling_mean(PAR_200_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+PAR_200_ref_diff_diagnostic:
+  description: diagnostic PAR_200_ref_diff for hours, for 28-day rolling mean for days
+  unit: µmol/(m^2*s) (micromol photons per square meter per second)
+  dependency: PAR_200_ref_diff
+  post_hour_func: "PAR_200_ref_diff"
+  post_day_func: "rolling_mean(PAR_200_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+PAR_300_ref:
+  description: reference of PAR_300
+  unit: µmol/(m^2*s) (micromol photons per square meter per second)
+  dependency: [ref_PAR_300]
+  post_hour_func: "ref_PAR_300"
+  aggregation: average
+  visibility: internal
+
+PAR_300_ref_diff:
+  description: difference to reference of PAR_300
+  unit: µmol/(m^2*s) (micromol photons per square meter per second)
+  dependency: [PAR_300, ref_PAR_300]
+  post_hour_func: "PAR_300 - ref_PAR_300"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+PAR_300_ref_diff_avg_28d:
+  description: 28-day rolling mean of PAR_300_ref_diff
+  unit: µmol/(m^2*s) (micromol photons per square meter per second)
+  dependency: PAR_300_ref_diff
+  post_day_func: "rolling_mean(PAR_300_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+PAR_300_ref_diff_diagnostic:
+  description: diagnostic PAR_300_ref_diff for hours, for 28-day rolling mean for days
+  unit: µmol/(m^2*s) (micromol photons per square meter per second)
+  dependency: PAR_300_ref_diff
+  post_hour_func: "PAR_300_ref_diff"
+  post_day_func: "rolling_mean(PAR_300_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+p_QNH_ref:
+  description: reference of p_QNH
+  unit: hPa (hectopascal)
+  dependency: [ref_p_QNH]
+  post_hour_func: "ref_p_QNH"
+  aggregation: average
+  visibility: internal
+
+p_QNH_ref_diff:
+  description: difference to reference of p_QNH
+  unit: hPa (hectopascal)
+  dependency: [p_QNH, ref_p_QNH]
+  post_hour_func: "p_QNH - ref_p_QNH"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+p_QNH_ref_diff_avg_28d:
+  description: 28-day rolling mean of p_QNH_ref_diff
+  unit: hPa (hectopascal)
+  dependency: p_QNH_ref_diff
+  post_day_func: "rolling_mean(p_QNH_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+p_QNH_ref_diff_diagnostic:
+  description: diagnostic p_QNH_ref_diff for hours, for 28-day rolling mean for days
+  unit: hPa (hectopascal)
+  dependency: p_QNH_ref_diff
+  post_hour_func: "p_QNH_ref_diff"
+  post_day_func: "rolling_mean(p_QNH_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+P_RT_NRT_ref:
+  description: reference of P_RT_NRT
+  unit: mm (millimeter)
+  dependency: [ref_P_RT_NRT]
+  post_hour_func: "ref_P_RT_NRT"
+  aggregation: sum
+  category: water
+  visibility: internal
+
+P_RT_NRT_ref_diff:
+  description: difference to reference of P_RT_NRT
+  unit: mm (millimeter)
+  dependency: [P_RT_NRT, ref_P_RT_NRT]
+  post_hour_func: "P_RT_NRT - ref_P_RT_NRT"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+P_RT_NRT_ref_diff_avg_28d:
+  description: 28-day rolling mean of P_RT_NRT_ref_diff
+  unit: mm (millimeter)
+  dependency: P_RT_NRT_ref_diff
+  post_day_func: "rolling_mean(P_RT_NRT_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+P_RT_NRT_ref_diff_diagnostic:
+  description: diagnostic P_RT_NRT_ref_diff for hours, for 28-day rolling mean for days
+  unit: mm (millimeter)
+  dependency: P_RT_NRT_ref_diff
+  post_hour_func: "P_RT_NRT_ref_diff"
+  post_day_func: "rolling_mean(P_RT_NRT_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+rH_200_ref:
+  description: reference of rH_200
+  unit: '% (percentage of relative humidity, 0-100)'
+  dependency: [ref_rH_200]
+  post_hour_func: "ref_rH_200"
+  aggregation: average
+  visibility: internal
+
+rH_200_ref_diff:
+  description: difference to reference of rH_200
+  unit: 'pp (percentage points of relative humidity)'
+  dependency: [rH_200, ref_rH_200]
+  post_hour_func: "rH_200 - ref_rH_200"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+rH_200_ref_diff_avg_28d:
+  description: 28-day rolling mean of rH_200_ref_diff
+  unit: 'pp (percentage points of relative humidity)'
+  dependency: rH_200_ref_diff
+  post_day_func: "rolling_mean(rH_200_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+rH_200_ref_diff_diagnostic:
+  description: diagnostic rH_200_ref_diff for hours, for 28-day rolling mean for days
+  unit: 'pp (percentage points of relative humidity)'
+  dependency: rH_200_ref_diff
+  post_hour_func: "rH_200_ref_diff"
+  post_day_func: "rolling_mean(rH_200_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+SM_20_ref:
+  description: reference of SM_20
+  unit: '% (percentage of volumetric water content)'
+  dependency: [ref_SM_20]
+  post_hour_func: "ref_SM_20"
+  aggregation: average
+  visibility: internal
+
+SM_20_ref_diff:
+  description: difference to reference of SM_20
+  unit: 'pp (percentage points of volumetric water content)'
+  dependency: [SM_20, ref_SM_20]
+  post_hour_func: "SM_20 - ref_SM_20"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+SM_20_ref_diff_avg_28d:
+  description: 28-day rolling mean of SM_20_ref_diff
+  unit: 'pp (percentage points of volumetric water content)'
+  dependency: SM_20_ref_diff
+  post_day_func: "rolling_mean(SM_20_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+SM_20_ref_diff_diagnostic:
+  description: diagnostic SM_20_ref_diff for hours, for 28-day rolling mean for days
+  unit: 'pp (percentage points of volumetric water content)'
+  dependency: SM_20_ref_diff
+  post_hour_func: "SM_20_ref_diff"
+  post_day_func: "rolling_mean(SM_20_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+SM_30_ref:
+  description: reference of SM_30
+  unit: '% (percentage of volumetric water content)'
+  dependency: [ref_SM_30]
+  post_hour_func: "ref_SM_30"
+  aggregation: average
+  visibility: internal
+
+SM_30_ref_diff:
+  description: difference to reference of SM_30
+  unit: 'pp (percentage points of volumetric water content)'
+  dependency: [SM_30, ref_SM_30]
+  post_hour_func: "SM_30 - ref_SM_30"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+SM_30_ref_diff_avg_28d:
+  description: 28-day rolling mean of SM_30_ref_diff
+  unit: 'pp (percentage points of volumetric water content)'
+  dependency: SM_30_ref_diff
+  post_day_func: "rolling_mean(SM_30_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+SM_30_ref_diff_diagnostic:
+  description: diagnostic SM_30_ref_diff for hours, for 28-day rolling mean for days
+  unit: 'pp (percentage points of volumetric water content)'
+  dependency: SM_30_ref_diff
+  post_hour_func: "SM_30_ref_diff"
+  post_day_func: "rolling_mean(SM_30_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+  
+Trad_ref:
+  description: reference of Trad
+  unit: °C (degree Celcius)
+  dependency: [ref_Trad]
+  post_hour_func: "ref_Trad"
+  aggregation: average
+  category: temperature
+  visibility: internal
+
+Trad_ref_diff:
+  description: difference to reference of Trad
+  unit: °K (degree Kelvin)
+  dependency: [Trad, ref_Trad]
+  post_hour_func: "Trad - ref_Trad"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+Trad_ref_diff_avg_28d:
+  description: 28-day rolling mean of Trad_ref_diff
+  unit: °K (degree Kelvin)
+  dependency: Trad_ref_diff
+  post_day_func: "rolling_mean(Trad_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+Trad_ref_diff_diagnostic:
+  description: diagnostic Trad_ref_diff for hours, for 28-day rolling mean for days
+  unit: °K (degree Kelvin)
+  dependency: Trad_ref_diff
+  post_hour_func: "Trad_ref_diff"
+  post_day_func: "rolling_mean(Trad_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+Ts_05_ref:
+  description: reference of Ts_05
+  unit: °C (degree Celcius)
+  dependency: [ref_Ts_05]
+  post_hour_func: "ref_Ts_05"
+  aggregation: average
+  category: temperature
+  visibility: internal
+
+Ts_05_ref_diff:
+  description: difference to reference of Ts_05
+  unit: °K (degree Kelvin)
+  dependency: [Ts_05, ref_Ts_05]
+  post_hour_func: "Ts_05 - ref_Ts_05"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+Ts_05_ref_diff_avg_28d:
+  description: 28-day rolling mean of Ts_05_ref_diff
+  unit: °K (degree Kelvin)
+  dependency: Ts_05_ref_diff
+  post_day_func: "rolling_mean(Ts_05_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+Ts_05_ref_diff_diagnostic:
+  description: diagnostic Ts_05_ref_diff for hours, for 28-day rolling mean for days
+  unit: °K (degree Kelvin)
+  dependency: Ts_05_ref_diff
+  post_hour_func: "Ts_05_ref_diff"
+  post_day_func: "rolling_mean(Ts_05_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+Ts_10_ref:
+  description: reference of Ts_10
+  unit: °C (degree Celcius)
+  dependency: [ref_Ts_10]
+  post_hour_func: "ref_Ts_10"
+  aggregation: average
+  category: temperature
+  visibility: internal
+
+Ts_10_ref_diff:
+  description: difference to reference of Ts_10
+  unit: °K (degree Kelvin)
+  dependency: [Ts_10, ref_Ts_10]
+  post_hour_func: "Ts_10 - ref_Ts_10"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+Ts_10_ref_diff_avg_28d:
+  description: 28-day rolling mean of Ts_10_ref_diff
+  unit: °K (degree Kelvin)
+  dependency: Ts_10_ref_diff
+  post_day_func: "rolling_mean(Ts_10_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+Ts_10_ref_diff_diagnostic:
+  description: diagnostic Ts_10_ref_diff for hours, for 28-day rolling mean for days
+  unit: °K (degree Kelvin)
+  dependency: Ts_10_ref_diff
+  post_hour_func: "Ts_10_ref_diff"
+  post_day_func: "rolling_mean(Ts_10_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+Ts_20_ref:
+  description: reference of Ts_20
+  unit: °C (degree Celcius)
+  dependency: [ref_Ts_20]
+  post_hour_func: "ref_Ts_20"
+  aggregation: average
+  category: temperature
+  visibility: internal
+
+Ts_20_ref_diff:
+  description: difference to reference of Ts_20
+  unit: °K (degree Kelvin)
+  dependency: [Ts_20, ref_Ts_20]
+  post_hour_func: "Ts_20 - ref_Ts_20"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+Ts_20_ref_diff_avg_28d:
+  description: 28-day rolling mean of Ts_20_ref_diff
+  unit: °K (degree Kelvin)
+  dependency: Ts_20_ref_diff
+  post_day_func: "rolling_mean(Ts_20_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+Ts_20_ref_diff_diagnostic:
+  description: diagnostic Ts_20_ref_diff for hours, for 28-day rolling mean for days
+  unit: °K (degree Kelvin)
+  dependency: Ts_20_ref_diff
+  post_hour_func: "Ts_20_ref_diff"
+  post_day_func: "rolling_mean(Ts_20_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+Ts_50_ref:
+  description: reference of Ts_50
+  unit: °C (degree Celcius)
+  dependency: [ref_Ts_50]
+  post_hour_func: "ref_Ts_50"
+  aggregation: average
+  category: temperature
+  visibility: internal
+
+Ts_50_ref_diff:
+  description: difference to reference of Ts_50
+  unit: °K (degree Kelvin)
+  dependency: [Ts_50, ref_Ts_50]
+  post_hour_func: "Ts_50 - ref_Ts_50"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+Ts_50_ref_diff_avg_28d:
+  description: 28-day rolling mean of Ts_50_ref_diff
+  unit: °K (degree Kelvin)
+  dependency: Ts_50_ref_diff
+  post_day_func: "rolling_mean(Ts_50_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+Ts_50_ref_diff_diagnostic:
+  description: diagnostic Ts_50_ref_diff for hours, for 28-day rolling mean for days
+  unit: °K (degree Kelvin)
+  dependency: Ts_50_ref_diff
+  post_hour_func: "Ts_50_ref_diff"
+  post_day_func: "rolling_mean(Ts_50_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+  
+UB_ref:
+  description: reference of UB
+  unit: V (volt)
+  dependency: [ref_UB]
+  post_hour_func: "ref_UB"
+  aggregation: average
+  visibility: internal
+
+UB_ref_diff:
+  description: difference to reference of UB
+  unit: V (volt)
+  dependency: [UB, ref_UB]
+  post_hour_func: "UB - ref_UB"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+UB_ref_diff_avg_28d:
+  description: 28-day rolling mean of UB_ref_diff
+  unit: V (volt)
+  dependency: UB_ref_diff
+  post_day_func: "rolling_mean(UB_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+UB_ref_diff_diagnostic:
+  description: diagnostic UB_ref_diff for hours, for 28-day rolling mean for days
+  unit: V (volt)
+  dependency: UB_ref_diff
+  post_hour_func: "UB_ref_diff"
+  post_day_func: "rolling_mean(UB_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+UOtt_ref:
+  description: reference of UOtt
+  unit: V (volt)
+  dependency: [ref_UOtt]
+  post_hour_func: "ref_UOtt"
+  aggregation: average
+  visibility: internal
+
+UOtt_ref_diff:
+  description: difference to reference of UOtt
+  unit: V (volt)
+  dependency: [UOtt, ref_UOtt]
+  post_hour_func: "UOtt - ref_UOtt"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+UOtt_ref_diff_avg_28d:
+  description: 28-day rolling mean of UOtt_ref_diff
+  unit: V (volt)
+  dependency: UOtt_ref_diff
+  post_day_func: "rolling_mean(UOtt_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+UOtt_ref_diff_diagnostic:
+  description: diagnostic UOtt_ref_diff for hours, for 28-day rolling mean for days
+  unit: V (volt)
+  dependency: UOtt_ref_diff
+  post_hour_func: "UOtt_ref_diff"
+  post_day_func: "rolling_mean(UOtt_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+WD_ref:
+  description: reference of WD
+  unit: ° (degree of arc 0-360)
+  dependency: [ref_WD]
+  post_hour_func: "ref_WD"
+  aggregation: average
+  visibility: internal
+
+WD_ref_diff:
+  description: difference to reference of WD
+  unit: ° (degree of arc)
+  dependency: [WD, ref_WD]
+  post_hour_func: "WD - ref_WD"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+WD_ref_diff_avg_28d:
+  description: 28-day rolling mean of WD_ref_diff
+  unit: ° (degree of arc)
+  dependency: WD_ref_diff
+  post_day_func: "rolling_mean(WD_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+WD_ref_diff_diagnostic:
+  description: diagnostic WD_ref_diff for hours, for 28-day rolling mean for days
+  unit: ° (degree of arc)
+  dependency: WD_ref_diff
+  post_hour_func: "WD_ref_diff"
+  post_day_func: "rolling_mean(WD_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+WV_ref:
+  description: reference of WV
+  unit: m/s (meter per second)
+  dependency: [ref_WV]
+  post_hour_func: "ref_WV"
+  aggregation: average
+  visibility: internal
+
+WV_ref_diff:
+  description: difference to reference of WV
+  unit: m/s (meter per second)
+  dependency: [WV, ref_WV]
+  post_hour_func: "WV - ref_WV"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+WV_ref_diff_avg_28d:
+  description: 28-day rolling mean of WV_ref_diff
+  unit: m/s (meter per second)
+  dependency: WV_ref_diff
+  post_day_func: "rolling_mean(WV_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+
+WV_ref_diff_diagnostic:
+  description: diagnostic WV_ref_diff for hours, for 28-day rolling mean for days
+  unit: m/s (meter per second)
+  dependency: WV_ref_diff
+  post_hour_func: "WV_ref_diff"
+  post_day_func: "rolling_mean(WV_ref_diff)"
+  aggregation: average
+  category: filled
+  visibility: internal
+  

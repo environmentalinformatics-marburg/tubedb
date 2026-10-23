@@ -35,7 +35,7 @@ import tsdb.remote.StationInfo;
 import tsdb.web.util.Web;
 
 public class Handler_model extends MethodHandler {	
-	
+
 
 	public Handler_model(RemoteTsDB tsdb) {
 		super(tsdb, "model");
@@ -153,15 +153,22 @@ public class Handler_model extends MethodHandler {
 					allSensors.add(sensorName);
 				}
 				json.endArray(); // end sensors
-				
-				json.key("nearest_plots");
+
+				/*json.key("nearest_plots");
 				json.array();
 				String[] plots = plotInfo.nearest_plots;
 				for(String plot : plots) {
 					json.value(plot);
 				}
-				json.endArray(); // end sensors
-				
+				json.endArray(); // end nearest_plots*/
+
+				if(Double.isFinite(plotInfo.geoPosLatitude) && Double.isFinite(plotInfo.geoPosLongitude)) {
+					json.key("lat");
+					json.value(plotInfo.geoPosLatitude);
+					json.key("lon");
+					json.value(plotInfo.geoPosLongitude);				
+				}
+
 				json.endObject(); // end plot
 			}
 		}
