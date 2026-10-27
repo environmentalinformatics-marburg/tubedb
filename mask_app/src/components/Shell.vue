@@ -9,7 +9,6 @@
           v-model="selectedProject"
           size="small"
           style="width: 110px; margin-right: 0px;"
-          @change="onProjectChange"
           placeholder="Select Project"
         >
           <el-option
@@ -26,7 +25,6 @@
           v-model="selectedGroup"
           size="small"
           style="width: 180px; margin-right: 0px;"
-          @change="onGroupChange"
           placeholder="Select group"
           :disabled="!selectedProject"
         >
@@ -44,7 +42,6 @@
           v-model="selectedPlot"
           size="small"
           style="width: 140px; margin-right: 0px;"
-          @change="onPlotChange"
           placeholder="Select Station"
           :disabled="!selectedGroup"
           filterable
@@ -108,11 +105,13 @@
           v-model="timeAggregation"
           size="small"
           style="width: 65px; margin-right: 0px;"
-          @change="onAggregationChange"
         >
-          <!--<el-option label="Raw" value="raw" />-->
+          <el-option label="Raw" value="raw" />
           <el-option label="Hour" value="hour" />
           <el-option label="Day" value="day" />
+          <el-option label="Week" value="week" />
+          <el-option label="Month" value="month" />
+          <el-option label="Year" value="year" />
         </el-select>
 
         <!-- QC Select -->
@@ -121,7 +120,6 @@
           v-model="selectedQC"
           size="small"
           style="width: 91px; margin-right: 0px;"
-          @change="onQCChange"
         >
           <el-option label="Raw" value="raw" />
           <el-option label="Physical" value="physical" />
@@ -137,7 +135,6 @@
           v-model="selectedSensorCmp"
           size="small"
           style="width: 200px;"
-          @change="onSensorCmpChange"
           placeholder="Comparison Sensor"
           :disabled="!selectedPlot"
           filterable
@@ -189,7 +186,6 @@
           v-model="selectedPlotCmp"
           size="small"
           style="width: 140px; margin-right: 0px;"
-          @change="onPlotCmpChange"
           placeholder="Comparison Station"
           :disabled="!selectedPlot"
           filterable
@@ -565,12 +561,14 @@ const sensorOptions = computed(() => {
         return false;
       }
 
-      if (timeAggregation.value === 'hour') {
+      /*if (timeAggregation.value === 'hour') {
         return sensorData.aggregation_hour !== 'none';
       } else if (timeAggregation.value === 'day') {
         return sensorData.aggregation_day !== 'none';
       }
-      return false;
+      return false;*/
+
+      return sensorData.aggregation_levels[timeAggregation.value] === true;
     })
     .map(({ sensorId, sensorData }) => ({
       value: sensorId,
@@ -650,9 +648,22 @@ const yAxisRangeConfig_cmp = computed(() => {
 
 const selectSensorWithPreference = () => {
   if (sensorOptions.value && sensorOptions.value.length > 0) {
-    const ta200Sensor = sensorOptions.value.find(s => s.value === 'Ta_200');
-    selectedSensor.value = ta200Sensor ? ta200Sensor.value : sensorOptions.value[0].value;
-    
+    const currentSensor = selectedSensor.value;
+    const sensorAvailable = currentSensor &&
+      sensorOptions.value.some(s => s.value === currentSensor);
+
+    if (!sensorAvailable) {
+      const ta200Sensor = sensorOptions.value.find(s => s.value === 'Ta_200');
+      selectedSensor.value = ta200Sensor ? ta200Sensor.value : sensorOptions.value[0].value;
+    }
+
+    const cmpAvailable = selectedSensorCmp.value &&
+      sensorCmpOptions.value.some(s => s.value === selectedSensorCmp.value);
+
+    if (!cmpAvailable) {
+      selectedSensorCmp.value = '';
+    }
+
     if (!selectedSensorCmp.value) {
       const firstDiagnostic = diagnosticSensorOptions.value[0]?.value;
       if (firstDiagnostic) {
@@ -661,6 +672,7 @@ const selectSensorWithPreference = () => {
     }
   } else {
     selectedSensor.value = '';
+    selectedSensorCmp.value = '';
   }
 };
 
@@ -689,14 +701,10 @@ watch(selectedProject, (newProject) => {
     const firstGroup = props.metaData.model.projects[newProject].groups[0]
     selectedGroup.value = firstGroup || ''
     selectedPlot.value = ''
-    selectedSensor.value = ''
-    selectedSensorCmp.value = ''
     selectedPlotCmp.value = ''
   } else {
     selectedGroup.value = ''
     selectedPlot.value = ''
-    selectedSensor.value = ''
-    selectedSensorCmp.value = ''
     selectedPlotCmp.value = ''
   }
 });
@@ -708,12 +716,8 @@ watch(selectedGroup, (newGroup) => {
     } else {
       selectedPlot.value = ''
     }
-    selectedSensor.value = ''
-    selectedSensorCmp.value = ''
   } else {
     selectedPlot.value = ''
-    selectedSensor.value = ''
-    selectedSensorCmp.value = ''
   }
 });
 
@@ -727,18 +731,6 @@ watch(selectedPlot, (newPlot) => {
   selectedPlotCmp.value = '';
 });
 
-const onProjectChange = (value) => {
-}
-
-const onGroupChange = (value) => {
-}
-
-const onPlotChange = (value) => {
-}
-
-const onPlotCmpChange = (value) => {
-}
-
 const onSensorChange = (value) => {
   //if (!selectedSensorCmp.value) {
     const firstDiagnostic = diagnosticSensorOptions.value[0]?.value;
@@ -748,14 +740,9 @@ const onSensorChange = (value) => {
   //}
 }
 
-const onAggregationChange = (value) => {
-}
-
-const onQCChange = (value) => {
-}
-
-const onSensorCmpChange = (value) => {
-}
+watch(timeAggregation, () => {
+  selectSensorWithPreference();
+});
 
 
 const viewerRef = ref(null);

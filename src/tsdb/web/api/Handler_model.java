@@ -238,6 +238,24 @@ public class Handler_model extends MethodHandler {
 			json.value(sensor.getAggregationMonth().toString());
 			json.key("aggregation_year");
 			json.value(sensor.getAggregationYear().toString());
+			
+			json.key("aggregation_levels");
+			json.object();
+			json.key("raw");
+			json.value(sensor.hasAggregationLevelRaw());
+			json.key("hour");
+			json.value(sensor.hasAggregationLevelHour());
+			json.key("day");
+			json.value(sensor.hasAggregationLevelDay());
+			json.key("week");
+			json.value(sensor.hasAggregationLevelWeek());
+			json.key("month");
+			json.value(sensor.hasAggregationLevelMonth());
+			json.key("year");
+			json.value(sensor.hasAggregationLevelYear());
+			json.endObject();		
+			
+			
 			if(-Float.MAX_VALUE < sensor.physicalMin || sensor.physicalMax < Float.MAX_VALUE) {
 				json.key("physical_range");
 				json.array();

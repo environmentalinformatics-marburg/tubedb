@@ -16,7 +16,7 @@ import tsdb.util.yaml.YamlMap;
  *
  */
 public class Sensor implements Serializable {
-	
+
 
 	private static final long serialVersionUID = -4139931796468207965L;
 
@@ -85,7 +85,7 @@ public class Sensor implements Serializable {
 	public String post_year_func = null;
 
 	private Boolean derived = null; //nullable
-	
+
 	public String[] diagnostic_sensors = null;
 
 	public Sensor(String name) {
@@ -231,9 +231,9 @@ public class Sensor implements Serializable {
 		String post_week_func = yamlMap.optString("post_week_func", null);
 		String post_month_func = yamlMap.optString("post_month_func", null);
 		String post_year_func = yamlMap.optString("post_year_func", null);
-		
+
 		Boolean derived = yamlMap.optBoolean("derived", null);
-		
+
 		String[] diagnostic_sensors = yamlMap.optList("diagnostic_sensors").asStringArray();
 
 		Sensor sensor = new Sensor(sensorName);
@@ -316,6 +316,39 @@ public class Sensor implements Serializable {
 
 	public void setAggregationYear(AggregationType agg) {
 		aggregationYear = agg;
+	}
+
+	public boolean hasAggregationLevelRaw() {
+		if(isDerived()) {
+			return this.raw_source != null || this.raw_func != null || this.post_raw_func != null;
+		} else {
+			return true;
+		}
+	}
+
+	public boolean hasAggregationLevelHour() {
+		return (hasAggregationLevelRaw() && getAggregationHour() != AggregationType.NONE) 
+				|| this.post_hour_func != null;			
+	}
+	
+	public boolean hasAggregationLevelDay() {
+		return (hasAggregationLevelHour() && getAggregationDay() != AggregationType.NONE) 
+				|| this.post_day_func != null;	
+	}
+	
+	public boolean hasAggregationLevelWeek() {
+		return (hasAggregationLevelDay() && getAggregationWeek() != AggregationType.NONE) 
+				|| this.post_week_func != null;	
+	}
+	
+	public boolean hasAggregationLevelMonth() {
+		return (hasAggregationLevelDay() && getAggregationMonth() != AggregationType.NONE) 
+				|| this.post_month_func != null;	
+	}
+	
+	public boolean hasAggregationLevelYear() {
+		return (hasAggregationLevelMonth() && getAggregationYear() != AggregationType.NONE) 
+				|| this.post_year_func != null;	
 	}
 
 	@Override
