@@ -191,6 +191,28 @@
           filterable
           clearable
         >
+          <template #prefix>
+            <el-button
+              class="plot-nav-btn"
+              link
+              size="small"
+              icon="ArrowLeft"
+              title="Previous comparison station"
+              :disabled="plotOptionsCmp.length === 0"
+              @mousedown.stop.prevent
+              @click.stop="selectAdjacentPlotCmp(-1)"
+            />
+            <el-button
+              class="plot-nav-btn"
+              link
+              size="small"
+              icon="ArrowRight"
+              title="Next comparison station"
+              :disabled="plotOptionsCmp.length === 0"
+              @mousedown.stop.prevent
+              @click.stop="selectAdjacentPlotCmp(1)"
+            />
+          </template>
           <template #header>
             <div class="cmp-dropdown-header">
               <el-icon class="cmp-dropdown-header-icon"><Filter /></el-icon>
@@ -232,6 +254,7 @@
 
           <el-checkbox v-model="separateDiagrams" label="Separate sensor diagrams" />
           <el-checkbox v-model="showMasks" label="Show stored masks" />
+          <el-checkbox v-model="interpolation" label="Interpolate missing values" />
         </el-popover>       
 
         <el-button
@@ -245,10 +268,34 @@
 
     <!-- Dialog Component -->
     <HelpDialog v-model="showHelpDialog" />
-    <MaskListDialog v-model="showMaskListDialog" :plot="selectedPlot" :sensor="selectedSensor" :mask="mask" @changed="fetchData(); fetchMask();"/>
+    <MaskListDialog 
+      v-model="showMaskListDialog" 
+      :plot="selectedPlot" 
+      :sensor="selectedSensor" 
+      :mask="mask" 
+      @changed="fetchCacheMap.clear(); fetchData(); fetchMask();"
+    />
 
     <!-- Main Content -->
     <div ref="mainContent" class="main-content">
+      <Viewer 
+        v-if="selectedPlot && data" 
+        :plot="selectedPlot" 
+        :sensor="selectedSensor"
+        :width="mainContentWidth"
+        :height="mainContentHeight"
+        :data="data"
+        :data_cmp="dataCmp"
+        :yAxisRangeConfig_cmp="yAxisRangeConfig_cmp"
+        :mask="mask"
+        :showMasks="showMasks"
+        :timeAggregation="timeAggregation"
+        :initialTimeRange="currentTimeRange"
+        @time-range-change="currentTimeRange = $event"
+        @selection-change="maskSelection = $event"
+        ref="viewerRef" 
+      />
+
       <div v-if="dataLoading || dataCmpLoading" class="loading-overlay">
         <el-icon class="is-loading"><Loading /></el-icon>
         <span>Loading data...</span>
@@ -261,21 +308,6 @@
           Retry
         </el-button>
       </div>
-
-      <Viewer 
-        v-if="selectedPlot && !dataLoading && data" 
-        :plot="selectedPlot" 
-        :sensor="selectedSensor"
-        :width="mainContentWidth"
-        :height="mainContentHeight"
-        :data="data"
-        :data_cmp="dataCmp"
-        :yAxisRangeConfig_cmp="yAxisRangeConfig_cmp"
-        :mask="mask"
-        :showMasks="showMasks"
-        @selection-change="maskSelection = $event"
-        ref="viewerRef" 
-      />
     </div>
 
     <!-- Bottom Toolbar -->
@@ -369,6 +401,7 @@ const selectedPlotCmp = ref('');
 
 const separateDiagrams = ref(true); 
 const showMasks = ref(true);
+const interpolation = ref(false);
 
 // Dialog State
 const showHelpDialog = ref(false);
@@ -379,6 +412,8 @@ const maskSelection = ref({min: null, max: null, dateMin: '*', dateMax: '*'});
 const maskType = ref('invalid');
 
 const cmpDiagnosticsOnly = ref(true);
+
+const currentTimeRange = ref(null);
 
 const selectedProjectData = computed(() => {
   if (!selectedProject.value || !props.metaData?.model?.projects) return null;
@@ -470,6 +505,22 @@ const selectAdjacentPlot = (direction) => {
   selectedPlot.value = options[nextIndex].value;
 };
 
+const selectAdjacentPlotCmp = (direction) => {
+  const options = plotOptionsCmp.value;
+  if (!options || options.length === 0) return;
+
+  const currentIndex = options.findIndex(opt => opt.value === selectedPlotCmp.value);
+
+  let nextIndex;
+  if (currentIndex === -1) {
+    nextIndex = 0;
+  } else {
+    nextIndex = (currentIndex + direction + options.length) % options.length;
+  }
+
+  selectedPlotCmp.value = options[nextIndex].value;
+};
+
 const cmpNearestStations = ref(true);
 
 const plotOptionsCmp = computed(() => {
@@ -485,7 +536,7 @@ const plotOptionsCmp = computed(() => {
     return [];
   }
   if(!plot.lat || !plot.lon) {
-    return cmpNearestStations.value ? [] : plotOptions;
+    return cmpNearestStations.value ? [] : plotOptions.value;
   }
   const refPoint = new LatLon(plot.lat, plot.lon);
   let opts = plotOptions.value
@@ -683,12 +734,10 @@ watch(() => props.metaData, (newData) => {
       selectedProject.value = firstProject.id
       
       if (firstProject.groups && firstProject.groups.length > 0) {
-        selectedGroup.value = firstProject.groups[0]
-        
-        const firstGroup = newData.model.groups[firstProject.groups[0]]
-        if (firstGroup?.plots && firstGroup.plots.length > 0) {
-          selectedPlot.value = firstGroup.plots[0]
-          
+        selectedGroup.value = firstProject.groups.includes('HEG') ? 'HEG' : firstProject.groups[0];
+        const firstGroup = newData.model.groups[selectedGroup.value];
+        if (firstGroup.plots && firstGroup.plots.length > 0) {
+          selectedPlot.value = firstGroup.plots[0];          
           selectSensorWithPreference();
         }
       }
@@ -761,8 +810,10 @@ onMounted(() => {
   });  
   resizeObserver.observe(mainContent.value);
 
-  if (selectedPlot.value && selectedSensor.value) {
+  if(selectedPlot.value && selectedSensor.value) {
     fetchData();
+    fetchMask();
+    fetchDataCmp();
   }
 });
 
@@ -798,72 +849,8 @@ function convertInt32ArrayToArray(a) {
   return r;
 }
 
-const fetchData = async () => {
-  if (!selectedPlot.value || !selectedSensor.value) {
-    data.value = null;
-    return;
-  }
-
-  data.value = null;
-  dataLoading.value = true;
-  dataError.value = null;
-
-  let timeseries = [];
-
-  timeseries.unshift({  
-        plot: selectedPlot.value,
-        sensor: selectedSensor.value,
-  });
-
-  if(selectedPlotCmp.value) {
-    timeseries.unshift({  
-          plot: selectedPlotCmp.value,
-          sensor: selectedSensor.value,
-    });
-  }
-
-  if (selectedSensorCmp.value && !separateDiagrams.value) {
-    timeseries.unshift({ 
-      plot: selectedPlot.value,
-      sensor: selectedSensorCmp.value,
-    });
-
-    if(selectedPlotCmp.value) {
-      timeseries.unshift({  
-          plot: selectedPlotCmp.value,
-          sensor: selectedSensorCmp.value,
-      });
-    }    
-  }
-
-  try {
-    const response = await fetch('/tsdb/query_js', {
-      method: 'POST', 
-      body: JSON.stringify({
-      settings: {
-        timeAggregation: timeAggregation.value,
-        quality: selectedQC.value,
-      },  
-      timeseries: timeseries,
-      })
-    });
-
-    if (!response.ok) {
-      let errorMessage = getFriendlyErrorMessage(response.status);
-      try {
-        const errorBody = await response.text();
-        if (errorBody) {
-          errorMessage = errorBody;
-        }
-      } catch (e) {
-        console.error('Could not read error body:', e)
-      }
-      throw new Error(errorMessage);
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
-    const dataView = new DataView(arrayBuffer);
-
+function arrayBufferToTimeseries(arrayBuffer) {
+   const dataView = new DataView(arrayBuffer);
     let entryCount = dataView.getInt32(0, true);
     let schemaCount = dataView.getInt32(4, true);
     let dataArray = [];
@@ -873,10 +860,73 @@ const fetchData = async () => {
       let values = new Float32Array(arrayBuffer, 4 + 4 + 4 * entryCount * (i + 1), entryCount);
       dataArray[i + 1] = convertFloat32ArrayToArray(values);
     }
-    data.value = dataArray;
+    return dataArray;
+}
+
+const fetchCacheMap = new Map();
+
+async function fetchTimeseries(reqBody) {
+  let respData = fetchCacheMap.get(reqBody);
+    if(!respData) {
+      const response = await fetch('/tsdb/query_js', {
+        method: 'POST', 
+        body: reqBody,
+      });
+
+      if (!response.ok) {
+        let errorMessage = getFriendlyErrorMessage(response.status);
+        try {
+          const errorBody = await response.text();
+          if (errorBody) {
+            errorMessage = errorBody;
+          }
+        } catch (e) {
+          console.error('Could not read error body:', e)
+        }
+        throw new Error(errorMessage);
+      }
+      respData = await response.arrayBuffer();
+      fetchCacheMap.set(reqBody, respData);
+    }
+    return arrayBufferToTimeseries(respData);
+}
+
+const fetchData = async () => {
+  if (!selectedPlot.value || !selectedSensor.value) {
+    data.value = null;
+    return;
+  }
+
+  //data.value = null;
+  dataLoading.value = true;
+  dataError.value = null;
+
+  const timeseries = [];
+  if (selectedSensorCmp.value && !separateDiagrams.value) {
+    if (selectedPlotCmp.value) {
+      timeseries.push({ plot: selectedPlotCmp.value, sensor: selectedSensorCmp.value });
+    }
+    timeseries.push({ plot: selectedPlot.value, sensor: selectedSensorCmp.value });
+  }
+  if (selectedPlotCmp.value) {
+    timeseries.push({ plot: selectedPlotCmp.value, sensor: selectedSensor.value });
+  }
+  timeseries.push({ plot: selectedPlot.value, sensor: selectedSensor.value });
+
+  try {
+    const reqBody = JSON.stringify({
+      settings: {
+        timeAggregation: timeAggregation.value,
+        quality: selectedQC.value,
+        interpolation: interpolation.value,
+      },  
+      timeseries: timeseries,
+    });
+    data.value = await fetchTimeseries(reqBody);
   } catch (err) {
     console.error(err);
     dataError.value = err.message;
+    data.value = null;
   } finally {
     dataLoading.value = false;
   }
@@ -888,65 +938,29 @@ const fetchDataCmp = async () => {
     return;
   }
 
-  dataCmp.value = null;
+  //dataCmp.value = null;
   dataCmpLoading.value = true;
   dataCmpError.value = null;
 
-  let timeseries = [];
-
-  timeseries.unshift({ 
-    plot: selectedPlot.value,
-    sensor: selectedSensorCmp.value,
-  });
-
-  if(selectedPlotCmp.value) {
-    timeseries.unshift({  
-        plot: selectedPlotCmp.value,
-        sensor: selectedSensorCmp.value,
-    });
+  const timeseries = [];
+  if (selectedPlotCmp.value) {
+    timeseries.push({ plot: selectedPlotCmp.value, sensor: selectedSensorCmp.value });
   }
+  timeseries.push({ plot: selectedPlot.value, sensor: selectedSensorCmp.value });
 
   try {
-    const response = await fetch('/tsdb/query_js', {
-      method: 'POST', 
-      body: JSON.stringify({
+    const reqBody = JSON.stringify({
       settings: {
         timeAggregation: timeAggregation.value,
         quality: selectedQC.value,
       },  
       timeseries: timeseries,
-      })
     });
-
-    if (!response.ok) {
-      let errorMessage = getFriendlyErrorMessage(response.status);
-      try {
-        const errorBody = await response.text();
-        if (errorBody) {
-          errorMessage = errorBody;
-        }
-      } catch (e) {
-        console.error('Could not read error body:', e)
-      }
-      throw new Error(errorMessage);
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
-    const dataView = new DataView(arrayBuffer);
-
-    let entryCount = dataView.getInt32(0, true);
-    let schemaCount = dataView.getInt32(4, true);
-    let dataArray = [];
-    let timestamps = new Int32Array(arrayBuffer, 4 + 4, entryCount);
-    dataArray[0] = convertInt32ArrayToArray(timestamps);
-    for(let i = 0; i < schemaCount; i++) {
-      let values = new Float32Array(arrayBuffer, 4 + 4 + 4 * entryCount * (i + 1), entryCount);
-      dataArray[i + 1] = convertFloat32ArrayToArray(values);
-    }
-    dataCmp.value = dataArray;
+    dataCmp.value = await fetchTimeseries(reqBody);
   } catch (err) {
     console.error(err);
     dataCmpError.value = err.message;
+    dataCmp.value = null;
   } finally {
     dataCmpLoading.value = false;
   }
@@ -988,7 +1002,7 @@ const fetchMask = async () => {
   }
 }
 
-watch([selectedPlot, selectedSensor, timeAggregation, selectedPlotCmp, separateDiagrams, selectedSensorCmp, selectedQC], () => {
+watch([selectedPlot, selectedSensor, timeAggregation, selectedPlotCmp, separateDiagrams, selectedSensorCmp, selectedQC, interpolation], () => {
   fetchData();
   fetchMask();
 }, { immediate: false });
@@ -1044,6 +1058,7 @@ const maskSelectionSave = async () => {
       viewerRef.value.resetSelection();
     }
 
+    fetchCacheMap.clear();
     fetchData();
     fetchMask();
 
@@ -1206,6 +1221,24 @@ const maskSelectionSave = async () => {
 .el-button.plot-nav-btn:focus {
   color: rgba(0, 0, 0, 0.9);
   background-color: transparent;
+}
+
+.loading-overlay,
+.error-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #606266;
+  /* halbtransparent, damit das alte Diagramm durchscheint */
+  background-color: rgba(245, 247, 250, 0.6);
 }
 
 </style>

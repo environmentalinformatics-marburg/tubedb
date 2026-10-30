@@ -2,6 +2,15 @@
   <div class="chart-container">
     <UplotVue :options="options_cmp" :data="data_cmp" v-if="data_cmp" ref="uplotDiagram_cmp" style="background-color: rgba(200,200,255,0.04); border-bottom: 1px dashed rgba(0, 0, 0, 0.3);" />
     <UplotVue :options="options" :data="data" v-if="data" ref="uplotDiagram" />
+
+    <el-button
+      class="zoom-reset-btn"
+      circle
+      size="small"
+      icon="FullScreen"
+      title="Zoom zurücksetzen"
+      @click="resetZoom"
+    />
   </div>
 </template>
 
@@ -36,6 +45,10 @@ const props = defineProps({
     type: [Array, null],
     required: true,
   },
+  initialTimeRange: {
+    type: Object,
+    default: null
+  },
   yAxisRangeConfig_cmp: {
     type: Object,
     default: () => ({ min: -10, max: 10 })
@@ -47,10 +60,14 @@ const props = defineProps({
   showMasks: {
     type: Boolean,
     default: true
+  },
+  timeAggregation: {
+    type: String,
+    default: 'day'
   },  
 });
 
-const emit = defineEmits(['selection-change']);
+const emit = defineEmits(['selection-change', 'time-range-change']);
 
 const uplotDiagram_cmp = ref(null); // ref to UplotVue instance
 const uplotDiagram = ref(null); // ref to UplotVue instance
@@ -73,8 +90,18 @@ function setScale(nxMin, nxMax) {
         max: nxMax,
       });            
     });
+
+    emit('time-range-change', { min: nxMin, max: nxMax });
   }
 }
+
+const resetZoom = () => {
+  if (!props.data || !props.data[0] || props.data[0].length === 0) return;
+  const xMin = props.data[0][0];
+  const xMax = props.data[0][props.data[0].length - 1];
+  setScale(xMin, xMax);
+};
+
 
 
 function wheelZoomPlugin(opts) {
@@ -107,8 +134,23 @@ function wheelZoomPlugin(opts) {
         //xMax = u.scales.x.max;
         xMin = props.data[0][0];
         xMax = props.data[0][props.data[0].length-1];
-        setScale(xMin, xMax);
         xRange = xMax - xMin;
+
+        let vMin = xMin;
+        let vMax = xMax;
+        const iTimeRange = props.initialTimeRange;
+        if (iTimeRange && Number.isFinite(iTimeRange.min) && Number.isFinite(iTimeRange.max)) {
+          //vMin = Math.max(iTimeRange.min, xMin);   
+          //vMax = Math.min(iTimeRange.max, xMax);
+          vMin = iTimeRange.min;   
+          vMax = iTimeRange.max;
+          if (vMin >= vMax) {
+            vMin = xMin;
+            vMax = xMax;
+          }
+        }
+        setScale(vMin, vMax);
+        
 
         let over = u.over;
         let rect = over.getBoundingClientRect();
@@ -223,35 +265,40 @@ const selectionMax = computed(() => {
 });
 
 
-function formatTimestamp(timestamp) {
+function formatTimestamp(timestamp, aggregation) {
   if (timestamp === null) {
     return '*';
-  }  
+  }
 
   const date = new Date(timestamp * 1000);
-  
   const pad = (n) => n.toString().padStart(2, '0');
-  
+
   const year = date.getFullYear();
   const month = pad(date.getMonth() + 1);
   const day = pad(date.getDate());
   const hours = pad(date.getHours());
   const minutes = pad(date.getMinutes());
-  
-  //return `${year}-${month}-${day}T${hours}:${minutes}`;
-  //return `${year}-${month}-${day}T${hours}`;
-  return `${year}-${month}-${day}`;
+
+  switch (aggregation) {
+    case 'raw':    return `${year}-${month}-${day}T${hours}:${minutes}`;
+    case 'hour':   return `${year}-${month}-${day}T${hours}`;
+    case 'month':  return `${year}-${month}`;
+    case 'year':   return `${year}`;
+    case 'week':
+    case 'day':
+    default:       return `${year}-${month}-${day}`;
+  }
 }
 
-watch([selectionMin, selectionMax], () => {
+watch([selectionMin, selectionMax, () => props.timeAggregation], () => {
   if (uplotDiagram.value && uplotDiagram.value._chart) {
     uplotDiagram.value._chart.redraw();
   }
   emit('selection-change', { 
     min: selectionMin.value, 
     max: selectionMax.value,
-    dateMin: formatTimestamp(selectionMin.value),
-    dateMax: formatTimestamp(selectionMax.value),
+    dateMin: formatTimestamp(selectionMin.value, props.timeAggregation),
+    dateMax: formatTimestamp(selectionMax.value, props.timeAggregation),
   });
 });
 
@@ -621,5 +668,13 @@ onUnmounted(() => {
 <style scoped>
 .chart-container {
   width: 100%;
+  position: relative;
+}
+
+.zoom-reset-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 10;
 }
 </style>

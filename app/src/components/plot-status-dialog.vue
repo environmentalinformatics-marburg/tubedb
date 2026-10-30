@@ -86,7 +86,12 @@
             <q-item-section side><q-icon name="task" /></q-item-section>
             <q-item-section>
               <q-list bordered separator class="bg-white" v-if="row.tasks && row.tasks.length > 0">
-                <q-item v-for="(t, index) in row.tasks" :key="t.id" class="task-item-container">
+                <q-item 
+                  v-for="(t, index) in row.tasks" 
+                  :key="t.id" 
+                  class="task-item-container"
+                  v-show="t.status !== 'done' && t.status !== 'cancelled'"
+                >
                   <div class="task-tab-label">
                     <span class="task-label-text">{{ plot }} task {{ t.id }}</span>
                     <span class="task-date">{{ t.created }}</span>

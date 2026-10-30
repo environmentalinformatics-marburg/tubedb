@@ -1801,7 +1801,7 @@ Ta_200_tropical_days:
   post_day_func: "(Ta_200_max >= 30 ? 1 : 0)"
   aggregation: sum
 
-Ta_200_extremely hot days:  
+Ta_200_extremely_hot_days:  
   description: TX35GE (Extremely hot days) (Tmax >= 35°C of Ta_200)
   unit: d (day)
   dependency: Ta_200_max

@@ -9,21 +9,10 @@
       <q-page padding class="column" v-if="model !== undefined">
 
         <q-card bordered class="overview-item">
-          <q-table
-            :rows="rows"
-            :columns="columns"
-            :pagination="pagination"
-            hide-bottom
-            dense
-            :loading="rowsLoading"
-            row-key="plot"
-            binary-state-sort
-            @row-click="onRowClick"
-            table-header-class="table-header"
-            :filter="filter"
-          >
 
-          <template v-slot:top-left>
+          <div class="table-toolbar">
+
+          <div class="table-toolbar-left">
             <q-select
               v-model="project"
               :options="projects"
@@ -53,9 +42,7 @@
               multiple
               clearable
             />
-          </template>
-
-          <template v-slot:top-right>
+            ...
             <q-input
               debounce="300"
               v-model="filter"
@@ -68,7 +55,36 @@
                 <q-icon name="search" />
               </template>
             </q-input>
-          </template>
+          </div>
+
+          <div class="table-toolbar-right">
+            <q-btn-toggle
+              v-model="viewMode"
+              no-caps
+              toggle-color="primary"
+              :options="[
+                { label: 'Table', value: 'table', icon: 'table_chart' },
+                { label: 'Report', value: 'report', icon: 'summarize' },
+              ]"
+            />
+          </div>
+
+          </div>
+
+          <q-table
+            v-if="viewMode === 'table'"          
+            :rows="rows"
+            :columns="columns"
+            :pagination="pagination"
+            hide-bottom
+            dense
+            :loading="rowsLoading"
+            row-key="plot"
+            binary-state-sort
+            @row-click="onRowClick"
+            table-header-class="table-header"
+            :filter="filter"
+          >      
 
           <template v-slot:body-cell-plot="props">
             <q-td :props="props">
@@ -111,17 +127,48 @@
             <q-td :props="props">
               <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 8]">
                 <div v-if="Array.isArray(props.row.tasks)">
-                  <div v-for="(t, i) in props.row.tasks" :key="i">{{ t.task }}</div>
+                  <div v-for="(t, i) in visibleTasks(props.row.tasks)" :key="i">{{ t.task }}</div>
                 </div>
                 <div v-else>{{ props.row.tasks }}</div>
               </q-tooltip>
-              <span v-if="!props.row.tasks || (Array.isArray(props.row.tasks) && props.row.tasks.length === 0)">-</span>
+              <span v-if="!props.row.tasks || (Array.isArray(props.row.tasks) && visibleTasks(props.row.tasks).length === 0)">-</span>
               <span v-else-if="typeof props.row.tasks === 'string'">{{ props.row.tasks }}</span>
-              <span v-else>{{ props.row.tasks.map(t => t.task).join('; ') }}</span>
+              <span v-else>{{ visibleTasks(props.row.tasks).map(t => t.task).join('; ') }}</span>
             </q-td>
           </template>
 
           </q-table>
+
+          <q-table
+            v-if="viewMode === 'report'"          
+            :rows="reportRows"
+            :columns="reportColumns"
+            :pagination="pagination"
+            hide-bottom
+            dense
+            :loading="rowsLoading"
+            row-key="id"
+            table-header-class="table-header"
+          >
+          <template v-slot:body-cell-plot="props">
+            <q-td :props="props">
+              <a
+                :href="api('content/visualisation_meta/visualisation_meta.html?pinned_project=' + project.id + '&pinned_plot=' + props.row.plot)"
+                target="_blank"
+                title="Open timeseries diagram in a new tab."
+              >
+                <q-icon name="timeline" @click.stop=""/>
+              </a>
+              {{props.row.plot}}
+            </q-td>
+          </template>
+          
+          <template v-slot:body-cell-voltage="props">
+            <q-td :props="props">
+              {{props.row.voltage === undefined ? '-' : props.row.voltage.toFixed(2)}}
+            </q-td>
+          </template>          
+          </q-table>  
         </q-card>
       </q-page>
       <div v-else>
@@ -157,6 +204,7 @@ export default {
   },
   data () {
     return {
+      viewMode: 'table',
       columns: [
         {
           name: 'first_datetime',
@@ -228,11 +276,61 @@ export default {
           sortable: true,
           classes: 'tasks-column',
           style: 'min-width: 400px; max-width: 400px; overflow: hidden; text-overflow: ellipsis; background-color: #fff; color: #1976d2;',
-        },
+        },       
       ],
+      reportColumns: [
+        {
+          name: 'plot',
+          field: 'plot',
+          label: 'Plot',
+          headerStyle: 'text-align: center; border-left: 1px solid #c6c6c6; border-right: 1px solid #c6c6c6; background-color: #d8d8d8; font-weight: 800;',
+          align: 'left',
+          sortable: true,
+          classes: 'plot',
+        },
+        {
+          name: 'tasks',
+          field: 'task',
+          label: 'Task',
+          headerStyle: 'text-align: center; min-width: 150px; max-width: 150px;',
+          align: 'left',
+          sortable: true,
+          classes: 'tasks-column',
+          style: 'min-width: 400px; max-width: 400px; overflow: hidden; text-overflow: ellipsis; background-color: #fff; color: #1976d2;',
+        },
+        {
+          name: 'status',
+          field: 'status',
+          label: 'Status',
+          headerStyle: 'text-align: center; min-width: 60px; max-width: 60px;',
+          align: 'left',
+          sortable: true,
+          style: 'min-width: 60px; max-width: 60px; overflow: hidden; text-overflow: ellipsis; background-color: rgba(255, 255, 0, 0.02); color: #757575;',
+        },
+        {
+          name: 'elapsed_days',
+          field: 'elapsed_days',
+          label: 'Elapsed days',
+          headerStyle: 'text-align: center; min-width: 85px; max-width: 85px;',
+          align: 'right',
+          sortable: true,
+          classes: row => this.elapsedClass(row.elapsed_days),
+          style: 'min-width: 85px; max-width: 85px; overflow: hidden; text-overflow: ellipsis;', 
+        },
+        {
+          name: 'voltage',
+          field: 'voltage',
+          label: 'Latest voltage',
+          headerStyle: 'text-align: center; min-width: 80px; max-width: 80px;',
+          align: 'right',
+          sortable: true,
+          classes: this.voltageClass,
+          style: 'min-width: 80px; max-width: 80px; overflow: hidden; text-overflow: ellipsis;',          
+        },                                        
+      ],      
       pagination: {
         rowsPerPage: 0,
-        sortBy: 'last_datetime',
+        sortBy: 'plot',
       },
       rawRows: [],
       rowsLoading: false,
@@ -285,9 +383,54 @@ export default {
       }
       const ps = this.plot;
       return this.rawRows.filter(row => ps.includes(row.plot));
-    }
+    },
+    reportRows() {
+      const result = [];
+      this.rows.forEach(row => {
+        const tasks = this.visibleTasks(row.tasks);
+        if (Array.isArray(tasks)) {
+          tasks.forEach((t, i) => {
+            result.push({
+              id: row.plot + '#' + i,
+              plot: row.plot,
+              task: t.task,
+              status: t.status || 'open',
+              last_date: row.last_date,
+              last_time: row.last_time,
+              elapsed_days: row.elapsed_days,
+              voltage: row.voltage,
+              voltage_min_error: row.voltage_min_error,
+              voltage_min_good: row.voltage_min_good,
+              voltage_min_watch: row.voltage_min_watch,              
+            });
+          });
+        } else if (typeof tasks === 'string' && tasks.trim() !== '' && tasks.trim() !== '-') {
+          result.push({
+            id: row.plot + '#text',
+            plot: row.plot,
+            task: tasks,
+            status: 'open',
+            last_date: row.last_date,
+            last_time: row.last_time,
+            elapsed_days: row.elapsed_days,
+            voltage: row.voltage,    
+            voltage_min_error: row.voltage_min_error,
+            voltage_min_good: row.voltage_min_good,
+            voltage_min_watch: row.voltage_min_watch,                     
+          });
+        }
+      });
+      return result;
+    },    
   },
   methods: {
+    visibleTasks(tasks) {
+      if (!Array.isArray(tasks)) return tasks;
+      return tasks.filter(t => {
+        const status = t.status || (t.done ? 'done' : 'open'); // Legacy: alte Tasks mit done-Flag
+        return status !== 'done' && status !== 'cancelled';
+      });
+    },
     async refresh() {
       if(this.group === undefined) {
         this.rawRows = [];
@@ -464,6 +607,28 @@ td.tasks-column span {
   background-color: #fff;
   color: #1976d2;
   font-weight: 400;
+}
+
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 12px 16px; /* entspricht grob dem Padding des ehemaligen q-table-Top-Bereichs */
+}
+
+.table-toolbar-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.table-toolbar-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 </style>

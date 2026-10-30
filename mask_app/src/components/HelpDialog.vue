@@ -21,7 +21,7 @@
         <!-- Data Settings Section -->
         <el-collapse-item title="Data Settings: Time Aggregation & QC" name="data">
           <p><strong>Time Aggregation:</strong> Choose between <i>Hour</i> and <i>Day</i> aggregation. Only sensors supporting the selected aggregation are listed.</p>
-          <p><strong>QC (Quality Control):</strong> Select the applied quality checks applied:</p>
+          <p><strong>QC (Quality Control):</strong> Select the applied quality checks:</p>
           <ul>
             <li><b>Raw</b> – no data checks</li>
             <li><b>Physical</b> – physical check only</li>
