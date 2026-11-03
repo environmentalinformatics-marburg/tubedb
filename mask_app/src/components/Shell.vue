@@ -732,23 +732,20 @@ watch(() => props.metaData, (newData) => {
     const firstProject = Object.values(newData.model.projects)[0]
     if (firstProject) {
       selectedProject.value = firstProject.id
-      
-      if (firstProject.groups && firstProject.groups.length > 0) {
-        selectedGroup.value = firstProject.groups.includes('HEG') ? 'HEG' : firstProject.groups[0];
-        const firstGroup = newData.model.groups[selectedGroup.value];
-        if (firstGroup.plots && firstGroup.plots.length > 0) {
-          selectedPlot.value = firstGroup.plots[0];          
-          selectSensorWithPreference();
-        }
-      }
     }
   }
 }, { immediate: true });
 
 watch(selectedProject, (newProject) => {
   if (newProject && props.metaData?.model?.projects?.[newProject]?.groups) {
-    const firstGroup = props.metaData.model.projects[newProject].groups[0]
-    selectedGroup.value = firstGroup || ''
+    const project = props.metaData.model.projects[newProject];
+    const groups = project.groups;
+    const defaultGroup = project.default_group;
+
+    selectedGroup.value = (defaultGroup && groups.includes(defaultGroup))
+      ? defaultGroup
+      : (groups[0] || '');
+
     selectedPlot.value = ''
     selectedPlotCmp.value = ''
   } else {
@@ -756,7 +753,7 @@ watch(selectedProject, (newProject) => {
     selectedPlot.value = ''
     selectedPlotCmp.value = ''
   }
-});
+}, { immediate: true });
 
 watch(selectedGroup, (newGroup) => {
   if (newGroup && props.metaData?.model?.groups?.[newGroup]?.plots) {
@@ -768,7 +765,7 @@ watch(selectedGroup, (newGroup) => {
   } else {
     selectedPlot.value = ''
   }
-});
+}, { immediate: true });
 
 watch(selectedPlot, (newPlot) => {
   if (newPlot && props.metaData?.model?.plots?.[newPlot]?.sensors) {
@@ -778,7 +775,7 @@ watch(selectedPlot, (newPlot) => {
     selectedSensorCmp.value = ''
   }
   selectedPlotCmp.value = '';
-});
+}, { immediate: true });
 
 const onSensorChange = (value) => {
   //if (!selectedSensorCmp.value) {

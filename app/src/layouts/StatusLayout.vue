@@ -42,19 +42,34 @@
               multiple
               clearable
             />
-            ...
+
             <q-input
+              v-if="viewMode === 'table'"
               debounce="300"
               v-model="filter"
               stack-label
               label="Search"
               filled
               clearable
+              style="margin-left: 10px;"
             >
               <template v-slot:append>
                 <q-icon name="search" />
               </template>
             </q-input>
+
+            <div v-if="viewMode === 'report'" class="report-toggles">
+              <q-checkbox
+                v-model="includeOutdated"
+                label="Outdated"
+                dense
+              />
+              <q-checkbox
+                v-model="includeLowVoltage"
+                label="Low voltage"
+                dense
+              />
+            </div>
           </div>
 
           <div class="table-toolbar-right">
@@ -66,6 +81,16 @@
                 { label: 'Table', value: 'table', icon: 'table_chart' },
                 { label: 'Report', value: 'report', icon: 'summarize' },
               ]"
+            />
+            <q-btn
+              no-caps
+              icon="download"
+              label="Excel"
+              outline
+              @click="viewMode === 'table' ? exportTable() : exportReport()"
+              class="q-mr-md"
+              style="margin-left: 10px;"
+              dense
             />
           </div>
 
@@ -84,6 +109,7 @@
             @row-click="onRowClick"
             table-header-class="table-header"
             :filter="filter"
+            class="sticky-header-table"
           >      
 
           <template v-slot:body-cell-plot="props">
@@ -148,7 +174,10 @@
             dense
             :loading="rowsLoading"
             row-key="id"
+            binary-state-sort
+            @row-click="onRowClick"
             table-header-class="table-header"
+            class="sticky-header-table"
           >
           <template v-slot:body-cell-plot="props">
             <q-td :props="props">
@@ -161,6 +190,16 @@
               </a>
               {{props.row.plot}}
             </q-td>
+          </template>
+
+          <template v-slot:body-cell-task="props">            
+            <q-td :props="props">
+              <q-icon v-if="props.row.icon" :name="props.row.icon" size="xs" color="orange-8" class="q-mr-xs" />
+              <span :class="{ 'generated-task': !!props.row.generated }">{{ props.row.task }}</span>
+              <q-tooltip>
+                {{ props.row.task }}
+              </q-tooltip>
+            </q-td>            
           </template>
           
           <template v-slot:body-cell-voltage="props">
@@ -192,10 +231,31 @@
 
 <script>
 
+import ExcelJS from 'exceljs';
+
 import { mapState, mapGetters } from 'vuex';
 
 import pagesToolbar from 'components/pages-toolbar.vue';
 import plotStatusDialog from 'components/plot-status-dialog.vue';
+
+
+const EXCEL_DAY_COLORS = {
+  timeMarkLost: 'FF666666',
+  timeMarkSixWeeks: 'FFFF4444',
+  timeMarkTwoWeeks: 'FFFF9944',
+  timeMarkOneWeek: 'FFFFFF44',
+  timeMarkNow: 'FF44FF44',
+};
+
+const EXCEL_VOLTAGE_COLORS = {
+  voltageMarkNaN: 'FFC7C7C7',       // #88888877
+  voltageMarkOK: 'FFA8FFA8',       // #44ff4477
+  voltageMarkWARN: 'FFFFFFA8',     // #ffff4477
+  voltageMarkCRITICAL: 'FFFFA8A8', // #ff444477
+};
+
+const EXCEL_THIN = { style: 'thin', color: { argb: 'FFE0E0E0' } };
+const EXCEL_PLOT_SIDE = { style: 'thin', color: { argb: 'FFC6C6C6' } };
 
 export default {
   components: {
@@ -289,7 +349,7 @@ export default {
           classes: 'plot',
         },
         {
-          name: 'tasks',
+          name: 'task',
           field: 'task',
           label: 'Task',
           headerStyle: 'text-align: center; min-width: 150px; max-width: 150px;',
@@ -303,7 +363,7 @@ export default {
           field: 'status',
           label: 'Status',
           headerStyle: 'text-align: center; min-width: 60px; max-width: 60px;',
-          align: 'left',
+          align: 'center',
           sortable: true,
           style: 'min-width: 60px; max-width: 60px; overflow: hidden; text-overflow: ellipsis; background-color: rgba(255, 255, 0, 0.02); color: #757575;',
         },
@@ -321,11 +381,11 @@ export default {
           name: 'voltage',
           field: 'voltage',
           label: 'Latest voltage',
-          headerStyle: 'text-align: center; min-width: 80px; max-width: 80px;',
+          headerStyle: 'text-align: center; min-width: 100px; max-width: 100px;',
           align: 'right',
           sortable: true,
           classes: this.voltageClass,
-          style: 'min-width: 80px; max-width: 80px; overflow: hidden; text-overflow: ellipsis;',          
+          style: 'min-width: 100px; max-width: 100px; overflow: hidden; text-overflow: ellipsis;',          
         },                                        
       ],      
       pagination: {
@@ -340,6 +400,8 @@ export default {
       filter: undefined,
       transmissionOptions: ['A', 'B', 'C'],
       conditionOptions: ['A', 'B', 'C'],
+      includeOutdated: false,
+      includeLowVoltage: false,
     }
   },
   computed: {
@@ -387,41 +449,49 @@ export default {
     reportRows() {
       const result = [];
       this.rows.forEach(row => {
+        const base = {
+          plot: row.plot,
+          last_date: row.last_date,
+          last_time: row.last_time,
+          elapsed_days: row.elapsed_days,
+          voltage: row.voltage,
+          voltage_min_error: row.voltage_min_error,
+          voltage_min_good: row.voltage_min_good,
+          voltage_min_watch: row.voltage_min_watch,
+        };
+
         const tasks = this.visibleTasks(row.tasks);
         if (Array.isArray(tasks)) {
           tasks.forEach((t, i) => {
-            result.push({
-              id: row.plot + '#' + i,
-              plot: row.plot,
-              task: t.task,
-              status: t.status || 'open',
-              last_date: row.last_date,
-              last_time: row.last_time,
-              elapsed_days: row.elapsed_days,
-              voltage: row.voltage,
-              voltage_min_error: row.voltage_min_error,
-              voltage_min_good: row.voltage_min_good,
-              voltage_min_watch: row.voltage_min_watch,              
-            });
+            result.push({ ...base, id: row.plot + '#' + i, task: t.task, status: t.status || 'open' });
           });
         } else if (typeof tasks === 'string' && tasks.trim() !== '' && tasks.trim() !== '-') {
+          result.push({ ...base, id: row.plot + '#text', task: tasks, status: 'open' });
+        }
+
+        if (this.includeOutdated && this.isDataMissing(row)) {
           result.push({
-            id: row.plot + '#text',
-            plot: row.plot,
-            task: tasks,
-            status: 'open',
-            last_date: row.last_date,
-            last_time: row.last_time,
-            elapsed_days: row.elapsed_days,
-            voltage: row.voltage,    
-            voltage_min_error: row.voltage_min_error,
-            voltage_min_good: row.voltage_min_good,
-            voltage_min_watch: row.voltage_min_watch,                     
+            ...base,
+            id: row.plot + '#auto_data',
+            task: this.includeLowVoltage && this.isLowVoltage(row) ? 'outdated & low voltage' : 'outdated',
+            //status: 'open',
+            generated: true,
+            icon: 'history',
+          });
+        }
+        if (this.includeLowVoltage && this.isLowVoltage(row) && (!this.includeOutdated || !this.isDataMissing(row))) {
+          result.push({
+            ...base,
+            id: row.plot + '#auto_voltage',
+            task: 'low voltage',
+            //status: 'open',
+            generated: true,
+            icon: 'battery_alert',
           });
         }
       });
       return result;
-    },    
+    },
   },
   methods: {
     visibleTasks(tasks) {
@@ -516,6 +586,254 @@ export default {
     onRowClick(e, row) {
       this.$refs.plotStatusDialog.show(this.project, row.plot);
     },
+    isDataMissing(row) {
+      const mark = this.elapsedClass(row.elapsed_days);
+      return mark === 'timeMarkTwoWeeks' ||
+        mark === 'timeMarkSixWeeks';
+    },
+    isLowVoltage(row) {
+      const mark = this.voltageClass(row);
+      return mark === 'voltageMarkWARN' || mark === 'voltageMarkCRITICAL';
+    },
+    tasksText(row) {
+      if (!row.tasks) return '-';
+      if (Array.isArray(row.tasks)) {
+        const visible = this.visibleTasks(row.tasks);
+        if (visible.length === 0) return '-';
+        return visible.map(t => t.task).join('; ');
+      }
+      return row.tasks;
+    },
+
+    tableExportRows() {
+      const term = this.filter === undefined || this.filter === null
+        ? ''
+        : String(this.filter).trim().toLowerCase();
+      if (term === '') {
+        return this.rows;
+      }
+      return this.rows.filter(row => [
+        row.plot,
+        row.status,
+        row.condition,
+        this.tasksText(row),
+        row.first_datetime,
+        row.last_datetime,
+        row.elapsed_days,
+        row.voltage,
+      ].some(v => v !== undefined && v !== null && String(v).toLowerCase().includes(term)));
+    },
+
+    setExcelDatetime(cell, date, time) {
+      cell.value = {
+        richText: [
+          { font: { bold: true, color: { argb: 'FF000000' } }, text: date.substring(0, 4) },
+          { font: { color: { argb: 'FF000000' } }, text: date.substring(4, 7) },
+          { font: { color: { argb: 'FF5C5C5C' } }, text: date.substring(7) + ' ' },
+          { font: { color: { argb: 'FF808080' } }, text: time },
+        ],
+      };
+    },
+
+    async downloadWorkbook(workbook, filename) {
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    },
+
+    async exportTable() {
+      const workbook = new ExcelJS.Workbook();
+      const sheet = workbook.addWorksheet(this.group.id);
+
+      const columns = [
+        { header: 'Plot', key: 'plot', width: 10 },        
+        { header: 'Earliest data', key: 'first_datetime', width: 19 },
+        { header: 'Latest data', key: 'last_datetime', width: 19 },
+        { header: 'Elapsed days', key: 'elapsed_days', width: 12 },
+        { header: 'Latest voltage', key: 'voltage', width: 14 },
+        { header: 'Transmission', key: 'status', width: 16 },
+        { header: 'Condition', key: 'condition', width: 22 },
+        { header: 'Tasks', key: 'tasks', width: 100 },
+      ];
+      sheet.columns = columns;
+      const keys = columns.map(c => c.key);
+
+      const header = sheet.getRow(1);
+      header.height = 20;
+      keys.forEach(key => {
+        const cell = header.getCell(key);
+        cell.font = { bold: true };
+        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF4F4F4' } };
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FFEAEAEA' } },
+          bottom: EXCEL_THIN,
+          left: EXCEL_THIN,
+          right: EXCEL_THIN,
+        };
+      });
+
+      const plotHeader = header.getCell('plot');
+      plotHeader.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD8D8D8' } };
+      plotHeader.border = {
+        top: { style: 'thin', color: { argb: 'FFEAEAEA' } },
+        bottom: EXCEL_THIN,
+        left: EXCEL_PLOT_SIDE,
+        right: EXCEL_PLOT_SIDE,
+      };
+
+      this.tableExportRows().forEach(row => {
+        const added = sheet.addRow({
+          elapsed_days: row.elapsed_days,
+          voltage: row.voltage === undefined ? '-' : Number(row.voltage.toFixed(2)),
+          plot: row.plot,
+          status: row.status,
+          condition: row.condition,
+          tasks: this.tasksText(row),
+        });
+
+        this.setExcelDatetime(added.getCell('first_datetime'), row.first_date, row.first_time);
+        this.setExcelDatetime(added.getCell('last_datetime'), row.last_date, row.last_time);
+
+        const plotCell = added.getCell('plot');
+        plotCell.alignment = { horizontal: 'center', vertical: 'middle' };
+        plotCell.font = { bold: true };
+        plotCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF4F4F4' } };
+
+        added.getCell('status').font = { color: { argb: 'FF757575' } };
+
+        added.getCell('tasks').font = { color: { argb: 'FF1976D2' } };
+
+        const mark = this.elapsedClass(row.elapsed_days);
+        if (EXCEL_DAY_COLORS[mark]) {
+          added.getCell('elapsed_days').fill = {
+            type: 'pattern', pattern: 'solid', fgColor: { argb: EXCEL_DAY_COLORS[mark] },
+          };
+        }
+
+        const vMark = this.voltageClass(row);
+        if (EXCEL_VOLTAGE_COLORS[vMark]) {
+          added.getCell('voltage').fill = {
+            type: 'pattern', pattern: 'solid', fgColor: { argb: EXCEL_VOLTAGE_COLORS[vMark] },
+          };
+        }
+        if (row.voltage !== undefined) {
+          added.getCell('voltage').numFmt = '0.00';
+        }
+
+        added.getCell('elapsed_days').alignment = { horizontal: 'right' };
+        added.getCell('voltage').alignment = { horizontal: 'right' };
+
+        keys.forEach(key => {
+          added.getCell(key).border = { top: EXCEL_THIN, bottom: EXCEL_THIN, left: EXCEL_THIN, right: EXCEL_THIN };
+        });
+        plotCell.border = { top: EXCEL_THIN, bottom: EXCEL_THIN, left: EXCEL_PLOT_SIDE, right: EXCEL_PLOT_SIDE };
+      });
+
+      sheet.views = [{ state: 'frozen', xSplit: 1, ySplit: 1, topLeftCell: 'B2' }];
+      sheet.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: columns.length } };
+
+      await this.downloadWorkbook(workbook, `plot_status_table_${this.group.id}_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    },
+
+    async exportReport() {
+      const workbook = new ExcelJS.Workbook();
+      const sheet = workbook.addWorksheet(this.group.id);
+
+      sheet.columns = [
+        { header: 'Plot', key: 'plot', width: 10 },
+        { header: 'Task', key: 'task', width: 100 },
+        { header: 'Status', key: 'status', width: 12 },
+        { header: 'Elapsed days', key: 'elapsed_days', width: 12 },
+        { header: 'Latest voltage', key: 'voltage', width: 14 },
+      ];
+
+      const header = sheet.getRow(1);
+      header.height = 20;
+      ['plot', 'task', 'status', 'elapsed_days', 'voltage'].forEach(key => {
+        const cell = header.getCell(key);
+        cell.font = { bold: true };
+        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF4F4F4' } };
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FFEAEAEA' } },
+          bottom: EXCEL_THIN,
+          left: EXCEL_THIN,
+          right: EXCEL_THIN,
+        };
+      });
+      const plotHeader = header.getCell('plot');
+      plotHeader.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD8D8D8' } };
+      plotHeader.border = {
+        top: { style: 'thin', color: { argb: 'FFEAEAEA' } },
+        bottom: EXCEL_THIN,
+        left: EXCEL_PLOT_SIDE,
+        right: EXCEL_PLOT_SIDE,
+      };
+
+      this.reportRows.forEach(row => {
+        const added = sheet.addRow({
+          plot: row.plot,
+          task: row.task,
+          status: row.status,
+          elapsed_days: row.elapsed_days,
+          voltage: row.voltage === undefined ? '-' : Number(row.voltage.toFixed(2)),
+        });
+
+        const plotCell = added.getCell('plot');
+        plotCell.alignment = { horizontal: 'center', vertical: 'middle' };
+        plotCell.font = { bold: true };
+        plotCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF4F4F4' } };
+
+        const taskCell = added.getCell('task');
+        taskCell.alignment = { wrapText: true, vertical: 'middle' };
+        if (row.generated) {
+          taskCell.font = { color: { argb: 'FFE65100' }, italic: true };
+        } else {
+          taskCell.font = { color: { argb: 'FF1976D2' } };
+        }
+
+        added.getCell('status').font = { color: { argb: 'FF757575' } };
+        added.getCell('status').alignment = { horizontal: 'center', vertical: 'middle' };
+
+        const mark = this.elapsedClass(row.elapsed_days);
+        if (EXCEL_DAY_COLORS[mark]) {
+          added.getCell('elapsed_days').fill = {
+            type: 'pattern', pattern: 'solid', fgColor: { argb: EXCEL_DAY_COLORS[mark] },
+          };
+        }
+
+        const vMark = this.voltageClass(row);
+        if (EXCEL_VOLTAGE_COLORS[vMark]) {
+          added.getCell('voltage').fill = {
+            type: 'pattern', pattern: 'solid', fgColor: { argb: EXCEL_VOLTAGE_COLORS[vMark] },
+          };
+        }
+        if (row.voltage !== undefined) {
+          added.getCell('voltage').numFmt = '0.00';
+        }
+
+        added.getCell('elapsed_days').alignment = { horizontal: 'right', vertical: 'middle' };
+        added.getCell('voltage').alignment = { horizontal: 'right', vertical: 'middle' };
+
+        ['plot', 'task', 'status', 'elapsed_days', 'voltage'].forEach(key => {
+          added.getCell(key).border = { top: EXCEL_THIN, bottom: EXCEL_THIN, left: EXCEL_THIN, right: EXCEL_THIN };
+        });
+        plotCell.border = { top: EXCEL_THIN, bottom: EXCEL_THIN, left: EXCEL_PLOT_SIDE, right: EXCEL_PLOT_SIDE };
+      });
+
+      sheet.views = [{ state: 'frozen', xSplit: 1, ySplit: 1, topLeftCell: 'B2' }];
+      sheet.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: 5 } };
+
+      await this.downloadWorkbook(workbook, `plot_status_report_${this.group.id}_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    },   
   },
   watch: {
     projects: {
@@ -536,13 +854,14 @@ export default {
     },*/
     groups: {
       handler() {
-        if(this.groups === undefined || this.groups.length === 0) {
+        if (this.groups === undefined || this.groups.length === 0) {
           this.group = undefined;
-        } else if(this.groups.length === 1) {
-          this.group = this.groups[0];
         } else {
-          //this.group = undefined;
-          this.group = this.groups[0];
+          const defaultId = this.project && this.project.default_group;
+          const defaultGroup = defaultId
+            ? this.groups.find(g => g !== undefined && g.id === defaultId)
+            : undefined;
+          this.group = defaultGroup !== undefined ? defaultGroup : this.groups[0];
         }
       },
       immediate: true,
@@ -615,7 +934,7 @@ td.tasks-column span {
   align-items: center;
   flex-wrap: wrap;
   gap: 8px 16px;
-  padding: 12px 16px; /* entspricht grob dem Padding des ehemaligen q-table-Top-Bereichs */
+  padding: 12px 16px; 
 }
 
 .table-toolbar-left {
@@ -629,6 +948,14 @@ td.tasks-column span {
   display: flex;
   align-items: center;
   flex-shrink: 0;
+}
+
+.report-toggles {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0px;
+  margin-left: 8px;
 }
 
 </style>
@@ -661,6 +988,22 @@ td.plot a {
 
 td.plot a:hover {
   background-color: white;
+}
+
+td.tasks-column span.generated-task {
+  color: #e65100;
+  font-style: italic;
+}
+
+.sticky-header-table .q-table__middle {
+  overflow: visible;
+}
+
+.sticky-header-table thead tr th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #f4f4f4;
 }
 
 </style>

@@ -71,6 +71,10 @@ public class Handler_model extends MethodHandler {
 					json.value(generalStationInfo.name);
 				}
 				json.endArray(); // end groups
+				if(region.defaultGeneralStation != null) {
+					json.key("default_group");
+					json.value(region.defaultGeneralStation);
+				}
 				if(region.viewTimeRange != null) {
 					json.key("view_timestamp_start");
 					json.value(region.viewTimeRange.start);		
