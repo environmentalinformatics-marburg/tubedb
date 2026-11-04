@@ -25,7 +25,7 @@ import tsdb.util.iterator.TsIterator;
  *
  */
 public class StreamStorageStreamDB implements StreamStorage {
-	
+
 
 	private StreamDB streamdb;
 
@@ -138,7 +138,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 		}
 		return new long[]{interval[0],interval[1]};
 	}
-	
+
 	/**
 	 * 
 	 * @param streamName
@@ -155,7 +155,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 		}
 		return new long[]{interval[0],interval[1]};
 	}
-	
+
 	public int[] getStationTimeInterval(String streamName, int min, int max) {
 		if(!streamdb.existStation(streamName)) {
 			return null;
@@ -182,7 +182,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 	public int[] getSensorTimeInterval(String stationName, String sensorName) {
 		return streamdb.getSensorTimeInterval(stationName, sensorName);
 	}
-	
+
 	public int[] getSensorTimeInterval(String stationName, String sensorName, int min, int max) {
 		return streamdb.getSensorTimeInterval(stationName, sensorName, min, max);
 	}
@@ -219,7 +219,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 	public TimeSeriesMask getTimeSeriesMask(String stationName, String sensorName) {
 		return streamdb.getSensorTimeSeriesMask(stationName, sensorName, false);
 	}
-	
+
 	@Override
 	public TimeSeriesMask getTimeSeriesSuspectMask(String stationName, String sensorName) {
 		return streamdb.getSensorTimeSeriesSuspectMask(stationName, sensorName, false);
@@ -232,7 +232,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 			streamdb.commit();
 		}
 	}
-	
+
 	@Override
 	public void setTimeSeriesSuspectMask(String stationName, String sensorName, TimeSeriesMask timeSeriesMask, boolean commit) {
 		streamdb.setSensorTimeSeriesSuspectMask(stationName, sensorName, timeSeriesMask);
@@ -260,26 +260,34 @@ public class StreamStorageStreamDB implements StreamStorage {
 
 	}
 
+	/**
+	 * Insert sensor data, excluding sensors name == null.
+	 * @param stationName
+	 * @param sensorNames
+	 * @param dataRows
+	 */
 	public void insertDataRows(String stationName, String[] sensorNames, Collection<DataRow> dataRows) {
 		int sensors = sensorNames.length;
 		ArrayList<DataEntry> dataEntryList = new ArrayList<DataEntry>(dataRows.size());
-		for(int i=0;i<sensors;i++) {
-			dataEntryList.clear();
-			for(DataRow dataRow:dataRows) {
-				float v = dataRow.data[i];
-				if(Float.isFinite(v)) {
-					dataEntryList.add(new DataEntry((int)dataRow.timestamp, v));
-				}
+		for(int i = 0; i < sensors; i++) {
+			if(sensorNames[i] != null) {
+				dataEntryList.clear();
+				for(DataRow dataRow:dataRows) {
+					float v = dataRow.data[i];
+					if(Float.isFinite(v)) {
+						dataEntryList.add(new DataEntry((int)dataRow.timestamp, v));
+					}
 
+				}
+				DataEntry[] dataEntries = dataEntryList.toArray(new DataEntry[0]);
+				insertDataEntryArray(stationName, sensorNames[i], dataEntries);
 			}
-			DataEntry[] dataEntries = dataEntryList.toArray(new DataEntry[0]);
-			insertDataEntryArray(stationName, sensorNames[i], dataEntries);
 		}		
 	}
 
 	public void insertDataEntryArray(String stationName, String sensorName, DataEntry[] dataEntries) {
-		if(logging) Logger.info("streamDB insert DataEntyArray "+stationName+"/"+sensorName);
-		if(dataEntries!=null&&dataEntries.length>0) {
+		if(logging) Logger.info("streamDB insert DataEntyArray " + stationName + "/" + sensorName);
+		if(dataEntries != null && dataEntries.length > 0) {
 			streamdb.insertSensorData(stationName, sensorName, dataEntries);
 		}
 	}
@@ -296,7 +304,7 @@ public class StreamStorageStreamDB implements StreamStorage {
 	public void clearMaskOfStation(String stationName) {
 		streamdb.clearMaskOfStation(stationName);		
 	}
-	
+
 	public void clearSuspectMaskOfStation(String stationName) {
 		streamdb.clearSuspectMaskOfStation(stationName);		
 	}

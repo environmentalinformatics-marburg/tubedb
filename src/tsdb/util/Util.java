@@ -564,14 +564,17 @@ public final class Util {
 	}
 
 	/**
-	 * check if text is contained in array
+	 * check if text is contained in array. In array null entries are ignored
 	 * @param array
 	 * @param text
 	 * @return
 	 */
 	public static boolean containsString(String[] array, String text) {
+		if(text == null) {
+			return false;
+		}
 		for(String s:array) {
-			if(s.equals(text)) {
+			if(text.equals(s)) {
 				return true;
 			}
 		}

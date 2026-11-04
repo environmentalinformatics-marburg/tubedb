@@ -259,7 +259,7 @@ public class ConfigLoader {
 						Logger.warn("plot not found "+plotText+" at "+obj+" in "+jsonFile);
 						continue;
 					}
-					if(station.sensorNameCorrectionMap==null) {
+					if(station.sensorNameCorrectionMap == null) {
 						station.sensorNameCorrectionMap = new HashMap<>();
 					}
 					NamedInterval[] corrections = station.sensorNameCorrectionMap.get(rawText);

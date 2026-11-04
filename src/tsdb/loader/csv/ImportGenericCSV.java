@@ -10,6 +10,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
+
+import javax.validation.constraints.NotNull;
+
 import java.util.Map.Entry;
 
 import org.tinylog.Logger;
@@ -23,6 +26,7 @@ import tsdb.component.labeledproperty.PropertyComputation;
 import tsdb.util.AbstractTable;
 import tsdb.util.AssumptionCheck;
 import tsdb.util.DataRow;
+import tsdb.util.Interval;
 import tsdb.util.StreamTable;
 import tsdb.util.TimeUtil;
 import tsdb.util.Util;
@@ -298,14 +302,15 @@ public class ImportGenericCSV {
 
 			if(!dataRows.isEmpty()) {
 				String[] sensorNames = Arrays.copyOfRange(table.names, 2, sensors + 2);
-				int firstTimestamp = (int) dataRows.get(0).timestamp;
-				int lastTimestamp = (int) dataRows.get(dataRows.size() - 1).timestamp;
+				int timestampMin = (int) dataRows.get(0).timestamp;
+				int timestampMax = (int) dataRows.get(dataRows.size() - 1).timestamp;
 				
-				station.labeledProperties.applyProperties(firstTimestamp, lastTimestamp, dataRows, sensorNames, station.stationID);
+				String[] correctedSensorNames = station.correctRawSensorNamesWithNull(sensorNames, Interval.of((int) timestampMin, (int) timestampMax));
+				station.labeledProperties.applyProperties(timestampMin, timestampMax, dataRows, correctedSensorNames, station.stationID);
 
-				Logger.info("insert " + stationName + "  with rows: " + dataRows.size() + "  " + TimeUtil.oleMinutesToText(firstTimestamp) + "  " + TimeUtil.oleMinutesToText(lastTimestamp) + "   " + dataRows.get(0));
-				tsdb.streamStorage.insertDataRows(stationName, sensorNames, dataRows);
-				tsdb.sourceCatalog.insert(SourceEntry.of(stationName, sensorNames, dataRows, filePath));
+				Logger.info("insert " + correctedSensorNames + "  with rows: " + dataRows.size() + "  " + TimeUtil.oleMinutesToText(timestampMin) + "  " + TimeUtil.oleMinutesToText(timestampMax) + "   " + dataRows.get(0));
+				tsdb.streamStorage.insertDataRows(stationName, correctedSensorNames, dataRows);
+				tsdb.sourceCatalog.insert(SourceEntry.of(stationName, sensorNames, correctedSensorNames, dataRows, filePath));
 			}
 		}
 	}

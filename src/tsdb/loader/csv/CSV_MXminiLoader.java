@@ -158,8 +158,7 @@ public class CSV_MXminiLoader {
 				Station station = tsdb.getStation(stationID);
 				if(station != null) {
 					//Logger.info(Arrays.toString(sensorNames));
-					Interval interval = Interval.of((int) timestampMin, (int) timestampMax);
-					correctedSensorNames = station.correctRawSensorNames(sensorNames, interval);
+					correctedSensorNames = station.correctRawSensorNamesWithNull(sensorNames, Interval.of((int) timestampMin, (int) timestampMax));
 					station.labeledProperties.applyProperties((int) timestampMin, (int) timestampMax, dataRows, correctedSensorNames, station.stationID);
 				}				
 				tsdb.streamStorage.insertDataRows(stationID, correctedSensorNames, dataRows);

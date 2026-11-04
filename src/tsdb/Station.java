@@ -150,20 +150,27 @@ public class Station {
 		return null;
 	}
 
-	public @NotNull String[] correctRawSensorNames(@NotNull String[] rawNames, @NotNull Interval fileTimeInterval) {
+	/**
+	 * 
+	 * @param rawNames
+	 * @param fileTimeInterval
+	 * @return Array with corrected sensor names. null entries for sensors to remove.
+	 */
+	public @NotNull String[] correctRawSensorNamesWithNull(@NotNull String[] rawNames, @NotNull Interval fileTimeInterval) {
 		String[] correctedNames = new String[rawNames.length];
 		for (int i = 0; i < rawNames.length; i++) {
-			correctedNames[i] = correctRawSensorName(rawNames[i], fileTimeInterval);
+			String correctedName = correctRawSensorName(rawNames[i], fileTimeInterval);
+			correctedNames[i] = "NaN".equals(correctedName) ? null : correctedName;			
 		}
 		return correctedNames;
 	}
 
 	/**
-	 * Applys sensor name corrections.
+	 * Applies sensor name corrections.
 	 * Should be used before translateInputSensorName.
 	 * @param rawName
 	 * @param fileTimeInterval
-	 * @return rawName or corrected name
+	 * @return rawName or corrected name. corrected name is "NaN" for sensor name to remove.
 	 */
 	public @NotNull String correctRawSensorName(@NotNull String rawName, @NotNull Interval fileTimeInterval) {
 		AssumptionCheck.throwNulls(rawName, fileTimeInterval);

@@ -294,11 +294,11 @@ public class TimeSeriesLoaderBE {
 				String correctedSensorName = station.correctRawSensorName(rawSensorName, fileTimeInterval);				
 				String sensorName = station.translateInputSensorName(correctedSensorName,true);
 				//System.out.println(sensorHeader.name+"->"+sensorName);
-				if(sensorName!=null&&sensorName.equals("NaN")) { // ignore sensor
+				if(sensorName != null && sensorName.equals("NaN")) { // ignore sensor
 					continue;
 				}
 				if(sensorName != null) {
-					for(int schemaIndex=0;schemaIndex<sensorNames.length;schemaIndex++) {
+					for(int schemaIndex=0; schemaIndex<sensorNames.length; schemaIndex++) {
 						String schemaSensorName = sensorNames[schemaIndex];
 						if(schemaSensorName.equals(sensorName)) {
 							eventPos[sensorIndex] = schemaIndex;
